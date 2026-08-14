@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="parents_form_view" model="ir.ui.view">
+            <field name="name">parents.form.view</field>
+            <field name="model">res.partner</field>
+            <field name="arch" type="xml">
+                <form string="Parents">
+                <sheet>
+                    <field name="image_1920" widget='image' class="oe_avatar" options='{"preview_image": "avatar_128"}'/>
+                    <field name="is_company" invisible="1"/>
+                    <field name="commercial_partner_id" invisible="1"/>
+                    <field name="type" invisible="1"/>
+                    <field name="company_type" widget="radio" class="oe_edit_only" options="{'horizontal': true}"/>
+                    <div class="oe_title">
+                        <label for="parents_id"/>
+                        <h1><field name="parents_id" readonly="1"/></h1>
+                        <label for="title"/>
+                        <field name="title"/>
+                        <field name="parent_id"
+                            widget="res_partner_many2one"
+                            placeholder="Company"
+                            domain="[('is_company', '=', True)]" context="{'default_is_company': True, 'show_vat': True}"
+                            invisible=" ['|', '&amp;', ('is_company','=', True),('parent_id', '=', False),('company_name', '!=', False),('company_name', '!=', '')]"/>
+                        <field name="company_name" invisible=" ['|', '|', ('company_name', '=', False), ('company_name', '=', ''), ('is_company', '=', True)]"/>
+                        <button name="create_company" type="object" class="oe_edit_only btn-link"
+                                invisible=" ['|', '|', ('is_company','=', True), ('company_name', '=', ''), ('company_name', '=', False)]">
+                            <span class="fa fa-plus-square"/>
+                                   Create company
+                        </button>    
+                    </div>
+                    <group>
+                        <group>
+                            <field name="name" default_focus="1" required=" [('type', '=', 'contact')]"/>
+                            <field name="father_name"/>
+                            <field name="surname"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group>
+                            <field name="type" invisible=" [('parent_id','=', False)]" groups="base.group_no_one"/>
+                            <label for="street" string="Address"/>
+                            <div class="o_address_format">
+                                <div invisible=" ['|', ('parent_id', '=', False), ('type', '!=', 'contact')]" class="oe_edit_only"><b>Company Address:</b></div>
+                                <field name="street" placeholder="Street..." class="o_address_street" required='1'
+                                    readonly="type == 'contact' and parent_id"/>
+                                <field name="street2" placeholder="Street 2..." class="o_address_street" required='1'
+                                    readonly="type == 'contact' and parent_id"/>
+                                <field name="city" placeholder="City" class="o_address_city"
+                                    readonly="type == 'contact' and parent_id" required='1'/>
+                                <field name="state_id" class="o_address_state" placeholder="State" options='{"no_open": True}' required='1'
+                                    readonly="type == 'contact' and parent_id" context="{'country_id': country_id, 'zip': zip}"/>
+                                <field name="zip" placeholder="ZIP" class="o_address_zip"
+                                    readonly="type == 'contact' and parent_id" required='1'/>
+                                <field name="country_id" placeholder="Country" class="o_address_country" options='{"no_open": True, "no_create": True}'
+                                    readonly="type == 'contact' and parent_id" required='1'/>
+                            </div>
+                            <field name="work_address" widget="html"/>
+                            <field name="educaition_level"/>
+                            <field name="occupation"/>                            
+                            <field name="village" string="Village"/>
+                            <field name="province" string="Province"/>
+                            <field name="district_id" string="District"/>
+                            <field name="state1" string="State"/>
+                            <field name="country1" string="Country"/>
+                        </group>
+
+                        <group>
+                            <field name="is_parent" string="Parents" invisible='1'/>
+                            <field name="job_id" required="1"/>
+                            <field name="phone" widget="phone"/>
+                            <field name="work_phone" widget="phone"/>
+                            <field name="mobile" widget="phone" required='1'/>
+                            <field name="emergency_contact" widget="html"/>
+                            <field name="howknow_id" string="How Know Our School"/>
+                            <field name="user_ids" invisible="1"/>
+                            <field name="email" widget="email" context="{'gravatar_image': True}" required="  [('user_ids','!=', [])]"/>
+                          
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <page string="Students" name="student">
+                            <field name="student_ids" widget="many2many" domain="[('father_name','=',name),('surname','=',surname)]" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True,'no_create':True}">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="standard"/>
+                                    <field name="div"/>
+                                    <field name="roll_no"/>
+                                </list>
+                            </field>    
+                            <!-- Chatter -->
+                     <chatter/>
+                        </page>
+                    </notebook>
+
+                </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="parents_list_view" model="ir.ui.view">
+            <field name="name">parent.list.view</field>
+            <field name="model">res.partner</field>
+            <field name="arch" type="xml">
+                <list>
+                    <field name="title"/>
+                    <field name="name"/>
+                    <field name="father_name"/>
+                    <field name="surname"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="parents_kanban_view" model="ir.ui.view">
+            <field name="name">parent.kanban.view</field>
+            <field name="model">res.partner</field>
+            <field name="arch" type="xml">
+                <kanban sample="1">
+                    <field name="avatar_128"/>
+                    <field name="is_company"/>
+                    <field name="active"/>
+                   <field name = "id"/>
+                    <field name = "name"/>
+                    <field name="title"/>
+                    <field name="name"/>
+                    <field name="father_name"/>
+                    <field name="surname"/>
+                    <field name="mobile"/>
+                    <field name="email"/>
+                    <templates>
+                        <t t-name="card" class="flex-row">
+                            <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                            <aside class="o_kanban_aside_full">
+                                <t t-if="!record.is_company.raw_value">
+                                    <div class="o_kanban_image_fill position-relative w-100">
+                                        <field name="avatar_128" alt="Contact image" class="h-100" widget="image" options="{'img_class': 'object-fit-cover'}"/>
+                                        <field t-if="record.parent_id.raw_value" name="parent_id" class="position-absolute bottom-0 end-0 w-25 bg-light" widget="image" options="{'preview_image': 'image_128', 'img_class': 'object-fit-contain'}"/>
+                                    </div>
+                                </t>
+                                <t t-else="">
+                                    <field name="avatar_128" class="w-100" widget="image" options="{'img_class': 'object-fit-contain w-100 h-100'}"/>
+                                </t>
+                            </aside>
+                            <main class="ps-2 ps-md-0">
+                                <div class="mb-1">
+                                    <field name="display_name" class="mb-0 fw-bold fs-5"/>
+                                    <field t-if="record.parent_id.raw_value and !record.function.raw_value" class="text-muted" name="parent_id"/>
+                                    <field t-elif="!record.parent_id.raw_value and record.function.raw_value" class="text-muted" name="function"/>
+                                    <div t-elif="record.parent_id.raw_value and record.function.raw_value" class="text-muted">
+                                        <field name="function"/> at <field name="parent_id"/>
+                                    </div>
+                                </div>
+                                <div t-if="record.city.raw_value or record.country_id.raw_value">
+                                    <field name="city"/>
+                                    <span t-if="record.city.raw_value and record.country_id.raw_value">, </span>
+                                    <field name="country_id"/>
+                                </div>
+                                <field name="email" class="text-truncate"/>
+                                <field name = "standard"/>
+                                <footer><div/></footer>
+                            </main>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+        <!-- parent search view -->
+        <record id="parents_search_view" model="ir.ui.view">
+            <field name="name">parent.search.view</field>
+            <field name="model">res.partner</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="is_parent" string="Parents" invisible="1"/>
+                    <field name="name" string="Name"/>
+                    <filter string="Parents" name="parent" domain="[('is_parent','=',False)]"/>
+                </search>
+            </field>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>AI Chat-to-Report & Dashboard Assistant</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            color: #333;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
+        .header {
+            background: linear-gradient(135deg, #017E84, #875A7B);
+            color: white;
+            text-align: center;
+            padding: 40px 20px;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 2.5em;
+        }
+        .header h2 {
+            font-weight: 300;
+            margin-top: 10px;
+        }
+        .company-info {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 1.2em;
+            color: #fff;
+        }
+        .company-info a {
+            color: #fff;
+            text-decoration: underline;
+            font-weight: bold;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        .feature-box {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        .feature-box h3 {
+            color: #875A7B;
+            font-size: 1.8em;
+            margin-top: 0;
+        }
+        .screenshot {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .screenshot img {
+            max-width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        .benefits-list {
+            list-style: none;
+            padding: 0;
+        }
+        .benefits-list li {
+            margin-bottom: 10px;
+            padding-left: 25px;
+            position: relative;
+        }
+        .benefits-list li:before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #017E84;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>AI Chat-to-Report & Dashboard Assistant</h1>
+        <h2>The High-Ticket Modernizer for Odoo</h2>
+        <div class="company-info">
+            Created by <strong>Ridhira Technologies, AI First company</strong><br/>
+            Website: <a href="https://ridhira.desigoogly.com/" target="_blank">https://ridhira.desigoogly.com/</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="feature-box">
+            <h3>Unlock Your Data with Plain English</h3>
+            <p>
+                Stop struggling with complex filters and "Group By" rules. Our powerful Natural Language query bar seamlessly integrates into your Odoo backend. Simply type what you want to see, and watch the AI instantly build the perfect report.
+            </p>
+            <div class="screenshot">
+                <img src="ai_query_bar.png" alt="AI Chat Widget Interface"/>
+                <p><em>Sleek, global floating AI Chat Widget accessible from anywhere in Odoo.</em></p>
+            </div>
+        </div>
+
+        <div class="feature-box">
+            <h3>Instant Beautiful Dashboards</h3>
+            <p>
+                Once the AI generates your report, it renders a stunning chart (Bar, Pie, Line) or a Pivot Table. You can easily pin these dynamic charts directly to your native Odoo Dashboards, allowing executives to build customized, real-time KPI overviews in seconds.
+            </p>
+            <div class="screenshot">
+                <img src="ai_chart_dashboard.png" alt="AI Generated Dashboard"/>
+                <p><em>Premium charting and native dashboard integration.</em></p>
+            </div>
+        </div>
+
+        <div class="feature-box">
+            <h3>Key Features</h3>
+            <ul class="benefits-list">
+                <li><strong>Multiple AI Providers:</strong> Fully compatible with OpenAI, Google Gemini, and Anthropic.</li>
+                <li><strong>Privacy First:</strong> Securely translates queries into Odoo ORM logic locally—your raw business data never leaves your server.</li>
+                <li><strong>Respects Access Rights:</strong> Automatically inherits Odoo's robust row-level security. Employees can only query data they have permission to see.</li>
+                <li><strong>Native OWL Integration:</strong> Built entirely with Odoo's modern Web Library for a fast, responsive user experience.</li>
+            </ul>
+        </div>
+    </div>
+
+</body>
+</html>

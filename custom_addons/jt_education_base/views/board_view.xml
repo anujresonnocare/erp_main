@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data>
+
+        <!-- Board Form View-->
+        <record id="board_board_form_view" model="ir.ui.view">
+            <field name="name">Board Form View</field>
+            <field name="model">board.board</field>
+            <field name="arch" type="xml">
+                <form>
+                	<sheet>
+                		<group>
+                			<group>
+		                		<field name = "name" required="1"/>
+		                	</group>
+		                </group>
+                	</sheet>
+                    <!-- Chatter -->
+                     <chatter/>
+                </form>
+            </field>
+        </record>
+
+        <!--Board List View-->
+        <record id="board_board_list_view" model="ir.ui.view">
+            <field name="name">Board Tree View</field>
+            <field name="model">board.board</field>
+            <field name="arch" type="xml">
+                <list>
+                    <field name = "name"/>
+                </list>
+            </field>
+        </record>
+    </data>
+</odoo>

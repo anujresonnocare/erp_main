@@ -1,0 +1,2308 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* jt_education_base
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 18.0+e\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-07-22 06:49+0000\n"
+"PO-Revision-Date: 2025-07-22 06:49+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: jt_education_base
+#: model:ir.actions.report,print_report_name:jt_education_base.report_student_certi_template
+msgid "'Student Certificate - %s'"
+msgstr "'Certificado de Estudante - %s'"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.report_student_certi
+msgid ""
+", \n"
+"they have demonstrated excellence in their studies."
+msgstr ""
+", \n"
+"Eles demonstraram excelência em seus estudos."
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.faculty_form_view
+#: model_terms:ir.ui.view,arch_db:jt_education_base.parents_form_view
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "<b>Company Address:</b>"
+msgstr "<b>Endereço da empresa:</b>"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.admission_inq_kanban_view
+msgid "<b>Country:</b>"
+msgstr "<b>País:</b>"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.admission_inq_kanban_view
+msgid "<b>Email:</b>"
+msgstr "<b>E-mail:</b>"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.admission_inq_kanban_view
+msgid "<b>Name:</b>"
+msgstr "<b>Nome:</b>"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.admission_inq_kanban_view
+msgid "<b>Phone:</b>"
+msgstr "<b>Telefone:</b>"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.admission_inq_kanban_view
+msgid "<b>Standard:</b>"
+msgstr "<b>Padrão:</b>"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.admission_inq_kanban_view
+msgid "<b>State:</b>"
+msgstr "<b>Estado:</b>"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.faculty_form_view
+msgid ""
+"<i class=\"fa fa-long-arrow-right mx-2\" aria-label=\"Arrow icon\" "
+"title=\"Arrow\"/>"
+msgstr ""
+"<i class=\"fa fa-long-arrow-right mx-2\" aria-label=\"Ícone de seta\" "
+"title=\"Seta\"/>"
+
+#. module: jt_education_base
+#: model:mail.template,body_html:jt_education_base.admission_successfull_template
+msgid ""
+"<p>Your Admission is Confirmed</p>\n"
+"            "
+msgstr ""
+"<p>Sua admissão está confirmada</p>\n"
+" "
+
+#. module: jt_education_base
+#: model:mail.template,body_html:jt_education_base.admission_pending_fees_template
+msgid ""
+"<p>Your Fees Pending</p>\n"
+"                <p>\n"
+"                Your Application is submitted but the date is closed kindly pay your fees.\n"
+"            </p>\n"
+"                <p>Your outstanding fees: <strong>{{fees}}</strong></p>\n"
+"            "
+msgstr ""
+"<p>Suas taxas pendentes</p>\n"
+" <p>\n"
+" Sua inscrição foi enviada, mas a data já está encerrada. Por favor, pague suas taxas.\n"
+" </p>\n"
+" <p>Suas taxas pendentes: <strong>{{fees}}</strong></p>\n"
+" "
+
+#. module: jt_education_base
+#: model:mail.template,body_html:jt_education_base.admission_cancel_template
+msgid ""
+"<p>Your admission has been cancelled</p>\n"
+"            "
+msgstr ""
+"<p>Sua admissão foi cancelada</p>\n"
+" "
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.parents_form_view
+msgid ""
+"<span class=\"fa fa-plus-square\"/>\n"
+"                                   Create company"
+msgstr ""
+"<span class=\"fa fa-plus-square\"/>\n"
+"Criar empresa"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.faculty_form_view
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "<span class=\"fa fa-plus-square\"/>Create company"
+msgstr "<span class=\"fa fa-plus-square\"/>Criar empresa"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_meeting_kanban_view
+msgid "<strong> Topic : </strong>"
+msgstr "<strong> Tópico : </strong>"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.report_student_certi
+msgid "<strong>CERTIFICATE</strong>"
+msgstr "<strong>CERTIFICADO</strong>"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.report_student_certi
+msgid "<strong>OF COMPETITION</strong>"
+msgstr "<strong>DA CONCORRÊNCIA</strong>"
+
+#. module: jt_education_base
+#. odoo-python
+#: code:addons/jt_education/addons/jt_education_base/models/res_users.py:0
+#: code:addons/jt_education_base/models/res_users.py:0
+msgid "A user cannot have both School and College.\n"
+msgstr "Um usuário não pode ter Escola e Faculdade.\n"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_list_view
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_search_view
+msgid "Academic Year"
+msgstr "Ano Letivo"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_admission_inquiry__message_needaction
+#: model:ir.model.fields,field_description:jt_education_base.field_board_board__message_needaction
+#: model:ir.model.fields,field_description:jt_education_base.field_district_district__message_needaction
+#: model:ir.model.fields,field_description:jt_education_base.field_how_know__message_needaction
+#: model:ir.model.fields,field_description:jt_education_base.field_medium_medium__message_needaction
+#: model:ir.model.fields,field_description:jt_education_base.field_province_province__message_needaction
+#: model:ir.model.fields,field_description:jt_education_base.field_standard_division__message_needaction
+#: model:ir.model.fields,field_description:jt_education_base.field_student_meeting__message_needaction
+#: model:ir.model.fields,field_description:jt_education_base.field_village_village__message_needaction
+msgid "Action Needed"
+msgstr "Ação necessária"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_admission_inquiry__activity_ids
+#: model:ir.model.fields,field_description:jt_education_base.field_board_board__activity_ids
+#: model:ir.model.fields,field_description:jt_education_base.field_district_district__activity_ids
+#: model:ir.model.fields,field_description:jt_education_base.field_how_know__activity_ids
+#: model:ir.model.fields,field_description:jt_education_base.field_medium_medium__activity_ids
+#: model:ir.model.fields,field_description:jt_education_base.field_province_province__activity_ids
+#: model:ir.model.fields,field_description:jt_education_base.field_standard_division__activity_ids
+#: model:ir.model.fields,field_description:jt_education_base.field_student_meeting__activity_ids
+#: model:ir.model.fields,field_description:jt_education_base.field_village_village__activity_ids
+msgid "Activities"
+msgstr "Atividades"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_admission_inquiry__activity_exception_decoration
+#: model:ir.model.fields,field_description:jt_education_base.field_board_board__activity_exception_decoration
+#: model:ir.model.fields,field_description:jt_education_base.field_district_district__activity_exception_decoration
+#: model:ir.model.fields,field_description:jt_education_base.field_how_know__activity_exception_decoration
+#: model:ir.model.fields,field_description:jt_education_base.field_medium_medium__activity_exception_decoration
+#: model:ir.model.fields,field_description:jt_education_base.field_province_province__activity_exception_decoration
+#: model:ir.model.fields,field_description:jt_education_base.field_standard_division__activity_exception_decoration
+#: model:ir.model.fields,field_description:jt_education_base.field_student_meeting__activity_exception_decoration
+#: model:ir.model.fields,field_description:jt_education_base.field_village_village__activity_exception_decoration
+msgid "Activity Exception Decoration"
+msgstr "Decoração de exceção de atividade"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_admission_inquiry__activity_state
+#: model:ir.model.fields,field_description:jt_education_base.field_board_board__activity_state
+#: model:ir.model.fields,field_description:jt_education_base.field_district_district__activity_state
+#: model:ir.model.fields,field_description:jt_education_base.field_how_know__activity_state
+#: model:ir.model.fields,field_description:jt_education_base.field_medium_medium__activity_state
+#: model:ir.model.fields,field_description:jt_education_base.field_province_province__activity_state
+#: model:ir.model.fields,field_description:jt_education_base.field_standard_division__activity_state
+#: model:ir.model.fields,field_description:jt_education_base.field_student_meeting__activity_state
+#: model:ir.model.fields,field_description:jt_education_base.field_village_village__activity_state
+msgid "Activity State"
+msgstr "Estado da atividade"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_admission_inquiry__activity_type_icon
+#: model:ir.model.fields,field_description:jt_education_base.field_board_board__activity_type_icon
+#: model:ir.model.fields,field_description:jt_education_base.field_district_district__activity_type_icon
+#: model:ir.model.fields,field_description:jt_education_base.field_how_know__activity_type_icon
+#: model:ir.model.fields,field_description:jt_education_base.field_medium_medium__activity_type_icon
+#: model:ir.model.fields,field_description:jt_education_base.field_province_province__activity_type_icon
+#: model:ir.model.fields,field_description:jt_education_base.field_standard_division__activity_type_icon
+#: model:ir.model.fields,field_description:jt_education_base.field_student_meeting__activity_type_icon
+#: model:ir.model.fields,field_description:jt_education_base.field_village_village__activity_type_icon
+msgid "Activity Type Icon"
+msgstr "Ícone de tipo de atividade"
+
+#. module: jt_education_base
+#: model:ir.model.fields,help:jt_education_base.field_res_partner__div
+#: model:ir.model.fields,help:jt_education_base.field_res_users__div
+msgid "Add Division of student"
+msgstr "Adicionar divisão do aluno"
+
+#. module: jt_education_base
+#: model:ir.model.fields,help:jt_education_base.field_res_partner__standard
+#: model:ir.model.fields,help:jt_education_base.field_res_users__standard
+#: model:ir.model.fields,help:jt_education_base.field_student_meeting__standard
+msgid "Add Standard of student"
+msgstr "Adicionar padrão do aluno"
+
+#. module: jt_education_base
+#: model:ir.model.fields,help:jt_education_base.field_change_year_wizard__current_year
+#: model:ir.model.fields,help:jt_education_base.field_change_year_wizard__year_to_change
+#: model:ir.model.fields,help:jt_education_base.field_res_partner__curr_year
+#: model:ir.model.fields,help:jt_education_base.field_res_users__curr_year
+msgid "Add current year of student"
+msgstr "Adicionar ano atual do aluno"
+
+#. module: jt_education_base
+#: model:ir.ui.menu,name:jt_education_base.configurations_add
+#: model_terms:ir.ui.view,arch_db:jt_education_base.faculty_form_view
+#: model_terms:ir.ui.view,arch_db:jt_education_base.parents_form_view
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "Address"
+msgstr "Endereço"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_admission_inquiry__add1
+msgid "Address 1"
+msgstr "Endereço 1"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_admission_inquiry__add2
+msgid "Address 2"
+msgstr "Endereço 2"
+
+#. module: jt_education_base
+#: model:mail.template,name:jt_education_base.admission_cancel_template
+msgid "Admission Cancellation"
+msgstr "Cancelamento de admissão"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__admission_date
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__admission_date
+msgid "Admission Date"
+msgstr Data de Admissão
+
+#. module: jt_education_base
+#: model:ir.actions.act_window,name:jt_education_base.action_admissioninq
+#: model:ir.ui.menu,name:jt_education_base.admission_inq_menu
+#: model_terms:ir.ui.view,arch_db:jt_education_base.admission_inq_form_view
+msgid "Admission Inquiry"
+msgstr "Consulta de admissão"
+
+#. module: jt_education_base
+#: model:mail.template,name:jt_education_base.admission_pending_fees_template
+msgid "Admission Pending Fees"
+msgstr "Taxas de admissão pendentes"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__adm_standard
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__adm_standard
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "Admission Standard"
+msgstr "Padrão de Admissão"
+
+#. module: jt_education_base
+#: model:mail.template,name:jt_education_base.admission_successfull_template
+msgid "Admission Status"
+msgstr "Status de admissão"
+
+#. module: jt_education_base
+#: model:ir.actions.act_window,name:jt_education_base.action_yearyear
+msgid "Admission Year"
+msgstr "Ano de Admissão"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__age
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__age
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "Age"
+msgstr "Idade"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.res_config_settings_view
+msgid "Allowed Days to pay fees"
+msgstr "Dias permitidos para pagamento de taxas"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_student_standard__app_close_date
+msgid "Application Close Date"
+msgstr "Data de encerramento da inscrição"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__lc_apply_date
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__lc_apply_date
+#: model:ir.model.fields,help:jt_education_base.field_res_partner__lc_apply_date
+#: model:ir.model.fields,help:jt_education_base.field_res_users__lc_apply_date
+msgid "Application Date of Leaving Certificate"
+msgstr "Data de solicitação do certificado de conclusão do ensino médio"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__applied_from_website
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__applied_from_website
+msgid "Applied from Website"
+msgstr "Aplicado a partir do site"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.faculty_kanban_view
+#: model_terms:ir.ui.view,arch_db:jt_education_base.parents_kanban_view
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_kanban_view
+msgid "Archived"
+msgstr "Arquivada"
+
+#. module: jt_education_base
+#: model:ir.model,name:jt_education_base.model_res_partner
+msgid "Assignment Student Class"
+msgstr "Contacto"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_admission_inquiry__message_attachment_count
+#: model:ir.model.fields,field_description:jt_education_base.field_board_board__message_attachment_count
+#: model:ir.model.fields,field_description:jt_education_base.field_district_district__message_attachment_count
+#: model:ir.model.fields,field_description:jt_education_base.field_how_know__message_attachment_count
+#: model:ir.model.fields,field_description:jt_education_base.field_medium_medium__message_attachment_count
+#: model:ir.model.fields,field_description:jt_education_base.field_province_province__message_attachment_count
+#: model:ir.model.fields,field_description:jt_education_base.field_standard_division__message_attachment_count
+#: model:ir.model.fields,field_description:jt_education_base.field_student_meeting__message_attachment_count
+#: model:ir.model.fields,field_description:jt_education_base.field_village_village__message_attachment_count
+msgid "Attachment Count"
+msgstr "Contagem de anexos"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__basic_last_salary
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__basic_last_salary
+msgid "Basic Salary Last Drawn,Pay scale and Grade scale"
+msgstr "Salário base recebido recentemente, escala salarial e escala de classificação"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_admission_inquiry__birthdate
+msgid "Birthdate"
+msgstr "Data de nascimento"
+
+#. module: jt_education_base
+#: model:ir.actions.act_window,name:jt_education_base.action_board
+#: model:ir.model,name:jt_education_base.model_board_board
+#: model:ir.model.fields,field_description:jt_education_base.field_res_company__board
+#: model:ir.ui.menu,name:jt_education_base.studentboard_submenu
+msgid "Board"
+msgstr "Conselho"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__board
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__board
+msgid "Board/University"
+msgstr "Conselho/Universidade"
+
+#. module: jt_education_base
+#: model:ir.model.fields.selection,name:jt_education_base.selection__res_partner__state__cancel
+#: model_terms:ir.ui.view,arch_db:jt_education_base.admission_inq_form_view
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_meeting_form_view
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "Cancel"
+msgstr "Cancelar"
+
+#. module: jt_education_base
+#: model:ir.model.fields.selection,name:jt_education_base.selection__admission_inquiry__state__cancel
+#: model:ir.model.fields.selection,name:jt_education_base.selection__student_meeting__state__cancel
+msgid "Cancelled"
+msgstr "Cancelada"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_standard_division__capacity
+#: model:ir.model.fields,field_description:jt_education_base.field_student_standard__capacity
+msgid "Capacity"
+msgstr "Capacidade"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__caste
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__caste
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "Caste"
+msgstr "Casta"
+
+#. module: jt_education_base
+#: model:ir.model,name:jt_education_base.model_change_year_wizard
+msgid "Change Year Wizard"
+msgstr "Assistente de mudança de ano"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_student_history__year_changed_from
+msgid "Changed Academic Year From"
+msgstr "Ano acadêmico alterado de"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_student_history__year_changed_to
+msgid "Changed Academic Year To"
+msgstr "Ano acadêmico alterado para"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_change_year_wizard__year_to_change
+msgid "Changed Year"
+msgstr "Ano alterado"
+
+#. module: jt_education_base
+#: model:ir.actions.server,name:jt_education_base.ir_cron_check_fees_and_cancel_admission_ir_actions_server
+msgid "Check Fees and Cancel Admissions"
+msgstr "Verifique as taxas e cancele as admissões"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_admission_inquiry__city
+#: model_terms:ir.ui.view,arch_db:jt_education_base.faculty_form_view
+#: model_terms:ir.ui.view,arch_db:jt_education_base.parents_form_view
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "City"
+msgstr "Cidade"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__college
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__college
+#: model:res.groups,name:jt_education_base.group_college
+msgid "College"
+msgstr "Faculdade"
+
+#. module: jt_education_base
+#: model:ir.model,name:jt_education_base.model_res_company
+msgid "Companies"
+msgstr "Empresas"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.faculty_form_view
+#: model_terms:ir.ui.view,arch_db:jt_education_base.parents_form_view
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "Company"
+msgstr "Empresa"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__company_type
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__company_type
+msgid "Company Type"
+msgstr "Tipo de Empresa"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__conduct
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__conduct
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "Conduct"
+msgstr "Conduta"
+
+#. module: jt_education_base
+#: model:ir.model.fields.selection,name:jt_education_base.selection__student_meeting__state__conducted
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_meeting_form_view
+#: model_terms:ir.ui.view,arch_db:jt_education_base.view_meeting_search
+msgid "Conducted"
+msgstr "Conduzida"
+
+#. module: jt_education_base
+#: model:ir.model,name:jt_education_base.model_res_config_settings
+msgid "Config Settings"
+msgstr "Definições de Configuração"
+
+#. module: jt_education_base
+#: model:ir.ui.menu,name:jt_education_base.configurations_menu
+msgid "Configurations"
+msgstr "Configurações"
+
+#. module: jt_education_base
+#: model:ir.model.fields.selection,name:jt_education_base.selection__res_partner__state__confirm
+#: model_terms:ir.ui.view,arch_db:jt_education_base.admission_inq_form_view
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "Confirm"
+msgstr "Confirmar"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__confirm_date
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__confirm_date
+msgid "Confirmation Date"
+msgstr "Data de confirmação"
+
+#. module: jt_education_base
+#: model:ir.model.fields.selection,name:jt_education_base.selection__admission_inquiry__state__confirm
+msgid "Confirmed"
+msgstr "Confirmada"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.report_student_certi
+msgid "Congratulations and best wishes for future success!"
+msgstr "Parabéns e votos de muito sucesso no futuro!"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.faculty_kanban_view
+#: model_terms:ir.ui.view,arch_db:jt_education_base.parents_kanban_view
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_kanban_view
+msgid "Contact image"
+msgstr "Imagem de contato"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_admission_inquiry__country_id
+#: model:ir.model.fields,field_description:jt_education_base.field_district_district__country
+#: model:ir.model.fields,field_description:jt_education_base.field_province_province__is_country
+#: model_terms:ir.ui.view,arch_db:jt_education_base.faculty_form_view
+#: model_terms:ir.ui.view,arch_db:jt_education_base.parents_form_view
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "Country"
+msgstr "País"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__country1
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__country1
+msgid "Country "
+msgstr "País "
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_admission_inquiry__create_uid
+#: model:ir.model.fields,field_description:jt_education_base.field_board_board__create_uid
+#: model:ir.model.fields,field_description:jt_education_base.field_change_year_wizard__create_uid
+#: model:ir.model.fields,field_description:jt_education_base.field_district_district__create_uid
+#: model:ir.model.fields,field_description:jt_education_base.field_how_know__create_uid
+#: model:ir.model.fields,field_description:jt_education_base.field_medium_medium__create_uid
+#: model:ir.model.fields,field_description:jt_education_base.field_province_province__create_uid
+#: model:ir.model.fields,field_description:jt_education_base.field_standard_division__create_uid
+#: model:ir.model.fields,field_description:jt_education_base.field_student_history__create_uid
+#: model:ir.model.fields,field_description:jt_education_base.field_student_meeting__create_uid
+#: model:ir.model.fields,field_description:jt_education_base.field_student_standard__create_uid
+#: model:ir.model.fields,field_description:jt_education_base.field_village_village__create_uid
+#: model:ir.model.fields,field_description:jt_education_base.field_year_year__create_uid
+msgid "Created by"
+msgstr "Criado por"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_admission_inquiry__create_date
+#: model:ir.model.fields,field_description:jt_education_base.field_board_board__create_date
+#: model:ir.model.fields,field_description:jt_education_base.field_change_year_wizard__create_date
+#: model:ir.model.fields,field_description:jt_education_base.field_district_district__create_date
+#: model:ir.model.fields,field_description:jt_education_base.field_how_know__create_date
+#: model:ir.model.fields,field_description:jt_education_base.field_medium_medium__create_date
+#: model:ir.model.fields,field_description:jt_education_base.field_province_province__create_date
+#: model:ir.model.fields,field_description:jt_education_base.field_standard_division__create_date
+#: model:ir.model.fields,field_description:jt_education_base.field_student_history__create_date
+#: model:ir.model.fields,field_description:jt_education_base.field_student_meeting__create_date
+#: model:ir.model.fields,field_description:jt_education_base.field_student_standard__create_date
+#: model:ir.model.fields,field_description:jt_education_base.field_village_village__create_date
+#: model:ir.model.fields,field_description:jt_education_base.field_year_year__create_date
+msgid "Created on"
+msgstr "Criado em"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__curr_year
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__curr_year
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "Current Year"
+msgstr "Ano Atual"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_change_year_wizard__current_year
+msgid "Current Year "
+msgstr "Ano Atual "
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.faculty_form_view
+msgid "Date"
+msgstr "Data"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__date_from
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__date_from
+msgid "Date From"
+msgstr "Data de"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__date_to
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__date_to
+msgid "Date To"
+msgstr "Data até"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "Date of Admission in this College"
+msgstr "Data de admissão nesta faculdade"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "Date of Admission in this School"
+msgstr "Data de admissão nesta escola"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "Date of Birth"
+msgstr "Data de nascimento"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__birthdate
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__birthdate
+msgid "Date of Birth "
+msgstr "Data de nascimento "
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "Date of Leaving College"
+msgstr "Data de saída da faculdade"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__leave_date
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__leave_date
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "Date of Leaving School"
+msgstr "Data de saída da escola"
+
+#. module: jt_education_base
+#: model:ir.model.fields,help:jt_education_base.field_res_partner__leave_date
+#: model:ir.model.fields,help:jt_education_base.field_res_users__leave_date
+msgid "Date of Leaving this school"
+msgstr "Data de saída desta escola"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__date_admission
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__date_admission
+msgid "Date of admission in this school"
+msgstr "Data de admissão nesta escola"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__degree
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__degree
+msgid "Degree"
+msgstr "Grau"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__degree_attachment
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__degree_attachment
+msgid "Degree Certificate"
+msgstr "Certificado de Graduação"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__detailed_age
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__detailed_age
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "Detailed Age"
+msgstr "Idade detalhada"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.faculty_form_view
+msgid "Details of Employment Experience"
+msgstr "Detalhes da experiência de emprego"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_admission_inquiry__display_name
+#: model:ir.model.fields,field_description:jt_education_base.field_board_board__display_name
+#: model:ir.model.fields,field_description:jt_education_base.field_change_year_wizard__display_name
+#: model:ir.model.fields,field_description:jt_education_base.field_district_district__display_name
+#: model:ir.model.fields,field_description:jt_education_base.field_how_know__display_name
+#: model:ir.model.fields,field_description:jt_education_base.field_medium_medium__display_name
+#: model:ir.model.fields,field_description:jt_education_base.field_province_province__display_name
+#: model:ir.model.fields,field_description:jt_education_base.field_standard_division__display_name
+#: model:ir.model.fields,field_description:jt_education_base.field_student_history__display_name
+#: model:ir.model.fields,field_description:jt_education_base.field_student_meeting__display_name
+#: model:ir.model.fields,field_description:jt_education_base.field_student_standard__display_name
+#: model:ir.model.fields,field_description:jt_education_base.field_village_village__display_name
+#: model:ir.model.fields,field_description:jt_education_base.field_year_year__display_name
+msgid "Display Name"
+msgstr "Nome de exibição"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__district_id
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__district_id
+#: model:ir.ui.menu,name:jt_education_base.studentdistrict_submenu
+#: model_terms:ir.ui.view,arch_db:jt_education_base.faculty_form_view
+#: model_terms:ir.ui.view,arch_db:jt_education_base.parents_form_view
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "District"
+msgstr "Distrito"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__div
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__div
+msgid "Div"
+msgstr "Divisão"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_admission_inquiry__div_id
+#: model:ir.model.fields,field_description:jt_education_base.field_standard_division__name
+#: model:ir.ui.menu,name:jt_education_base.studentdivision_submenu
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_list_view
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_search_view
+msgid "Division"
+msgstr "Divisão"
+
+#. module: jt_education_base
+#: model:ir.model.fields.selection,name:jt_education_base.selection__admission_inquiry__state__draft
+#: model:ir.model.fields.selection,name:jt_education_base.selection__res_partner__state__draft
+#: model_terms:ir.ui.view,arch_db:jt_education_base.view_meeting_search
+msgid "Draft"
+msgstr "Rascunho"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__educaition_level
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__educaition_level
+msgid "Educaition Level"
+msgstr "Nível de escolaridade"
+
+#. module: jt_education_base
+#: model:ir.module.category,name:jt_education_base.module_category_jt_education_base
+#: model:ir.ui.menu,name:jt_education_base.root_menu
+msgid "Education"
+msgstr "Educação"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.faculty_form_view
+msgid "Educational Details"
+msgstr "Detalhes educacionais"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_admission_inquiry__email
+msgid "Email"
+msgstr "E-mail"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__emergency_contact
+msgid "Emergency Contact"
+msgstr "Contato de emergência"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__employee_id
+msgid "Employees "
+msgstr "Funcionárias "
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_student_meeting__end_date
+msgid "End Date"
+msgstr "Data de término"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__end_date
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__end_date
+msgid "Ending Date"
+msgstr "Data de término"
+
+#. module: jt_education_base
+#: model:ir.model.fields,help:jt_education_base.field_res_partner__board
+#: model:ir.model.fields,help:jt_education_base.field_res_users__board
+msgid "Enter Board/University passed out from"
+msgstr "Entrar no Conselho/Universidade passou de"
+
+#. module: jt_education_base
+#: model:ir.model.fields,help:jt_education_base.field_res_partner__date_admission
+#: model:ir.model.fields,help:jt_education_base.field_res_users__date_admission
+msgid "Enter Date of admission in this school"
+msgstr "Insira a data de admissão nesta escola"
+
+#. module: jt_education_base
+#. odoo-python
+#: code:addons/jt_education/addons/jt_education_base/models/admission_inq.py:0
+#: code:addons/jt_education_base/models/admission_inq.py:0
+msgid "Enter GR No. First"
+msgstr "Digite o nº GR primeiro"
+
+#. module: jt_education_base
+#: model:ir.model.fields,help:jt_education_base.field_res_partner__college
+#: model:ir.model.fields,help:jt_education_base.field_res_users__college
+msgid "Enter Passed out college"
+msgstr "Entre na faculdade aprovada"
+
+#. module: jt_education_base
+#: model:ir.model.fields,help:jt_education_base.field_res_partner__designation
+#: model:ir.model.fields,help:jt_education_base.field_res_users__designation
+msgid "Enter Post/Designation held previously."
+msgstr "Digite o cargo/designação ocupado anteriormente."
+
+#. module: jt_education_base
+#: model:ir.model.fields,help:jt_education_base.field_res_partner__qualifying_date
+#: model:ir.model.fields,help:jt_education_base.field_res_users__qualifying_date
+msgid "Enter Qualifying Date"
+msgstr "Insira a data de qualificação"
+
+#. module: jt_education_base
+#: model:ir.model.fields,help:jt_education_base.field_res_partner__adm_standard
+#: model:ir.model.fields,help:jt_education_base.field_res_users__adm_standard
+msgid "Enter Standard in which student got admission in this school"
+msgstr "Digite o padrão em que o aluno foi admitido nesta escola"
+
+#. module: jt_education_base
+#: model:ir.model.fields,help:jt_education_base.field_res_partner__specialization
+#: model:ir.model.fields,help:jt_education_base.field_res_users__specialization
+msgid "Enter Subject in which you have specialization"
+msgstr "Digite o assunto em que você tem especialização"
+
+#. module: jt_education_base
+#: model:ir.model.fields,help:jt_education_base.field_res_partner__duties
+#: model:ir.model.fields,help:jt_education_base.field_res_users__duties
+msgid "Enter what kind of duties where held by you."
+msgstr "Informe que tipo de funções você desempenhou."
+
+#. module: jt_education_base
+#: model:ir.ui.menu,name:jt_education_base.faculty_menu
+#: model:ir.ui.menu,name:jt_education_base.faculty_root_menu
+msgid "Faculties"
+msgstr "Faculdades"
+
+#. module: jt_education_base
+#: model:ir.actions.act_window,name:jt_education_base.action_faculty
+#: model:ir.model.fields,field_description:jt_education_base.field_student_meeting__faculty_id
+#: model:ir.model.fields.selection,name:jt_education_base.selection__res_partner__company_type__faculty
+#: model:res.groups,name:jt_education_base.group_faculty
+#: model_terms:ir.ui.view,arch_db:jt_education_base.faculty_form_view
+#: model_terms:ir.ui.view,arch_db:jt_education_base.faculty_search_view
+msgid "Faculty"
+msgstr "Faculdade"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_meeting_kanban_view
+msgid "Faculty :"
+msgstr "Faculdade :"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_meeting_form_view
+msgid "Faculty Feedback"
+msgstr "Feedback do corpo docente"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__faculty_id
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__faculty_id
+#: model:ir.model.fields,help:jt_education_base.field_res_partner__faculty_id
+#: model:ir.model.fields,help:jt_education_base.field_res_users__faculty_id
+msgid "Faculty ID"
+msgstr "ID do corpo docente"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_student_meeting__note2
+msgid "Faculty Response and Evaluation"
+msgstr "Resposta e avaliação do corpo docente"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_admission_inquiry__fname
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__father_name
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__father_name
+msgid "Father Name"
+msgstr "Nome do Pai"
+
+#. module: jt_education_base
+#: model:mail.template,subject:jt_education_base.admission_pending_fees_template
+msgid "Fee Payment Reminder"
+msgstr "Lembrete de Pagamento de Taxa"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_meeting_form_view
+msgid "Feedback"
+msgstr "Feedback"
+
+#. module: jt_education_base
+#: model:ir.model.fields.selection,name:jt_education_base.selection__admission_inquiry__sel_gen__female
+#: model:ir.model.fields.selection,name:jt_education_base.selection__res_partner__gender__female
+msgid "Female"
+msgstr "Feminino"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_admission_inquiry__message_follower_ids
+#: model:ir.model.fields,field_description:jt_education_base.field_board_board__message_follower_ids
+#: model:ir.model.fields,field_description:jt_education_base.field_district_district__message_follower_ids
+#: model:ir.model.fields,field_description:jt_education_base.field_how_know__message_follower_ids
+#: model:ir.model.fields,field_description:jt_education_base.field_medium_medium__message_follower_ids
+#: model:ir.model.fields,field_description:jt_education_base.field_province_province__message_follower_ids
+#: model:ir.model.fields,field_description:jt_education_base.field_standard_division__message_follower_ids
+#: model:ir.model.fields,field_description:jt_education_base.field_student_meeting__message_follower_ids
+#: model:ir.model.fields,field_description:jt_education_base.field_village_village__message_follower_ids
+msgid "Followers"
+msgstr "Seguidores"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_admission_inquiry__message_partner_ids
+#: model:ir.model.fields,field_description:jt_education_base.field_board_board__message_partner_ids
+#: model:ir.model.fields,field_description:jt_education_base.field_district_district__message_partner_ids
+#: model:ir.model.fields,field_description:jt_education_base.field_how_know__message_partner_ids
+#: model:ir.model.fields,field_description:jt_education_base.field_medium_medium__message_partner_ids
+#: model:ir.model.fields,field_description:jt_education_base.field_province_province__message_partner_ids
+#: model:ir.model.fields,field_description:jt_education_base.field_standard_division__message_partner_ids
+#: model:ir.model.fields,field_description:jt_education_base.field_student_meeting__message_partner_ids
+#: model:ir.model.fields,field_description:jt_education_base.field_village_village__message_partner_ids
+msgid "Followers (Partners)"
+msgstr "Seguidores (Parceiros)"
+
+#. module: jt_education_base
+#: model:ir.model.fields,help:jt_education_base.field_admission_inquiry__activity_type_icon
+#: model:ir.model.fields,help:jt_education_base.field_board_board__activity_type_icon
+#: model:ir.model.fields,help:jt_education_base.field_district_district__activity_type_icon
+#: model:ir.model.fields,help:jt_education_base.field_how_know__activity_type_icon
+#: model:ir.model.fields,help:jt_education_base.field_medium_medium__activity_type_icon
+#: model:ir.model.fields,help:jt_education_base.field_province_province__activity_type_icon
+#: model:ir.model.fields,help:jt_education_base.field_standard_division__activity_type_icon
+#: model:ir.model.fields,help:jt_education_base.field_student_meeting__activity_type_icon
+#: model:ir.model.fields,help:jt_education_base.field_village_village__activity_type_icon
+msgid "Font awesome icon e.g. fa-tasks"
+msgstr "Ícone do Font Awesome, por exemplo: fa-tasks"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "GR No."
+msgstr "Nº GR"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__gr_no
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__gr_no
+msgid "GR Number"
+msgstr "Número GR"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_admission_inquiry__sel_gen
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__gender
+#: model_terms:ir.ui.view,arch_db:jt_education_base.faculty_search_view
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_search_view
+msgid "Gender"
+msgstr "Gênero"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "General Information"
+msgstr "Informações Gerais"
+
+#. module: jt_education_base
+#: model:ir.model.fields,help:jt_education_base.field_res_partner__gr_no
+#: model:ir.model.fields,help:jt_education_base.field_res_users__gr_no
+msgid "General Registration Number of student"
+msgstr "Número de Registro Geral do estudante"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "Get Roll Number"
+msgstr "Obter Número de Chamada"
+
+#. module: jt_education_base
+#: model:ir.actions.server,name:jt_education_base.ir_cron_giving_fees_pending_reminder_ir_actions_server
+msgid "Giving Fees Pending Reminder"
+msgstr "Enviar Lembrete de Taxas Pendentes"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_admission_inquiry__gr_no
+msgid "Gr No."
+msgstr "Nº GR"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.admission_inq_search_view
+msgid "Group By"
+msgstr "Agrupar Por"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_admission_inquiry__has_message
+#: model:ir.model.fields,field_description:jt_education_base.field_board_board__has_message
+#: model:ir.model.fields,field_description:jt_education_base.field_district_district__has_message
+#: model:ir.model.fields,field_description:jt_education_base.field_how_know__has_message
+#: model:ir.model.fields,field_description:jt_education_base.field_medium_medium__has_message
+#: model:ir.model.fields,field_description:jt_education_base.field_province_province__has_message
+#: model:ir.model.fields,field_description:jt_education_base.field_standard_division__has_message
+#: model:ir.model.fields,field_description:jt_education_base.field_student_meeting__has_message
+#: model:ir.model.fields,field_description:jt_education_base.field_village_village__has_message
+msgid "Has Message"
+msgstr "Possui Mensagem"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.report_student_certi
+msgid "Has successfully completed the academic year"
+msgstr "Concluiu com sucesso o ano letivo"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "History"
+msgstr "Histórico"
+
+#. module: jt_education_base
+#: model:ir.actions.act_window,name:jt_education_base.action_howknow
+#: model:ir.model,name:jt_education_base.model_how_know
+#: model:ir.ui.menu,name:jt_education_base.howknow_menu
+msgid "How Know"
+msgstr "Como Soube"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.faculty_form_view
+#: model_terms:ir.ui.view,arch_db:jt_education_base.parents_form_view
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "How Know Our School"
+msgstr "Como Soube da Nossa Escola"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.res_config_settings_view
+msgid "How Many Students For Rewards"
+msgstr "Quantos Estudantes para Recompensas"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_admission_inquiry__howknow_id
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__howknow_id
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__howknow_id
+msgid "How Student Know Our School"
+msgstr "Como o Estudante Soube da Nossa Escola"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_admission_inquiry__id
+#: model:ir.model.fields,field_description:jt_education_base.field_board_board__id
+#: model:ir.model.fields,field_description:jt_education_base.field_change_year_wizard__id
+#: model:ir.model.fields,field_description:jt_education_base.field_district_district__id
+#: model:ir.model.fields,field_description:jt_education_base.field_how_know__id
+#: model:ir.model.fields,field_description:jt_education_base.field_medium_medium__id
+#: model:ir.model.fields,field_description:jt_education_base.field_province_province__id
+#: model:ir.model.fields,field_description:jt_education_base.field_standard_division__id
+#: model:ir.model.fields,field_description:jt_education_base.field_student_history__id
+#: model:ir.model.fields,field_description:jt_education_base.field_student_meeting__id
+#: model:ir.model.fields,field_description:jt_education_base.field_student_standard__id
+#: model:ir.model.fields,field_description:jt_education_base.field_village_village__id
+#: model:ir.model.fields,field_description:jt_education_base.field_year_year__id
+msgid "ID"
+msgstr "ID"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "INDIAN"
+msgstr "INDIANO"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_admission_inquiry__activity_exception_icon
+#: model:ir.model.fields,field_description:jt_education_base.field_board_board__activity_exception_icon
+#: model:ir.model.fields,field_description:jt_education_base.field_district_district__activity_exception_icon
+#: model:ir.model.fields,field_description:jt_education_base.field_how_know__activity_exception_icon
+#: model:ir.model.fields,field_description:jt_education_base.field_medium_medium__activity_exception_icon
+#: model:ir.model.fields,field_description:jt_education_base.field_province_province__activity_exception_icon
+#: model:ir.model.fields,field_description:jt_education_base.field_standard_division__activity_exception_icon
+#: model:ir.model.fields,field_description:jt_education_base.field_student_meeting__activity_exception_icon
+#: model:ir.model.fields,field_description:jt_education_base.field_village_village__activity_exception_icon
+msgid "Icon"
+msgstr "Ícone"
+
+#. module: jt_education_base
+#: model:ir.model.fields,help:jt_education_base.field_admission_inquiry__activity_exception_icon
+#: model:ir.model.fields,help:jt_education_base.field_board_board__activity_exception_icon
+#: model:ir.model.fields,help:jt_education_base.field_district_district__activity_exception_icon
+#: model:ir.model.fields,help:jt_education_base.field_how_know__activity_exception_icon
+#: model:ir.model.fields,help:jt_education_base.field_medium_medium__activity_exception_icon
+#: model:ir.model.fields,help:jt_education_base.field_province_province__activity_exception_icon
+#: model:ir.model.fields,help:jt_education_base.field_standard_division__activity_exception_icon
+#: model:ir.model.fields,help:jt_education_base.field_student_meeting__activity_exception_icon
+#: model:ir.model.fields,help:jt_education_base.field_village_village__activity_exception_icon
+msgid "Icon to indicate an exception activity."
+msgstr "Ícone para indicar uma atividade de exceção."
+
+#. module: jt_education_base
+#: model:ir.model.fields,help:jt_education_base.field_admission_inquiry__message_needaction
+#: model:ir.model.fields,help:jt_education_base.field_board_board__message_needaction
+#: model:ir.model.fields,help:jt_education_base.field_district_district__message_needaction
+#: model:ir.model.fields,help:jt_education_base.field_how_know__message_needaction
+#: model:ir.model.fields,help:jt_education_base.field_medium_medium__message_needaction
+#: model:ir.model.fields,help:jt_education_base.field_province_province__message_needaction
+#: model:ir.model.fields,help:jt_education_base.field_standard_division__message_needaction
+#: model:ir.model.fields,help:jt_education_base.field_student_meeting__message_needaction
+#: model:ir.model.fields,help:jt_education_base.field_village_village__message_needaction
+msgid "If checked, new messages require your attention."
+msgstr "Se marcado, novas mensagens exigem sua atenção."
+
+#. module: jt_education_base
+#: model:ir.model.fields,help:jt_education_base.field_admission_inquiry__message_has_error
+#: model:ir.model.fields,help:jt_education_base.field_admission_inquiry__message_has_sms_error
+#: model:ir.model.fields,help:jt_education_base.field_board_board__message_has_error
+#: model:ir.model.fields,help:jt_education_base.field_board_board__message_has_sms_error
+#: model:ir.model.fields,help:jt_education_base.field_district_district__message_has_error
+#: model:ir.model.fields,help:jt_education_base.field_district_district__message_has_sms_error
+#: model:ir.model.fields,help:jt_education_base.field_how_know__message_has_error
+#: model:ir.model.fields,help:jt_education_base.field_how_know__message_has_sms_error
+#: model:ir.model.fields,help:jt_education_base.field_medium_medium__message_has_error
+#: model:ir.model.fields,help:jt_education_base.field_medium_medium__message_has_sms_error
+#: model:ir.model.fields,help:jt_education_base.field_province_province__message_has_error
+#: model:ir.model.fields,help:jt_education_base.field_province_province__message_has_sms_error
+#: model:ir.model.fields,help:jt_education_base.field_standard_division__message_has_error
+#: model:ir.model.fields,help:jt_education_base.field_standard_division__message_has_sms_error
+#: model:ir.model.fields,help:jt_education_base.field_student_meeting__message_has_error
+#: model:ir.model.fields,help:jt_education_base.field_student_meeting__message_has_sms_error
+#: model:ir.model.fields,help:jt_education_base.field_village_village__message_has_error
+#: model:ir.model.fields,help:jt_education_base.field_village_village__message_has_sms_error
+msgid "If checked, some messages have a delivery error."
+msgstr "Se marcado, algumas mensagens apresentam erro de entrega."
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_admission_inquiry__inquiry_id
+#: model:ir.model.fields,help:jt_education_base.field_admission_inquiry__inquiry_id
+msgid "Inquiry ID"
+msgstr "ID da Consulta"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "Internal Notes"
+msgstr "Notas Internas"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "Internal note..."
+msgstr "Nota interna..."
+
+#. module: jt_education_base
+#. odoo-python
+#: code:addons/jt_education/addons/jt_education_base/models/student.py:0
+#: code:addons/jt_education_base/models/student.py:0
+msgid "Invalid date of birth ..please enter correct date"
+msgstr "Data de nascimento inválida.. por favor, insira uma data correta"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__is_faculty
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__is_faculty
+msgid "Is Faculty"
+msgstr "É docente"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_admission_inquiry__message_is_follower
+#: model:ir.model.fields,field_description:jt_education_base.field_board_board__message_is_follower
+#: model:ir.model.fields,field_description:jt_education_base.field_district_district__message_is_follower
+#: model:ir.model.fields,field_description:jt_education_base.field_how_know__message_is_follower
+#: model:ir.model.fields,field_description:jt_education_base.field_medium_medium__message_is_follower
+#: model:ir.model.fields,field_description:jt_education_base.field_province_province__message_is_follower
+#: model:ir.model.fields,field_description:jt_education_base.field_standard_division__message_is_follower
+#: model:ir.model.fields,field_description:jt_education_base.field_student_meeting__message_is_follower
+#: model:ir.model.fields,field_description:jt_education_base.field_village_village__message_is_follower
+msgid "Is Follower"
+msgstr "É seguidor"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__is_parent
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__is_parent
+msgid "Is Parent"
+msgstr "É pai"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__is_student
+msgid "Is Student"
+msgstr "É estudante"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__lc_issue_date
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__lc_issue_date
+#: model:ir.model.fields,help:jt_education_base.field_res_partner__lc_issue_date
+#: model:ir.model.fields,help:jt_education_base.field_res_users__lc_issue_date
+msgid "Issue Date of Leaving Certificate"
+msgstr "Data de emissão do Certificado de Saída"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__job_id
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__job_id
+msgid "Job Positions"
+msgstr "Cargos"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__join_date
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__join_date
+msgid "Joining Date"
+msgstr "Data de Admissão"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "Last College Attended"
+msgstr "Última Faculdade Frequentada"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__lastschool
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__lastschool
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "Last School Attended"
+msgstr "Última Escola Frequentada"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__last_std
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__last_std
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "Last Standard"
+msgstr "Última Série"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_admission_inquiry__write_uid
+#: model:ir.model.fields,field_description:jt_education_base.field_board_board__write_uid
+#: model:ir.model.fields,field_description:jt_education_base.field_change_year_wizard__write_uid
+#: model:ir.model.fields,field_description:jt_education_base.field_district_district__write_uid
+#: model:ir.model.fields,field_description:jt_education_base.field_how_know__write_uid
+#: model:ir.model.fields,field_description:jt_education_base.field_medium_medium__write_uid
+#: model:ir.model.fields,field_description:jt_education_base.field_province_province__write_uid
+#: model:ir.model.fields,field_description:jt_education_base.field_standard_division__write_uid
+#: model:ir.model.fields,field_description:jt_education_base.field_student_history__write_uid
+#: model:ir.model.fields,field_description:jt_education_base.field_student_meeting__write_uid
+#: model:ir.model.fields,field_description:jt_education_base.field_student_standard__write_uid
+#: model:ir.model.fields,field_description:jt_education_base.field_village_village__write_uid
+#: model:ir.model.fields,field_description:jt_education_base.field_year_year__write_uid
+msgid "Last Updated by"
+msgstr "Última atualização por"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_admission_inquiry__write_date
+#: model:ir.model.fields,field_description:jt_education_base.field_board_board__write_date
+#: model:ir.model.fields,field_description:jt_education_base.field_change_year_wizard__write_date
+#: model:ir.model.fields,field_description:jt_education_base.field_district_district__write_date
+#: model:ir.model.fields,field_description:jt_education_base.field_how_know__write_date
+#: model:ir.model.fields,field_description:jt_education_base.field_medium_medium__write_date
+#: model:ir.model.fields,field_description:jt_education_base.field_province_province__write_date
+#: model:ir.model.fields,field_description:jt_education_base.field_standard_division__write_date
+#: model:ir.model.fields,field_description:jt_education_base.field_student_history__write_date
+#: model:ir.model.fields,field_description:jt_education_base.field_student_meeting__write_date
+#: model:ir.model.fields,field_description:jt_education_base.field_student_standard__write_date
+#: model:ir.model.fields,field_description:jt_education_base.field_village_village__write_date
+#: model:ir.model.fields,field_description:jt_education_base.field_year_year__write_date
+msgid "Last Updated on"
+msgstr "Última atualização em"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "Leaving Information"
+msgstr "Informações de Saída"
+
+#. module: jt_education_base
+#: model:ir.model.fields.selection,name:jt_education_base.selection__admission_inquiry__sel_gen__male
+#: model:ir.model.fields.selection,name:jt_education_base.selection__res_partner__gender__male
+msgid "Male"
+msgstr "Masculino"
+
+#. module: jt_education_base
+#: model:ir.actions.act_window,name:jt_education_base.action_medium
+#: model:ir.model,name:jt_education_base.model_medium_medium
+#: model:ir.model.fields,field_description:jt_education_base.field_res_company__medium
+#: model:ir.ui.menu,name:jt_education_base.studentmedium_submenu
+msgid "Medium"
+msgstr "Meio"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_student_meeting__meeting_seq
+msgid "Meeting Seq"
+msgstr "Sequência da Reunião"
+
+#. module: jt_education_base
+#: model:ir.actions.act_window,name:jt_education_base.action_meetings
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__meeting_ids
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__meeting_ids
+#: model:ir.ui.menu,name:jt_education_base.meetings_menu
+#: model:ir.ui.menu,name:jt_education_base.meetings_root_menu
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "Meetings"
+msgstr "Reuniões"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_admission_inquiry__message_has_error
+#: model:ir.model.fields,field_description:jt_education_base.field_board_board__message_has_error
+#: model:ir.model.fields,field_description:jt_education_base.field_district_district__message_has_error
+#: model:ir.model.fields,field_description:jt_education_base.field_how_know__message_has_error
+#: model:ir.model.fields,field_description:jt_education_base.field_medium_medium__message_has_error
+#: model:ir.model.fields,field_description:jt_education_base.field_province_province__message_has_error
+#: model:ir.model.fields,field_description:jt_education_base.field_standard_division__message_has_error
+#: model:ir.model.fields,field_description:jt_education_base.field_student_meeting__message_has_error
+#: model:ir.model.fields,field_description:jt_education_base.field_village_village__message_has_error
+msgid "Message Delivery error"
+msgstr "Erro na entrega da mensagem"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_admission_inquiry__message_ids
+#: model:ir.model.fields,field_description:jt_education_base.field_board_board__message_ids
+#: model:ir.model.fields,field_description:jt_education_base.field_district_district__message_ids
+#: model:ir.model.fields,field_description:jt_education_base.field_how_know__message_ids
+#: model:ir.model.fields,field_description:jt_education_base.field_medium_medium__message_ids
+#: model:ir.model.fields,field_description:jt_education_base.field_province_province__message_ids
+#: model:ir.model.fields,field_description:jt_education_base.field_standard_division__message_ids
+#: model:ir.model.fields,field_description:jt_education_base.field_student_meeting__message_ids
+#: model:ir.model.fields,field_description:jt_education_base.field_village_village__message_ids
+msgid "Messages"
+msgstr "Mensagens"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_admission_inquiry__mobile
+msgid "Mobile"
+msgstr "Celular"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_admission_inquiry__mname
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__mother_name
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__mother_name
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "Mother Name"
+msgstr "Nome da mãe"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__mother_tonque
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__mother_tonque
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "Mother Tongue"
+msgstr "Língua materna"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_admission_inquiry__my_activity_date_deadline
+#: model:ir.model.fields,field_description:jt_education_base.field_board_board__my_activity_date_deadline
+#: model:ir.model.fields,field_description:jt_education_base.field_district_district__my_activity_date_deadline
+#: model:ir.model.fields,field_description:jt_education_base.field_how_know__my_activity_date_deadline
+#: model:ir.model.fields,field_description:jt_education_base.field_medium_medium__my_activity_date_deadline
+#: model:ir.model.fields,field_description:jt_education_base.field_province_province__my_activity_date_deadline
+#: model:ir.model.fields,field_description:jt_education_base.field_standard_division__my_activity_date_deadline
+#: model:ir.model.fields,field_description:jt_education_base.field_student_meeting__my_activity_date_deadline
+#: model:ir.model.fields,field_description:jt_education_base.field_village_village__my_activity_date_deadline
+msgid "My Activity Deadline"
+msgstr "Prazo da Minha Atividade"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_admission_inquiry__name
+#: model:ir.model.fields,field_description:jt_education_base.field_board_board__name
+#: model:ir.model.fields,field_description:jt_education_base.field_district_district__name
+#: model:ir.model.fields,field_description:jt_education_base.field_how_know__name
+#: model:ir.model.fields,field_description:jt_education_base.field_medium_medium__name
+#: model:ir.model.fields,field_description:jt_education_base.field_province_province__name
+#: model:ir.model.fields,field_description:jt_education_base.field_village_village__name
+#: model_terms:ir.ui.view,arch_db:jt_education_base.faculty_search_view
+#: model_terms:ir.ui.view,arch_db:jt_education_base.parents_search_view
+msgid "Name"
+msgstr "Nome"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_meeting_kanban_view
+msgid "Name :"
+msgstr "Nome:"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__name_of_institute
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__name_of_institute
+msgid "Name of Institute/University/School"
+msgstr "Nome do Instituto/Universidade/Escola"
+
+#. module: jt_education_base
+#: model:ir.model.fields,help:jt_education_base.field_res_partner__lastschool
+#: model:ir.model.fields,help:jt_education_base.field_res_users__lastschool
+msgid "Name of last school attended"
+msgstr "Nome da última escola frequentada"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__nationality
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__nationality
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "Nationality"
+msgstr "Nacionalidade"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__duties
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__duties
+msgid "Nature Of Duties"
+msgstr "Natureza das Funções"
+
+#. module: jt_education_base
+#: model:ir.model.fields.selection,name:jt_education_base.selection__student_meeting__state__draft
+msgid "New"
+msgstr "Novo"
+
+#. module: jt_education_base
+#: model:ir.model.fields,help:jt_education_base.field_student_history__year_changed_to
+msgid "New academic year"
+msgstr "Novo ano acadêmico"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_admission_inquiry__activity_calendar_event_id
+#: model:ir.model.fields,field_description:jt_education_base.field_board_board__activity_calendar_event_id
+#: model:ir.model.fields,field_description:jt_education_base.field_district_district__activity_calendar_event_id
+#: model:ir.model.fields,field_description:jt_education_base.field_how_know__activity_calendar_event_id
+#: model:ir.model.fields,field_description:jt_education_base.field_medium_medium__activity_calendar_event_id
+#: model:ir.model.fields,field_description:jt_education_base.field_province_province__activity_calendar_event_id
+#: model:ir.model.fields,field_description:jt_education_base.field_standard_division__activity_calendar_event_id
+#: model:ir.model.fields,field_description:jt_education_base.field_student_meeting__activity_calendar_event_id
+#: model:ir.model.fields,field_description:jt_education_base.field_village_village__activity_calendar_event_id
+msgid "Next Activity Calendar Event"
+msgstr "Próximo Evento do Calendário de Atividades"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_admission_inquiry__activity_date_deadline
+#: model:ir.model.fields,field_description:jt_education_base.field_board_board__activity_date_deadline
+#: model:ir.model.fields,field_description:jt_education_base.field_district_district__activity_date_deadline
+#: model:ir.model.fields,field_description:jt_education_base.field_how_know__activity_date_deadline
+#: model:ir.model.fields,field_description:jt_education_base.field_medium_medium__activity_date_deadline
+#: model:ir.model.fields,field_description:jt_education_base.field_province_province__activity_date_deadline
+#: model:ir.model.fields,field_description:jt_education_base.field_standard_division__activity_date_deadline
+#: model:ir.model.fields,field_description:jt_education_base.field_student_meeting__activity_date_deadline
+#: model:ir.model.fields,field_description:jt_education_base.field_village_village__activity_date_deadline
+msgid "Next Activity Deadline"
+msgstr "Próximo Prazo da Atividade"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_admission_inquiry__activity_summary
+#: model:ir.model.fields,field_description:jt_education_base.field_board_board__activity_summary
+#: model:ir.model.fields,field_description:jt_education_base.field_district_district__activity_summary
+#: model:ir.model.fields,field_description:jt_education_base.field_how_know__activity_summary
+#: model:ir.model.fields,field_description:jt_education_base.field_medium_medium__activity_summary
+#: model:ir.model.fields,field_description:jt_education_base.field_province_province__activity_summary
+#: model:ir.model.fields,field_description:jt_education_base.field_standard_division__activity_summary
+#: model:ir.model.fields,field_description:jt_education_base.field_student_meeting__activity_summary
+#: model:ir.model.fields,field_description:jt_education_base.field_village_village__activity_summary
+msgid "Next Activity Summary"
+msgstr "Resumo da Próxima Atividade"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_admission_inquiry__activity_type_id
+#: model:ir.model.fields,field_description:jt_education_base.field_board_board__activity_type_id
+#: model:ir.model.fields,field_description:jt_education_base.field_district_district__activity_type_id
+#: model:ir.model.fields,field_description:jt_education_base.field_how_know__activity_type_id
+#: model:ir.model.fields,field_description:jt_education_base.field_medium_medium__activity_type_id
+#: model:ir.model.fields,field_description:jt_education_base.field_province_province__activity_type_id
+#: model:ir.model.fields,field_description:jt_education_base.field_standard_division__activity_type_id
+#: model:ir.model.fields,field_description:jt_education_base.field_student_meeting__activity_type_id
+#: model:ir.model.fields,field_description:jt_education_base.field_village_village__activity_type_id
+msgid "Next Activity Type"
+msgstr "Tipo da Próxima Atividade"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__nickname
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__nickname
+msgid "Nickname"
+msgstr "Apelido"
+
+#. module: jt_education_base
+#: model:ir.model.fields.selection,name:jt_education_base.selection__res_partner__promotion__no
+msgid "No"
+msgstr "Não"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__detension
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__detension
+msgid "No. of Time Student is Detained"
+msgstr "Número de vezes que o aluno foi retido"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_admission_inquiry__note
+msgid "Note"
+msgstr "Nota"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "Notes"
+msgstr "Notas"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_config_settings__student_for_reward
+msgid "Number Of Students"
+msgstr "Número de Alunos"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_admission_inquiry__message_needaction_counter
+#: model:ir.model.fields,field_description:jt_education_base.field_board_board__message_needaction_counter
+#: model:ir.model.fields,field_description:jt_education_base.field_district_district__message_needaction_counter
+#: model:ir.model.fields,field_description:jt_education_base.field_how_know__message_needaction_counter
+#: model:ir.model.fields,field_description:jt_education_base.field_medium_medium__message_needaction_counter
+#: model:ir.model.fields,field_description:jt_education_base.field_province_province__message_needaction_counter
+#: model:ir.model.fields,field_description:jt_education_base.field_standard_division__message_needaction_counter
+#: model:ir.model.fields,field_description:jt_education_base.field_student_meeting__message_needaction_counter
+#: model:ir.model.fields,field_description:jt_education_base.field_village_village__message_needaction_counter
+msgid "Number of Actions"
+msgstr "Número de Ações"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_config_settings__no_of_days
+msgid "Number of Days"
+msgstr "Número de Dias"
+
+#. module: jt_education_base
+#: model:ir.model.fields,help:jt_education_base.field_res_partner__detension
+#: model:ir.model.fields,help:jt_education_base.field_res_users__detension
+msgid "Number of Time Student is Detained"
+msgstr "Número de vezes que o aluno foi retido"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__working_days
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__working_days
+msgid "Number of Working Days"
+msgstr "Número de Dias Úteis"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__working_days_present
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__working_days_present
+msgid "Number of Working Days Present"
+msgstr "Número de Dias Úteis Presentes"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_admission_inquiry__message_has_error_counter
+#: model:ir.model.fields,field_description:jt_education_base.field_board_board__message_has_error_counter
+#: model:ir.model.fields,field_description:jt_education_base.field_district_district__message_has_error_counter
+#: model:ir.model.fields,field_description:jt_education_base.field_how_know__message_has_error_counter
+#: model:ir.model.fields,field_description:jt_education_base.field_medium_medium__message_has_error_counter
+#: model:ir.model.fields,field_description:jt_education_base.field_province_province__message_has_error_counter
+#: model:ir.model.fields,field_description:jt_education_base.field_standard_division__message_has_error_counter
+#: model:ir.model.fields,field_description:jt_education_base.field_student_meeting__message_has_error_counter
+#: model:ir.model.fields,field_description:jt_education_base.field_village_village__message_has_error_counter
+msgid "Number of errors"
+msgstr "Número de erros"
+
+#. module: jt_education_base
+#: model:ir.model.fields,help:jt_education_base.field_admission_inquiry__message_needaction_counter
+#: model:ir.model.fields,help:jt_education_base.field_board_board__message_needaction_counter
+#: model:ir.model.fields,help:jt_education_base.field_district_district__message_needaction_counter
+#: model:ir.model.fields,help:jt_education_base.field_how_know__message_needaction_counter
+#: model:ir.model.fields,help:jt_education_base.field_medium_medium__message_needaction_counter
+#: model:ir.model.fields,help:jt_education_base.field_province_province__message_needaction_counter
+#: model:ir.model.fields,help:jt_education_base.field_standard_division__message_needaction_counter
+#: model:ir.model.fields,help:jt_education_base.field_student_meeting__message_needaction_counter
+#: model:ir.model.fields,help:jt_education_base.field_village_village__message_needaction_counter
+msgid "Number of messages requiring action"
+msgstr "Número de mensagens que requerem ação"
+
+#. module: jt_education_base
+#: model:ir.model.fields,help:jt_education_base.field_admission_inquiry__message_has_error_counter
+#: model:ir.model.fields,help:jt_education_base.field_board_board__message_has_error_counter
+#: model:ir.model.fields,help:jt_education_base.field_district_district__message_has_error_counter
+#: model:ir.model.fields,help:jt_education_base.field_how_know__message_has_error_counter
+#: model:ir.model.fields,help:jt_education_base.field_medium_medium__message_has_error_counter
+#: model:ir.model.fields,help:jt_education_base.field_province_province__message_has_error_counter
+#: model:ir.model.fields,help:jt_education_base.field_standard_division__message_has_error_counter
+#: model:ir.model.fields,help:jt_education_base.field_student_meeting__message_has_error_counter
+#: model:ir.model.fields,help:jt_education_base.field_village_village__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr "Número de mensagens com erro de entrega"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__occupation
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__occupation
+msgid "Occupation"
+msgstr "Ocupação"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_standard_division__occupied_seats
+#: model:ir.model.fields,field_description:jt_education_base.field_student_standard__occupied_seats
+msgid "Ocuppied Seats"
+msgstr "Assentos Ocupados"
+
+#. module: jt_education_base
+#: model:ir.model.fields.selection,name:jt_education_base.selection__student_meeting__state__ongoing
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_meeting_form_view
+msgid "Ongoing"
+msgstr "Em andamento"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "Other Information"
+msgstr "Outras Informações"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.report_student_certi
+msgid "PROUDLY PRESENT TO"
+msgstr "ORGULHOSAMENTE APRESENTADO A"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_student_meeting__parent_id
+#: model:ir.model.fields.selection,name:jt_education_base.selection__res_partner__company_type__parent
+msgid "Parent"
+msgstr "Responsável"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_meeting_kanban_view
+msgid "Parent :"
+msgstr "Responsável :"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__parents_id
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__parents_id
+#: model:ir.model.fields,help:jt_education_base.field_res_partner__parents_id
+#: model:ir.model.fields,help:jt_education_base.field_res_users__parents_id
+msgid "Parent ID"
+msgstr "ID do Responsável"
+
+#. module: jt_education_base
+#: model:ir.actions.act_window,name:jt_education_base.action_parent
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__parentsid
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__parentsid
+#: model:ir.ui.menu,name:jt_education_base.parent_menu
+#: model_terms:ir.ui.view,arch_db:jt_education_base.parents_form_view
+#: model_terms:ir.ui.view,arch_db:jt_education_base.parents_search_view
+msgid "Parents"
+msgstr "Responsáveis"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_student_meeting__note
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_meeting_form_view
+msgid "Parents Feedback"
+msgstr "Feedback dos Responsáveis"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "Pending Fees"
+msgstr "Taxas Pendentes"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_admission_inquiry__phone
+msgid "Phone"
+msgstr "Telefone"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "Place of Birth"
+msgstr "Local de Nascimento"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__birthPlace
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__birthPlace
+msgid "Place of Birth "
+msgstr "Local de Nascimento"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__designation
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__designation
+msgid "Post Held/Designation"
+msgstr "Cargo/Função"
+
+#. module: jt_education_base
+#: model:ir.model.fields,help:jt_education_base.field_student_history__year_changed_from
+msgid "Previous academic year"
+msgstr "Ano letivo anterior"
+
+#. module: jt_education_base
+#: model:res.groups,name:jt_education_base.group_principle
+msgid "Principle"
+msgstr "Diretor"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__progress
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__progress
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "Progress"
+msgstr "Progresso"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__province
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__province
+#: model:ir.ui.menu,name:jt_education_base.studentprovince_submenu
+#: model_terms:ir.ui.view,arch_db:jt_education_base.faculty_form_view
+#: model_terms:ir.ui.view,arch_db:jt_education_base.parents_form_view
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "Province"
+msgstr "Província"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__promotion
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__promotion
+msgid "Qualified for Promoting to Next Class"
+msgstr "Qualificado para Promoção à Próxima Classe"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__qualifying_date
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__qualifying_date
+msgid "Qualifying Date"
+msgstr "Data de Qualificação"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_admission_inquiry__question
+msgid "Question"
+msgstr "Pergunta"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_student_history__reason
+msgid "Reason"
+msgstr "Razão"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_change_year_wizard__reason_to_change
+msgid "Reason To Change"
+msgstr "Motivo da Mudança"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "Reason for Leaving College"
+msgstr "Motivo para Deixar a Faculdade"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "Reason for Leaving School"
+msgstr "Motivo para Deixar a Escola"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__reason_for_leave
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__reason_for_leave
+msgid "Reason for Leaving school"
+msgstr "Motivo para Deixar a Escola"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__religion
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__religion
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "Religion"
+msgstr "Religião"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__remarks
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__remarks
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "Remarks"
+msgstr "Observações"
+
+#. module: jt_education_base
+#: model:ir.ui.menu,name:jt_education_base.menu_education_reports
+msgid "Reports"
+msgstr "Relatórios"
+
+#. module: jt_education_base
+#: model:ir.model.fields.selection,name:jt_education_base.selection__student_meeting__state__rescheduled
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_meeting_form_view
+#: model_terms:ir.ui.view,arch_db:jt_education_base.view_meeting_search
+msgid "Rescheduled"
+msgstr "Reagendado"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_meeting_form_view
+msgid "Reset to Draft"
+msgstr "Reiniciar para Rascunho"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_admission_inquiry__activity_user_id
+#: model:ir.model.fields,field_description:jt_education_base.field_board_board__activity_user_id
+#: model:ir.model.fields,field_description:jt_education_base.field_district_district__activity_user_id
+#: model:ir.model.fields,field_description:jt_education_base.field_how_know__activity_user_id
+#: model:ir.model.fields,field_description:jt_education_base.field_medium_medium__activity_user_id
+#: model:ir.model.fields,field_description:jt_education_base.field_province_province__activity_user_id
+#: model:ir.model.fields,field_description:jt_education_base.field_standard_division__activity_user_id
+#: model:ir.model.fields,field_description:jt_education_base.field_student_meeting__activity_user_id
+#: model:ir.model.fields,field_description:jt_education_base.field_village_village__activity_user_id
+msgid "Responsible User"
+msgstr "Usuário Responsável"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__student_result
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__student_result
+msgid "Result Percentage"
+msgstr "Percentual de Resultado"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__roll_no
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__roll_no
+#: model:ir.model.fields,help:jt_education_base.field_res_partner__roll_no
+#: model:ir.model.fields,help:jt_education_base.field_res_users__roll_no
+msgid "Roll Number"
+msgstr "Número de Matrícula"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_admission_inquiry__message_has_sms_error
+#: model:ir.model.fields,field_description:jt_education_base.field_board_board__message_has_sms_error
+#: model:ir.model.fields,field_description:jt_education_base.field_district_district__message_has_sms_error
+#: model:ir.model.fields,field_description:jt_education_base.field_how_know__message_has_sms_error
+#: model:ir.model.fields,field_description:jt_education_base.field_medium_medium__message_has_sms_error
+#: model:ir.model.fields,field_description:jt_education_base.field_province_province__message_has_sms_error
+#: model:ir.model.fields,field_description:jt_education_base.field_standard_division__message_has_sms_error
+#: model:ir.model.fields,field_description:jt_education_base.field_student_meeting__message_has_sms_error
+#: model:ir.model.fields,field_description:jt_education_base.field_village_village__message_has_sms_error
+msgid "SMS Delivery error"
+msgstr "Erro na entrega do SMS"
+
+#. module: jt_education_base
+#: model:res.groups,name:jt_education_base.group_school
+msgid "School"
+msgstr "Escola"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_standard_division__vacant_seates
+#: model:ir.model.fields,field_description:jt_education_base.field_student_standard__vacant_seates
+msgid "Seats Available"
+msgstr "Assentos Disponíveis"
+
+#. module: jt_education_base
+#: model:ir.model.fields,help:jt_education_base.field_res_partner__job_id
+#: model:ir.model.fields,help:jt_education_base.field_res_users__job_id
+msgid "Select appropriate Job Position"
+msgstr "Selecione a Posição de Trabalho adequada"
+
+#. module: jt_education_base
+#: model:ir.model.fields,help:jt_education_base.field_res_partner__degree
+#: model:ir.model.fields,help:jt_education_base.field_res_users__degree
+msgid "Select your Highest degree"
+msgstr "Selecione seu Grau Acadêmico mais alto"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__signature
+msgid "Signature"
+msgstr "Assinatura"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_admission_inquiry__standard_id
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__standard
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__standard
+#: model:ir.model.fields,field_description:jt_education_base.field_standard_division__standard_id
+#: model:ir.model.fields,field_description:jt_education_base.field_student_meeting__standard
+#: model:ir.model.fields,field_description:jt_education_base.field_student_standard__name
+#: model:ir.ui.menu,name:jt_education_base.studentstandard_submenu
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_list_view
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_search_view
+msgid "Standard"
+msgstr "Série"
+
+#. module: jt_education_base
+#: model:ir.actions.act_window,name:jt_education_base.action_studentdivision
+#: model:ir.model,name:jt_education_base.model_standard_division
+msgid "Standard Division"
+msgstr "Divisão da Série"
+
+#. module: jt_education_base
+#: model:ir.model.fields.selection,name:jt_education_base.selection__change_year_wizard__reason_to_change__standard_upgrade
+msgid "Standard Upgrade"
+msgstr "Promoção de Série"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_student_meeting__start_date
+msgid "Start Date"
+msgstr "Data de Início"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_admission_inquiry__state_id
+#: model:ir.model.fields,field_description:jt_education_base.field_district_district__state
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__state
+#: model_terms:ir.ui.view,arch_db:jt_education_base.faculty_form_view
+#: model_terms:ir.ui.view,arch_db:jt_education_base.parents_form_view
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_list_view
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "State"
+msgstr "Estado"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_admission_inquiry__state
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__state1
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__state1
+msgid "State "
+msgstr "Estado "
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_student_meeting__state
+#: model_terms:ir.ui.view,arch_db:jt_education_base.admission_inq_search_view
+msgid "Status"
+msgstr "Status"
+
+#. module: jt_education_base
+#: model:ir.model.fields,help:jt_education_base.field_admission_inquiry__activity_state
+#: model:ir.model.fields,help:jt_education_base.field_board_board__activity_state
+#: model:ir.model.fields,help:jt_education_base.field_district_district__activity_state
+#: model:ir.model.fields,help:jt_education_base.field_how_know__activity_state
+#: model:ir.model.fields,help:jt_education_base.field_medium_medium__activity_state
+#: model:ir.model.fields,help:jt_education_base.field_province_province__activity_state
+#: model:ir.model.fields,help:jt_education_base.field_standard_division__activity_state
+#: model:ir.model.fields,help:jt_education_base.field_student_meeting__activity_state
+#: model:ir.model.fields,help:jt_education_base.field_village_village__activity_state
+msgid ""
+"Status based on activities\n"
+"Overdue: Due date is already passed\n"
+"Today: Activity date is today\n"
+"Planned: Future activities."
+msgstr ""
+"Status baseado nas atividades\n"
+"Atrasado: A data de vencimento já passou\n"
+"Hoje: A data da atividade é hoje\n"
+"Planejado: Atividades futuras."
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.faculty_form_view
+#: model_terms:ir.ui.view,arch_db:jt_education_base.parents_form_view
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "Street 2..."
+msgstr "Rua 2..."
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.faculty_form_view
+#: model_terms:ir.ui.view,arch_db:jt_education_base.parents_form_view
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "Street..."
+msgstr "Rua..."
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__is_student
+#: model:ir.model.fields,field_description:jt_education_base.field_student_history__student_id
+#: model:ir.model.fields,field_description:jt_education_base.field_student_meeting__student_id
+#: model:ir.model.fields.selection,name:jt_education_base.selection__res_partner__company_type__student
+#: model:ir.ui.menu,name:jt_education_base.configurations_stud
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_search_view
+msgid "Student"
+msgstr "Aluno"
+
+#. module: jt_education_base
+#: model:ir.model,name:jt_education_base.model_admission_inquiry
+msgid "Student Admission Inquiry Details"
+msgstr "Detalhes da Consulta de Admissão do Aluno"
+
+#. module: jt_education_base
+#: model:ir.actions.report,name:jt_education_base.report_student_certi_template
+msgid "Student Certificate (PDF)"
+msgstr "Certificado do Aluno (PDF)"
+
+#. module: jt_education_base
+#: model:ir.actions.act_window,name:jt_education_base.action_district
+#: model:ir.actions.act_window,name:jt_education_base.action_student_district
+#: model:ir.model,name:jt_education_base.model_district_district
+msgid "Student District"
+msgstr "Distrito do Aluno"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__student_history_ids
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__student_history_ids
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "Student History"
+msgstr "Histórico do Aluno"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__stud_id
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__stud_id
+#: model:ir.model.fields,help:jt_education_base.field_res_partner__stud_id
+#: model:ir.model.fields,help:jt_education_base.field_res_users__stud_id
+msgid "Student ID"
+msgstr "ID do Aluno"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "Student Information"
+msgstr "Informações do Aluno"
+
+#. module: jt_education_base
+#: model:ir.model,name:jt_education_base.model_student_meeting
+msgid "Student Meeting"
+msgstr "Reunião do Aluno"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_meeting_calendar_view
+msgid "Student Meetings"
+msgstr "Reuniões dos Alunos"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_list_view
+msgid "Student Name"
+msgstr "Nome do Aluno"
+
+#. module: jt_education_base
+#: model:ir.actions.act_window,name:jt_education_base.action_province
+#: model:ir.actions.act_window,name:jt_education_base.action_province_village
+#: model:ir.model,name:jt_education_base.model_province_province
+msgid "Student Province"
+msgstr "Província do Aluno"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__student_rank
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__student_rank
+msgid "Student Rank"
+msgstr "Classificação do Aluno"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "Student Signature"
+msgstr "Assinatura do Aluno"
+
+#. module: jt_education_base
+#: model:ir.actions.act_window,name:jt_education_base.action_studentstandard
+#: model:ir.model,name:jt_education_base.model_student_standard
+msgid "Student Standard"
+msgstr "Turma do Aluno"
+
+#. module: jt_education_base
+#: model:ir.actions.act_window,name:jt_education_base.action_student_village
+#: model:ir.actions.act_window,name:jt_education_base.action_village
+#: model:ir.model,name:jt_education_base.model_village_village
+msgid "Student Village"
+msgstr "Aldeia do Aluno"
+
+#. module: jt_education_base
+#: model:ir.actions.act_window,name:jt_education_base.action_student
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__student_ids
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__student_ids
+#: model:ir.model.fields,field_description:jt_education_base.field_student_standard__student_ids
+#: model:ir.ui.menu,name:jt_education_base.student_menu
+#: model:ir.ui.menu,name:jt_education_base.student_root_menu
+#: model_terms:ir.ui.view,arch_db:jt_education_base.parents_form_view
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "Students"
+msgstr "Alunos"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "Students UID"
+msgstr "UID dos Alunos"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__studying_since
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__studying_since
+msgid "Studying Since"
+msgstr "Estudando Desde"
+
+#. module: jt_education_base
+#: model:ir.model.fields,help:jt_education_base.field_res_partner__studying_since
+#: model:ir.model.fields,help:jt_education_base.field_res_users__studying_since
+msgid "Studying Since in this school"
+msgstr "Estudando Desde nesta escola"
+
+#. module: jt_education_base
+#: model:ir.model.fields,help:jt_education_base.field_res_partner__std_studying
+#: model:ir.model.fields,help:jt_education_base.field_res_users__std_studying
+msgid "Studying in Current Standard"
+msgstr "Estudando na Série Atual"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__std_studying
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__std_studying
+msgid "Studying in Standard"
+msgstr "Estudando na Série"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "Studying since"
+msgstr "Estudando desde"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "Sub-Caste"
+msgstr "Subcasta"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__subcaste
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__subcaste
+msgid "SubCaste"
+msgstr "Subcasta"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__specialization
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__specialization
+msgid "Subject/Specialization"
+msgstr "Disciplina/Especialização"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__supporting_documents
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__supporting_documents
+msgid "Supporting Documents"
+msgstr "Documentos Comprobatórios"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__supporting_documents_filename
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__supporting_documents_filename
+msgid "Supporting Documents..."
+msgstr "Documentos Comprobatórios..."
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_admission_inquiry__surname
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__surname
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__surname
+msgid "Surname"
+msgstr "Sobrenome"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "Tags..."
+msgstr "Tags..."
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.report_student_certi
+msgid ""
+"The student is now promoted to the next academic year, continuing their "
+"journey of learning and growth."
+msgstr ""
+"O estudante foi promovido ao próximo ano acadêmico, continuando sua "
+"jornada de aprendizado e crescimento."
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.report_student_certi
+msgid ""
+"This achievement reflects their dedication and commitment to academic "
+"excellence. The course was successfully completed from"
+msgstr ""
+"Esta conquista reflete sua dedicação e compromisso com a excelência acadêmica. O curso foi concluído com sucesso a partir de"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_student_meeting__topic
+msgid "Topic"
+msgstr "Tópico"
+
+#. module: jt_education_base
+#: model:ir.model.fields,help:jt_education_base.field_res_partner__working_days
+#: model:ir.model.fields,help:jt_education_base.field_res_users__working_days
+msgid "Total Number of Working Days"
+msgstr "Número Total de Dias Úteis"
+
+#. module: jt_education_base
+#: model:ir.model.fields,help:jt_education_base.field_res_partner__working_days_present
+#: model:ir.model.fields,help:jt_education_base.field_res_users__working_days_present
+msgid "Total Number of days present"
+msgstr "Número Total de Dias Presentes"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.report_student_certi
+msgid "Trusty Sign"
+msgstr "Assinatura Confiável"
+
+#. module: jt_education_base
+#: model:ir.model.fields,help:jt_education_base.field_admission_inquiry__activity_exception_decoration
+#: model:ir.model.fields,help:jt_education_base.field_board_board__activity_exception_decoration
+#: model:ir.model.fields,help:jt_education_base.field_district_district__activity_exception_decoration
+#: model:ir.model.fields,help:jt_education_base.field_how_know__activity_exception_decoration
+#: model:ir.model.fields,help:jt_education_base.field_medium_medium__activity_exception_decoration
+#: model:ir.model.fields,help:jt_education_base.field_province_province__activity_exception_decoration
+#: model:ir.model.fields,help:jt_education_base.field_standard_division__activity_exception_decoration
+#: model:ir.model.fields,help:jt_education_base.field_student_meeting__activity_exception_decoration
+#: model:ir.model.fields,help:jt_education_base.field_village_village__activity_exception_decoration
+msgid "Type of the exception activity on record."
+msgstr "Tipo da atividade de exceção no registro."
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "Update Student Percentage"
+msgstr "Atualizar Percentual do Estudante"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "Update Student Ranks"
+msgstr "Atualizar Classificações dos Estudantes"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__adhar_attachment_pdf
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__adhar_attachment_pdf
+msgid "Upload Adhar Card"
+msgstr "Enviar Cartão Adhar"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__adhar_attachment_pdf_file
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__adhar_attachment_pdf_file
+msgid "Upload Adhar Card "
+msgstr "Enviar Cartão Adhar "
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__degree_attachment_filename
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__degree_attachment_filename
+msgid "Upload Degree..."
+msgstr "Enviar Diploma..."
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_admission_inquiry__doc_attachment_pdf
+msgid "Upload File"
+msgstr "Enviar Arquivo"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_admission_inquiry__doc_attachment_pdf_file
+msgid "Upload File "
+msgstr "Enviar Arquivo "
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__marksheet_attachment_pdf
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__marksheet_attachment_pdf
+msgid "Upload Marksheet"
+msgstr "Enviar Boletim de Notas"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__marksheet_attachment_pdf_file
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__marksheet_attachment_pdf_file
+msgid "Upload Marksheet "
+msgstr "Enviar Boletim de Notas "
+
+#. module: jt_education_base
+#: model:ir.model,name:jt_education_base.model_res_users
+msgid "User"
+msgstr "Utilizador"
+
+#. module: jt_education_base
+#: model:ir.ui.menu,name:jt_education_base.studentvillage_submenu
+#: model_terms:ir.ui.view,arch_db:jt_education_base.faculty_form_view
+#: model_terms:ir.ui.view,arch_db:jt_education_base.parents_form_view
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "Village"
+msgstr "Vila"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_admission_inquiry__website_message_ids
+#: model:ir.model.fields,field_description:jt_education_base.field_board_board__website_message_ids
+#: model:ir.model.fields,field_description:jt_education_base.field_district_district__website_message_ids
+#: model:ir.model.fields,field_description:jt_education_base.field_how_know__website_message_ids
+#: model:ir.model.fields,field_description:jt_education_base.field_medium_medium__website_message_ids
+#: model:ir.model.fields,field_description:jt_education_base.field_province_province__website_message_ids
+#: model:ir.model.fields,field_description:jt_education_base.field_standard_division__website_message_ids
+#: model:ir.model.fields,field_description:jt_education_base.field_student_meeting__website_message_ids
+#: model:ir.model.fields,field_description:jt_education_base.field_village_village__website_message_ids
+msgid "Website Messages"
+msgstr "Mensagens do Site"
+
+#. module: jt_education_base
+#: model:ir.model.fields,help:jt_education_base.field_admission_inquiry__website_message_ids
+#: model:ir.model.fields,help:jt_education_base.field_board_board__website_message_ids
+#: model:ir.model.fields,help:jt_education_base.field_district_district__website_message_ids
+#: model:ir.model.fields,help:jt_education_base.field_how_know__website_message_ids
+#: model:ir.model.fields,help:jt_education_base.field_medium_medium__website_message_ids
+#: model:ir.model.fields,help:jt_education_base.field_province_province__website_message_ids
+#: model:ir.model.fields,help:jt_education_base.field_standard_division__website_message_ids
+#: model:ir.model.fields,help:jt_education_base.field_student_meeting__website_message_ids
+#: model:ir.model.fields,help:jt_education_base.field_village_village__website_message_ids
+msgid "Website communication history"
+msgstr "Histórico de comunicação do site"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__work_address
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__work_address
+msgid "Work Address "
+msgstr "Endereço do Trabalho "
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__work_phone
+msgid "Work Phone"
+msgstr "Telefone do Trabalho"
+
+#. module: jt_education_base
+#: model:ir.model.fields.selection,name:jt_education_base.selection__change_year_wizard__reason_to_change__wrong_selection
+msgid "Wrong Selection"
+msgstr "Seleção Incorreta"
+
+#. module: jt_education_base
+#: model:ir.model,name:jt_education_base.model_year_year
+#: model:ir.model.fields,field_description:jt_education_base.field_admission_inquiry__year_id
+#: model:ir.model.fields,field_description:jt_education_base.field_year_year__name
+#: model:ir.ui.menu,name:jt_education_base.yearyear_submenu
+msgid "Year"
+msgstr "Ano"
+
+#. module: jt_education_base
+#: model:ir.model.fields.selection,name:jt_education_base.selection__res_partner__promotion__yes
+msgid "Yes"
+msgstr "Sim"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.faculty_form_view
+#: model_terms:ir.ui.view,arch_db:jt_education_base.parents_form_view
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "ZIP"
+msgstr "CEP"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_admission_inquiry__zip_code
+msgid "Zip"
+msgstr "CEP"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.report_student_certi
+msgid "__________________________"
+msgstr "__________________________"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.report_student_certi
+msgid "and rank"
+msgstr "e classificação"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.faculty_kanban_view
+#: model_terms:ir.ui.view,arch_db:jt_education_base.parents_kanban_view
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_kanban_view
+msgid "at"
+msgstr "em"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "e.g. BE0477472701"
+msgstr "ex.: BE0477472701"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "e.g. Sales Director"
+msgstr "ex.: Diretor de Vendas"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "e.g. www.odoo.com"
+msgstr "ex.: www.odoo.com"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "please add photo"
+msgstr "por favor, adicione uma foto"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "student ID"
+msgstr "ID do estudante"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "student general register number"
+msgstr "Número geral de registro do estudante"
+
+#. module: jt_education_base
+#: model:ir.model,name:jt_education_base.model_student_history
+msgid "student.history"
+msgstr "histórico do estudante"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.report_student_certi
+msgid "to"
+msgstr "até"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__village
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__village
+msgid "village"
+msgstr "vila"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.report_student_certi
+msgid "with outstanding performance. With"
+msgstr "com desempenho excepcional. Com"

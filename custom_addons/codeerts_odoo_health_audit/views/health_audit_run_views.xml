@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record model="ir.ui.view" id="view_health_audit_run_list">
+        <field name="name">health.audit.run.list</field>
+        <field name="model">health.audit.run</field>
+        <field name="arch" type="xml">
+            <list string="Audit History" create="0">
+                <field name="create_date"/>
+                <field name="overall_score"/>
+                <field name="trigger"/>
+                <field name="count_critical"/>
+                <field name="count_warning"/>
+                <field name="count_info"/>
+                <field name="duration"/>
+            </list>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="view_health_audit_run_form">
+        <field name="name">health.audit.run.form</field>
+        <field name="model">health.audit.run</field>
+        <field name="arch" type="xml">
+            <form string="Audit Run">
+                <sheet>
+                    <group>
+                        <group string="Scores">
+                            <field name="overall_score"/>
+                            <field name="score_finance"/>
+                            <field name="score_sales"/>
+                            <field name="score_inventory"/>
+                            <field name="score_data_quality"/>
+                            <field name="score_security"/>
+                        </group>
+                        <group string="Summary">
+                            <field name="trigger"/>
+                            <field name="count_critical"/>
+                            <field name="count_warning"/>
+                            <field name="count_info"/>
+                            <field name="duration"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Findings" name="findings">
+                            <field name="finding_ids">
+                                <list create="0">
+                                    <field name="category"/>
+                                    <field name="check_id"/>
+                                    <field name="severity"/>
+                                    <field name="count"/>
+                                    <field name="affected_model"/>
+                                    <button name="action_view_records" type="object"
+                                            string="View Records" icon="fa-external-link"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="action_health_audit_run">
+        <field name="name">Audit History</field>
+        <field name="res_model">health.audit.run</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

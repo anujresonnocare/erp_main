@@ -1,0 +1,52 @@
+.o_ai_chat_report_systray {
+    position: relative;
+    
+    .fa-magic {
+        background: linear-gradient(45deg, #017E84, #875A7B);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        transition: transform 0.2s ease;
+        
+        &:hover {
+            transform: scale(1.1);
+        }
+    }
+}
+
+.o_ai_chat_panel {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    width: 350px;
+    margin-top: 10px;
+    z-index: 1050;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(0,0,0,0.1);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1) !important;
+    
+    .o_ai_textarea {
+        resize: none;
+        border-radius: 8px;
+        border: 1px solid #e0e0e0;
+        transition: border-color 0.2s;
+        
+        &:focus {
+            border-color: #875A7B;
+            box-shadow: 0 0 0 0.2rem rgba(135, 90, 123, 0.25);
+            outline: none;
+        }
+    }
+    
+    .btn-primary {
+        background: linear-gradient(45deg, #875A7B, #017E84);
+        border: none;
+        border-radius: 20px;
+        padding: 6px 20px;
+        font-weight: 500;
+        
+        &:hover {
+            opacity: 0.9;
+        }
+    }
+}

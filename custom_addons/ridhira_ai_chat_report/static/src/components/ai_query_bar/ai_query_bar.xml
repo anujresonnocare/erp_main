@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ridhira_ai_chat_report.AiQueryBar">
+        <div class="o_ai_chat_report_systray d-flex align-items-center">
+            <button class="btn btn-sm btn-link dropdown-toggle d-flex align-items-center"
+                    t-on-click="togglePanel"
+                    title="AI Data Analyst">
+                <i class="fa fa-magic fa-lg text-primary" role="img" aria-label="AI Analyst"/>
+            </button>
+            
+            <div t-if="state.isOpen" class="o_ai_chat_panel dropdown-menu show shadow border-0 rounded-3 p-3">
+                <h5 class="mb-3 text-primary"><i class="fa fa-magic me-2"/> AI Data Analyst</h5>
+                <p class="text-muted small mb-2">Ask me anything about your Odoo data.</p>
+                
+                <div class="mb-3">
+                    <textarea 
+                        class="form-control o_ai_textarea" 
+                        t-model="state.prompt" 
+                        t-on-keydown="onKeydown"
+                        placeholder="e.g., Show me sales from last 30 days grouped by customer..." 
+                        rows="3"
+                        t-att-disabled="state.isLoading">
+                    </textarea>
+                </div>
+                
+                <div t-if="state.error" class="alert alert-danger p-2 small mb-3">
+                    <t t-esc="state.error"/>
+                </div>
+                
+                <div class="d-flex justify-content-end">
+                    <button class="btn btn-primary btn-sm d-flex align-items-center" 
+                            t-on-click="submitQuery" 
+                            t-att-disabled="state.isLoading || !state.prompt">
+                        <t t-if="state.isLoading">
+                            <i class="fa fa-spinner fa-spin me-2"/> Analyzing...
+                        </t>
+                        <t t-else="">
+                            Generate Report <i class="fa fa-arrow-right ms-2"/>
+                        </t>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>

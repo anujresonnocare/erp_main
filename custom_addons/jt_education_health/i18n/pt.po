@@ -1,0 +1,353 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* jt_education_health
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 18.0+e\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-07-22 09:43+0000\n"
+"PO-Revision-Date: 2025-07-22 09:43+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: jt_education_health
+#: model_terms:ir.ui.view,arch_db:jt_education_health.template_health_history_id
+msgid "<strong>Blood Group:</strong>"
+msgstr "<strong>Grupo Sanguíneo:</strong>"
+
+#. module: jt_education_health
+#: model_terms:ir.ui.view,arch_db:jt_education_health.template_health_history_id
+msgid "<strong>Eye Glasses No:</strong>"
+msgstr "<strong>Número de Óculos:</strong>"
+
+#. module: jt_education_health
+#: model_terms:ir.ui.view,arch_db:jt_education_health.template_health_history_id
+msgid "<strong>Height:</strong>"
+msgstr "<strong>Altura:</strong>"
+
+#. module: jt_education_health
+#: model_terms:ir.ui.view,arch_db:jt_education_health.template_health_history_id
+msgid "<strong>Major Diseases:</strong>"
+msgstr "<strong>Principais Doenças:</strong>"
+
+#. module: jt_education_health
+#: model_terms:ir.ui.view,arch_db:jt_education_health.template_health_history_id
+msgid "<strong>Name:</strong>"
+msgstr "<strong>Nome:</strong>"
+
+#. module: jt_education_health
+#: model_terms:ir.ui.view,arch_db:jt_education_health.template_health_history_id
+msgid "<strong>Physical Challenged:</strong>"
+msgstr "<strong>Deficiente Físico:</strong>"
+
+#. module: jt_education_health
+#: model_terms:ir.ui.view,arch_db:jt_education_health.template_health_history_id
+msgid "<strong>Type:</strong>"
+msgstr "<strong>Tipo:</strong>"
+
+#. module: jt_education_health
+#: model_terms:ir.ui.view,arch_db:jt_education_health.template_health_history_id
+msgid "<strong>Weight:</strong>"
+msgstr "<strong>Peso:</strong>"
+
+#. module: jt_education_health
+#: model:ir.model.fields.selection,name:jt_education_health.selection__health_health__blood_group__a+
+msgid "A+ve"
+msgstr "A+"
+
+#. module: jt_education_health
+#: model:ir.model.fields.selection,name:jt_education_health.selection__health_health__blood_group__a-
+msgid "A-ve"
+msgstr "A-"
+
+#. module: jt_education_health
+#: model:ir.model.fields.selection,name:jt_education_health.selection__health_health__blood_group__ab+
+msgid "AB+ve"
+msgstr "AB+"
+
+#. module: jt_education_health
+#: model:ir.model.fields.selection,name:jt_education_health.selection__health_health__blood_group__ab-
+msgid "AB-ve"
+msgstr "AB-"
+
+#. module: jt_education_health
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health__regular_checkup
+msgid "Any Regular Checkup Required?"
+msgstr "Exige algum checkup regular?"
+
+#. module: jt_education_health
+#: model:ir.model,name:jt_education_health.model_res_partner
+msgid "Assignment Student Class"
+msgstr "Turma do Aluno"
+
+#. module: jt_education_health
+#: model:ir.model.fields.selection,name:jt_education_health.selection__health_health__blood_group__b+
+msgid "B+ve"
+msgstr "B+"
+
+#. module: jt_education_health
+#: model:ir.model.fields.selection,name:jt_education_health.selection__health_health__blood_group__b-
+msgid "B-ve"
+msgstr "B-"
+
+#. module: jt_education_health
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health__blood_group
+#: model_terms:ir.ui.view,arch_db:jt_education_health.template_health_register_id
+#: model_terms:ir.ui.view,arch_db:jt_education_health.view_health_search
+msgid "Blood Group"
+msgstr "Grupo Sanguíneo"
+
+#. module: jt_education_health
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health_line__name
+#: model_terms:ir.ui.view,arch_db:jt_education_health.template_health_history_id
+msgid "Checkup Detail"
+msgstr "Detalhe do Check-up"
+
+#. module: jt_education_health
+#: model_terms:ir.ui.view,arch_db:jt_education_health.health_faculty_form_view
+#: model_terms:ir.ui.view,arch_db:jt_education_health.health_student_form_view
+#: model_terms:ir.ui.view,arch_db:jt_education_health.view_health_form
+msgid "Checkup Details"
+msgstr "Detalhes do Check-up"
+
+#. module: jt_education_health
+#: model_terms:ir.ui.view,arch_db:jt_education_health.health_faculty_form_view
+#: model_terms:ir.ui.view,arch_db:jt_education_health.health_student_form_view
+#: model_terms:ir.ui.view,arch_db:jt_education_health.view_health_form
+msgid "Checkup Line"
+msgstr "Linha de Check-up"
+
+#. module: jt_education_health
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health__health_line
+msgid "Checkup Lines"
+msgstr "Linhas de Check-up"
+
+#. module: jt_education_health
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health_line__recommendation
+msgid "Checkup Recommendation"
+msgstr "Recomendação do Check-up"
+
+#. module: jt_education_health
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health__create_uid
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health_line__create_uid
+msgid "Created by"
+msgstr "Criado por"
+
+#. module: jt_education_health
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health__create_date
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health_line__create_date
+msgid "Created on"
+msgstr "Criado em"
+
+#. module: jt_education_health
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health_line__date
+#: model_terms:ir.ui.view,arch_db:jt_education_health.template_health_history_id
+msgid "Date"
+msgstr "Data"
+
+#. module: jt_education_health
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health__display_name
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health_line__display_name
+msgid "Display Name"
+msgstr "Nome de Exibição"
+
+#. module: jt_education_health
+#. odoo-python
+#: code:addons/jt_education/addons/jt_education_health/models/health.py:0
+#: code:addons/jt_education_health/models/health.py:0
+msgid "Enter proper height and weight!"
+msgstr "Insira altura e peso corretos!"
+
+#. module: jt_education_health
+#: model_terms:ir.ui.view,arch_db:jt_education_health.view_health_search
+msgid "Eye Glasses"
+msgstr "Óculos"
+
+#. module: jt_education_health
+#: model_terms:ir.ui.view,arch_db:jt_education_health.template_health_register_id
+msgid "Eye Glasses No"
+msgstr "Nº dos Óculos"
+
+#. module: jt_education_health
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health__eyeglasses_no
+msgid "Eye Glasses Number"
+msgstr "Número dos Óculos"
+
+#. module: jt_education_health
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health__eyeglasses
+msgid "Eye Glasses?"
+msgstr "Usa Óculos?"
+
+#. module: jt_education_health
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health__faculty_id
+#: model:ir.model.fields.selection,name:jt_education_health.selection__health_health__type__faculty
+msgid "Faculty"
+msgstr "Faculdade"
+
+#. module: jt_education_health
+#: model_terms:ir.ui.view,arch_db:jt_education_health.view_health_search
+msgid "Group By..."
+msgstr "Agrupar por..."
+
+#. module: jt_education_health
+#: model:ir.actions.act_window,name:jt_education_health.action_health_view
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health_line__health_id
+#: model_terms:ir.ui.view,arch_db:jt_education_health.view_health_form
+#: model_terms:ir.ui.view,arch_db:jt_education_health.view_health_search
+#: model_terms:ir.ui.view,arch_db:jt_education_health.view_health_tree
+msgid "Health"
+msgstr "Saúde"
+
+#. module: jt_education_health
+#: model:ir.model.fields,field_description:jt_education_health.field_res_partner__health_faculty_lines
+#: model:ir.model.fields,field_description:jt_education_health.field_res_users__health_faculty_lines
+#: model_terms:ir.ui.view,arch_db:jt_education_health.health_faculty_form_view
+#: model_terms:ir.ui.view,arch_db:jt_education_health.health_student_form_view
+msgid "Health Detail"
+msgstr "Detalhe de Saúde"
+
+#. module: jt_education_health
+#: model:ir.model,name:jt_education_health.model_health_health
+msgid "Health Detail for Students and Faculties"
+msgstr "Detalhe de Saúde para Alunos e Professores"
+
+#. module: jt_education_health
+#: model:ir.model.fields,field_description:jt_education_health.field_res_partner__health_lines
+#: model:ir.model.fields,field_description:jt_education_health.field_res_users__health_lines
+msgid "Health Details"
+msgstr "Detalhes de Saúde"
+
+#. module: jt_education_health
+#: model_terms:ir.ui.view,arch_db:jt_education_health.template_health_history_id
+msgid "Health History"
+msgstr "Histórico de Saúde"
+
+#. module: jt_education_health
+#: model_terms:ir.ui.view,arch_db:jt_education_health.template_health_register_id
+msgid "Health Register"
+msgstr "Registro de Saúde"
+
+#. module: jt_education_health
+#: model:ir.model,name:jt_education_health.model_health_health_line
+msgid "Health line"
+msgstr "Linha de Saúde"
+
+#. module: jt_education_health
+#: model_terms:ir.ui.view,arch_db:jt_education_health.template_health_register_id
+msgid "Height"
+msgstr "Altura"
+
+#. module: jt_education_health
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health__height
+msgid "Height(C.M.)"
+msgstr "Altura (cm)"
+
+#. module: jt_education_health
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health__id
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health_line__id
+msgid "ID"
+msgstr "ID"
+
+#. module: jt_education_health
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health__write_uid
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health_line__write_uid
+msgid "Last Updated by"
+msgstr "Última atualização por"
+
+#. module: jt_education_health
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health__write_date
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health_line__write_date
+msgid "Last Updated on"
+msgstr "Última atualização em"
+
+#. module: jt_education_health
+#: model_terms:ir.ui.view,arch_db:jt_education_health.view_health_search
+msgid "Major Disease"
+msgstr "Doença Grave"
+
+#. module: jt_education_health
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health__major_diseases_note
+#: model_terms:ir.ui.view,arch_db:jt_education_health.template_health_register_id
+msgid "Major Diseases"
+msgstr "Doenças Graves"
+
+#. module: jt_education_health
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health__major_diseases
+msgid "Major Diseases?"
+msgstr "Possui Doenças Graves?"
+
+#. module: jt_education_health
+#: model_terms:ir.ui.view,arch_db:jt_education_health.template_health_register_id
+msgid "Name"
+msgstr "Nome"
+
+#. module: jt_education_health
+#: model:ir.model.fields.selection,name:jt_education_health.selection__health_health__blood_group__o+
+msgid "O+ve"
+msgstr "O+"
+
+#. module: jt_education_health
+#: model:ir.model.fields.selection,name:jt_education_health.selection__health_health__blood_group__o-
+msgid "O-ve"
+msgstr "O-"
+
+#. module: jt_education_health
+#: model_terms:ir.ui.view,arch_db:jt_education_health.health_faculty_form_view
+#: model_terms:ir.ui.view,arch_db:jt_education_health.health_student_form_view
+#: model_terms:ir.ui.view,arch_db:jt_education_health.view_health_form
+msgid "Other Details"
+msgstr "Outros Detalhes"
+
+#. module: jt_education_health
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health__physical_challenges_note
+#: model_terms:ir.ui.view,arch_db:jt_education_health.view_health_search
+msgid "Physical Challenge"
+msgstr "Desafio Físico"
+
+#. module: jt_education_health
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health__physical_challenges
+msgid "Physical Challenge?"
+msgstr "Possui Desafio Físico?"
+
+#. module: jt_education_health
+#: model_terms:ir.ui.view,arch_db:jt_education_health.template_health_register_id
+msgid "Physical Challenged"
+msgstr "Com Desafio Físico"
+
+#. module: jt_education_health
+#: model_terms:ir.ui.view,arch_db:jt_education_health.template_health_history_id
+msgid "Recommendation"
+msgstr "Recomendação"
+
+#. module: jt_education_health
+#: model_terms:ir.ui.view,arch_db:jt_education_health.view_health_search
+msgid "Regular Checkup"
+msgstr "Check-up Regular"
+
+#. module: jt_education_health
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health__student_id
+#: model:ir.model.fields.selection,name:jt_education_health.selection__health_health__type__student
+msgid "Student"
+msgstr "Aluno"
+
+#. module: jt_education_health
+#: model_terms:ir.ui.view,arch_db:jt_education_health.view_health_search
+msgid "Student Name"
+msgstr "Nome do Aluno"
+
+#. module: jt_education_health
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health__type
+#: model_terms:ir.ui.view,arch_db:jt_education_health.template_health_register_id
+msgid "Type"
+msgstr "Tipo"
+
+#. module: jt_education_health
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health__weight
+#: model_terms:ir.ui.view,arch_db:jt_education_health.template_health_register_id
+msgid "Weight"
+msgstr "Peso"

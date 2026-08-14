@@ -1,0 +1,948 @@
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="
+https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js
+"></script>
+<link href="
+https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css
+" rel="stylesheet">
+<style>
+.nav-tabs .nav-link.active {
+    background-color: #0057ff !important;
+    color: #ffffff !important;
+}
+</style>
+<div class="container" style="padding: 1rem !important; margin-bottom: 1.5rem !important;">
+    <!-- Company Overview with Supported  -->
+    <section class="oe_container pt16 mt16" >
+        <div class="row mb-4" style="max-width:1540px; margin:0 auto; background-color:#0057ff14; border-radius:20px">
+            <div class="col-12 d-lg-flex justify-content-between">
+                <div class="col-lg-5 my-2 py-3 ps-4 justify-content-center text-dark">
+                    <ul class="list-unstyled mb-0" style="display:block; font-size:1.2rem; padding-left:5%">
+                        <li class="pb-2" style="font-weight:bold; font-family:'Helvetica', 'Lato','Open Sans';">
+                            Supported with:
+                        </li>
+                        <li class="pb-2" style="font-family:'Helvetica', 'Lato','Open Sans';">
+                            <img src="images/icon/checkbox_img.png" alt="check-mark" class="img img-responsive img-fluid mr-1" style="height: 1.5em; width: 1.6em;" loading="lazy">
+                            Odoo Enterprise (Odoo.sh &amp; On Premise)
+                        </li>
+                        <li style="font-family:'Helvetica', 'Lato','Open Sans';">
+                            <img src="images/icon/checkbox_img.png" alt="check-mark" class="img img-responsive img-fluid mr-1" style="height: 1.5em; width: 1.6em;" loading="lazy">
+                            Odoo Community
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-lg-7 my-2 d-flex p-4 justify-content-center">
+                    <img src="images/jupical_banner_image.png" alt="Jupical Logo" class="img img-responsive img-fluid" loading="lazy" style="">
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Product Title -->
+    <section id="jt_heading" style="padding-top:50px">
+        <div class="container">
+            <div class="text-center">
+                <h4 style="font-size:30px; font-weight:600; color:#0057ff; margin-bottom:10px;font-family:'Helvetica', 'Lato','Open Sans';">
+                    Education Management ERP
+                </h4>
+
+                <p style="color:#777; font-size:18px; margin:0; letter-spacing:1px; margin-top:12px;font-family:'Helvetica', 'Lato','Open Sans';">
+                    A complete Education ERP solution to efficiently manage admissions, students, faculty, examinations, fees, library, transportation, hostel, counseling, assignments, events, and much more from a single Odoo platform.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Product Overview -->
+    <section class="mb-4 bg-white" style="border-radius:20px">
+        <div class="pt-4" >
+            <ul class="nav nav-tabs justify-content-center bg-white pt-md-2" id="tab_section" role="tablist" style="font-family:'Helvetica', 'Lato','Open Sans'; border-bottom:1px solid #a2a2a2; background-color:unset; margin:0 auto">
+                <li class="nav-item" role="presentation" style="border-top-right-radius:5px; border-top-left-radius:5px; background-color:#ffffff; margin-right:10px; border:1px solid #a2a2a2; border-bottom:0px">
+                    <a class="nav-link active" id="tab_jt_docs" data-bs-toggle="tab" type="button" data-bs-target="#jt_docs" role="tab" aria-controls="jt_docs" aria-selected="true" style="font-family:'Helvetica', 'Lato','Open Sans'; font-size:18px; padding:10px 20px; border-top-left-radius:5px; border-top-right-radius:5px; color:#040f3a; border-bottom:1px solid #a2a2a2">
+                    <img src="images/icon/document.png" style="width:30px; margin-top:-5px; margin-right:5px" alt="Docs Image">
+                    Docs
+                    </a>
+                </li>
+                <li class="nav-item" role="presentation" style="border-top-right-radius:5px; border-top-left-radius:5px; background-color:#ffffff; margin-right:10px; border:1px solid #a2a2a2; border-bottom:0px">
+                    <a class="nav-link" id="tab_jt_video" data-bs-toggle="tab" type="button" data-bs-target="#jt_video" role="tab" aria-controls="jt_video" aria-selected="true" style="font-family:'Helvetica', 'Lato','Open Sans'; font-size:18px; padding:10px 20px; border-top-left-radius:5px; border-top-right-radius:5px; color:#040f3a; border-bottom:1px solid #a2a2a2">
+                    <img src="images/icon/video.png" style="width:30px; margin-top:-5px; margin-right:5px" alt="Overview Image">
+                    Videos
+                    </a>
+                </li>
+                <li class="nav-item" role="presentation" style="border-top-right-radius:5px; border-top-left-radius:5px; background-color:#ffffff; margin-right:10px; border:1px solid #a2a2a2; border-bottom:0px">
+                    <a class="nav-link"
+                    id="tab_jt_mobile"
+                    data-bs-toggle="tab"
+                    type="button"
+                    data-bs-target="#jt_mobile"
+                    role="tab"
+                    aria-controls="jt_mobile"
+                    aria-selected="false"
+                    style="font-family:'Helvetica', 'Lato','Open Sans'; font-size:18px; padding:10px 20px; border-top-left-radius:5px; border-top-right-radius:5px; color:#040f3a; border-bottom:1px solid #a2a2a2">
+
+                        <img src="images/icon/mobile_app.png"
+                            style="width:30px; margin-top:-5px; margin-right:5px">
+
+                        Mobile App
+
+                    </a>
+                </li>   
+                <li class="nav-item" role="presentation" style="border-top-right-radius:5px; border-top-left-radius:5px; background-color:#ffffff; margin-right:10px; border:1px solid #a2a2a2; border-bottom:0px">
+                    <a class="nav-link" id="tab_release_note" data-bs-toggle="tab" type="button" data-bs-target="#release_note" role="tab" aria-controls="release_note" aria-selected="false" style="font-family:'Helvetica', 'Lato','Open Sans'; font-size:18px; padding:10px 20px; border-top-left-radius:5px; border-top-right-radius:5px; color:#040f3a; border-bottom:1px solid #a2a2a2">
+                    <img src="images/icon/release_notes.png" style="width:30px; margin-top:-5px; margin-right:5px" alt="Release Notes Image">
+                    Release Notes
+                    </a>
+                </li>
+                <!-- <li class="nav-item" role="presentation" style="border-top-right-radius:5px; border-top-left-radius:5px; background-color:#ffffff; margin-right:10px; border:1px solid #a2a2a2; border-bottom:0px">
+                    <a class="nav-link" id="tab_jt_faq" data-bs-toggle="tab" type="button" data-bs-target="#jt_faq" role="tab" aria-controls="jt_faq" aria-selected="false" style="font-family:'Helvetica', 'Lato','Open Sans'; font-size:18px; padding:10px 20px; border-top-left-radius:5px; border-top-right-radius:5px; color:#040f3a; border-bottom:1px solid #a2a2a2">
+                    <img src="images/icon/faq.png" style="width:30px; margin-top:-5px; margin-right:5px" alt="FAQs Image">
+                    FAQs
+                    </a>
+                </li> -->
+
+                <li class="nav-item" role="presentation" style="border-top-right-radius:5px; border-top-left-radius:5px; background-color:#ffffff; margin-right:10px; border:1px solid #a2a2a2; border-bottom:0px">
+                    <a class="nav-link" id="tab_jt_license" data-bs-toggle="tab" type="button" data-bs-target="#jt_license" role="tab" aria-controls="jt_license" aria-selected="false" style="font-family:'Helvetica', 'Lato','Open Sans'; font-size:18px; padding:10px 20px; border-top-left-radius:5px; border-top-right-radius:5px; color:#040f3a; border-bottom:1px solid #a2a2a2">
+                    <img src="images/icon/license.png" style="width:30px; margin-top:-5px; margin-right:5px" alt="License Image">
+                    License
+                    </a>
+                </li>
+            </ul>
+            <div class="tab-content py-5" id="tab_section_content">
+                <!-- Documents Tab code -->
+                <div aria-labelledby="tab_jt_docs" class="tab-pane active show" id="jt_docs" role="tabpanel">
+                    <div class="tab-pane fade active show" id="nav_tabs_content_edu_doc" role="tabpanel" aria-labelledby="nav_tabs_link_edu_doc">
+                        <div class="oe_structure oe_empty">
+                            <section class="s_text_block" data-name="Text">
+                                <div class="row">
+                                    <div class="sidenav col-lg-2 col-md-12">
+                                        <div class="sidebar_logo_li text-center pt-2">
+                                            <a href="https://www.jupical.io/">
+                                            <img src="images/logo.png" style="max-width:40%" class="mx-auto img-fluid"></a>
+                                        </div>
+                                        <div class="s_tabs_nav ">
+                                            <ul class="nav nav-tabs flex-column sidebar_ul" style="border-bottom: 0px;" role="tablist">
+                                                <li class="nav-item" role="presentation" style="background-color: #ffffff;border: 1px solid #a2a2a2;border-radius: 5px;margin-bottom: 2px;">
+                                                        <a class="nav-link active" id="nav_tabs_link_overview" data-bs-toggle="tab" href="#nav_tabs_content_overview" role="tab" aria-controls="nav_tabs_content_overview" aria-selected="true" style="font-family:'Helvetica', 'Lato','Open Sans'; font-size:18px; padding:10px 20px; border-top-left-radius:5px; border-top-right-radius:5px; color:#040f3a; border-bottom:1px solid #a2a2a2">
+                                                        Overview
+                                                    </a>
+                                                </li>
+                                                <!-- <li class="nav-item" role="presentation" style="background-color: #ffffff;border: 1px solid #a2a2a2;border-radius: 5px;margin-bottom: 2px;">
+                                                    <a class="nav-link" id="nav_tabs_link_features" data-bs-toggle="tab" href="#nav_tabs_content_features" role="tab" aria-controls="nav_tabs_content_features" aria-selected="false" style="font-family:'Helvetica', 'Lato','Open Sans'; font-size:18px; padding:10px 20px; border-top-left-radius:5px; border-top-right-radius:5px; color:#040f3a; border-bottom:1px solid #a2a2a2">
+                                                        Features
+                                                    </a>
+                                                </li> -->
+                                                <li class="nav-item" role="presentation" style="background-color: #ffffff;border: 1px solid #a2a2a2;border-radius: 5px;margin-bottom: 2px;">
+                                                    <a class="nav-link" id="nav_tabs_link_images" data-bs-toggle="tab" href="#nav_tabs_content_images" role="tab" aria-controls="nav_tabs_content_images" aria-selected="false" style="font-family:'Helvetica', 'Lato','Open Sans'; font-size:18px; padding:10px 20px; border-top-left-radius:5px; border-top-right-radius:5px; color:#040f3a; border-bottom:1px solid #a2a2a2">
+                                                        Images
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <div class="sidebar_main col-lg-10 col-md-12">
+                                        <div class="s_tabs_content tab-content">
+                                            <div class="tab-pane fade active show" id="nav_tabs_content_overview" role="tabpanel" aria-labelledby="nav_tabs_link_overview">
+                                                <div class="oe_structure oe_empty">
+                                                    <section class="s_text_block">
+                                                        <div class="s_allow_columns container">
+                                                            <div class="main_div_01">
+                                                                <h3>1. Overview</h3>
+
+                                                                <p style="text-align: justify;font-family:'Helvetica', 'Lato','Open Sans';">
+                                                                Education Management ERP is a comprehensive Odoo solution designed to simplify and automate the day-to-day operations of schools, colleges, universities, coaching institutes, and other educational organizations. It centralizes academic, administrative, and financial processes into one powerful platform, allowing institutions to efficiently manage their complete educational ecosystem.<br/><br/>
+                                                                The application covers every stage of the student lifecycle, from admission inquiries and enrollment to attendance tracking, examinations, assignments, fee collection, library management, transportation, hostel management, counseling, events, and academic reporting. Faculty, parents, administrators, and students can all collaborate through a unified system, reducing manual work while improving communication and transparency.<br/><br/>
+                                                                Built on Odoo, the system offers a modern and user-friendly interface with integrated reporting, configurable workflows, and role-based access. Whether managing a small institute or a multi-campus educational organization, Education Management ERP provides the flexibility and scalability required to streamline operations and enhance the overall learning experience.
+                                                                </p>
+                                                                <br/>
+                                                                <h3>2. Features</h3>
+                                                                <ul class="list-unstyled mb-0 ml-5" style="display:block;">
+
+                                                                    <li class="pb-2" style="font-family:'Helvetica', 'Lato','Open Sans';color:#fff;font-size:19px;line-height:35px;background-color:#0057ff;padding-left:20px;border-radius:7px;padding-top:10px;padding-bottom:10px;margin-bottom:10px;">
+                                                                        <img src="images/icon/checkbox_img_white.png" alt="check-mark" class="img img-responsive img-fluid mr-1" style="height:1.5em;width:1.6em;" loading="lazy">
+                                                                        Streamline the complete admission process, from inquiry registration to student enrollment with organized records.
+                                                                    </li>
+
+                                                                    <li class="pb-2" style="font-family:'Helvetica', 'Lato','Open Sans';color:#fff;font-size:19px;line-height:35px;background-color:#0057ff;padding-left:20px;border-radius:7px;padding-top:10px;padding-bottom:10px;margin-bottom:10px;">
+                                                                        <img src="images/icon/checkbox_img_white.png" alt="check-mark" class="img img-responsive img-fluid mr-1" style="height:1.5em;width:1.6em;" loading="lazy">
+                                                                        Maintain comprehensive student profiles with academic, personal, health, fee, and parent information.
+                                                                    </li>
+
+                                                                    <li class="pb-2" style="font-family:'Helvetica', 'Lato','Open Sans';color:#fff;font-size:19px;line-height:35px;background-color:#0057ff;padding-left:20px;border-radius:7px;padding-top:10px;padding-bottom:10px;margin-bottom:10px;">
+                                                                        <img src="images/icon/checkbox_img_white.png" alt="check-mark" class="img img-responsive img-fluid mr-1" style="height:1.5em;width:1.6em;" loading="lazy">
+                                                                        Manage faculty records, qualifications, health details, work experience, and academic responsibilities from one place.
+                                                                    </li>
+
+                                                                    <li class="pb-2" style="font-family:'Helvetica', 'Lato','Open Sans';color:#fff;font-size:19px;line-height:35px;background-color:#0057ff;padding-left:20px;border-radius:7px;padding-top:10px;padding-bottom:10px;margin-bottom:10px;">
+                                                                        <img src="images/icon/checkbox_img_white.png" alt="check-mark" class="img img-responsive img-fluid mr-1" style="height:1.5em;width:1.6em;" loading="lazy">
+                                                                        Record attendance, create class timetables, and efficiently organize daily academic schedules.
+                                                                    </li>
+
+                                                                    <li class="pb-2" style="font-family:'Helvetica', 'Lato','Open Sans';color:#fff;font-size:19px;line-height:35px;background-color:#0057ff;padding-left:20px;border-radius:7px;padding-top:10px;padding-bottom:10px;margin-bottom:10px;">
+                                                                        <img src="images/icon/checkbox_img_white.png" alt="check-mark" class="img img-responsive img-fluid mr-1" style="height:1.5em;width:1.6em;" loading="lazy">
+                                                                        Schedule examinations, generate student results automatically, calculate grades, and print professional report cards.
+                                                                    </li>
+
+                                                                    <li class="pb-2" style="font-family:'Helvetica', 'Lato','Open Sans';color:#fff;font-size:19px;line-height:35px;background-color:#0057ff;padding-left:20px;border-radius:7px;padding-top:10px;padding-bottom:10px;margin-bottom:10px;">
+                                                                        <img src="images/icon/checkbox_img_white.png" alt="check-mark" class="img img-responsive img-fluid mr-1" style="height:1.5em;width:1.6em;" loading="lazy">
+                                                                        Create assignments, monitor submissions, evaluate student performance, and track completion status with ease.
+                                                                    </li>
+
+                                                                    <li class="pb-2" style="font-family:'Helvetica', 'Lato','Open Sans';color:#fff;font-size:19px;line-height:35px;background-color:#0057ff;padding-left:20px;border-radius:7px;padding-top:10px;padding-bottom:10px;margin-bottom:10px;">
+                                                                        <img src="images/icon/checkbox_img_white.png" alt="check-mark" class="img img-responsive img-fluid mr-1" style="height:1.5em;width:1.6em;" loading="lazy">
+                                                                        Handle student fees, quotations, payment tracking, and outstanding balances with integrated financial management.
+                                                                    </li>
+
+                                                                    <li class="pb-2" style="font-family:'Helvetica', 'Lato','Open Sans';color:#fff;font-size:19px;line-height:35px;background-color:#0057ff;padding-left:20px;border-radius:7px;padding-top:10px;padding-bottom:10px;margin-bottom:10px;">
+                                                                        <img src="images/icon/checkbox_img_white.png" alt="check-mark" class="img img-responsive img-fluid mr-1" style="height:1.5em;width:1.6em;" loading="lazy">
+                                                                        Organize library books, memberships, issue and return records, and detailed library reports.
+                                                                    </li>
+
+                                                                    <li class="pb-2" style="font-family:'Helvetica', 'Lato','Open Sans';color:#fff;font-size:19px;line-height:35px;background-color:#0057ff;padding-left:20px;border-radius:7px;padding-top:10px;padding-bottom:10px;margin-bottom:10px;">
+                                                                        <img src="images/icon/checkbox_img_white.png" alt="check-mark" class="img img-responsive img-fluid mr-1" style="height:1.5em;width:1.6em;" loading="lazy">
+                                                                        Manage hostel registrations, room allocation, housekeeping, student complaints, and parent meetings.
+                                                                    </li>
+
+                                                                    <li class="pb-2" style="font-family:'Helvetica', 'Lato','Open Sans';color:#fff;font-size:19px;line-height:35px;background-color:#0057ff;padding-left:20px;border-radius:7px;padding-top:10px;padding-bottom:10px;margin-bottom:10px;">
+                                                                        <img src="images/icon/checkbox_img_white.png" alt="check-mark" class="img img-responsive img-fluid mr-1" style="height:1.5em;width:1.6em;" loading="lazy">
+                                                                        Configure transportation routes, vehicles, drivers, conductors, fare structures, and student transport assignments.
+                                                                    </li>
+
+                                                                    <li class="pb-2" style="font-family:'Helvetica', 'Lato','Open Sans';color:#fff;font-size:19px;line-height:35px;background-color:#0057ff;padding-left:20px;border-radius:7px;padding-top:10px;padding-bottom:10px;margin-bottom:10px;">
+                                                                        <img src="images/icon/checkbox_img_white.png" alt="check-mark" class="img img-responsive img-fluid mr-1" style="height:1.5em;width:1.6em;" loading="lazy">
+                                                                        Conduct counseling sessions, collect feedback, manage surveys, and improve student well-being through structured records.
+                                                                    </li>
+
+                                                                    <li class="pb-2" style="font-family:'Helvetica', 'Lato','Open Sans';color:#fff;font-size:19px;line-height:35px;background-color:#0057ff;padding-left:20px;border-radius:7px;padding-top:10px;padding-bottom:10px;margin-bottom:10px;">
+                                                                        <img src="images/icon/checkbox_img_white.png" alt="check-mark" class="img img-responsive img-fluid mr-1" style="height:1.5em;width:1.6em;" loading="lazy">
+                                                                        Organize educational events, manage registrations, ticketing, attendee tracking, and event communication.
+                                                                    </li>
+
+                                                                    <li class="pb-2" style="font-family:'Helvetica', 'Lato','Open Sans';color:#fff;font-size:19px;line-height:35px;background-color:#0057ff;padding-left:20px;border-radius:7px;padding-top:10px;padding-bottom:10px;margin-bottom:10px;">
+                                                                        <img src="images/icon/checkbox_img_white.png" alt="check-mark" class="img img-responsive img-fluid mr-1" style="height:1.5em;width:1.6em;" loading="lazy">
+                                                                        Generate attendance, examination, evaluation, fee, and academic reports to support informed decision-making.
+                                                                    </li>
+
+                                                                    <li class="pb-2" style="font-family:'Helvetica', 'Lato','Open Sans';color:#fff;font-size:19px;line-height:35px;background-color:#0057ff;padding-left:20px;border-radius:7px;padding-top:10px;padding-bottom:10px;margin-bottom:10px;">
+                                                                        <img src="images/icon/checkbox_img_white.png" alt="check-mark" class="img img-responsive img-fluid mr-1" style="height:1.5em;width:1.6em;" loading="lazy">
+                                                                        Includes a dedicated mobile application for students, parents, and faculty to stay connected anytime, anywhere.
+                                                                    </li>
+
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                    </section>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="tab-pane fade" id="nav_tabs_content_images" role="tabpanel" aria-labelledby="nav_tabs_link_images">
+                                                <div class="oe_structure oe_empty">
+                                                    <section class="s_text_block">
+                                                        <div class="container s_allow_columns">
+                                                            <div style="font-family:'Helvetica', 'Lato','Open Sans';">
+                                                                                                                                    <h3>Enterprise Edition Screenshots</h3>
+
+                                                                    <div class="mt-4">
+                                                                        <p>
+                                                                            <strong>Admission Inquiry</strong><br>
+                                                                            Efficiently manage admission inquiries with complete applicant information, follow-up activities, and integrated communication tools available in Odoo Enterprise.
+                                                                        </p>
+                                                                        <img src="enterprise_ss/inquiry_form.png" class="w-100">
+                                                                    </div>
+
+                                                                    <div class="mt-4">
+                                                                        <p>
+                                                                            <strong>Student Management</strong><br>
+                                                                            Access a complete 360° student profile with personal, academic, health, fee, attendance, and parent information. Enterprise features provide better collaboration through chatter and scheduled activities.
+                                                                        </p>
+                                                                        <img src="enterprise_ss/student_form.png" class="w-100"><br/><br/>
+                                                                        <img src="enterprise_ss/student_health_wizard.png" class="w-100"><br/><br/>
+                                                                        <img src="enterprise_ss/student_kanban.png" class="w-100"><br/><br/>
+                                                                    </div>
+
+                                                                    <div class="mt-4">
+                                                                        <p>
+                                                                            <strong>Student Attendance</strong><br>
+                                                                            Record and review attendance across classes and subjects while utilizing Enterprise activity management to simplify follow-ups and daily academic operations.
+                                                                        </p>
+                                                                        <img src="enterprise_ss/attendance_form.png" class="w-100">
+                                                                    </div>
+
+                                                                    <div class="mt-4">
+                                                                        <p>
+                                                                            <strong>Class Timetable</strong><br>
+                                                                            Create structured academic schedules with flexible period management and efficiently organize classes for different standards and divisions.
+                                                                        </p>
+                                                                        <img src="enterprise_ss/timetable_form.png" class="w-100">
+                                                                    </div>
+
+                                                                    <div class="mt-4">
+                                                                        <p>
+                                                                            <strong>Parents Management</strong><br>
+                                                                            Maintain complete parent and guardian records while benefiting from Enterprise communication tools for better collaboration with families.
+                                                                        </p>
+                                                                        <img src="enterprise_ss/parents_form.png" class="w-100">
+                                                                    </div>
+
+                                                                    <div class="mt-4">
+                                                                        <p>
+                                                                            <strong>Faculty Management</strong><br>
+                                                                            Manage faculty profiles, educational qualifications, employment history, health information, and internal communication from one centralized workspace.
+                                                                        </p>
+                                                                        <img src="enterprise_ss/faculty_form.png" class="w-100">
+                                                                    </div>
+
+                                                                   
+                                                                    <div class="mt-4">
+                                                                        <p>
+                                                                            <strong>Student Results</strong><br>
+                                                                            Automatically calculate grades, percentages, and pass/fail status while generating professional result reports ready for printing or sharing.
+                                                                        </p>
+                                                                        <img src="enterprise_ss/result_form.png" class="w-100"><br/><br/>
+                                                                        <img src="enterprise_ss/result_report.png" class="w-100">
+                                                                    </div>
+
+                                                                    <div class="mt-4">
+                                                                        <p>
+                                                                            <strong>Library Management</strong><br>
+                                                                            Manage books, memberships, issue and return records, and library inventory with improved navigation and collaboration features.
+                                                                        </p>
+                                                                        <img src="enterprise_ss/author_form.png" class="w-100"><br/><br/>
+                                                                        <img src="enterprise_ss/issue_book_form.png" class="w-100">
+                                                                    </div>
+
+                                                                   
+
+                                                                    <div class="mt-4">
+                                                                        <p>
+                                                                            <strong>Fee Management</strong><br>
+                                                                            Track fee structures, quotations, invoices, payments, and outstanding balances while maintaining complete financial transparency.
+                                                                        </p>
+                                                                        <img src="enterprise_ss/fees_type_list.png" class="w-100"><br/><br/>
+                                                                        <img src="enterprise_ss/fees_form.png" class="w-100">
+                                                                    </div>
+
+                                                                    <div class="mt-4">
+                                                                        <p>
+                                                                            <strong>Hostel Management</strong><br>
+                                                                            Manage hostel registrations, buildings, room allocation, housekeeping, complaints, and related activities through an integrated Enterprise workflow.
+                                                                        </p>
+                                                                        <img src="enterprise_ss/hostel_reg_form.png" class="w-100"><br/><br/>
+                                                                        <img src="enterprise_ss/hostel_room_kanban.png" class="w-100">
+                                                                    </div>
+
+
+                                                                    <div class="mt-4">
+                                                                        <p>
+                                                                            <strong>Reports & Analytics</strong><br>
+                                                                            Analyze attendance, examinations, fees, evaluations, and student performance using comprehensive reports that help institutions make data-driven decisions.
+                                                                        </p>
+                                                                        <img src="enterprise_ss/attendance_report.png" class="w-100"><br/><br/>
+                                                                        <img src="enterprise_ss/result_report.png" class="w-100">
+                                                                    </div>
+
+
+                                                                    <br/><br/>
+                                                                <h3>Community Edition Screenshots</h3>
+
+                                                                    <div class="mt-4">
+                                                                        <p>
+                                                                            <strong>Student Management</strong><br>
+                                                                            Maintain comprehensive student records including personal details, academic information, health records, fee details, parent information, and digital signatures from a centralized student profile.
+                                                                        </p>
+                                                                        <img src="community_ss/student_form.png" class="w-100">
+                                                                    </div>
+
+                                                                    <div class="mt-4">
+                                                                        <p>
+                                                                            <strong>Student Health Details</strong><br>
+                                                                            Maintain detailed student health records including medical history, allergies, and emergency contact information as part of the student profile.
+                                                                        </p>
+                                                                        <img src="community_ss/student_health_detail.png" class="w-100">
+                                                                    </div>
+
+                                                                    <div class="mt-4">
+                                                                        <p>
+                                                                            <strong>Student Attendance</strong><br>
+                                                                            Record daily attendance by faculty, class, division, subject, and date while maintaining accurate attendance history for every student.
+                                                                        </p>
+                                                                        <img src="community_ss/student_attendee_list.png" class="w-100">
+                                                                    </div>
+
+                                                                    <div class="mt-4">
+                                                                        <p>
+                                                                            <strong>Attendance Report</strong><br>
+                                                                            Generate consolidated attendance reports to track student presence and quickly identify absentee patterns across classes and time periods.
+                                                                        </p>
+                                                                        <img src="community_ss/attendance_report.png" class="w-100">
+                                                                    </div>
+
+                                                                    <div class="mt-4">
+                                                                        <p>
+                                                                            <strong>Attendance Report View</strong><br>
+                                                                            Review attendance data in a structured, filterable report view for faster analysis by administrators and faculty.
+                                                                        </p>
+                                                                        <img src="community_ss/attendance_report_view.png" class="w-100">
+                                                                    </div>
+
+                                                                    <div class="mt-4">
+                                                                        <p>
+                                                                            <strong>Student Leaving / Transfer</strong><br>
+                                                                            Process student leaving requests and maintain complete leaving records, including transfer details and reason for leaving.
+                                                                        </p>
+                                                                        <img src="community_ss/student_leaving_form.png" class="w-100">
+                                                                    </div>
+
+                                                                    <div class="mt-4">
+                                                                        <p>
+                                                                            <strong>Class Timetable</strong><br>
+                                                                            Create and manage well-structured timetables with customizable periods for different standards, divisions, and academic schedules.
+                                                                        </p>
+                                                                        <img src="community_ss/timetable_form.png" class="w-100">
+                                                                    </div>
+
+                                                                    <div class="mt-4">
+                                                                        <p>
+                                                                            <strong>Parents Management</strong><br>
+                                                                            Store parent and guardian information along with contact details, occupation, and linked student records for better communication.
+                                                                        </p>
+                                                                        <img src="community_ss/parents_form'.png" class="w-100">
+                                                                    </div>
+
+                                                                    <div class="mt-4">
+                                                                        <p>
+                                                                            <strong>Faculty Management</strong><br>
+                                                                            Manage faculty profiles including qualifications, work experience, health information, and employment records in a single interface.
+                                                                        </p>
+                                                                        <img src="community_ss/faculty_form.png" class="w-100">
+                                                                    </div>
+
+                                                                    <div class="mt-4">
+                                                                        <p>
+                                                                            <strong>Examination Management</strong><br>
+                                                                            Schedule examinations, assign subjects, configure marks, and manage examination records across different academic years.
+                                                                        </p>
+                                                                        <img src="community_ss/exam_form.png" class="w-100">
+                                                                    </div>
+
+                                                                    <div class="mt-4">
+                                                                        <p>
+                                                                            <strong>Student Results</strong><br>
+                                                                            Generate result sheets with automatic grade calculation, percentage, pass/fail status, faculty remarks, and printable reports.
+                                                                        </p>
+                                                                        <img src="community_ss/result_form.png" class="w-100">
+                                                                    </div>
+
+                                                                    <div class="mt-4">
+                                                                        <p>
+                                                                            <strong>Assignments</strong><br>
+                                                                            Create assignments, allocate them to students, monitor submissions, and track completion status within the academic schedule.
+                                                                        </p>
+                                                                        <img src="community_ss/assignment_form.png" class="w-100">
+                                                                    </div>
+
+                                                                    <div class="mt-4">
+                                                                        <p>
+                                                                            <strong>Assignment Submissions</strong><br>
+                                                                            Track student assignment submissions, review submitted work, and evaluate performance for each assignment.
+                                                                        </p>
+                                                                        <img src="community_ss/submission_form.png" class="w-100">
+                                                                    </div>
+
+                                                                    <div class="mt-4">
+                                                                        <p>
+                                                                            <strong>Fee Management</strong><br>
+                                                                            Simplify fee collection by managing fee structures, quotations, payments, outstanding balances, and student payment history.
+                                                                        </p>
+                                                                        <img src="community_ss/fees_form.png" class="w-100">
+                                                                    </div>
+
+                                                                    <div class="mt-4">
+                                                                        <p>
+                                                                            <strong>Library - Book Management</strong><br>
+                                                                            Maintain a complete catalog of library books with authors, categories, and availability status.
+                                                                        </p>
+                                                                        <img src="community_ss/book_form.png" class="w-100">
+                                                                    </div>
+
+                                                                    <div class="mt-4">
+                                                                        <p>
+                                                                            <strong>Library - Issue Books</strong><br>
+                                                                            Issue and return library books to students and faculty while tracking due dates and book availability.
+                                                                        </p>
+                                                                        <img src="community_ss/issue_books.png" class="w-100">
+                                                                    </div>
+
+                                                                    <div class="mt-4">
+                                                                        <p>
+                                                                            <strong>Library - Membership</strong><br>
+                                                                            Manage library membership records for students and faculty, including membership validity and issued book history.
+                                                                        </p>
+                                                                        <img src="community_ss/membership_form_view.png" class="w-100">
+                                                                    </div>
+
+                                                                    <div class="mt-4">
+                                                                        <p>
+                                                                            <strong>Hostel Registration</strong><br>
+                                                                            Handle hostel registrations, buildings, housekeeping activities, and parent meetings through one system.
+                                                                        </p>
+                                                                        <img src="community_ss/hostel_reg_form.png" class="w-100">
+                                                                    </div>
+
+                                                                    <div class="mt-4">
+                                                                        <p>
+                                                                            <strong>Hostel Room Allocation</strong><br>
+                                                                            Allocate hostel rooms to registered students and manage building- and room-wise occupancy.
+                                                                        </p>
+                                                                        <img src="community_ss/room_allocation.png" class="w-100">
+                                                                    </div>
+
+                                                                    <div class="mt-4">
+                                                                        <p>
+                                                                            <strong>Student Complaints</strong><br>
+                                                                            Record and track student complaints related to hostel facilities and resolve them efficiently.
+                                                                        </p>
+                                                                        <img src="community_ss/student_complaint_form.png" class="w-100">
+                                                                    </div>
+
+                                                                    <div class="mt-4">
+                                                                        <p>
+                                                                            <strong>Transportation</strong><br>
+                                                                            Manage vehicles, routes, drivers, conductors, distance-based fare structures, and transportation assignments efficiently.
+                                                                        </p>
+                                                                        <img src="community_ss/transportation_form.png" class="w-100">
+                                                                    </div>
+
+                                                                    <div class="mt-4">
+                                                                        <p>
+                                                                            <strong>Counseling Management</strong><br>
+                                                                            Schedule counseling sessions, conduct surveys, collect student feedback, and maintain detailed counseling records.
+                                                                        </p>
+                                                                        <img src="community_ss/counselling_form.png" class="w-100">
+                                                                    </div>
+
+                                                                    <div class="mt-4">
+                                                                        <p>
+                                                                            <strong>Counseling Survey</strong><br>
+                                                                            Conduct structured surveys to gather student feedback as part of the counseling and well-being process.
+                                                                        </p>
+                                                                        <img src="community_ss/survey_form.png" class="w-100">
+                                                                    </div>
+
+                                                                    <div class="mt-4">
+                                                                        <p>
+                                                                            <strong>Events - Registration</strong><br>
+                                                                            Organize educational events and manage registrations, schedules, and participant details.
+                                                                        </p>
+                                                                        <img src="community_ss/event_form.png" class="w-100">
+                                                                    </div>
+
+                                                                    <div class="mt-4">
+                                                                        <p>
+                                                                            <strong>Events - Kanban View</strong><br>
+                                                                            Track event status and progress using an intuitive Kanban view for better event management.
+                                                                        </p>
+                                                                        <img src="community_ss/event_kanban.png" class="w-100">
+                                                                    </div>
+
+                                                                    <div class="mt-4">
+                                                                        <p>
+                                                                            <strong>Events - Student Participation</strong><br>
+                                                                            Analyze student participation across events through graphical insights for better engagement tracking.
+                                                                        </p>
+                                                                        <img src="community_ss/event_student_graph.png" class="w-100">
+                                                                    </div>
+
+                                                                    <div class="mt-4">
+                                                                        <p>
+                                                                            <strong>System Configuration</strong><br>
+                                                                            Configure academic year, standards, divisions, subjects, and other system-wide settings from a centralized configuration menu.
+                                                                        </p>
+                                                                        <img src="community_ss/config_menu.png" class="w-100">
+                                                                    </div>
+                                                                <br/>
+                                                                <br/><br/>
+
+
+                                                            </div>
+                                                        </div>
+                                                    </section>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+                    </div>  
+                </div>
+                <!-- Video Tab Code -->
+        <div aria-labelledby="tab_jt_video" class="tab-pane" id="jt_video" role="tabpanel">
+            <div class="text-center" style="margin-bottom: 20px;">
+                            
+                                        
+
+                                        <div class="text-start" style="max-width:90%; margin:0 auto 30px auto;">
+                                            <p style="font-size:15px; margin:0 0 10px 0;">Get a complete overview of the Education Management ERP, including module configuration, academic setup, and system workflow using the Enterprise Edition.</p>
+                                            <video style="width:100%" controls>
+                                                <source src="education_videos/01_SystemOverview_Configuration.mp4" type="video/mp4">
+                                            </video>
+                                        </div>
+
+                                        <div class="text-start" style="max-width:90%; margin:0 auto 30px auto;">
+                                            <p style="font-size:15px; margin:0 0 10px 0;">Learn how to manage online admission inquiries submitted through the website and efficiently convert applicants into enrolled students.</p>
+                                            <video style="width:100%" controls>
+                                                <source src="education_videos/02_OnlineAdmission_WebsiteInquiry.mp4" type="video/mp4">
+                                            </video>
+                                        </div>
+
+                                        <div class="text-start" style="max-width:90%; margin:0 auto 30px auto;">
+                                            <p style="font-size:15px; margin:0 0 10px 0;">Explore complete student lifecycle management, including student profiles, academic records, parents, health information, fee management, and related activities.</p>
+                                            <video style="width:100%" controls>
+                                                <source src="education_videos/03_StudentManagement.mp4" type="video/mp4">
+                                            </video>
+                                        </div>
+
+                                        <div class="text-start" style="max-width:90%; margin:0 auto 30px auto;">
+                                            <p style="font-size:15px; margin:0 0 10px 0;">Manage faculty profiles, qualifications, departments, work experience, and responsibilities with Enterprise collaboration features.</p>
+                                            <video style="width:100%" controls>
+                                                <source src="education_videos/04_FacultyManagement.mp4" type="video/mp4">
+                                            </video>
+                                        </div>
+
+                                        <div class="text-start" style="max-width:90%; margin:0 auto 30px auto;">
+                                            <p style="font-size:15px; margin:0 0 10px 0;">Create and organize class timetables, allocate lecture periods, and efficiently manage academic schedules.</p>
+                                            <video style="width:100%" controls>
+                                                <source src="education_videos/05_TimetableManagement.mp4" type="video/mp4">
+                                            </video>
+                                        </div>
+
+                                        <div class="text-start" style="max-width:90%; margin:0 auto 30px auto;">
+                                            <p style="font-size:15px; margin:0 0 10px 0;">Record daily student attendance, monitor absentee reports, and maintain accurate attendance history.</p>
+                                            <video style="width:100%" controls>
+                                                <source src="education_videos/06_AttendanceManagement.mp4" type="video/mp4">
+                                            </video>
+                                        </div>
+
+                                        <div class="text-start" style="max-width:90%; margin:0 auto 30px auto;">
+                                            <p style="font-size:15px; margin:0 0 10px 0;">Schedule examinations, configure grading systems, calculate results automatically, and generate professional report cards.</p>
+                                            <video style="width:100%" controls>
+                                                <source src="education_videos/07_Examination_Results.mp4" type="video/mp4">
+                                            </video>
+                                        </div>
+
+                                        <div class="text-start" style="max-width:90%; margin:0 auto 30px auto;">
+                                            <p style="font-size:15px; margin:0 0 10px 0;">Organize books, memberships, issue and return records, and efficiently manage library operations.</p>
+                                            <video style="width:100%" controls>
+                                                <source src="education_videos/08_LibraryManagement.mp4" type="video/mp4">
+                                            </video>
+                                        </div>
+
+                                        <div class="text-start" style="max-width:90%; margin:0 auto 30px auto;">
+                                            <p style="font-size:15px; margin:0 0 10px 0;">Configure fee structures, manage student payments, track dues, and simplify the complete fee collection process.</p>
+                                            <video style="width:100%" controls>
+                                                <source src="education_videos/09_Fees_Payments.mp4" type="video/mp4">
+                                            </video>
+                                        </div>
+
+                                        <div class="text-start" style="max-width:90%; margin:0 auto 30px auto;">
+                                            <p style="font-size:15px; margin:0 0 10px 0;">Manage hostel buildings, room allocations, student accommodation, housekeeping, and hostel administration.</p>
+                                            <video style="width:100%" controls>
+                                                <source src="education_videos/10_HostelManagement.mp4" type="video/mp4">
+                                            </video>
+                                        </div>
+
+                                        <div class="text-start" style="max-width:90%; margin:0 auto 30px auto;">
+                                            <p style="font-size:15px; margin:0 0 10px 0;">Create assignments, distribute them to students, monitor submissions, and evaluate academic performance.</p>
+                                            <video style="width:100%" controls>
+                                                <source src="education_videos/11_Assignment_Management_EMS.mp4" type="video/mp4">
+                                            </video>
+                                        </div>
+
+                                        <div class="text-start" style="max-width:90%; margin:0 auto 30px auto;">
+                                            <p style="font-size:15px; margin:0 0 10px 0;">Configure transportation routes, vehicles, drivers, conductors, and student transport assignments with ease.</p>
+                                            <video style="width:100%" controls>
+                                                <source src="education_videos/12_Transportation_Management_EMS.mp4" type="video/mp4">
+                                            </video>
+                                        </div>
+
+                                        <div class="text-start" style="max-width:90%; margin:0 auto 30px auto;">
+                                            <p style="font-size:15px; margin:0 0 10px 0;">Schedule counseling sessions, conduct surveys, collect student feedback, and maintain counseling records.</p>
+                                            <video style="width:100%" controls>
+                                                <source src="education_videos/13_Counseling_Management_EMS.mp4" type="video/mp4">
+                                            </video>
+                                        </div>
+
+                                        <div class="text-start" style="max-width:90%; margin:0 auto 30px auto;">
+                                            <p style="font-size:15px; margin:0 0 10px 0;">Manage parent information, maintain guardian records, and strengthen communication between the institution and families.</p>
+                                            <video style="width:100%" controls>
+                                                <source src="education_videos/14_Parents_Menu_EMS.mp4" type="video/mp4">
+                                            </video>
+                                        </div>
+
+                                        <div class="text-start" style="max-width:90%; margin:0 auto 30px auto;">
+                                            <p style="font-size:15px; margin:0 0 10px 0;">Evaluate student performance through structured assessments, academic evaluations, and detailed progress tracking.</p>
+                                            <video style="width:100%" controls>
+                                                <source src="education_videos/15_Evaluation_Profile_EMS.mp4" type="video/mp4">
+                                            </video>
+                                        </div>
+
+                                        <div class="text-start" style="max-width:90%; margin:0 auto 30px auto;">
+                                            <p style="font-size:15px; margin:0 0 10px 0;">Organize educational events, manage registrations, schedules, participants, and event-related activities from a single platform.</p>
+                                            <video style="width:100%" controls>
+                                                <source src="education_videos/16_Events_Menu_EMS.mp4" type="video/mp4">
+                                            </video>
+                                        </div>
+
+                                        <div class="text-start" style="max-width:90%; margin:0 auto 30px auto;">
+                                            <p style="font-size:15px; margin:0 0 10px 0;">Generate comprehensive academic, attendance, examination, fee, and performance reports to support better institutional decision-making.</p>
+                                            <video style="width:100%" controls>
+                                                <source src="education_videos/17_Reports_Menu_EMS.mp4" type="video/mp4">
+                                            </video>
+                                        </div>
+                                        </div>
+        </div>
+        <!-- Mobile App Tab Code -->
+                <div aria-labelledby="tab_jt_mobile" class="tab-pane" id="jt_mobile" role="tabpanel">
+                    <div class="text-center" style="margin-bottom: 20px;">
+                        <h4 style="font-size:25px; font-weight:600; color:#0057ff; margin-bottom:10px;font-family:'Helvetica', 'Lato','Open Sans';">
+                            Mobile App
+                        </h4>
+                        <img src="images/icon/heading_line.png" alt="heading">
+                    </div>
+
+                    <div class="text-start" style="max-width:90%; margin:0 auto 30px auto;">
+                        <p style="font-size:15px; margin:0 0 10px 0;">
+                            Watch a complete walkthrough of the Education Management ERP mobile app, covering all the key features available to students, parents, and faculty on the go.
+                        </p>
+                        <video style="width:100%" controls>
+                            <source src="education_videos/Mobile_App_EMS.mp4" type="video/mp4">
+                        </video>
+                    </div>
+                </div>
+                <!-- Release Note Tab Code-->
+                <div aria-labelledby="tab_release_note" class="tab-pane" id="release_note" role="tabpanel">
+                    <section class="oe_container  px-2">
+                        <div class="s_releases mt32 mb32" style="border-radius:10px; background-color:#fff !important">
+                            <!-- row -->
+                            <div class="row pt-5 m-0">
+                                <div class="col-md-3">
+                                    <h4 style="font-family:'Helvetica', 'Lato','Open Sans'; font-size:16px; color:#514F4F; margin:0; line-height:26px">
+                                        Release 1.0.0
+                                    </h4>
+                                    <span style="font-size:14px; color:#7A7979; display:block; margin-bottom:20px;font-family:'Helvetica', 'Lato','Open Sans';">
+                                    22 June, 2026
+                                    </span>
+                                </div>
+                                <div class="col-md-8">
+                                    <div style="padding:0 0 40px">
+                                        <div style="margin:0 0 10px">
+                                            <div style="display:inline-block; padding:0px 8px; color:#FFF; background-color:#0057ff; border-radius:20px;font-family:'Helvetica', 'Lato','Open Sans';">
+                                                New Version
+                                            </div>
+                                        </div>
+                                        <ul class="pl-3" style="color:#7A7979; font-family:'Helvetica', 'Lato','Open Sans';">
+                                            <li><span style="color:#7A7979">Latest version of Education Management ERP for Odoo 18.0</span>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div style="padding:0px 0 10px; border-bottom:1px solid #E3E3E3">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+                <!-- FAQ Tab Code -->
+                <!-- <div aria-labelledby="tab_jt_faq" class="tab-pane" id="jt_faq" role="tabpanel">
+                    <section class="s_faq_collapse pt32 pb32">
+                        <div class="container">
+                            <div id="jt_myCollapse" class="accordion" role="tablist">
+                                <div class="card bg-white" data-name="Item" style="font-family:'Helvetica', 'Lato','Open Sans';">
+                                    <span role="tab" data-bs-toggle="collapse" aria-expanded="true" class="card-header s_faq_collapse_right_icon" data-bs-target="#myCollapseTab_001" style="background-color: #0057ff;color: #fff;">Does Thawani support all countries?</span>
+                                    <div class="collapse show" data-parent="#jt_myCollapse" role="tabpanel" id="myCollapseTab_001" style="">
+                                        <div class="card-body">
+                                            <p class="card-text">No, Thawani only supports Oman.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div> -->
+                <!-- License Tab Code -->
+                <div aria-labelledby="tab_jt_license" class="tab-pane" id="jt_license" role="tabpanel">
+                    <section class="container">
+                        <div class="">
+                            <pre class="mt8">
+                                Odoo Proprietary License v1.0
+
+                                This software and associated files (the "Software") may only be used (executed,
+                                modified, executed after modifications) if you have purchased a valid license
+                                from the authors, typically via Odoo Apps, or if you have received a written
+                                agreement from the authors of the Software (see the COPYRIGHT file).
+
+                                You may develop Odoo modules that use the Software as a library (typically
+                                by depending on it, importing it and using its resources), but without copying
+                                any source code or material from the Software. You may distribute those
+                                modules under the license of your choice, provided that this license is
+                                compatible with the terms of the Odoo Proprietary License (For example:
+                                LGPL, MIT, or proprietary licenses similar to this one).
+
+                                It is forbidden to publish, distribute, sublicense, or sell copies of the Software
+                                or modified copies of the Software.
+
+                                The above copyright notice and this permission notice must be included in all
+                                copies or substantial portions of the Software.
+
+                                THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+                                IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+                                FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+                                IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+                                DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+                                ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+                                DEALINGS IN THE SOFTWARE.
+                            </pre>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="pt32">
+        <div class="row">
+            <div class="col-12">
+                <div class="text-center">
+                    <h4 style="font-size:25px; font-weight:600; color:#0057ff; margin-bottom:10px;font-family:'Helvetica', 'Lato','Open Sans';">
+                        Help and Support
+                    </h4>
+                    <img src="images/icon/heading_line.png" alt="heading">
+                    <p style="color:#777; font-size:18px; margin:0; letter-spacing:1px; margin-top:12px;font-family:'Helvetica', 'Lato','Open Sans';">
+                        Get Help and Support Around-the Clock
+                    </p>
+                </div>
+            </div>
+            <div class="col-12">
+                <p class="text-center px-5" style="font-size:14px; color:#555; font-weight:normal;font-family:'Helvetica', 'Lato','Open Sans';">
+                    We offer lifetime support from our team for all our modules and services to address any defects that may arise. However, should you encounter any issues with your custom application, you may need to purchase our custom support package for additional assistance.
+                </p>
+            </div>
+            <div class="mx-auto col-lg-9 mb-4 oe_screenshot mt-4">
+                <div class="row align-items-center justify-content-center mx-0 p-3">
+                    <div class="col-sm-2 text-center pr-0">
+                        <img src="images/icon/email.png" alt="mail" class="img img-fluid">
+                    </div>
+                    <div class="col-xl-7 col-sm-10" style="font-family:'Helvetica', 'Lato','Open Sans';">
+                        <p class="my-2" style="color:#555; font-weight:bold">EMAIL US :</p>
+                        <b class="" style="font-size:18px; color:#0057ff;">erp@jupical.io</b>
+                        <p class="my-2" style="font-size:14px; color:#777; font-weight:normal">
+                            Please don't hesitate to contact our technical team via email at erp@jupical.io. For immediate assistance, you can also reach us on Skype at erp@jupical.io.
+                        </p>
+                    </div>
+                    <div class="col-xl-3 offset-xl-0 float-xl-right col-sm-10 offset-sm-2 float-left mt16" style="font-family:'Helvetica', 'Lato','Open Sans';">
+                        <a href="mailto:erp@jupical.io" class="btn" style="padding:10px 22px; background-color:#0057ff; font-size:14px; color:#fff"><i class="fa fa-pencil-square-o" style="color:white; margin-right:4px"></i>Email us</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- <section id="jt_suggested_products" class="mt-5">
+        <div class="container">
+            <div class="text-center" style="margin-bottom: 20px;">
+                <h4 style="font-size:25px; font-weight:600; color:#0057ff; margin-bottom:10px;font-family:'Helvetica', 'Lato','Open Sans';">
+                    Suggested Products
+                </h4>
+                <img src="images/icon/heading_line.png" alt="heading">
+            </div>
+            <div class="row my-3">
+                <div class="col-lg-3 col-md-6 col-sm-12 mb-2 text-center">
+                    <a href="https://apps.odoo.com/apps/modules/15.0/jt_qweb_editor/" target="_blank">
+                        <img src="images/qweb.gif" alt="All in one Cancel" height="180" style="border: 2px solid #0057ff;border-radius: 5px;padding: 10px 10px 10px 10px;">
+                    </a>
+                </div>
+                <div class="col-lg-3 col-md-6 col-sm-12 mb-2 text-center">
+                    <a href="https://apps.odoo.com/apps/modules/15.0/jt_qweb_editor/" target="_blank">
+                        <img src="images/recaptcha.gif" alt="All in one Cancel" height="180" style="border: 2px solid #0057ff;border-radius: 5px;padding: 10px 10px 10px 10px;">
+                    </a>
+                </div>
+                <div class="col-lg-3 col-md-6 col-sm-12 mb-2 text-center">
+                    <a href="https://apps.odoo.com/apps/modules/15.0/jt_qweb_editor/" target="_blank">
+                        <img src="images/barcode.gif" alt="All in one Cancel" height="180" style="border: 2px solid #0057ff;border-radius: 5px;padding: 10px 10px 10px 10px;">
+                    </a>
+                </div>
+                <div class="col-lg-3 col-md-6 col-sm-12 mb-2 text-center">
+                    <a href="https://apps.odoo.com/apps/modules/15.0/jt_qweb_editor/" target="_blank">
+                        <img src="images/cost.gif" alt="All in one Cancel" height="180" style="border: 2px solid #0057ff;border-radius: 5px;padding: 10px 10px 10px 10px;">
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section> -->
+    <section class="e-odoo-apps text-center" style="margin-top:50px; margin-bottom:50px">
+	<div class="container">
+		<div class="text-center" style="margin-bottom: 20px;">
+			<h4 style="font-size:25px; font-weight:600; color:#0057ff; margin-bottom:10px;font-family:'Helvetica', 'Lato','Open Sans';">
+                Our Services
+                </h4>
+			<img src="images/icon/heading_line.png" alt="heading">
+			</div>
+			<div class="row">
+				<div class="col-md-3">
+					<a href="https://www.jupical.io/contactus" target="_blank">
+						<img src="images/dedicated.png" class="img-responsive" style="margin:auto;width: 128px;height: 128px;" alt="Odoo Consulting">
+						</a>
+						<h4 style="margin-top:20px; font-size:17px; color:#21272b; font-weight:700; margin-bottom:0">Product Development</h4>
+					</div>
+					<div class="col-md-3">
+						<a href="https://www.jupical.io/contactus" target="_blank">
+							<img src="images/Implementation.png" class="img-responsive" style="margin:auto;width: 128px;height: 128px;" alt="Odoo Implementation">
+							</a>
+							<h4 style="margin-top:20px; font-size:17px; color:#21272b; font-weight:700; margin-bottom:0">Implementation</h4>
+						</div>
+						<div class="col-md-3">
+							<a href="https://www.jupical.io/contactus" target="_blank">
+								<img src="images/Integration.png" class="img-responsive" style="margin:auto;width: 128px;height: 128px;" alt="Odoo Integration">
+								</a>
+								<h4 style="margin-top:20px; font-size:17px; color:#21272b; font-weight:700; margin-bottom:0">Integration</h4>
+							</div>
+							<div class="col-md-3">
+								<a href="https://www.jupical.io/contactus" target="_blank">
+									<img src="images/training.png" class="img-responsive" style="margin:auto;width: 128px;height: 128px;" alt="Odoo Training">
+									</a>
+									<h4 style="margin-top:20px; font-size:17px; color:#21272b; font-weight:700; margin-bottom:0">Training</h4>
+								</div>
+							</div>
+							<br>
+								<br>
+									<div class="row">
+										<div class="col-md-3">
+											<a href="https://www.jupical.io/contactus" target="_blank">
+												<img src="images/Development.png" class="img-responsive" style="margin:auto;width: 128px;height: 128px;" alt="Hire Odoo Developers">
+												</a>
+												<h4 style="margin-top:20px; font-size:17px; color:#21272b; font-weight:700; margin-bottom:0">Development</h4>
+											</div>
+											<div class="col-md-3">
+												<a href="https://www.jupical.io/contactus" target="_blank">
+													<img src="images/Mobile Application.png" class="img-responsive" style="margin:auto;width: 128px;height: 128px;" alt="Odoo Mobile Application">
+													</a>
+													<h4 style="margin-top:20px; font-size:17px; color:#21272b; font-weight:700; margin-bottom:0">Odoo Mobile Application</h4>
+												</div>
+												<div class="col-md-3">
+													<a href="https://www.jupical.io/contactus" target="_blank">
+														<img src="images/Optimisation.png" class="img-responsive" style="margin:auto;width: 128px;height: 128px;" alt="Odoo Optimisation">
+														</a>
+														<h4 style="margin-top:20px; font-size:17px; color:#21272b; font-weight:700; margin-bottom:0">System Optimisation</h4>
+													</div>
+													<div class="col-md-3">
+														<a href="http://www.jupical.com/odoo-migration" target="_blank">
+															<img src="images/migration.png" class="img-responsive" style="margin:auto;width:128px;height: 128px;" alt="Odoo Migration">
+															</a>
+															<h4 style="margin-top:20px; font-size:17px; color:#21272b; font-weight:700; margin-bottom:0">Migration</h4>
+														</div>
+													</div>
+													<div class="view-more-link">
+														<span href="http://www.jupical.com/" target="_blank" style="display:inline-block; font-size:18px; color:#ffffff; font-weight:700; padding:0 33px; line-height:37px; border-radius:5px; text-decoration:none; margin-top:40px">View More</span>
+													</div>
+												</div>
+	</section>
+<div>

@@ -1,0 +1,30 @@
+{
+    'name': 'Odoo Health Audit | Odoo Database Health Check | Configuration & Data Quality Audit | One-Click System Health Score',
+    'version': '18.0.1.0.2',
+    'summary': 'One-click Odoo health check that audits your data and configuration across 7 areas, then scores your database 0 to 100 with fixes.',
+    'category': 'Productivity',
+    'author': 'CODEerts',
+    'website': 'https://www.codeerts.com',
+    'support': 'support@codeerts.com',
+    'license': 'LGPL-3',
+    'depends': ['base', 'web'],
+    'images': ['static/description/banner.gif'],
+    'data': [
+        'security/health_audit_security.xml',
+        'security/ir.model.access.csv',
+        'data/health_check_data.xml',
+        'views/health_check_views.xml',
+        'views/health_audit_run_views.xml',
+        'views/health_dashboard_action.xml',
+        'views/health_audit_menus.xml',
+    ],
+    'assets': {
+        'web.assets_backend': [
+            'codeerts_odoo_health_audit/static/src/dashboard/health_dashboard.js',
+            'codeerts_odoo_health_audit/static/src/dashboard/health_dashboard.xml',
+            'codeerts_odoo_health_audit/static/src/dashboard/health_dashboard.scss',
+        ],
+    },
+    'application': True,
+    'installable': True,
+}

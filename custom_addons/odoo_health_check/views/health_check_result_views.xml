@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="health_check_result_view_list" model="ir.ui.view">
+        <field name="name">health.check.result.list</field>
+        <field name="model">health.check.result</field>
+        <field name="arch" type="xml">
+            <list string="Health Check Results" create="0" edit="0">
+                <field name="date"/>
+                <field name="check_type"/>
+                <field name="mount_path"/>
+                <field name="used_pct"/>
+                <field name="free_bytes" string="Free (bytes)"/>
+                <field name="total_bytes" string="Total (bytes)" optional="hide"/>
+                <field name="status"
+                       widget="badge"
+                       decoration-success="status == 'ok'"
+                       decoration-warning="status == 'warn'"
+                       decoration-danger="status == 'critical' or status == 'error'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="health_check_result_view_form" model="ir.ui.view">
+        <field name="name">health.check.result.form</field>
+        <field name="model">health.check.result</field>
+        <field name="arch" type="xml">
+            <form string="Health Check Result" create="0" edit="0">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="check_type"/>
+                            <field name="status"
+                                   widget="badge"
+                                   decoration-success="status == 'ok'"
+                                   decoration-warning="status == 'warn'"
+                                   decoration-danger="status == 'critical' or status == 'error'"/>
+                            <field name="date"/>
+                        </group>
+                        <group>
+                            <field name="mount_path"/>
+                            <field name="used_pct"/>
+                            <field name="free_bytes"/>
+                            <field name="total_bytes"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Details" invisible="not details_json">
+                            <field name="details_json" widget="text" nolabel="1"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="health_check_result_view_search" model="ir.ui.view">
+        <field name="name">health.check.result.search</field>
+        <field name="model">health.check.result</field>
+        <field name="arch" type="xml">
+            <search string="Health Check Results">
+                <field name="check_type"/>
+                <field name="mount_path"/>
+                <filter string="Last 24 Hours" name="last_24h"
+                        domain="[('date', '>=', (context_today() - datetime.timedelta(days=1)).strftime('%Y-%m-%d'))]"/>
+                <filter string="Last 7 Days" name="last_7d"
+                        domain="[('date', '>=', (context_today() - datetime.timedelta(days=7)).strftime('%Y-%m-%d'))]"/>
+                <separator/>
+                <filter string="Disk: Root" name="disk_root" domain="[('check_type', '=', 'disk_root')]"/>
+                <filter string="Disk: Filestore" name="disk_filestore" domain="[('check_type', '=', 'disk_filestore')]"/>
+                <separator/>
+                <filter string="OK" name="ok" domain="[('status', '=', 'ok')]"/>
+                <filter string="Warning" name="warn" domain="[('status', '=', 'warn')]"/>
+                <filter string="Critical" name="critical" domain="[('status', '=', 'critical')]"/>
+                <filter string="Error" name="error" domain="[('status', '=', 'error')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Check Type" name="group_check_type" context="{'group_by': 'check_type'}"/>
+                    <filter string="Status" name="group_status" context="{'group_by': 'status'}"/>
+                    <filter string="Day" name="group_day" context="{'group_by': 'date:day'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="health_check_result_action" model="ir.actions.act_window">
+        <field name="name">Disk Checks</field>
+        <field name="res_model">health.check.result</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="health_check_result_view_search"/>
+        <field name="domain">[('check_type', 'in', ['disk_root', 'disk_filestore'])]</field>
+        <field name="context">{"search_default_last_7d": 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No disk checks recorded yet.</p>
+            <p>The hourly disk check cron will start populating this list shortly after install.</p>
+        </field>
+    </record>
+
+    <record id="health_check_pg_report_action" model="ir.actions.act_window">
+        <field name="name">PG Reports</field>
+        <field name="res_model">health.check.result</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="health_check_result_view_search"/>
+        <field name="domain">[('check_type', '=', 'pg_report')]</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No monthly PG reports yet.</p>
+            <p>The monthly PostgreSQL growth report runs on the 1st of each month at 08:00. You can also trigger it manually from the cron list.</p>
+        </field>
+    </record>
+
+</odoo>

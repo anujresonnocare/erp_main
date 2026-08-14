@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//block[@id='user_default_rights']" position="before">
+                <block title="Allowed Days to pay fees" id='fees_payment'>
+                <setting id="allowed_number_of_days_for_fees_payment">
+                    <field name="no_of_days"/>
+                </setting>
+                </block>
+                <block title="How Many Students For Rewards" id='student_reward'>
+                    <setting id="allowed_number_of_students_for_rewards">
+                        <field name="student_for_reward" />
+                    </setting>
+                </block>
+            </xpath>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,607 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* jt_education_base
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 14.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-10-23 18:34+0000\n"
+"PO-Revision-Date: 2020-10-23 18:34+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.faculty_form_view
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "<b>Company Address:</b>"
+msgstr "<b>Adresse der Firma:</b>"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid ""
+"<span class=\"fa fa-plus-square\"/>\n"
+"                                       Create company"
+msgstr ""
+"<span class=\"fa fa-plus-square\"/>\n"
+"                                       Unternehmen erstellen"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_tree_view
+#: model_terms:ir.ui.view,arch_db:jt_education_base.view_partner_search_inh
+msgid "Academic Year"
+msgstr "Akademisches Jahr"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.faculty_form_view
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "Address"
+msgstr "Adresse"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__adm_standard
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__adm_standard
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "Admission Standard"
+msgstr "Aufnahme-Standard"
+
+#. module: jt_education_base
+#: model:ir.actions.act_window,name:jt_education_base.action_yearyear
+msgid "Admission Year"
+msgstr "Aufnahme Jahr"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__lc_apply_date
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__lc_apply_date
+msgid "Application Date of Leaving Certificate"
+msgstr "Antragsdatum der Austrittsbescheinigung"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__caste
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__caste
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "Caste"
+msgstr "Kaste"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "City"
+msgstr "Stadt"
+
+#. module: jt_education_base
+#: model:ir.model.fields.selection,name:jt_education_base.selection__res_partner__company_type__company
+#: model_terms:ir.ui.view,arch_db:jt_education_base.faculty_form_view
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "Company"
+msgstr "Unternehmen"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__company_type
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__company_type
+msgid "Company Type"
+msgstr "Unternehmen Typ"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__conduct
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__conduct
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "Conduct"
+msgstr "Durchführung"
+
+#. module: jt_education_base
+#: model:ir.ui.menu,name:jt_education_base.configurations_menu
+msgid "Configurations"
+msgstr "Konfigurationen"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__country1
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__country1
+#: model_terms:ir.ui.view,arch_db:jt_education_base.faculty_form_view
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "Country"
+msgstr "Land"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_standard_division__create_uid
+#: model:ir.model.fields,field_description:jt_education_base.field_student_standard__create_uid
+#: model:ir.model.fields,field_description:jt_education_base.field_year_year__create_uid
+msgid "Created by"
+msgstr "Erstellt von"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_standard_division__create_date
+#: model:ir.model.fields,field_description:jt_education_base.field_student_standard__create_date
+#: model:ir.model.fields,field_description:jt_education_base.field_year_year__create_date
+msgid "Created on"
+msgstr "Erstellt am"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__curr_year
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__curr_year
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "Current Year"
+msgstr "Laufendes Jahr"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "Date of Admission in this School"
+msgstr "Datum der Aufnahme in diese Schule"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__birthdate
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__birthdate
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "Date of Birth"
+msgstr "Geburtsdatum"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__leave_date
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__leave_date
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "Date of Leaving School"
+msgstr "Datum des Schulabschlusses"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__date_admission
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__date_admission
+msgid "Date of admission in this school"
+msgstr "Datum der Aufnahme in diese Schule"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__display_name
+#: model:ir.model.fields,field_description:jt_education_base.field_standard_division__display_name
+#: model:ir.model.fields,field_description:jt_education_base.field_student_standard__display_name
+#: model:ir.model.fields,field_description:jt_education_base.field_year_year__display_name
+msgid "Display Name"
+msgstr "Name anzeigen"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__district
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__district
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "District"
+msgstr "Bezirk"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__div
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__div
+msgid "Div"
+msgstr "Abteilung"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_standard_division__name
+#: model:ir.ui.menu,name:jt_education_base.studentdivision_submenu
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_tree_view
+#: model_terms:ir.ui.view,arch_db:jt_education_base.view_partner_search_inh
+msgid "Division"
+msgstr "Abteilung"
+
+#. module: jt_education_base
+#: model:ir.ui.menu,name:jt_education_base.root_menu
+msgid "Education"
+msgstr "Bildung"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "Enter roll no"
+msgstr "Rollen-Nr. eingeben"
+
+#. module: jt_education_base
+#: model:ir.actions.act_window,name:jt_education_base.action_faculty
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__is_faculty
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__is_faculty
+#: model:ir.ui.menu,name:jt_education_base.faculty_menu
+#: model_terms:ir.ui.view,arch_db:jt_education_base.faculty_form_view
+msgid "Faculty"
+msgstr "Fakultät"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__father_name
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__father_name
+#: model_terms:ir.ui.view,arch_db:jt_education_base.faculty_form_view
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "Father Name"
+msgstr "Name des Vaters"
+
+#. module: jt_education_base
+#: model:ir.model.fields.selection,name:jt_education_base.selection__res_partner__gender__female
+msgid "Female"
+msgstr "Weiblich"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.faculty_form_view
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "First Name"
+msgstr "Vorname"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "GR No."
+msgstr "GR Nr."
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__gr_no
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__gr_no
+msgid "GR Number"
+msgstr "GR-Nummer"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__gender
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__gender
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+#: model_terms:ir.ui.view,arch_db:jt_education_base.view_partner_search_inh
+msgid "Gender"
+msgstr "Geschlecht"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__id
+#: model:ir.model.fields,field_description:jt_education_base.field_standard_division__id
+#: model:ir.model.fields,field_description:jt_education_base.field_student_standard__id
+#: model:ir.model.fields,field_description:jt_education_base.field_year_year__id
+msgid "ID"
+msgstr "ID"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "INDIAN /"
+msgstr "INDIEN /"
+
+#. module: jt_education_base
+#: model:ir.model.fields.selection,name:jt_education_base.selection__res_partner__company_type__person
+msgid "Individual"
+msgstr "Einzelperson"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "Internal Notes"
+msgstr "Interne Notizen"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "Internal note..."
+msgstr "Interne Notiz..."
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__lc_issue_date
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__lc_issue_date
+msgid "Issue Date of Leaving Certificate"
+msgstr "Ausstellungsdatum der Austrittsbescheinigung"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner____last_update
+#: model:ir.model.fields,field_description:jt_education_base.field_standard_division____last_update
+#: model:ir.model.fields,field_description:jt_education_base.field_student_standard____last_update
+#: model:ir.model.fields,field_description:jt_education_base.field_year_year____last_update
+msgid "Last Modified on"
+msgstr "Letzte Änderung am"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__lastschool
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__lastschool
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "Last School Attended"
+msgstr "Zuletzt besuchte Schule"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__last_std
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__last_std
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "Last Standard"
+msgstr "Letzter Standard"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_standard_division__write_uid
+#: model:ir.model.fields,field_description:jt_education_base.field_student_standard__write_uid
+#: model:ir.model.fields,field_description:jt_education_base.field_year_year__write_uid
+msgid "Last Updated by"
+msgstr "Zuletzt aktualisiert von"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_standard_division__write_date
+#: model:ir.model.fields,field_description:jt_education_base.field_student_standard__write_date
+#: model:ir.model.fields,field_description:jt_education_base.field_year_year__write_date
+msgid "Last Updated on"
+msgstr "Zuletzt aktualisiert am"
+
+#. module: jt_education_base
+#: model:ir.model.fields.selection,name:jt_education_base.selection__res_partner__gender__male
+msgid "Male"
+msgstr "Männlich"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__mother_name
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__mother_name
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "Mother Name"
+msgstr "Name der Mutter"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__mother_tonque
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__mother_tonque
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "Mother Tongue"
+msgstr "Muttersprache"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__nationality
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__nationality
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "Nationality"
+msgstr "Staatsangehörigkeit"
+
+#. module: jt_education_base
+#: model:ir.model.fields.selection,name:jt_education_base.selection__res_partner__promotion__no
+msgid "No"
+msgstr "Nein"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__detension
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__detension
+msgid "No. of Time Student is Detained"
+msgstr "Anzahl der inhaftierten Studenten"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__working_days
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__working_days
+msgid "Number of Working Days"
+msgstr "Anzahl der Arbeitstage"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__working_days_present
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__working_days_present
+msgid "Number of Working Days Present"
+msgstr "Anzahl der anwesenden Arbeitstage"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__birthPlace
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__birthPlace
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "Place of Birth"
+msgstr "Geburtsort"
+
+#. module: jt_education_base
+#: model:ir.ui.menu,name:jt_education_base.profile_menu
+msgid "Profile"
+msgstr "Profil"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__progress
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__progress
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "Progress"
+msgstr "Fortschritt"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__promotion
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__promotion
+msgid "Qualified for Promoting to Next Class"
+msgstr "Qualifiziert für den Aufstieg in die nächste Klasse"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "Reason for Leaving School"
+msgstr "Grund für das Verlassen der Schule"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__reason_for_leave
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__reason_for_leave
+msgid "Reason for Leaving school"
+msgstr "Grund für das Verlassen der Schule"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__religion
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__religion
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "Religion"
+msgstr "Religion"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__remarks
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__remarks
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "Remarks"
+msgstr "Anmerkungen"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__roll_no
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__roll_no
+msgid "Roll Number"
+msgstr "Rollennummer"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__standard
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__standard
+#: model:ir.model.fields,field_description:jt_education_base.field_student_standard__name
+#: model:ir.ui.menu,name:jt_education_base.studentstandard_submenu
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_tree_view
+#: model_terms:ir.ui.view,arch_db:jt_education_base.view_partner_search_inh
+msgid "Standard"
+msgstr "Standard"
+
+#. module: jt_education_base
+#: model:ir.model,name:jt_education_base.model_standard_division
+msgid "Standard Division"
+msgstr "Standard-Abteilung"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__state1
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__state1
+#: model_terms:ir.ui.view,arch_db:jt_education_base.faculty_form_view
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "State"
+msgstr "Staat"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.faculty_form_view
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "Street 2..."
+msgstr "Straße 2..."
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.faculty_form_view
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "Street..."
+msgstr "Straße..."
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__is_student
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__is_student
+#: model:ir.model.fields.selection,name:jt_education_base.selection__res_partner__company_type__student
+#: model:ir.ui.menu,name:jt_education_base.student_menu
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile_i
+#: model_terms:ir.ui.view,arch_db:jt_education_base.view_partner_search_inh
+msgid "Student"
+msgstr "Student"
+
+#. module: jt_education_base
+#: model:ir.actions.act_window,name:jt_education_base.action_studentdivision
+msgid "Student Division"
+msgstr "Studentische Abteilung"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__stud_id
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__stud_id
+msgid "Student ID"
+msgstr "Studentenausweis"
+
+#. module: jt_education_base
+#: model:ir.model,name:jt_education_base.model_res_partner
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "Student Information"
+msgstr "Informationen für Studierende"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_tree_view
+msgid "Student Name"
+msgstr "Name des Studenten"
+
+#. module: jt_education_base
+#: model:ir.actions.act_window,name:jt_education_base.action_studentstandard
+#: model:ir.model,name:jt_education_base.model_student_standard
+msgid "Student Standard"
+msgstr "Student Standard"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__uid
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__uid
+msgid "Student UID"
+msgstr "Studenten-UID"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "Student Unique ID"
+msgstr "Eindeutiger Studentenausweis"
+
+#. module: jt_education_base
+#: model:ir.actions.act_window,name:jt_education_base.action_student
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "Students"
+msgstr "Studenten"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "Students ID"
+msgstr "Studenten-ID"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__studying_since
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__studying_since
+msgid "Studying Since"
+msgstr "Studieren seit"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__std_studying
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__std_studying
+msgid "Studying in Standard"
+msgstr "Studieren im Standard"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "Studying since"
+msgstr "Studieren seit"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "Sub-Caste"
+msgstr "Unter-Kaste"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__subcaste
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__subcaste
+msgid "SubCaste"
+msgstr "Unterkaste"
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__surname
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__surname
+#: model_terms:ir.ui.view,arch_db:jt_education_base.faculty_form_view
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "Surname"
+msgstr "Nachname"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "Tags..."
+msgstr "Tags..."
+
+#. module: jt_education_base
+#: model:ir.model.fields,field_description:jt_education_base.field_res_partner__city1
+#: model:ir.model.fields,field_description:jt_education_base.field_res_users__city1
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "Taluka"
+msgstr "Taluka"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "UID No."
+msgstr "UID-Nr."
+
+#. module: jt_education_base
+#: model:ir.model,name:jt_education_base.model_year_year
+#: model:ir.model.fields,field_description:jt_education_base.field_year_year__name
+#: model:ir.ui.menu,name:jt_education_base.yearyear_submenu
+msgid "Year"
+msgstr "Jahr"
+
+#. module: jt_education_base
+#: model:ir.model.fields.selection,name:jt_education_base.selection__res_partner__promotion__yes
+msgid "Yes"
+msgstr "Ja"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.faculty_form_view
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "ZIP"
+msgstr "ZIP"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "e.g. BE0477472701"
+msgstr "z.B. BE0477472701"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "e.g. Sales Director"
+msgstr "z.B. Vertriebsleiter"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "e.g. www.odoo.com"
+msgstr "z.B. www.odoo.com"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "student ID"
+msgstr "Studentenausweis"
+
+#. module: jt_education_base
+#: model_terms:ir.ui.view,arch_db:jt_education_base.student_profile
+msgid "student general register number"
+msgstr "Nummer des allgemeinen Studentenregisters"

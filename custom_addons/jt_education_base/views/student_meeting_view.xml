@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data>
+        <record id="view_meeting_search" model="ir.ui.view">
+            <field name="name">meeting.search</field>
+            <field name="model">student.meeting</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="meeting_seq"/>
+                    <field name="topic"/>
+                    <field name="student_id"/>
+                    <field name="standard"/>
+                    <field name="faculty_id"/>
+                    <field name="parent_id"/>
+                    <field name="start_date"/>
+                    <field name="end_date"/>
+                    <filter string="Draft" name="filter_draft" domain="[('state','=','draft')]"/>
+                    <filter string="Rescheduled" name="filter_rescheduled" domain="[('state','=','rescheduled')]"/>
+                    <filter string="Conducted" name="filter_conducted" domain="[('state','=','conducted')]"/>
+                </search>
+            </field>
+        </record>
+
+        <!-- Student Meeting Form View-->
+        <record id="student_meeting_form_view" model="ir.ui.view">
+            <field name="name">Student Meeting Form View</field>
+            <field name="model">student.meeting</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <button name="ongoing_meeting" string="Ongoing" type="object" class="oe_highlight" invisible="state not in 'draft'"/>
+                        <button name="conducted_meeting" string="Conducted" type="object" class="oe_highlight" invisible="state not in 'ongoing'"/>
+                        <button name="rescheduled_meeting" string="Rescheduled" type="object" class="oe_highlight" invisible="state not in 'draft'"/>
+                        <button name="cancel_meeting" string="Cancel" type="object" class="oe_highlight" invisible="state not in ('draft','rescheduled')"/>
+                        <button name="reset_to_draft" string="Reset to Draft" type="object" invisible="state not in 'cancel'"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,ongoing,conducted,rescheduled,cancel"/>
+                    </header>
+                	<sheet>
+                        <div class="oe_title">
+                            <h1><field name="meeting_seq" readonly="1"/></h1>
+                        </div>  
+                		<group>
+                			<group>
+                                <field name="topic" required="1" readonly="state not in ('draft','rescheduled')"/>
+                                <field name = "student_id" domain="[('is_student','=',True)]" readonly="state not in ('draft','rescheduled')" />
+                                <field name = "standard" readonly="1"/>
+                                <field name = "start_date" readonly="state not in ('draft','rescheduled')"/>
+                            </group>
+                            <group>
+                                <field name = "parent_id" domain="[('is_parent','=',True)]" readonly="state not in ('draft','rescheduled')" />
+                                <field name = "faculty_id" domain="[('is_faculty','=',True)]" readonly="state not in ('draft','rescheduled')" />
+                                <field name = "end_date" readonly="state not in ('draft','rescheduled')"/>
+                            </group>
+		                </group>
+                        <notebook>
+                            <page name="parents_feedback" string="Parents Feedback" invisible="state not in 'conducted'">
+                                <field name = "note" placeholder="Feedback"/>
+                            </page>
+                            <page name="faculty_feedback" string="Faculty Feedback" invisible="state not in 'conducted'">
+                                <field name = "note2" placeholder="Feedback"/>
+                            </page>
+                        </notebook>
+                	</sheet>
+                    <!-- Chatter -->
+                     <chatter/>
+                </form>
+            </field>
+        </record>
+
+        <record id="student_meeting_kanban_view" model="ir.ui.view">
+            <field name="name">Student Meeting Kanban View</field>
+            <field name="model">student.meeting</field>
+            <field name="arch" type="xml">
+                <kanban>
+                    <field name="state"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div class="oe_kanban_card">
+                                <div class="oe_kanban_content">
+                                    <div class="oe_kanban_title">
+                                        <field name="meeting_seq"/>
+                                    </div>
+
+                                    <div>
+                                        <strong> Topic : </strong><field name="topic"/>
+                                    </div>
+                                    <div>
+                                        Name : <field name="student_id"/>
+                                    </div>
+
+                                    <div>
+                                        Parent : <field name="parent_id"/>
+                                    </div>
+                                    <div>
+                                        Faculty : <field name="faculty_id"/>
+                                    </div>
+                                </div>
+
+                                <div class="oe_kanban_footer">
+                                    <field name="state" widget="label_selection" class="oe_kanban_bottom_left"/>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="student_meeting_calendar_view">
+            <field name="name">Student Meeting Calendar View</field>
+            <field name="model">student.meeting</field>
+            <field eval="2" name="priority"/>
+            <field name="arch" type="xml">
+                <calendar string="Student Meetings" date_start="start_date" date_stop="end_date">
+                    <field name="meeting_seq"/>
+                    <field name="topic"/>
+                    <field name="student_id"/>
+                    <field name="faculty_id"/>
+                    <field name="parent_id"/>
+                    <field name="state"/>
+                </calendar>
+            </field>
+        </record>
+
+        <!--Student Meeting List View-->
+        <record id="student_meeting_list_view" model="ir.ui.view">
+            <field name="name">Student Meeting List View</field>
+            <field name="model">student.meeting</field>
+            <field name="arch" type="xml">
+                <list>
+                    <field name = "meeting_seq"/>
+                    <field name = "topic"/>
+                    <field name = "student_id"/>
+                    <field name = "parent_id"/>
+                    <field name = "faculty_id"/>
+                    <field name = "standard"/>
+                    <field name="state" widget="badge" decoration-success="state == 'conducted'" decoration-info="state == 'rescheduled'" decoration-warning="state == 'ongoing'" decoration-danger="state == 'cancel'" optional="show"/>
+                </list>
+            </field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="0">
+    <!-- Style strings are inlined via t-set / t-attf-style rather than
+         CSS classes because Gmail / Outlook / mobile clients strip
+         <style> blocks before render. The t-set vars below give us
+         "class-like" reuse while still emitting inline styles. -->
+
+    <record id="mail_template_cron_failure" model="mail.template">
+        <field name="name">Odoo Health Check: Cron Failure</field>
+        <field name="model_id" ref="model_ir_cron_history"/>
+        <field name="subject">[Odoo Health] Cron failure: {{ object.cron_id.name }} on {{ object.server_name }}</field>
+        <field name="email_from">{{ (object.env.company.email or user.email_formatted) }}</field>
+        <field name="body_html" type="html">
+            <div style="font-family:Arial,sans-serif;font-size:14px;color:#333;max-width:720px">
+                <t t-set="accent" t-value="'#b00020'"/>
+                <t t-set="badge_style" t-value="'display:inline-block;padding:4px 12px;background:' + accent + ';color:#fff;font-weight:bold;border-radius:3px;font-size:12px;letter-spacing:0.5px'"/>
+                <t t-set="button_style" t-value="'display:inline-block;padding:8px 16px;background:' + accent + ';color:#fff;text-decoration:none;border-radius:3px;font-weight:bold'"/>
+                <t t-set="kv_label" t-value="'padding:4px 12px 4px 0;color:#666'"/>
+                <t t-set="footer_style" t-value="'margin-top:24px;color:#888;font-size:12px'"/>
+                <div t-attf-style="{{ badge_style }}">CRITICAL</div>
+                <p style="margin-top:12px">A scheduled action has <strong t-attf-style="color:{{ accent }}">failed</strong> on server <strong t-out="object.server_name"/>.</p>
+                <table style="border-collapse:collapse;margin:12px 0">
+                    <tr><td t-attf-style="{{ kv_label }}">Scheduled action</td><td><strong t-out="object.cron_id.name"/></td></tr>
+                    <tr><td t-attf-style="{{ kv_label }}">Started</td><td t-out="object.date_start"/></tr>
+                    <tr><td t-attf-style="{{ kv_label }}">Ended</td><td t-out="object.date_end"/></tr>
+                    <tr><td t-attf-style="{{ kv_label }}">Duration</td><td><t t-out="object.duration_sec"/> s</td></tr>
+                    <tr><td t-attf-style="{{ kv_label }}">Server</td><td t-out="object.server_name"/></tr>
+                </table>
+                <p>
+                    <a t-att-href="object._action_url()" t-attf-style="{{ button_style }}">
+                        View in Cron History
+                    </a>
+                </p>
+                <details style="margin-top:18px">
+                    <summary style="cursor:pointer;color:#666;font-size:13px;padding:6px 0">
+                        Show full error traceback
+                    </summary>
+                    <pre t-attf-style="background:#f5f5f5;padding:12px;border-left:4px solid {{ accent }};overflow-x:auto;margin-top:8px;font-size:12px" t-out="object.error_traceback"/>
+                </details>
+                <p t-attf-style="{{ footer_style }}">
+                    Sent by <strong>Odoo Health Check</strong>. Manage recipients in Settings -&gt; Health Check.
+                </p>
+            </div>
+        </field>
+        <field name="auto_delete" eval="True"/>
+    </record>
+
+    <record id="mail_template_disk_alert" model="mail.template">
+        <field name="name">Odoo Health Check: Disk Alert</field>
+        <field name="model_id" ref="model_health_check_result"/>
+        <field name="subject">[Odoo Health] Disk {{ object.status }}: {{ object.mount_path }} at {{ '%.1f' % (object.used_pct or 0) }}% used</field>
+        <field name="email_from">{{ (object.env.company.email or user.email_formatted) }}</field>
+        <field name="body_html" type="html">
+            <div style="font-family:Arial,sans-serif;font-size:14px;color:#333;max-width:720px">
+                <t t-set="accent" t-value="'#b00020' if object.status == 'critical' else '#b08000'"/>
+                <t t-set="badge_text" t-value="object.status.upper() if object.status else 'WARNING'"/>
+                <t t-set="badge_style" t-value="'display:inline-block;padding:4px 12px;background:' + accent + ';color:#fff;font-weight:bold;border-radius:3px;font-size:12px;letter-spacing:0.5px'"/>
+                <t t-set="button_style" t-value="'display:inline-block;padding:8px 16px;background:' + accent + ';color:#fff;text-decoration:none;border-radius:3px;font-weight:bold'"/>
+                <t t-set="kv_label" t-value="'padding:4px 12px 4px 0;color:#666'"/>
+                <t t-set="footer_style" t-value="'margin-top:24px;color:#888;font-size:12px'"/>
+                <div t-attf-style="{{ badge_style }}" t-out="badge_text"/>
+                <p style="margin-top:12px">Disk usage on <strong t-out="object.mount_path"/> has reached
+                   <strong t-out="object.status"/>:
+                   <strong t-out="'%.1f' % (object.used_pct or 0)"/>% used.</p>
+                <table style="border-collapse:collapse;margin:12px 0">
+                    <tr><td t-attf-style="{{ kv_label }}">Check</td><td t-out="object.check_type"/></tr>
+                    <tr><td t-attf-style="{{ kv_label }}">Mount</td><td><strong t-out="object.mount_path"/></td></tr>
+                    <tr><td t-attf-style="{{ kv_label }}">Status</td><td t-out="object.status"/></tr>
+                    <tr><td t-attf-style="{{ kv_label }}">Used</td><td><t t-out="'%.2f' % (object.used_pct or 0)"/>%</td></tr>
+                    <tr><td t-attf-style="{{ kv_label }}">Total</td><td><t t-out="'%.2f' % ((object.total_bytes or 0) / (1024.0 ** 3))"/> GB</td></tr>
+                    <tr><td t-attf-style="{{ kv_label }}">Free</td><td><t t-out="'%.2f' % ((object.free_bytes or 0) / (1024.0 ** 3))"/> GB</td></tr>
+                    <tr><td t-attf-style="{{ kv_label }}">Time</td><td t-out="object.date"/></tr>
+                </table>
+                <p>
+                    <a t-att-href="object._action_url()" t-attf-style="{{ button_style }}">
+                        View in Disk Checks
+                    </a>
+                </p>
+                <p t-attf-style="{{ footer_style }}">
+                    One alert per worsening transition. Manage thresholds and recipients in Settings -&gt; Health Check.
+                </p>
+            </div>
+        </field>
+        <field name="auto_delete" eval="True"/>
+    </record>
+
+    <record id="mail_template_pg_monthly" model="mail.template">
+        <field name="name">Odoo Health Check: Monthly PG Report</field>
+        <field name="model_id" ref="model_health_check_result"/>
+        <field name="subject">[Odoo Health] PG monthly report: {{ object.env.cr.dbname }} ({{ object.date and object.date.strftime('%Y-%m') or '' }})</field>
+        <field name="email_from">{{ (object.env.company.email or user.email_formatted) }}</field>
+        <field name="body_html" type="html">
+            <div style="font-family:Arial,sans-serif;font-size:14px;color:#333;max-width:720px">
+                <t t-set="accent" t-value="'#1f7a8c'"/>
+                <t t-set="button_style" t-value="'display:inline-block;padding:8px 16px;background:' + accent + ';color:#fff;text-decoration:none;border-radius:3px;font-weight:bold'"/>
+                <t t-set="th_style" t-value="'text-align:left;padding:6px 12px;border-bottom:1px solid #ddd'"/>
+                <t t-set="th_right" t-value="'text-align:right;padding:6px 12px;border-bottom:1px solid #ddd'"/>
+                <t t-set="td_style" t-value="'padding:4px 12px;border-bottom:1px solid #eee'"/>
+                <t t-set="td_right" t-value="'padding:4px 12px;text-align:right;border-bottom:1px solid #eee'"/>
+                <t t-set="footer_style" t-value="'margin-top:24px;color:#888;font-size:12px'"/>
+                <t t-set="data" t-value="object._get_parsed_details()"/>
+                <p>Monthly PostgreSQL growth report for database
+                   <strong t-out="data.get('db_name', '?')"/>.</p>
+                <p>
+                    Total DB size: <strong t-out="object._human_bytes(data.get('total_db_bytes', 0))"/>
+                    <t t-if="data.get('total_db_bytes_delta') is not None">
+                        (<t t-out="object._human_delta_bytes(data.get('total_db_bytes_delta'))"/> vs previous report)
+                    </t>
+                </p>
+                <h3 style="margin-top:18px">Top tables</h3>
+                <table style="border-collapse:collapse;font-size:13px">
+                    <thead>
+                        <tr style="background:#f5f5f5">
+                            <th t-attf-style="{{ th_style }}">Table</th>
+                            <th t-attf-style="{{ th_right }}">Total size</th>
+                            <th t-attf-style="{{ th_right }}">Δ Size</th>
+                            <th t-attf-style="{{ th_right }}">Rows (est.)</th>
+                            <th t-attf-style="{{ th_right }}">Δ Rows</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr t-foreach="data.get('tables', [])" t-as="t">
+                            <td t-attf-style="{{ td_style }}" t-out="t.get('name')"/>
+                            <td t-attf-style="{{ td_right }}" t-out="object._human_bytes(t.get('total_bytes', 0))"/>
+                            <td t-attf-style="{{ td_right }}">
+                                <t t-if="t.get('total_bytes_delta') is None">new</t>
+                                <t t-else="" t-out="object._human_delta_bytes(t.get('total_bytes_delta'))"/>
+                            </td>
+                            <td t-attf-style="{{ td_right }}" t-out="t.get('row_estimate', 0)"/>
+                            <td t-attf-style="{{ td_right }}">
+                                <t t-if="t.get('row_estimate_delta') is None">new</t>
+                                <t t-elif="t.get('row_estimate_delta') &gt; 0">+<t t-out="t.get('row_estimate_delta')"/></t>
+                                <t t-else="" t-out="t.get('row_estimate_delta')"/>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p style="margin-top:18px">
+                    <a t-att-href="object._action_url()" t-attf-style="{{ button_style }}">
+                        View in PG Reports
+                    </a>
+                </p>
+                <p t-attf-style="{{ footer_style }}">
+                    Sent monthly by <strong>Odoo Health Check</strong>. Row counts are PostgreSQL estimates from `pg_class.reltuples` (last ANALYZE), not exact COUNT(*). Manage recipients in Settings -&gt; Health Check.
+                </p>
+            </div>
+        </field>
+        <field name="auto_delete" eval="True"/>
+    </record>
+
+</odoo>

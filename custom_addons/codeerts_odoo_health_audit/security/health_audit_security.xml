@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- App category: ir.module.category (res.groups.category_id links to this) -->
+    <record id="module_category_odoo_health" model="ir.module.category">
+        <field name="name">Odoo Health</field>
+        <field name="sequence">90</field>
+    </record>
+
+    <!-- v18: res.groups.category_id (Many2one -> ir.module.category) directly on the group.
+         There is no res.groups.privilege model in v18. -->
+    <record id="group_health_audit_user" model="res.groups">
+        <field name="name">Audit User</field>
+        <field name="category_id" ref="module_category_odoo_health"/>
+    </record>
+
+    <record id="group_health_audit_manager" model="res.groups">
+        <field name="name">Audit Manager</field>
+        <field name="category_id" ref="module_category_odoo_health"/>
+        <field name="implied_ids" eval="[Command.link(ref('group_health_audit_user'))]"/>
+    </record>
+</odoo>

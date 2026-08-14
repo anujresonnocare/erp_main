@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="student_profile" model="ir.ui.view">
+            <field name="name">student.profile.form.view</field>
+            <field name="model">res.partner</field>
+            <field name="arch" type="xml">
+                <form string="Students">
+                <header>
+                    <button name="confirm_student" string="Confirm" type="object" class="oe_highlight" invisible="state not in ('draft','cancel')"/>
+
+                    <button name="cancel_state" string="Cancel" type="object" class="oe_highlight" invisible="state not in ('draft','confirm')"/>
+
+                    <button name="pending_fees" string="Pending Fees" type="object" class="oe_highlight" invisible="state not in ('confirm')"/>
+
+                    <button name="update_student_ranks" type="object" string="Update Student Ranks" class="btn-primary"/>
+                    
+                    <button name="update_student_percentage" type="object" string="Update Student Percentage" class="btn-primary"/>
+
+                    <!-- <button name="open_wizard_academic_year" string="Change Academic Year" type="object" class="oe_highlight"/> -->
+                    <field name="state" widget="statusbar" statusbar_visible="draft,confirm,cancel">
+
+                    
+                    </field>
+                </header>
+                <sheet>
+                    <field name="image_1920" widget='image' placeholder="please add photo" class="oe_avatar" options='{"preview_image": "avatar_128"}'/>
+                    <field name="type" invisible="1"/>
+                    <field name="is_company" invisible="1"/>
+                    <field name="commercial_partner_id" invisible="1"/>
+
+                    <div class="oe_title">
+                        <h1><field name="stud_id" readonly='1'/></h1>
+                        <field name="company_type" options="{'horizontal': true}" widget="radio" groups="base.group_no_one"/>
+                        <!-- <field name="studend_type" options="{'horizontal': true}" widget="radio" groups="base.group_no_one"/> -->
+                        <br/>
+                        <field name="parent_id"
+                                widget="res_partner_many2one"
+                                invisible="((is_company and not parent_id) or company_name) and company_name != ''"
+                                placeholder="Company"
+                                domain="[('is_company', '=', True)]" context="{'default_is_company': True, 'show_vat': True}"
+                               />
+                        <field name="company_name" invisible="not company_name or company_name == '' or is_company"/>
+                        <button name="create_company" type="object" class="oe_edit_only btn-link"
+                                invisible="is_company or company_name == '' or not company_name">
+                            <span class="fa fa-plus-square"/>Create company
+                        </button>        
+                    </div>  
+                    <group>
+                        <group>
+                            <field name="name" default_focus="1" required="type == 'contact'"/>
+                            <field name="surname" required="1"/>
+                            <field name="nickname"/>
+                            <field name="type" invisible="not parent_id" groups="base.group_no_one"/>
+                            <label for="street" string="Address"/>
+                            <div class="o_address_format">
+                                <div invisible="not parent_id or type != 'contact'" class="oe_edit_only"><b>Company Address:</b></div>
+                                <field name="street" placeholder="Street..." class="o_address_street" required='1'
+                                    readonly="type == 'contact' and parent_id"/>
+                                <field name="street2" placeholder="Street 2..." class="o_address_street" required='1'
+                                    readonly="type == 'contact' and parent_id"/>
+                                <field name="city" placeholder="City" class="o_address_city"
+                                    readonly="type == 'contact' and parent_id" required='1'/>
+                                <field name="state_id" class="o_address_state" placeholder="State" options='{"no_open": True}'
+                                    readonly="type == 'contact' and parent_id" context="{'country_id': country_id, 'zip': zip}"/>
+                                <field name="zip" placeholder="ZIP" class="o_address_zip"
+                                    readonly="type == 'contact' and parent_id" required='1'/>
+                                <field name="country_id" placeholder="Country" class="o_address_country" options='{"no_open": True, "no_create": True}'
+                                    readonly="type == 'contact' and parent_id" required='1'/>
+                            </div>
+                            <field name="vat" placeholder="e.g. BE0477472701" readonly="parent_id"  invisible="1"/>
+                            <!-- Extra fields for student -->
+                            <field name="is_student" string="Student" invisible="1"/>
+                            <field name="gender" string="Gender" widget="radio" options="{'horizontal': true}" required="1"/>
+                            <field name="howknow_id" string="How Know Our School"/>
+                            <field name="admission_date"/>
+                            
+                        </group>
+                        <group>
+                            <field name="function" placeholder="e.g. Sales Director"
+                                invisible="is_company"/>
+                            <field name="father_name" required="1"/>
+                            <field name="mother_name" string="Mother Name" required="1"/>
+                            <field name="phone" widget="phone"/>
+                            <field name="mobile" widget="phone" required='1'/>
+                            <field name="emergency_contact" widget="html"/>
+                            <field name="user_ids" invisible="1"/>
+                            <field name="email" widget="email" context="{'gravatar_image': True}" required=" [('user_ids','!=', [])]"/>
+                            <field name="website" widget="url" placeholder="e.g. www.odoo.com"/>
+                            <field name="applied_from_website"/>
+                            <field name="title" options='{"no_open": True}'
+                                invisible="is_company"/>
+                            <field name="lang" invisible="1"/>
+                            <field name="category_id" widget="many2many_tags" options="{'color_field': 'color', 'no_create_edit': True}" placeholder="Tags..." invisible="1"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <page name="student_info" string="Student Information">
+                            <group>
+                                <group string="General Information">
+                                    <field name="stud_id" string="Students UID" placeholder="student ID" readonly="1"/>
+                                    <field name="curr_year" string="Current Year" required="1"/>
+                                    <field name="standard" string="Standard" required="1"/>
+                                    <field name="div" string="Division" required="1"/>
+                                    <field name="gr_no" string="GR No." placeholder="student general register number" required="1"/>
+                                    <div>
+                                        <div>
+                                            <label for="roll_no"/>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div style="width:100%;"> 
+                                            <field name="roll_no" readonly="roll_no"/>
+                                            <button name="get_roll_no" type="object" class="oe_highlight" string="Get Roll Number" invisible="roll_no"/>
+                                        </div>
+                                    </div>
+                                    <field name="birthdate" string="Date of Birth" required="1"/>
+                                    <field name="age" string="Age" readonly="1" force_save='1'/>
+                                    <field name="detailed_age" string="Detailed Age" readonly="1" force_save='1'/>
+                                    <field name="birthPlace" string="Place of Birth"/>
+                                    <field name="marksheet_attachment_pdf_file" invisible="1"/>
+                                    <field filename="marksheet_attachment_pdf_file" name="marksheet_attachment_pdf"/>
+                                    <field name="adhar_attachment_pdf_file" invisible="1"/>
+                                    <field filename="adhar_attachment_pdf_file" name="adhar_attachment_pdf"/>
+                                </group>
+                                <group string="Other Information">
+                                    <field name="caste" string="Caste"/>
+                                    <field name="subcaste" string="Sub-Caste"/>
+                                    <field name="nationality" string="Nationality" placeholder="INDIAN"/>
+                                    <field name="religion" string="Religion"/>
+                                    <field name="village" string="Village"/>
+                                    <field name="province" string="Province"/>     
+                                    <field name="district_id" string="District"/>
+                                    <field name="state1" string="State"/>
+                                    <field name="country1" string="Country"/>
+                                    <field name="mother_tonque" string="Mother Tongue"/>
+                                    <field name="detension"/>
+                                    <field name="working_days"/>
+                                    <field name="student_rank" readonly="1" />
+                                    <field name="student_result" />
+                                </group>
+                            </group>
+                            <group string="Notes">
+                                <field name="remarks" string="Remarks"/>
+                                <field name="progress" string="Progress"/>
+                            </group>
+                        </page>
+                        <page string="Student Signature" name="student_signature">
+                            <group>
+                                <group>
+                                    <field name="signature" widget="signature"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page name='internal_notes' string="Internal Notes">
+                            <field name="comment" placeholder="Internal note..."/>
+                        </page>
+                        <page name="leaving_info" string="Leaving Information">
+                            <group>
+                                <group>
+                                    <field name="lastschool" string="Last College Attended" groups="jt_education_base.group_college"/>
+                                    <field name="lastschool" string="Last School Attended" groups="jt_education_base.group_school"/>
+
+                                    <field name="last_std" string="Last Standard"/>
+
+                                    <field name="date_admission" string="Date of Admission in this College" groups="jt_education_base.group_college"/>
+                                    <field name="date_admission" string="Date of Admission in this School" groups="jt_education_base.group_school"/>
+
+                                    <field name="adm_standard" string="Admission Standard"/>
+                                    <field name="conduct" string="Conduct"/>
+                                    <field name="promotion" widget="selection"/>
+                                    <field name="studying_since" string="Studying since"/>
+                                </group>
+                                <group>
+                                    <field name="reason_for_leave" string="Reason for Leaving College" groups="jt_education_base.group_college"/>
+                                    <field name="reason_for_leave" string="Reason for Leaving School" groups="jt_education_base.group_school"/>
+
+                                    <field name="working_days_present"/>
+                                    <field name="lc_apply_date"/>
+                                    <field name="lc_issue_date"/>
+
+                                    <field name="leave_date" string="Date of Leaving College" groups="jt_education_base.group_college"/>
+                                    <field name="leave_date" string="Date of Leaving School" groups="jt_education_base.group_school"/>
+                                </group>
+                                <group> 
+                                </group>
+                            </group>
+                        </page>
+                        <page name="meeting_info" string="Meetings">
+                            <field name="meeting_ids" nolabel="1"> 
+                                <list editable="bottom">
+                                    <field name = "meeting_seq"/>
+                                    <field name = "topic"/>
+                                    <field name = "student_id" domain="[('is_student','=',True)]"/>
+                                    <field name = "parent_id" domain="[('is_parent','=',True)]"/>
+                                    <field name = "faculty_id" domain="[('is_faculty','=',True)]"/>
+                                    <field name = "standard"/>
+                                    <field name = "note"/>
+                                    <field name = "note2"/>
+                                    <field name="state" widget="badge" decoration-success="state == 'conducted'" decoration-info="state == 'rescheduled'" decoration-warning="state == 'ongoing'" decoration-danger="state == 'cancel'" optional="show"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page name="history_tab" string="History">
+                            <field name="student_history_ids">
+                                 <list string="Student History" editable="bottom" create="0" delete="0" limit="10">
+                                    <field name="year_changed_from"/>
+                                    <field name="year_changed_to"/>
+                                    <field name="reason"/>
+                                 </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <!-- Chatter -->
+                     <chatter/>
+                </form>
+            </field>
+        </record>
+
+        <record id="student_list_view" model="ir.ui.view">
+            <field name="name">student.list.view</field>
+            <field name="model">res.partner</field>
+            <field name="arch" type="xml">
+                <list multi_edit="1">
+                    <field name="name" string="Student Name"/>
+                    <field name="standard" string="Standard" required="1"/>
+                    <field name="div" string="Division"/>
+                    <field name="curr_year" string="Academic Year"/>
+                    <field name="state" string="State"/>
+
+                </list>
+            </field>
+        </record>
+
+        <record id="student_kanban_view" model="ir.ui.view">
+            <field name="name">student.kanban.view</field>
+            <field name="model">res.partner</field>
+            <field name="arch" type="xml">
+               <kanban sample="1">
+                    <field name="avatar_128"/>
+                    <field name="is_company"/>
+                    <field name="active"/>
+                    <field name = "id"/>
+                    <field name = "name"/>
+                    <field name = "standard"/>
+                    <field name = "div"/>
+                    <field name = "curr_year"/>
+                    <field name = "mobile"/>
+                    <field name = "email"/>
+                    <templates>
+                        <t t-name="card" class="flex-row">
+                            <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                            <aside class="o_kanban_aside_full">
+                                <t t-if="!record.is_company.raw_value">
+                                    <div class="o_kanban_image_fill position-relative w-100">
+                                        <field name="avatar_128" alt="Contact image" class="h-100" widget="image" options="{'img_class': 'object-fit-cover'}"/>
+                                        <field t-if="record.parent_id.raw_value" name="parent_id" class="position-absolute bottom-0 end-0 w-25 bg-light" widget="image" options="{'preview_image': 'image_128', 'img_class': 'object-fit-contain'}"/>
+                                    </div>
+                                </t>
+                                <t t-else="">
+                                    <field name="avatar_128" class="w-100" widget="image" options="{'img_class': 'object-fit-contain w-100 h-100'}"/>
+                                </t>
+                            </aside>
+                            <main class="ps-2 ps-md-0">
+                                <div class="mb-1">
+                                    <field name="display_name" class="mb-0 fw-bold fs-5"/>
+                                    <field t-if="record.parent_id.raw_value and !record.function.raw_value" class="text-muted" name="parent_id"/>
+                                    <field t-elif="!record.parent_id.raw_value and record.function.raw_value" class="text-muted" name="function"/>
+                                    <div t-elif="record.parent_id.raw_value and record.function.raw_value" class="text-muted">
+                                        <field name="function"/> at <field name="parent_id"/>
+                                    </div>
+                                </div>
+                                <div t-if="record.city.raw_value or record.country_id.raw_value">
+                                    <field name="city"/>
+                                    <span t-if="record.city.raw_value and record.country_id.raw_value">, </span>
+                                    <field name="country_id"/>
+                                </div>
+                                <field name="email" class="text-truncate"/>
+                                <field name = "standard"/>
+                    <field name = "div"/>
+                    <field name = "curr_year"/>
+                    <field name = "mobile"/>
+                                <footer><div/></footer>
+                            </main>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+        <!-- student search view -->
+        <record id="student_search_view" model="ir.ui.view">
+            <field name="name">student.search.view</field>
+            <field name="model">res.partner</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="is_student" string="Student" invisible="1"/>
+                    <field name="standard" string="Standard"/>
+                    <field name="div"/>
+                    <field name="curr_year"/>
+                    <filter string="Student" name="student" domain="[('is_student','=',False)]"/>
+                    <group expand="1">
+                        <filter name="standard" string="Standard" domain="[('is_student','=',True)]" context="{'group_by' : 'standard'}"/>
+                        <filter name="gender" string="Gender" domain="[('is_student','=',True)]" context="{'group_by' : 'gender'}"/>
+                        <filter name="division" string="Division" domain="[('is_student','=',True)]" context="{'group_by' : 'div'}"/>
+                        <filter name="curr_year" string="Academic Year" domain="[('is_student','=',True)]" context="{'group_by' : 'curr_year'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="ir_cron_check_fees_and_cancel_admission" model="ir.cron">
+            <field name="name">Check Fees and Cancel Admissions</field>
+            <field name="model_id" ref="base.model_res_partner"/>
+            <field name="state">code</field>
+            <field name="code">model.check_fees_and_cancel_admission()</field>
+            <field name="user_id" ref="base.user_root"/> 
+            <field name="active" eval="True"/>
+            <field name="interval_type">days</field>
+            <field name="interval_number">1</field> 
+            <!-- <field name="numbercall">-1</field>  -->
+            <!-- <field name="doall" eval="True"/> -->
+        </record>
+
+        <record id="ir_cron_giving_fees_pending_reminder" model="ir.cron">
+            <field name="name">Giving Fees Pending Reminder</field>
+            <field name="model_id" ref="base.model_res_partner"/>
+            <field name="state">code</field>
+            <field name="code">model.pending_fees()</field>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="active" eval="True"/>
+            <field name="interval_type">days</field>
+            <field name="interval_number">1</field> 
+            <!-- <field name="numbercall">-1</field> 
+            <field name="doall" eval="True"/> -->
+        </record>
+
+    </data>
+</odoo>

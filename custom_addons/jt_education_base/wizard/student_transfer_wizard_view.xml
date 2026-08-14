@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_student_transfer_wizard_form" model="ir.ui.view">
+            <field name="name">student.transfer.wizard.form</field>
+            <field name="model">student.transfer.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Class Transfer Wizard">
+                    <sheet>
+                        <div class="text-center p-4 my-3 text-white" style="background-color: #23262f; border-radius: 6px;" invisible="not download_report_ready">
+                            <h4 class="mb-2"><span class="me-2">✅</span>Your Report is Ready!</h4>
+                            <p class="text-muted small mb-3">Click the file below to download your Score Summary Report.</p>
+                            <div class="fs-5">
+                                <span class="oi oi-download text-info me-1"/>
+                                <field name="report_file" filename="report_name" readonly="1" class="text-decoration-none fw-bold text-info"/>
+                                <field name="report_name" invisible="1"/>
+                            </div>
+                        </div>
+
+                        <div invisible="download_report_ready">
+                            <div class="alert alert-info d-flex align-items-center" role="alert">
+                                <i class="oi oi-info-circle me-2"/>
+                                <div>
+                                    Select the source parameters to filter students, followed by target destination parameters.
+                                </div>
+                            </div>
+                            <group>
+                                <group string="From Source Class Structure">
+                                    <field name="from_year_id" options="{'no_create': True, 'no_open': True}"/>
+                                    <field name="from_standard_id" options="{'no_create': True, 'no_open': True}"/>
+                                    <field name="from_div_id" options="{'no_create': True, 'no_open': True}"/>
+                                </group>
+                                <group string="To Target Destination Class">
+                                    <field name="to_year_id" options="{'no_create': True, 'no_open': True}"/>
+                                    <field name="to_standard_id" options="{'no_create': True, 'no_open': True}"/>
+                                    <field name="to_div_id" options="{'no_create': True, 'no_open': True}"/>
+                                </group>
+                            </group>
+                            <notebook>
+                                <page string="Target Selected Students" name="students_to_transfer">
+                                    <div class="row my-2">
+                                        <div class="col-12 d-flex justify-content-between align-items-center">
+                                            <span class="badge rounded-pill text-bg-primary fs-6">
+                                                Total Matching Profiles: <field name="student_count" readonly="1"/>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <field name="student_ids" widget="many2many_tags" placeholder="No students matched from the current source filter..."/>
+                                </page>
+                            </notebook>
+                        </div>
+                    </sheet>
+                    <footer>
+                        <button string="Execute Transfer" name="action_transfer" type="object" class="btn-primary" data-hotkey="q" invisible="download_report_ready"/>
+                        <button string="Cancel" class="btn-secondary" special="cancel" data-hotkey="x" invisible="download_report_ready"/>
+                        <button string="Close" class="btn-secondary" special="cancel" invisible="not download_report_ready"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_student_transfer_wizard" model="ir.actions.act_window">
+            <field name="name">Class Room Transfer</field>
+            <field name="res_model">student.transfer.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <record id="view_student_update_all_wizard_form" model="ir.ui.view">
+            <field name="name">student.update.all.wizard.form</field>
+            <field name="model">student.update.all.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Global Year-End Promotion Layout">
+                    <sheet>
+                        <div class="text-center p-4 my-3 text-white" style="background-color: #23262f; border-radius: 6px;" invisible="not download_report_ready">
+                            <h4 class="mb-2"><span class="me-2">✅</span>Your Report is Ready!</h4>
+                            <p class="text-muted small mb-3">Click the file below to download your Sequential Summary Report.</p>
+                            <div class="fs-5">
+                                <span class="oi oi-download text-info me-1"/>
+                                <field name="report_file" filename="report_name" readonly="1" class="text-decoration-none fw-bold text-info"/>
+                                <field name="report_name" invisible="1"/>
+                            </div>
+                        </div>
+
+                        <div invisible="download_report_ready">
+                            <div class="alert alert-info d-flex align-items-center" role="alert">
+                                <i class="oi oi-info-circle me-2"/>
+                                <div>
+                                    <strong>Sequence Match Rule:</strong> Manually select target destinations. The system will process matching records where the target parameters are exactly 1 sequence step (+1) ahead of the student's current values.
+                                </div>
+                            </div>
+                            <group>
+                                <group string="Source Target Filters (Multi-Select)">
+                                    <field name="filter_year_ids" widget="many2many_tags" options="{'no_create': True}"/>
+                                    <field name="filter_standard_ids" widget="many2many_tags" options="{'no_create': True}"/>
+                                    <field name="filter_div_ids" widget="many2many_tags" options="{'no_create': True}"/>
+                                </group>
+                                <group string="Target Promotion Structure (Manual Selection)">
+                                    <field name="new_year_ids" widget="many2many_tags" options="{'no_create': True}"/>
+                                    <field name="new_standard_ids" widget="many2many_tags" options="{'no_create': True}"/>
+                                    <field name="new_div_ids" widget="many2many_tags" options="{'no_create': True}"/>
+                                </group>
+                            </group>
+                            <group class="mt-3">
+                                <div class="d-flex align-items-center">
+                                    <span class="fw-bold text-muted me-2">Scope Size to Filter:</span>
+                                    <span class="badge text-bg-warning fs-6">
+                                        <field name="student_count" readonly="1"/> records
+                                    </span>
+                                </div>
+                            </group>
+                        </div>
+                    </sheet>
+                    <footer>
+                        <button string="Execute Mass Promotion" name="action_update_all" type="object" class="btn-danger" data-hotkey="p" invisible="download_report_ready"/>
+                        <button string="Cancel" class="btn-secondary" special="cancel" data-hotkey="x" invisible="download_report_ready"/>
+                        <button string="Close" class="btn-secondary" special="cancel" invisible="not download_report_ready"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_student_update_all_wizard" model="ir.actions.act_window">
+            <field name="name">Bulk Transfer / Promote</field>
+            <field name="res_model">student.update.all.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+    </data>
+</odoo>

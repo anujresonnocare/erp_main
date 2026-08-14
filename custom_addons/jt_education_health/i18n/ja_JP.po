@@ -1,0 +1,352 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* jt_education_health
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 18.0+e\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-07-23 07:50+0000\n"
+"PO-Revision-Date: 2025-07-23 07:50+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: jt_education_health
+#: model_terms:ir.ui.view,arch_db:jt_education_health.template_health_history_id
+msgid "<strong>Blood Group:</strong>"
+msgstr "<strong>血液型：</strong>"
+
+#. module: jt_education_health
+#: model_terms:ir.ui.view,arch_db:jt_education_health.template_health_history_id
+msgid "<strong>Eye Glasses No:</strong>"
+msgstr "<strong>眼鏡番号：</strong>"
+
+#. module: jt_education_health
+#: model_terms:ir.ui.view,arch_db:jt_education_health.template_health_history_id
+msgid "<strong>Height:</strong>"
+msgstr "<strong>身長：</strong>"
+
+#. module: jt_education_health
+#: model_terms:ir.ui.view,arch_db:jt_education_health.template_health_history_id
+msgid "<strong>Major Diseases:</strong>"
+msgstr "<strong>重大な疾患：</strong>"
+
+#. module: jt_education_health
+#: model_terms:ir.ui.view,arch_db:jt_education_health.template_health_history_id
+msgid "<strong>Name:</strong>"
+msgstr "<strong>名前：</strong>"
+
+#. module: jt_education_health
+#: model_terms:ir.ui.view,arch_db:jt_education_health.template_health_history_id
+msgid "<strong>Physical Challenged:</strong>"
+msgstr "<strong>身体障害：</strong>"
+
+#. module: jt_education_health
+#: model_terms:ir.ui.view,arch_db:jt_education_health.template_health_history_id
+msgid "<strong>Type:</strong>"
+msgstr "<strong>タイプ：</strong>"
+
+#. module: jt_education_health
+#: model_terms:ir.ui.view,arch_db:jt_education_health.template_health_history_id
+msgid "<strong>Weight:</strong>"
+msgstr "<strong>体重：</strong>"
+
+#. module: jt_education_health
+#: model:ir.model.fields.selection,name:jt_education_health.selection__health_health__blood_group__a+
+msgid "A+ve"
+msgstr "A型（Rh+）"
+
+#. module: jt_education_health
+#: model:ir.model.fields.selection,name:jt_education_health.selection__health_health__blood_group__a-
+msgid "A-ve"
+msgstr "A型（Rh-）"
+
+#. module: jt_education_health
+#: model:ir.model.fields.selection,name:jt_education_health.selection__health_health__blood_group__ab+
+msgid "AB+ve"
+msgstr "AB型（Rh+）"
+
+#. module: jt_education_health
+#: model:ir.model.fields.selection,name:jt_education_health.selection__health_health__blood_group__ab-
+msgid "AB-ve"
+msgstr "AB型（Rh-）"
+
+#. module: jt_education_health
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health__regular_checkup
+msgid "Any Regular Checkup Required?"
+msgstr "定期健診が必要ですか？"
+
+#. module: jt_education_health
+#: model:ir.model.fields.selection,name:jt_education_health.selection__health_health__blood_group__b+
+msgid "B+ve"
+msgstr "B型（Rh+）"
+
+#. module: jt_education_health
+#: model:ir.model.fields.selection,name:jt_education_health.selection__health_health__blood_group__b-
+msgid "B-ve"
+msgstr "B型（Rh-）"
+
+#. module: jt_education_health
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health__blood_group
+#: model_terms:ir.ui.view,arch_db:jt_education_health.template_health_register_id
+#: model_terms:ir.ui.view,arch_db:jt_education_health.view_health_search
+msgid "Blood Group"
+msgstr "血液型"
+
+#. module: jt_education_health
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health_line__name
+#: model_terms:ir.ui.view,arch_db:jt_education_health.template_health_history_id
+msgid "Checkup Detail"
+msgstr "健診の詳細"
+
+#. module: jt_education_health
+#: model_terms:ir.ui.view,arch_db:jt_education_health.health_faculty_form_view
+#: model_terms:ir.ui.view,arch_db:jt_education_health.health_student_form_view
+#: model_terms:ir.ui.view,arch_db:jt_education_health.view_health_form
+msgid "Checkup Details"
+msgstr "健診の詳細"
+
+#. module: jt_education_health
+#: model_terms:ir.ui.view,arch_db:jt_education_health.health_faculty_form_view
+#: model_terms:ir.ui.view,arch_db:jt_education_health.health_student_form_view
+#: model_terms:ir.ui.view,arch_db:jt_education_health.view_health_form
+msgid "Checkup Line"
+msgstr "健診行"
+
+#. module: jt_education_health
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health__health_line
+msgid "Checkup Lines"
+msgstr "健診行"
+
+#. module: jt_education_health
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health_line__recommendation
+msgid "Checkup Recommendation"
+msgstr "健診の推奨事項"
+
+#. module: jt_education_health
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health__create_uid
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health_line__create_uid
+msgid "Created by"
+msgstr "作成者"
+
+#. module: jt_education_health
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health__create_date
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health_line__create_date
+msgid "Created on"
+msgstr "作成日"
+
+#. module: jt_education_health
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health_line__date
+#: model_terms:ir.ui.view,arch_db:jt_education_health.template_health_history_id
+msgid "Date"
+msgstr "日付"
+
+#. module: jt_education_health
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health__display_name
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health_line__display_name
+msgid "Display Name"
+msgstr "表示名"
+
+#. module: jt_education_health
+#. odoo-python
+#: code:addons/jt_education_health/models/health.py:0
+msgid "Enter proper height and weight!"
+msgstr "正しい身長と体重を入力してください！"
+
+#. module: jt_education_health
+#: model_terms:ir.ui.view,arch_db:jt_education_health.view_health_search
+msgid "Eye Glasses"
+msgstr "眼鏡"
+
+#. module: jt_education_health
+#: model_terms:ir.ui.view,arch_db:jt_education_health.template_health_register_id
+msgid "Eye Glasses No"
+msgstr "眼鏡番号"
+
+#. module: jt_education_health
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health__eyeglasses_no
+msgid "Eye Glasses Number"
+msgstr "眼鏡番号"
+
+#. module: jt_education_health
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health__eyeglasses
+msgid "Eye Glasses?"
+msgstr "眼鏡をかけていますか？"
+
+#. module: jt_education_health
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health__faculty_id
+#: model:ir.model.fields.selection,name:jt_education_health.selection__health_health__type__faculty
+msgid "Faculty"
+msgstr "教職員"
+
+#. module: jt_education_health
+#: model_terms:ir.ui.view,arch_db:jt_education_health.view_health_search
+msgid "Group By..."
+msgstr "グループ化..."
+
+#. module: jt_education_health
+#: model:ir.actions.act_window,name:jt_education_health.action_health_view
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health_line__health_id
+#: model_terms:ir.ui.view,arch_db:jt_education_health.view_health_form
+#: model_terms:ir.ui.view,arch_db:jt_education_health.view_health_search
+#: model_terms:ir.ui.view,arch_db:jt_education_health.view_health_tree
+msgid "Health"
+msgstr "健康"
+
+#. module: jt_education_health
+#: model:ir.model.fields,field_description:jt_education_health.field_res_partner__health_faculty_lines
+#: model:ir.model.fields,field_description:jt_education_health.field_res_users__health_faculty_lines
+#: model_terms:ir.ui.view,arch_db:jt_education_health.health_faculty_form_view
+#: model_terms:ir.ui.view,arch_db:jt_education_health.health_student_form_view
+msgid "Health Detail"
+msgstr "健康詳細"
+
+#. module: jt_education_health
+#: model:ir.model,name:jt_education_health.model_health_health
+msgid "Health Detail for Students and Faculties"
+msgstr "学生および教職員の健康詳細"
+
+#. module: jt_education_health
+#: model:ir.model.fields,field_description:jt_education_health.field_res_partner__health_lines
+#: model:ir.model.fields,field_description:jt_education_health.field_res_users__health_lines
+msgid "Health Details"
+msgstr "健康詳細"
+
+#. module: jt_education_health
+#: model_terms:ir.ui.view,arch_db:jt_education_health.template_health_history_id
+msgid "Health History"
+msgstr "健康履歴"
+
+#. module: jt_education_health
+#: model_terms:ir.ui.view,arch_db:jt_education_health.template_health_register_id
+msgid "Health Register"
+msgstr "健康記録"
+
+#. module: jt_education_health
+#: model:ir.model,name:jt_education_health.model_health_health_line
+msgid "Health line"
+msgstr "健康行"
+
+#. module: jt_education_health
+#: model_terms:ir.ui.view,arch_db:jt_education_health.template_health_register_id
+msgid "Height"
+msgstr "身長"
+
+#. module: jt_education_health
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health__height
+msgid "Height(C.M.)"
+msgstr "身長（cm）"
+
+#. module: jt_education_health
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health__id
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health_line__id
+msgid "ID"
+msgstr "ID"
+
+#. module: jt_education_health
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health__write_uid
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health_line__write_uid
+msgid "Last Updated by"
+msgstr "最終更新者"
+
+#. module: jt_education_health
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health__write_date
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health_line__write_date
+msgid "Last Updated on"
+msgstr "最終更新日"
+
+#. module: jt_education_health
+#: model_terms:ir.ui.view,arch_db:jt_education_health.view_health_search
+msgid "Major Disease"
+msgstr "重大な疾患"
+
+#. module: jt_education_health
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health__major_diseases_note
+#: model_terms:ir.ui.view,arch_db:jt_education_health.template_health_register_id
+msgid "Major Diseases"
+msgstr "重大な疾患"
+
+#. module: jt_education_health
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health__major_diseases
+msgid "Major Diseases?"
+msgstr "重大な疾患がありますか？"
+
+#. module: jt_education_health
+#: model_terms:ir.ui.view,arch_db:jt_education_health.template_health_register_id
+msgid "Name"
+msgstr "名前"
+
+#. module: jt_education_health
+#: model:ir.model.fields.selection,name:jt_education_health.selection__health_health__blood_group__o+
+msgid "O+ve"
+msgstr "O型（Rh+）"
+
+#. module: jt_education_health
+#: model:ir.model.fields.selection,name:jt_education_health.selection__health_health__blood_group__o-
+msgid "O-ve"
+msgstr "O型（Rh-）"
+
+#. module: jt_education_health
+#: model_terms:ir.ui.view,arch_db:jt_education_health.health_faculty_form_view
+#: model_terms:ir.ui.view,arch_db:jt_education_health.health_student_form_view
+#: model_terms:ir.ui.view,arch_db:jt_education_health.view_health_form
+msgid "Other Details"
+msgstr "その他の詳細"
+
+#. module: jt_education_health
+#: model:ir.model,name:jt_education_health.model_res_partner
+msgid "Parent Information"
+msgstr "保護者情報"
+
+#. module: jt_education_health
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health__physical_challenges_note
+#: model_terms:ir.ui.view,arch_db:jt_education_health.view_health_search
+msgid "Physical Challenge"
+msgstr "身体障害"
+
+#. module: jt_education_health
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health__physical_challenges
+msgid "Physical Challenge?"
+msgstr "身体障害がありますか？"
+
+#. module: jt_education_health
+#: model_terms:ir.ui.view,arch_db:jt_education_health.template_health_register_id
+msgid "Physical Challenged"
+msgstr "身体障害"
+
+#. module: jt_education_health
+#: model_terms:ir.ui.view,arch_db:jt_education_health.template_health_history_id
+msgid "Recommendation"
+msgstr "推奨事項"
+
+#. module: jt_education_health
+#: model_terms:ir.ui.view,arch_db:jt_education_health.view_health_search
+msgid "Regular Checkup"
+msgstr "定期健診"
+
+#. module: jt_education_health
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health__student_id
+#: model:ir.model.fields.selection,name:jt_education_health.selection__health_health__type__student
+msgid "Student"
+msgstr "学生"
+
+#. module: jt_education_health
+#: model_terms:ir.ui.view,arch_db:jt_education_health.view_health_search
+msgid "Student Name"
+msgstr "学生の名前"
+
+#. module: jt_education_health
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health__type
+#: model_terms:ir.ui.view,arch_db:jt_education_health.template_health_register_id
+msgid "Type"
+msgstr "タイプ"
+
+#. module: jt_education_health
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health__weight
+#: model_terms:ir.ui.view,arch_db:jt_education_health.template_health_register_id
+msgid "Weight"
+msgstr "体重"

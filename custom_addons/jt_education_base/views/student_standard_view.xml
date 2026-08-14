@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Student Standard Form View-->
+        <record id="standard_form_view" model="ir.ui.view">
+            <field name="name">Student Standard Form View</field>
+            <field name="model">student.standard</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name" required='1'/>
+                                <field name="occupied_seats"/>
+                                <field name="vacant_seates"/>
+                                <field name="capacity"/>
+
+                            </group>
+                            <group>
+                                <field name="app_close_date" groups="base.group_system" />
+                            </group>
+                        </group>                                
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <!--Student Standard List View-->
+        <record id="standard_list_view" model="ir.ui.view">
+            <field name="name">Student Standard List View</field>
+            <field name="model">student.standard</field>
+            <field name="arch" type="xml">
+                <list>
+                    <field name="name" required='1'/>
+                    <field name="capacity"/>
+                    <field name="occupied_seats"/>
+                    <field name="vacant_seates"/>
+                </list>
+            </field>
+        </record>
+        <!--Division Form View-->
+        <record id="division_form_view" model="ir.ui.view">
+            <field name="name">Standard Division Form View</field>
+            <field name="model">standard.division</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name" required='1'/>                                
+                            </group>
+                        </group>
+                    </sheet>
+                    <!-- Chatter -->
+                     <chatter/>
+                </form>
+            </field>
+        </record>
+        <!--Division List View-->
+        <record id="division_list_view" model="ir.ui.view">
+            <field name="name">Standard Division List View</field>
+            <field name="model">standard.division</field>
+            <field name="arch" type="xml">
+                <list editable='top'>
+                    <field name="name" required='1'/>
+                    <field name="capacity"/>
+                    <!-- <field name="occupied_seats"/>
+                    <field name="vacant_seates"/> -->
+                </list>
+            </field>
+        </record>
+        <!-- Year Form View-->
+        <record id="year_form_view" model="ir.ui.view">
+            <field name="name">Year Year Form View</field>
+            <field name="model">year.year</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name" required='1'/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <!--Year List View-->
+        <record id="year_list_view" model="ir.ui.view">
+            <field name="name">Year Year List View</field>
+            <field name="model">year.year</field>
+            <field name="arch" type="xml">
+                <list editable='top'>
+                    <field name="name" required='1'/>
+                </list>
+            </field>
+        </record>
+    </data>
+</odoo>

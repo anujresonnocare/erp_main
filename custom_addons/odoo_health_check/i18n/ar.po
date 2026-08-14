@@ -1,0 +1,944 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* odoo_health_check
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 18.0+e\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-30 09:04+0000\n"
+"PO-Revision-Date: 2026-04-30 09:04+0000\n"
+"Last-Translator: \n"
+"Language-Team: Arabic\n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5;\n"
+
+
+#. module: odoo_health_check
+#: model:mail.template,body_html:odoo_health_check.mail_template_pg_monthly
+msgid ""
+"<div style=\"font-family:Arial,sans-serif;font-size:14px;color:#333;max-width:720px\">\n"
+"                <t t-set=\"accent\" t-value=\"'#1f7a8c'\"/>\n"
+"                <t t-set=\"button_style\" t-value=\"'display:inline-block;padding:8px 16px;background:' + accent + ';color:#fff;text-decoration:none;border-radius:3px;font-weight:bold'\"/>\n"
+"                <t t-set=\"th_style\" t-value=\"'text-align:left;padding:6px 12px;border-bottom:1px solid #ddd'\"/>\n"
+"                <t t-set=\"th_right\" t-value=\"'text-align:right;padding:6px 12px;border-bottom:1px solid #ddd'\"/>\n"
+"                <t t-set=\"td_style\" t-value=\"'padding:4px 12px;border-bottom:1px solid #eee'\"/>\n"
+"                <t t-set=\"td_right\" t-value=\"'padding:4px 12px;text-align:right;border-bottom:1px solid #eee'\"/>\n"
+"                <t t-set=\"footer_style\" t-value=\"'margin-top:24px;color:#888;font-size:12px'\"/>\n"
+"                <t t-set=\"data\" t-value=\"object._get_parsed_details()\"/>\n"
+"                <p>Monthly PostgreSQL growth report for database\n"
+"                   <strong t-out=\"data.get('db_name', '?')\"/>.</p>\n"
+"                <p>\n"
+"                    Total DB size: <strong t-out=\"object._human_bytes(data.get('total_db_bytes', 0))\"/>\n"
+"                    <t t-if=\"data.get('total_db_bytes_delta') is not None\">\n"
+"                        (<t t-out=\"object._human_delta_bytes(data.get('total_db_bytes_delta'))\"/> vs previous report)\n"
+"                    </t>\n"
+"                </p>\n"
+"                <h3 style=\"margin-top:18px\">Top tables</h3>\n"
+"                <table style=\"border-collapse:collapse;font-size:13px\">\n"
+"                    <thead>\n"
+"                        <tr style=\"background:#f5f5f5\">\n"
+"                            <th t-attf-style=\"{{ th_style }}\">Table</th>\n"
+"                            <th t-attf-style=\"{{ th_right }}\">Total size</th>\n"
+"                            <th t-attf-style=\"{{ th_right }}\">Î Size</th>\n"
+"                            <th t-attf-style=\"{{ th_right }}\">Rows (est.)</th>\n"
+"                            <th t-attf-style=\"{{ th_right }}\">Î Rows</th>\n"
+"                        </tr>\n"
+"                    </thead>\n"
+"                    <tbody>\n"
+"                        <tr t-foreach=\"data.get('tables', [])\" t-as=\"t\">\n"
+"                            <td t-attf-style=\"{{ td_style }}\" t-out=\"t.get('name')\"/>\n"
+"                            <td t-attf-style=\"{{ td_right }}\" t-out=\"object._human_bytes(t.get('total_bytes', 0))\"/>\n"
+"                            <td t-attf-style=\"{{ td_right }}\">\n"
+"                                <t t-if=\"t.get('total_bytes_delta') is None\">new</t>\n"
+"                                <t t-else=\"\" t-out=\"object._human_delta_bytes(t.get('total_bytes_delta'))\"/>\n"
+"                            </td>\n"
+"                            <td t-attf-style=\"{{ td_right }}\" t-out=\"t.get('row_estimate', 0)\"/>\n"
+"                            <td t-attf-style=\"{{ td_right }}\">\n"
+"                                <t t-if=\"t.get('row_estimate_delta') is None\">new</t>\n"
+"                                <t t-elif=\"t.get('row_estimate_delta') &gt; 0\">+<t t-out=\"t.get('row_estimate_delta')\"/></t>\n"
+"                                <t t-else=\"\" t-out=\"t.get('row_estimate_delta')\"/>\n"
+"                            </td>\n"
+"                        </tr>\n"
+"                    </tbody>\n"
+"                </table>\n"
+"                <p style=\"margin-top:18px\">\n"
+"                    <a t-att-href=\"object._action_url()\" t-attf-style=\"{{ button_style }}\">\n"
+"                        View in PG Reports\n"
+"                    </a>\n"
+"                </p>\n"
+"                <p t-attf-style=\"{{ footer_style }}\">\n"
+"                    Sent monthly by <strong>Odoo Health Check</strong>. Row counts are PostgreSQL estimates from `pg_class.reltuples` (last ANALYZE), not exact COUNT(*). Manage recipients in Settings -&gt; Health Check.\n"
+"                </p>\n"
+"            </div>\n"
+"        "
+msgstr ""
+"<div style=\"font-family:Arial,sans-serif;font-size:14px;color:#333;max-width:720px\">\n"
+"                <t t-set=\"accent\" t-value=\"'#1f7a8c'\"/>\n"
+"                <t t-set=\"button_style\" t-value=\"'display:inline-block;padding:8px 16px;background:' + accent + ';color:#fff;text-decoration:none;border-radius:3px;font-weight:bold'\"/>\n"
+"                <t t-set=\"th_style\" t-value=\"'text-align:left;padding:6px 12px;border-bottom:1px solid #ddd'\"/>\n"
+"                <t t-set=\"th_right\" t-value=\"'text-align:right;padding:6px 12px;border-bottom:1px solid #ddd'\"/>\n"
+"                <t t-set=\"td_style\" t-value=\"'padding:4px 12px;border-bottom:1px solid #eee'\"/>\n"
+"                <t t-set=\"td_right\" t-value=\"'padding:4px 12px;text-align:right;border-bottom:1px solid #eee'\"/>\n"
+"                <t t-set=\"footer_style\" t-value=\"'margin-top:24px;color:#888;font-size:12px'\"/>\n"
+"                <t t-set=\"data\" t-value=\"object._get_parsed_details()\"/>\n"
+"                <p>تقرير نمو PostgreSQL الشهري لقاعدة البيانات \n"
+"                   <strong t-out=\"data.get('db_name', '?')\"/>.</p>\n"
+"                <p>\n"
+"                    إجمالي حجم قاعدة البيانات: <strong t-out=\"object._human_bytes(data.get('total_db_bytes', 0))\"/>\n"
+"                    <t t-if=\"data.get('total_db_bytes_delta') is not None\">\n"
+"                        (<t t-out=\"object._human_delta_bytes(data.get('total_db_bytes_delta'))\"/> مقارنةً بالتقرير السابق)\n"
+"                    </t>\n"
+"                </p>\n"
+"                <h3 style=\"margin-top:18px\">أكبر الجداول</h3>\n"
+"                <table style=\"border-collapse:collapse;font-size:13px\">\n"
+"                    <thead>\n"
+"                        <tr style=\"background:#f5f5f5\">\n"
+"                            <th t-attf-style=\"{{ th_style }}\">الجدول</th>\n"
+"                            <th t-attf-style=\"{{ th_right }}\">الحجم الإجمالي</th>\n"
+"                            <th t-attf-style=\"{{ th_right }}\">Δ الحجم</th>\n"
+"                            <th t-attf-style=\"{{ th_right }}\">الصفوف (تقدير)</th>\n"
+"                            <th t-attf-style=\"{{ th_right }}\">Δ الصفوف</th>\n"
+"                        </tr>\n"
+"                    </thead>\n"
+"                    <tbody>\n"
+"                        <tr t-foreach=\"data.get('tables', [])\" t-as=\"t\">\n"
+"                            <td t-attf-style=\"{{ td_style }}\" t-out=\"t.get('name')\"/>\n"
+"                            <td t-attf-style=\"{{ td_right }}\" t-out=\"object._human_bytes(t.get('total_bytes', 0))\"/>\n"
+"                            <td t-attf-style=\"{{ td_right }}\">\n"
+"                                <t t-if=\"t.get('total_bytes_delta') is None\">جديد</t>\n"
+"                                <t t-else=\"\" t-out=\"object._human_delta_bytes(t.get('total_bytes_delta'))\"/>\n"
+"                            </td>\n"
+"                            <td t-attf-style=\"{{ td_right }}\" t-out=\"t.get('row_estimate', 0)\"/>\n"
+"                            <td t-attf-style=\"{{ td_right }}\">\n"
+"                                <t t-if=\"t.get('row_estimate_delta') is None\">جديد</t>\n"
+"                                <t t-elif=\"t.get('row_estimate_delta') &gt; 0\">+<t t-out=\"t.get('row_estimate_delta')\"/></t>\n"
+"                                <t t-else=\"\" t-out=\"t.get('row_estimate_delta')\"/>\n"
+"                            </td>\n"
+"                        </tr>\n"
+"                    </tbody>\n"
+"                </table>\n"
+"                <p style=\"margin-top:18px\">\n"
+"                    <a t-att-href=\"object._action_url()\" t-attf-style=\"{{ button_style }}\">\n"
+"                        افتح في تقارير PG\n"
+"                    </a>\n"
+"                </p>\n"
+"                <p t-attf-style=\"{{ footer_style }}\">\n"
+"                    يُرسل شهريًا بواسطة <strong>Odoo Health Check</strong>. عدد الصفوف هو تقدير من PostgreSQL عبر `pg_class.reltuples` (آخر ANALYZE)، وليس COUNT(*) الدقيق. إدارة المستلمين في الإعدادات -> Health Check.\n"
+"                </p>\n"
+"            </div>\n"
+"        "
+
+#. module: odoo_health_check
+#: model:mail.template,body_html:odoo_health_check.mail_template_disk_alert
+msgid ""
+"<div style=\"font-family:Arial,sans-serif;font-size:14px;color:#333;max-width:720px\">\n"
+"                <t t-set=\"accent\" t-value=\"'#b00020' if object.status == 'critical' else '#b08000'\"/>\n"
+"                <t t-set=\"badge_text\" t-value=\"object.status.upper() if object.status else 'WARNING'\"/>\n"
+"                <t t-set=\"badge_style\" t-value=\"'display:inline-block;padding:4px 12px;background:' + accent + ';color:#fff;font-weight:bold;border-radius:3px;font-size:12px;letter-spacing:0.5px'\"/>\n"
+"                <t t-set=\"button_style\" t-value=\"'display:inline-block;padding:8px 16px;background:' + accent + ';color:#fff;text-decoration:none;border-radius:3px;font-weight:bold'\"/>\n"
+"                <t t-set=\"kv_label\" t-value=\"'padding:4px 12px 4px 0;color:#666'\"/>\n"
+"                <t t-set=\"footer_style\" t-value=\"'margin-top:24px;color:#888;font-size:12px'\"/>\n"
+"                <div t-attf-style=\"{{ badge_style }}\" t-out=\"badge_text\"/>\n"
+"                <p style=\"margin-top:12px\">Disk usage on <strong t-out=\"object.mount_path\"/> has reached\n"
+"                   <strong t-out=\"object.status\"/>:\n"
+"                   <strong t-out=\"'%.1f' % (object.used_pct or 0)\"/>% used.</p>\n"
+"                <table style=\"border-collapse:collapse;margin:12px 0\">\n"
+"                    <tr><td t-attf-style=\"{{ kv_label }}\">Check</td><td t-out=\"object.check_type\"/></tr>\n"
+"                    <tr><td t-attf-style=\"{{ kv_label }}\">Mount</td><td><strong t-out=\"object.mount_path\"/></td></tr>\n"
+"                    <tr><td t-attf-style=\"{{ kv_label }}\">Status</td><td t-out=\"object.status\"/></tr>\n"
+"                    <tr><td t-attf-style=\"{{ kv_label }}\">Used</td><td><t t-out=\"'%.2f' % (object.used_pct or 0)\"/>%</td></tr>\n"
+"                    <tr><td t-attf-style=\"{{ kv_label }}\">Total</td><td><t t-out=\"'%.2f' % ((object.total_bytes or 0) / (1024.0 ** 3))\"/> GB</td></tr>\n"
+"                    <tr><td t-attf-style=\"{{ kv_label }}\">Free</td><td><t t-out=\"'%.2f' % ((object.free_bytes or 0) / (1024.0 ** 3))\"/> GB</td></tr>\n"
+"                    <tr><td t-attf-style=\"{{ kv_label }}\">Time</td><td t-out=\"object.date\"/></tr>\n"
+"                </table>\n"
+"                <p>\n"
+"                    <a t-att-href=\"object._action_url()\" t-attf-style=\"{{ button_style }}\">\n"
+"                        View in Disk Checks\n"
+"                    </a>\n"
+"                </p>\n"
+"                <p t-attf-style=\"{{ footer_style }}\">\n"
+"                    One alert per worsening transition. Manage thresholds and recipients in Settings -&gt; Health Check.\n"
+"                </p>\n"
+"            </div>\n"
+"        "
+msgstr ""
+"<div style=\"font-family:Arial,sans-serif;font-size:14px;color:#333;max-width:720px\">\n"
+"                <t t-set=\"accent\" t-value=\"'#b00020' if object.status == 'critical' else '#b08000'\"/>\n"
+"                <t t-set=\"badge_text\" t-value=\"object.status.upper() if object.status else 'WARNING'\"/>\n"
+"                <t t-set=\"badge_style\" t-value=\"'display:inline-block;padding:4px 12px;background:' + accent + ';color:#fff;font-weight:bold;border-radius:3px;font-size:12px;letter-spacing:0.5px'\"/>\n"
+"                <t t-set=\"button_style\" t-value=\"'display:inline-block;padding:8px 16px;background:' + accent + ';color:#fff;text-decoration:none;border-radius:3px;font-weight:bold'\"/>\n"
+"                <t t-set=\"kv_label\" t-value=\"'padding:4px 12px 4px 0;color:#666'\"/>\n"
+"                <t t-set=\"footer_style\" t-value=\"'margin-top:24px;color:#888;font-size:12px'\"/>\n"
+"                <div t-attf-style=\"{{ badge_style }}\" t-out=\"badge_text\"/>\n"
+"                <p style=\"margin-top:12px\">استخدام القرص على <strong t-out=\"object.mount_path\"/> وصل إلى \n"
+"                   <strong t-out=\"object.status\"/>:\n"
+"                   <strong t-out=\"'%.1f' % (object.used_pct or 0)\"/>% مستخدم.</p>\n"
+"                <table style=\"border-collapse:collapse;margin:12px 0\">\n"
+"                    <tr><td t-attf-style=\"{{ kv_label }}\">الفحص</td><td t-out=\"object.check_type\"/></tr>\n"
+"                    <tr><td t-attf-style=\"{{ kv_label }}\">نقطة التحميل</td><td><strong t-out=\"object.mount_path\"/></td></tr>\n"
+"                    <tr><td t-attf-style=\"{{ kv_label }}\">الحالة</td><td t-out=\"object.status\"/></tr>\n"
+"                    <tr><td t-attf-style=\"{{ kv_label }}\">مستخدم</td><td><t t-out=\"'%.2f' % (object.used_pct or 0)\"/>%</td></tr>\n"
+"                    <tr><td t-attf-style=\"{{ kv_label }}\">إجمالي</td><td><t t-out=\"'%.2f' % ((object.total_bytes or 0) / (1024.0 ** 3))\"/> GB</td></tr>\n"
+"                    <tr><td t-attf-style=\"{{ kv_label }}\">حر</td><td><t t-out=\"'%.2f' % ((object.free_bytes or 0) / (1024.0 ** 3))\"/> GB</td></tr>\n"
+"                    <tr><td t-attf-style=\"{{ kv_label }}\">الوقت</td><td t-out=\"object.date\"/></tr>\n"
+"                </table>\n"
+"                <p>\n"
+"                    <a t-att-href=\"object._action_url()\" t-attf-style=\"{{ button_style }}\">\n"
+"                        افتح في فحوصات القرص\n"
+"                    </a>\n"
+"                </p>\n"
+"                <p t-attf-style=\"{{ footer_style }}\">\n"
+"                    بريد واحد لكل تدهور. إدارة العتبات والمستلمين في الإعدادات -> Health Check.\n"
+"                </p>\n"
+"            </div>\n"
+"        "
+
+#. module: odoo_health_check
+#: model:mail.template,body_html:odoo_health_check.mail_template_cron_failure
+msgid ""
+"<div style=\"font-family:Arial,sans-serif;font-size:14px;color:#333;max-width:720px\">\n"
+"                <t t-set=\"accent\" t-value=\"'#b00020'\"/>\n"
+"                <t t-set=\"badge_style\" t-value=\"'display:inline-block;padding:4px 12px;background:' + accent + ';color:#fff;font-weight:bold;border-radius:3px;font-size:12px;letter-spacing:0.5px'\"/>\n"
+"                <t t-set=\"button_style\" t-value=\"'display:inline-block;padding:8px 16px;background:' + accent + ';color:#fff;text-decoration:none;border-radius:3px;font-weight:bold'\"/>\n"
+"                <t t-set=\"kv_label\" t-value=\"'padding:4px 12px 4px 0;color:#666'\"/>\n"
+"                <t t-set=\"footer_style\" t-value=\"'margin-top:24px;color:#888;font-size:12px'\"/>\n"
+"                <div t-attf-style=\"{{ badge_style }}\">CRITICAL</div>\n"
+"                <p style=\"margin-top:12px\">A scheduled action has <strong t-attf-style=\"color:{{ accent }}\">failed</strong> on server <strong t-out=\"object.server_name\"/>.</p>\n"
+"                <table style=\"border-collapse:collapse;margin:12px 0\">\n"
+"                    <tr><td t-attf-style=\"{{ kv_label }}\">Scheduled action</td><td><strong t-out=\"object.cron_id.name\"/></td></tr>\n"
+"                    <tr><td t-attf-style=\"{{ kv_label }}\">Started</td><td t-out=\"object.date_start\"/></tr>\n"
+"                    <tr><td t-attf-style=\"{{ kv_label }}\">Ended</td><td t-out=\"object.date_end\"/></tr>\n"
+"                    <tr><td t-attf-style=\"{{ kv_label }}\">Duration</td><td><t t-out=\"object.duration_sec\"/> s</td></tr>\n"
+"                    <tr><td t-attf-style=\"{{ kv_label }}\">Server</td><td t-out=\"object.server_name\"/></tr>\n"
+"                </table>\n"
+"                <p>\n"
+"                    <a t-att-href=\"object._action_url()\" t-attf-style=\"{{ button_style }}\">\n"
+"                        View in Cron History\n"
+"                    </a>\n"
+"                </p>\n"
+"                <details style=\"margin-top:18px\">\n"
+"                    <summary style=\"cursor:pointer;color:#666;font-size:13px;padding:6px 0\">\n"
+"                        Show full error traceback\n"
+"                    </summary>\n"
+"                    <pre t-attf-style=\"background:#f5f5f5;padding:12px;border-left:4px solid {{ accent }};overflow-x:auto;margin-top:8px;font-size:12px\" t-out=\"object.error_traceback\"/>\n"
+"                </details>\n"
+"                <p t-attf-style=\"{{ footer_style }}\">\n"
+"                    Sent by <strong>Odoo Health Check</strong>. Manage recipients in Settings -&gt; Health Check.\n"
+"                </p>\n"
+"            </div>\n"
+"        "
+msgstr ""
+"<div style=\"font-family:Arial,sans-serif;font-size:14px;color:#333;max-width:720px\">\n"
+"                <t t-set=\"accent\" t-value=\"'#b00020'\"/>\n"
+"                <t t-set=\"badge_style\" t-value=\"'display:inline-block;padding:4px 12px;background:' + accent + ';color:#fff;font-weight:bold;border-radius:3px;font-size:12px;letter-spacing:0.5px'\"/>\n"
+"                <t t-set=\"button_style\" t-value=\"'display:inline-block;padding:8px 16px;background:' + accent + ';color:#fff;text-decoration:none;border-radius:3px;font-weight:bold'\"/>\n"
+"                <t t-set=\"kv_label\" t-value=\"'padding:4px 12px 4px 0;color:#666'\"/>\n"
+"                <t t-set=\"footer_style\" t-value=\"'margin-top:24px;color:#888;font-size:12px'\"/>\n"
+"                <div t-attf-style=\"{{ badge_style }}\">حرج</div>\n"
+"                <p style=\"margin-top:12px\">إجراء مجدول <strong t-attf-style=\"color:{{ accent }}\">فشل</strong> على الخادم <strong t-out=\"object.server_name\"/>.</p>\n"
+"                <table style=\"border-collapse:collapse;margin:12px 0\">\n"
+"                    <tr><td t-attf-style=\"{{ kv_label }}\">إجراء مجدول</td><td><strong t-out=\"object.cron_id.name\"/></td></tr>\n"
+"                    <tr><td t-attf-style=\"{{ kv_label }}\">بدأ</td><td t-out=\"object.date_start\"/></tr>\n"
+"                    <tr><td t-attf-style=\"{{ kv_label }}\">انتهى</td><td t-out=\"object.date_end\"/></tr>\n"
+"                    <tr><td t-attf-style=\"{{ kv_label }}\">المدة</td><td><t t-out=\"object.duration_sec\"/> ث</td></tr>\n"
+"                    <tr><td t-attf-style=\"{{ kv_label }}\">الخادم</td><td t-out=\"object.server_name\"/></tr>\n"
+"                </table>\n"
+"                <p>\n"
+"                    <a t-att-href=\"object._action_url()\" t-attf-style=\"{{ button_style }}\">\n"
+"                        افتح في سجل المجدوِل\n"
+"                    </a>\n"
+"                </p>\n"
+"                <details style=\"margin-top:18px\">\n"
+"                    <summary style=\"cursor:pointer;color:#666;font-size:13px;padding:6px 0\">\n"
+"                        إظهار التتبع الكامل للخطأ\n"
+"                    </summary>\n"
+"                    <pre t-attf-style=\"background:#f5f5f5;padding:12px;border-left:4px solid {{ accent }};overflow-x:auto;margin-top:8px;font-size:12px\" t-out=\"object.error_traceback\"/>\n"
+"                </details>\n"
+"                <p t-attf-style=\"{{ footer_style }}\">\n"
+"                    أُرسل بواسطة <strong>Odoo Health Check</strong>. إدارة المستلمين في الإعدادات -> Health Check.\n"
+"                </p>\n"
+"            </div>\n"
+"        "
+
+#. module: odoo_health_check
+#: model:ir.model.fields,field_description:odoo_health_check.field_health_check_result__check_type
+#: model_terms:ir.ui.view,arch_db:odoo_health_check.health_check_result_view_search
+msgid "Check Type"
+msgstr "نوع الفحص"
+
+#. module: odoo_health_check
+#: model:ir.model.fields,help:odoo_health_check.field_res_config_settings__odoo_health_notify_emails
+msgid "Comma-separated list of recipients that receive an email every time a scheduled action fails. Leave empty to disable."
+msgstr "قائمة مستلمين مفصولين بفواصل يتلقون بريدًا في كل مرة يفشل فيها إجراء مجدول. اتركه فارغًا للتعطيل."
+
+#. module: odoo_health_check
+#: model_terms:ir.ui.view,arch_db:odoo_health_check.res_config_settings_view_form
+msgid "Comma-separated list of recipients. Leave empty to disable email alerts."
+msgstr "مستلمون مفصولون بفواصل. اتركه فارغًا لإيقاف تنبيهات البريد."
+
+#. module: odoo_health_check
+#: model_terms:ir.ui.view,arch_db:odoo_health_check.res_config_settings_view_form
+msgid "Comma-separated recipients for the monthly PostgreSQL growth report (sent on the 1st of each month at 08:00). Leave empty to disable email - the report row is still created."
+msgstr "مستلمون مفصولون بفواصل لتقرير نمو PostgreSQL الشهري (يُرسل في اليوم الأول من كل شهر الساعة 08:00). اتركه فارغًا لإيقاف البريد: يُنشأ سجل التقرير على أي حال."
+
+#. module: odoo_health_check
+#: model:ir.model.fields,help:odoo_health_check.field_res_config_settings__odoo_health_disk_alert_emails
+msgid "Comma-separated recipients that receive an email when disk usage transitions from ok to warn or critical (or from warn to critical). One email per worsening transition - no per-hour spam. Leave empty to disable."
+msgstr "مستلمون مفصولون بفواصل يتلقون بريدًا عند انتقال القرص من ok إلى warn أو critical (أو من warn إلى critical). بريد واحد لكل تدهور، بدون رسائل بالساعة. اتركه فارغًا للتعطيل."
+
+#. module: odoo_health_check
+#: model:ir.model.fields,help:odoo_health_check.field_res_config_settings__odoo_health_pg_report_emails
+msgid "Comma-separated recipients that receive the monthly PostgreSQL growth report on the 1st of each month at 08:00. Leave empty to disable email - the report row is still created."
+msgstr "مستلمون مفصولون بفواصل يتلقون تقرير نمو PostgreSQL الشهري في اليوم الأول من كل شهر الساعة 08:00. اتركه فارغًا لإيقاف البريد: يُنشأ سجل التقرير على أي حال."
+
+#. module: odoo_health_check
+#: model_terms:ir.ui.view,arch_db:odoo_health_check.res_config_settings_view_form
+msgid "Comma-separated recipients. One email per worsening transition (ok->warn, ok->critical, warn->critical). Leave empty to disable."
+msgstr "مستلمون مفصولون بفواصل. بريد واحد لكل تدهور (ok->warn, ok->critical, warn->critical). اتركه فارغًا للتعطيل."
+
+#. module: odoo_health_check
+#: model:ir.model,name:odoo_health_check.model_res_config_settings
+msgid "Config Settings"
+msgstr "إعدادات التكوين"
+
+#. module: odoo_health_check
+#: model:ir.model.fields,field_description:odoo_health_check.field_health_check_dashboard__create_uid
+#: model:ir.model.fields,field_description:odoo_health_check.field_health_check_result__create_uid
+#: model:ir.model.fields,field_description:odoo_health_check.field_ir_cron_history__create_uid
+msgid "Created by"
+msgstr "أنشأ بواسطة"
+
+#. module: odoo_health_check
+#: model:ir.model.fields,field_description:odoo_health_check.field_health_check_dashboard__create_date
+#: model:ir.model.fields,field_description:odoo_health_check.field_health_check_result__create_date
+#: model:ir.model.fields,field_description:odoo_health_check.field_ir_cron_history__create_date
+msgid "Created on"
+msgstr "أنشأ في"
+
+#. module: odoo_health_check
+#: model:ir.model.fields.selection,name:odoo_health_check.selection__health_check_dashboard__disk_filestore_status__critical
+#: model:ir.model.fields.selection,name:odoo_health_check.selection__health_check_dashboard__disk_root_status__critical
+#: model:ir.model.fields.selection,name:odoo_health_check.selection__health_check_result__status__critical
+#: model_terms:ir.ui.view,arch_db:odoo_health_check.health_check_result_view_search
+msgid "Critical"
+msgstr "حرج"
+
+#. module: odoo_health_check
+#: model_terms:ir.ui.view,arch_db:odoo_health_check.res_config_settings_view_form
+msgid "Critical Threshold (%)"
+msgstr "الحد الحرج (%)"
+
+#. module: odoo_health_check
+#: model_terms:ir.ui.view,arch_db:odoo_health_check.ir_cron_history_view_form
+msgid "Cron Execution"
+msgstr "تنفيذ المجدوِل"
+
+#. module: odoo_health_check
+#: model:ir.model,name:odoo_health_check.model_ir_cron_history
+#: model_terms:ir.ui.view,arch_db:odoo_health_check.ir_cron_history_view_list
+msgid "Cron Execution History"
+msgstr "سجل تنفيذ المجدوِل"
+
+#. module: odoo_health_check
+#: model_terms:ir.ui.view,arch_db:odoo_health_check.res_config_settings_view_form
+msgid "Cron Failure Emails"
+msgstr "بريد أعطال المجدوِل"
+
+#. module: odoo_health_check
+#: model:ir.model.fields,field_description:odoo_health_check.field_res_config_settings__odoo_health_notify_emails
+msgid "Cron Failure Notification Emails"
+msgstr "بريد إشعارات أعطال المجدوِل"
+
+#. module: odoo_health_check
+#: model:ir.actions.act_window,name:odoo_health_check.ir_cron_history_action
+#: model:ir.ui.menu,name:odoo_health_check.menu_cron_history
+#: model_terms:ir.ui.view,arch_db:odoo_health_check.ir_cron_history_view_search
+msgid "Cron History"
+msgstr "سجل المجدوِل"
+
+#. module: odoo_health_check
+#: model_terms:ir.ui.view,arch_db:odoo_health_check.res_config_settings_view_form
+msgid "Cron execution history older than this is deleted daily. Zero or negative disables cleanup."
+msgstr "يُحذف السجل الأقدم من هذه القيمة يوميًا. صفر أو قيمة سالبة يُعطل التنظيف."
+
+#. module: odoo_health_check
+#: model:ir.model.fields,help:odoo_health_check.field_res_config_settings__odoo_health_retention_days
+msgid "Cron execution history rows older than this are deleted daily. Set to 0 or negative to disable cleanup."
+msgstr "تُحذف سجلات السجل الأقدم من هذه القيمة يوميًا. ضع 0 أو قيمة سالبة لتعطيل التنظيف."
+
+#. module: odoo_health_check
+#: model_terms:ir.actions.act_window,help:odoo_health_check.ir_cron_history_action
+msgid "Cron execution history will appear here after scheduled actions run."
+msgstr "سيظهر سجل التنفيذ هنا بعد تشغيل الإجراءات المجدولة."
+
+#. module: odoo_health_check
+#: model:ir.model.fields,field_description:odoo_health_check.field_health_check_dashboard__failures_24h
+msgid "Cron failures (24h)"
+msgstr "أعطال المجدوِل (24 ساعة)"
+
+#. module: odoo_health_check
+#: model:ir.model.fields,field_description:odoo_health_check.field_health_check_dashboard__failures_7d
+msgid "Cron failures (7d)"
+msgstr "أعطال المجدوِل (7 أيام)"
+
+#. module: odoo_health_check
+#: model_terms:ir.ui.view,arch_db:odoo_health_check.health_check_dashboard_view_form
+msgid "Cron health"
+msgstr "حالة المجدوِل"
+
+#. module: odoo_health_check
+#: model:ir.model.fields,field_description:odoo_health_check.field_health_check_dashboard__history_total_7d
+msgid "Cron runs (7d)"
+msgstr "تشغيلات المجدوِل (7 أيام)"
+
+#. module: odoo_health_check
+#: model:ir.model.fields,field_description:odoo_health_check.field_health_check_dashboard__last_pg_report_db_delta
+msgid "DB delta vs previous"
+msgstr "تغير قاعدة البيانات مقابل السابق"
+
+#. module: odoo_health_check
+#: model:ir.model.fields,field_description:odoo_health_check.field_health_check_dashboard__last_pg_report_db_size
+msgid "DB size"
+msgstr "حجم قاعدة البيانات"
+
+#. module: odoo_health_check
+#: model:ir.ui.menu,name:odoo_health_check.menu_dashboard
+msgid "Dashboard"
+msgstr "لوحة المعلومات"
+
+#. module: odoo_health_check
+#: model:ir.model.fields,field_description:odoo_health_check.field_health_check_result__date
+msgid "Date"
+msgstr "التاريخ"
+
+#. module: odoo_health_check
+#: model_terms:ir.ui.view,arch_db:odoo_health_check.health_check_result_view_search
+msgid "Day"
+msgstr "اليوم"
+
+#. module: odoo_health_check
+#: model_terms:ir.ui.view,arch_db:odoo_health_check.health_check_result_view_form
+msgid "Details"
+msgstr "التفاصيل"
+
+#. module: odoo_health_check
+#: model:ir.model.fields,field_description:odoo_health_check.field_health_check_result__details_json
+msgid "Details (JSON)"
+msgstr "التفاصيل (JSON)"
+
+#. module: odoo_health_check
+#: model:ir.model.fields,field_description:odoo_health_check.field_res_config_settings__odoo_health_disk_alert_emails
+#: model_terms:ir.ui.view,arch_db:odoo_health_check.res_config_settings_view_form
+msgid "Disk Alert Emails"
+msgstr "بريد تنبيهات القرص"
+
+#. module: odoo_health_check
+#: model:ir.actions.act_window,name:odoo_health_check.health_check_result_action
+#: model:ir.ui.menu,name:odoo_health_check.menu_disk_checks
+msgid "Disk Checks"
+msgstr "فحوصات القرص"
+
+#. module: odoo_health_check
+#: model:ir.model.fields,field_description:odoo_health_check.field_res_config_settings__odoo_health_disk_critical_pct
+msgid "Disk Critical Threshold (%)"
+msgstr "حد القرص الحرج (%)"
+
+#. module: odoo_health_check
+#: model:ir.model.fields,field_description:odoo_health_check.field_health_check_dashboard__disk_filestore_status
+msgid "Disk Filestore Status"
+msgstr "حالة مخزن الملفات"
+
+#. module: odoo_health_check
+#: model:ir.model.fields,field_description:odoo_health_check.field_health_check_dashboard__disk_filestore_summary
+msgid "Disk Filestore Summary"
+msgstr "ملخص مخزن الملفات"
+
+#. module: odoo_health_check
+#: model:ir.model.fields,field_description:odoo_health_check.field_health_check_dashboard__disk_filestore_used_pct
+msgid "Disk Filestore Used Pct"
+msgstr "النسبة المستخدمة من مخزن الملفات"
+
+#. module: odoo_health_check
+#: model_terms:ir.ui.view,arch_db:odoo_health_check.res_config_settings_view_form
+msgid "Disk Monitoring"
+msgstr "مراقبة القرص"
+
+#. module: odoo_health_check
+#: model:ir.model.fields,field_description:odoo_health_check.field_health_check_dashboard__disk_root_status
+msgid "Disk Root Status"
+msgstr "حالة قرص الجذر"
+
+#. module: odoo_health_check
+#: model:ir.model.fields,field_description:odoo_health_check.field_health_check_dashboard__disk_root_summary
+msgid "Disk Root Summary"
+msgstr "ملخص قرص الجذر"
+
+#. module: odoo_health_check
+#: model:ir.model.fields,field_description:odoo_health_check.field_health_check_dashboard__disk_root_used_pct
+msgid "Disk Root Used Pct"
+msgstr "النسبة المستخدمة من قرص الجذر"
+
+#. module: odoo_health_check
+#: model:ir.model.fields,field_description:odoo_health_check.field_res_config_settings__odoo_health_disk_warn_pct
+msgid "Disk Warning Threshold (%)"
+msgstr "حد تحذير القرص (%)"
+
+#. module: odoo_health_check
+#: model_terms:ir.ui.view,arch_db:odoo_health_check.res_config_settings_view_form
+msgid "Disk usage above this percentage is flagged 'critical'. Default 90."
+msgstr "استخدام القرص فوق هذه النسبة يُعلَّم بـ 'critical'. الافتراضي 90."
+
+#. module: odoo_health_check
+#: model_terms:ir.ui.view,arch_db:odoo_health_check.res_config_settings_view_form
+msgid "Disk usage above this percentage is flagged 'warn'. Default 80."
+msgstr "استخدام القرص فوق هذه النسبة يُعلَّم بـ 'warn'. الافتراضي 80."
+
+#. module: odoo_health_check
+#: model:ir.model.fields,help:odoo_health_check.field_res_config_settings__odoo_health_disk_critical_pct
+msgid "Disk usage above this percentage marks the result as 'critical'. Default: 90%. Must be higher than the warning threshold."
+msgstr "استخدام القرص فوق هذه النسبة يُصنف النتيجة على أنها 'critical'. الافتراضي: 90%. يجب أن يكون أعلى من حد التحذير."
+
+#. module: odoo_health_check
+#: model:ir.model.fields,help:odoo_health_check.field_res_config_settings__odoo_health_disk_warn_pct
+msgid "Disk usage above this percentage marks the result as 'warn'. Default: 80%. Must be lower than the critical threshold."
+msgstr "استخدام القرص فوق هذه النسبة يُصنف النتيجة على أنها 'warn'. الافتراضي: 80%. يجب أن يكون أقل من الحد الحرج."
+
+#. module: odoo_health_check
+#: model_terms:ir.ui.view,arch_db:odoo_health_check.health_check_result_view_search
+msgid "Disk: Filestore"
+msgstr "القرص: Filestore"
+
+#. module: odoo_health_check
+#: model:ir.model.fields.selection,name:odoo_health_check.selection__health_check_result__check_type__disk_root
+msgid "Disk: OS Root"
+msgstr "القرص: جذر النظام"
+
+#. module: odoo_health_check
+#: model:ir.model.fields.selection,name:odoo_health_check.selection__health_check_result__check_type__disk_filestore
+msgid "Disk: Odoo Filestore"
+msgstr "القرص: مخزن ملفات Odoo"
+
+#. module: odoo_health_check
+#: model_terms:ir.ui.view,arch_db:odoo_health_check.health_check_result_view_search
+msgid "Disk: Root"
+msgstr "القرص: الجذر"
+
+#. module: odoo_health_check
+#: model:ir.model.fields,field_description:odoo_health_check.field_health_check_dashboard__display_name
+#: model:ir.model.fields,field_description:odoo_health_check.field_health_check_result__display_name
+#: model:ir.model.fields,field_description:odoo_health_check.field_ir_cron_history__display_name
+msgid "Display Name"
+msgstr "اسم العرض"
+
+#. module: odoo_health_check
+#: model:ir.model.fields,field_description:odoo_health_check.field_ir_cron_history__duration_sec
+msgid "Duration (s)"
+msgstr "المدة (ث)"
+
+#. module: odoo_health_check
+#: model:ir.model.constraint,message:odoo_health_check.constraint_ir_cron_history_date_order
+msgid "End time must be on or after start time."
+msgstr "يجب أن يكون وقت الانتهاء في أو بعد وقت البدء."
+
+#. module: odoo_health_check
+#: model:ir.model.fields,field_description:odoo_health_check.field_ir_cron_history__date_end
+msgid "Ended"
+msgstr "انتهى"
+
+#. module: odoo_health_check
+#: model:ir.model.fields.selection,name:odoo_health_check.selection__health_check_dashboard__disk_filestore_status__error
+#: model:ir.model.fields.selection,name:odoo_health_check.selection__health_check_dashboard__disk_root_status__error
+#: model:ir.model.fields.selection,name:odoo_health_check.selection__health_check_result__status__error
+#: model_terms:ir.ui.view,arch_db:odoo_health_check.health_check_result_view_search
+msgid "Error"
+msgstr "خطأ"
+
+#. module: odoo_health_check
+#: model:ir.model.fields,field_description:odoo_health_check.field_ir_cron_history__error_traceback
+#: model_terms:ir.ui.view,arch_db:odoo_health_check.ir_cron_history_view_form
+msgid "Error Traceback"
+msgstr "تتبع الخطأ"
+
+#. module: odoo_health_check
+#: model:ir.model.fields.selection,name:odoo_health_check.selection__ir_cron_history__state__failed
+#: model_terms:ir.ui.view,arch_db:odoo_health_check.ir_cron_history_view_search
+msgid "Failed"
+msgstr "فشل"
+
+#. module: odoo_health_check
+#: model_terms:ir.ui.view,arch_db:odoo_health_check.health_check_dashboard_view_form
+msgid "Filestore"
+msgstr "مخزن الملفات"
+
+#. module: odoo_health_check
+#: model_terms:ir.ui.view,arch_db:odoo_health_check.health_check_result_view_list
+msgid "Free (bytes)"
+msgstr "حر (بايت)"
+
+#. module: odoo_health_check
+#: model:ir.model.fields,field_description:odoo_health_check.field_health_check_result__free_bytes
+msgid "Free Bytes"
+msgstr "البايتات الحرة"
+
+#. module: odoo_health_check
+#: model_terms:ir.ui.view,arch_db:odoo_health_check.health_check_result_view_search
+#: model_terms:ir.ui.view,arch_db:odoo_health_check.ir_cron_history_view_search
+msgid "Group By"
+msgstr "تجميع حسب"
+
+#. module: odoo_health_check
+#: model:ir.ui.menu,name:odoo_health_check.menu_root
+#: model_terms:ir.ui.view,arch_db:odoo_health_check.res_config_settings_view_form
+msgid "Health Check"
+msgstr "Health Check"
+
+#. module: odoo_health_check
+#: model:ir.actions.server,name:odoo_health_check.health_check_dashboard_action
+#: model_terms:ir.ui.view,arch_db:odoo_health_check.health_check_dashboard_view_form
+msgid "Health Check Dashboard"
+msgstr "لوحة Health Check"
+
+#. module: odoo_health_check
+#: model:ir.model,name:odoo_health_check.model_health_check_result
+#: model_terms:ir.ui.view,arch_db:odoo_health_check.health_check_result_view_form
+msgid "Health Check Result"
+msgstr "نتيجة الفحص"
+
+#. module: odoo_health_check
+#: model_terms:ir.ui.view,arch_db:odoo_health_check.health_check_result_view_list
+#: model_terms:ir.ui.view,arch_db:odoo_health_check.health_check_result_view_search
+msgid "Health Check Results"
+msgstr "نتائج الفحص"
+
+#. module: odoo_health_check
+#: model:ir.actions.act_window,name:odoo_health_check.action_open_health_check_settings
+msgid "Health Check Settings"
+msgstr "إعدادات Health Check"
+
+#. module: odoo_health_check
+#: model:ir.model.fields,field_description:odoo_health_check.field_res_config_settings__odoo_health_retention_days
+#: model_terms:ir.ui.view,arch_db:odoo_health_check.res_config_settings_view_form
+msgid "History Retention (days)"
+msgstr "احتفاظ بالسجل (أيام)"
+
+#. module: odoo_health_check
+#: model:ir.model.fields,field_description:odoo_health_check.field_health_check_dashboard__id
+#: model:ir.model.fields,field_description:odoo_health_check.field_health_check_result__id
+#: model:ir.model.fields,field_description:odoo_health_check.field_ir_cron_history__id
+msgid "ID"
+msgstr "المعرف"
+
+#. module: odoo_health_check
+#: model:ir.model.fields,field_description:odoo_health_check.field_health_check_dashboard__last_pg_report_table
+msgid "Largest table"
+msgstr "أكبر جدول"
+
+#. module: odoo_health_check
+#: model_terms:ir.ui.view,arch_db:odoo_health_check.health_check_result_view_search
+#: model_terms:ir.ui.view,arch_db:odoo_health_check.ir_cron_history_view_search
+msgid "Last 24 Hours"
+msgstr "آخر 24 ساعة"
+
+#. module: odoo_health_check
+#: model_terms:ir.ui.view,arch_db:odoo_health_check.health_check_result_view_search
+#: model_terms:ir.ui.view,arch_db:odoo_health_check.ir_cron_history_view_search
+msgid "Last 7 Days"
+msgstr "آخر 7 أيام"
+
+#. module: odoo_health_check
+#: model:ir.model.fields,field_description:odoo_health_check.field_health_check_dashboard__last_pg_report_at
+msgid "Last PG report"
+msgstr "آخر تقرير PG"
+
+#. module: odoo_health_check
+#: model:ir.model.fields,field_description:odoo_health_check.field_health_check_dashboard__write_uid
+#: model:ir.model.fields,field_description:odoo_health_check.field_health_check_result__write_uid
+#: model:ir.model.fields,field_description:odoo_health_check.field_ir_cron_history__write_uid
+msgid "Last Updated by"
+msgstr "آخر تحديث بواسطة"
+
+#. module: odoo_health_check
+#: model:ir.model.fields,field_description:odoo_health_check.field_health_check_dashboard__write_date
+#: model:ir.model.fields,field_description:odoo_health_check.field_health_check_result__write_date
+#: model:ir.model.fields,field_description:odoo_health_check.field_ir_cron_history__write_date
+msgid "Last Updated on"
+msgstr "آخر تحديث في"
+
+#. module: odoo_health_check
+#: model:ir.model.fields,field_description:odoo_health_check.field_health_check_dashboard__disk_root_at
+msgid "Last disk:root sample"
+msgstr "آخر قياس لقرص الجذر"
+
+#. module: odoo_health_check
+#: model:ir.model.fields,field_description:odoo_health_check.field_health_check_dashboard__disk_filestore_at
+msgid "Last filestore sample"
+msgstr "آخر قياس لمخزن الملفات"
+
+#. module: odoo_health_check
+#: model_terms:ir.ui.view,arch_db:odoo_health_check.health_check_dashboard_view_form
+msgid "Latest PG report"
+msgstr "آخر تقرير PG"
+
+#. module: odoo_health_check
+#: model:ir.model.fields,field_description:odoo_health_check.field_health_check_result__mount_path
+msgid "Mount / Path"
+msgstr "نقطة التحميل / المسار"
+
+#. module: odoo_health_check
+#: model:ir.model.fields,field_description:odoo_health_check.field_health_check_dashboard__name
+msgid "Name"
+msgstr "الاسم"
+
+#. module: odoo_health_check
+#: model_terms:ir.actions.act_window,help:odoo_health_check.ir_cron_history_action
+msgid "No cron executions recorded yet."
+msgstr "لا توجد عمليات تنفيذ مجدوِل مسجلة بعد."
+
+#. module: odoo_health_check
+#: model:ir.model.fields.selection,name:odoo_health_check.selection__health_check_dashboard__disk_filestore_status__unknown
+#: model:ir.model.fields.selection,name:odoo_health_check.selection__health_check_dashboard__disk_root_status__unknown
+msgid "No data yet"
+msgstr "لا توجد بيانات بعد"
+
+#. module: odoo_health_check
+#: model_terms:ir.actions.act_window,help:odoo_health_check.health_check_result_action
+msgid "No disk checks recorded yet."
+msgstr "لا توجد فحوصات قرص مسجلة بعد."
+
+#. module: odoo_health_check
+#: model_terms:ir.actions.act_window,help:odoo_health_check.health_check_pg_report_action
+msgid "No monthly PG reports yet."
+msgstr "لا توجد تقارير PG شهرية بعد."
+
+#. module: odoo_health_check
+#: model_terms:ir.ui.view,arch_db:odoo_health_check.res_config_settings_view_form
+msgid "Notifications"
+msgstr "الإشعارات"
+
+#. module: odoo_health_check
+#: model:ir.model.fields.selection,name:odoo_health_check.selection__health_check_dashboard__disk_filestore_status__ok
+#: model:ir.model.fields.selection,name:odoo_health_check.selection__health_check_dashboard__disk_root_status__ok
+#: model:ir.model.fields.selection,name:odoo_health_check.selection__health_check_result__status__ok
+#: model_terms:ir.ui.view,arch_db:odoo_health_check.health_check_result_view_search
+msgid "OK"
+msgstr "تم"
+
+#. module: odoo_health_check
+#: model_terms:ir.ui.view,arch_db:odoo_health_check.health_check_dashboard_view_form
+msgid "OS root"
+msgstr "جذر النظام"
+
+#. module: odoo_health_check
+#: model:ir.model,name:odoo_health_check.model_health_check_dashboard
+msgid "Odoo Health Check Dashboard"
+msgstr "لوحة Odoo Health Check"
+
+#. module: odoo_health_check
+#: model:mail.template,name:odoo_health_check.mail_template_cron_failure
+msgid "Odoo Health Check: Cron Failure"
+msgstr "Odoo Health Check: عطل المجدوِل"
+
+#. module: odoo_health_check
+#: model:ir.actions.server,name:odoo_health_check.ir_cron_history_retention_cleanup_ir_actions_server
+msgid "Odoo Health Check: Cron history retention cleanup"
+msgstr "Odoo Health Check: تنظيف سجل المجدوِل وفق فترة الاحتفاظ"
+
+#. module: odoo_health_check
+#: model:mail.template,name:odoo_health_check.mail_template_disk_alert
+msgid "Odoo Health Check: Disk Alert"
+msgstr "Odoo Health Check: تنبيه القرص"
+
+#. module: odoo_health_check
+#: model:ir.actions.server,name:odoo_health_check.ir_cron_health_disk_check_ir_actions_server
+msgid "Odoo Health Check: Disk usage check"
+msgstr "Odoo Health Check: فحص استخدام القرص"
+
+#. module: odoo_health_check
+#: model:mail.template,name:odoo_health_check.mail_template_pg_monthly
+msgid "Odoo Health Check: Monthly PG Report"
+msgstr "Odoo Health Check: تقرير PG الشهري"
+
+#. module: odoo_health_check
+#: model:ir.actions.server,name:odoo_health_check.ir_cron_health_pg_report_ir_actions_server
+msgid "Odoo Health Check: Monthly PostgreSQL growth report"
+msgstr "Odoo Health Check: تقرير نمو PostgreSQL الشهري"
+
+#. module: odoo_health_check
+#: model:ir.model.fields,field_description:odoo_health_check.field_res_config_settings__odoo_health_pg_report_emails
+msgid "PG Monthly Report Emails"
+msgstr "بريد التقرير الشهري لـ PG"
+
+#. module: odoo_health_check
+#: model_terms:ir.ui.view,arch_db:odoo_health_check.res_config_settings_view_form
+msgid "PG Report Emails"
+msgstr "بريد تقرير PG"
+
+#. module: odoo_health_check
+#: model:ir.actions.act_window,name:odoo_health_check.health_check_pg_report_action
+#: model:ir.ui.menu,name:odoo_health_check.menu_pg_reports
+msgid "PG Reports"
+msgstr "تقارير PG"
+
+#. module: odoo_health_check
+#: model:ir.model.fields.selection,name:odoo_health_check.selection__health_check_result__check_type__pg_report
+#: model_terms:ir.ui.view,arch_db:odoo_health_check.res_config_settings_view_form
+msgid "PostgreSQL Monthly Report"
+msgstr "تقرير PostgreSQL الشهري"
+
+#. module: odoo_health_check
+#: model:ir.model.fields,help:odoo_health_check.field_health_check_result__details_json
+msgid "Raw details, error traceback, or extra metadata as JSON."
+msgstr "تفاصيل خام، تتبع الخطأ أو بيانات وصفية إضافية بتنسيق JSON."
+
+#. module: odoo_health_check
+#: model_terms:ir.ui.view,arch_db:odoo_health_check.health_check_dashboard_view_form
+msgid "Refresh"
+msgstr "تحديث"
+
+#. module: odoo_health_check
+#: model_terms:ir.ui.view,arch_db:odoo_health_check.res_config_settings_view_form
+msgid "Retention"
+msgstr "الاحتفاظ"
+
+#. module: odoo_health_check
+#: model:ir.model.fields.selection,name:odoo_health_check.selection__ir_cron_history__state__running
+#: model_terms:ir.ui.view,arch_db:odoo_health_check.ir_cron_history_view_search
+msgid "Running"
+msgstr "قيد التشغيل"
+
+#. module: odoo_health_check
+#: model:ir.model.fields,field_description:odoo_health_check.field_ir_cron_history__cron_id
+#: model_terms:ir.ui.view,arch_db:odoo_health_check.ir_cron_history_view_search
+msgid "Scheduled Action"
+msgstr "إجراء مجدول"
+
+#. module: odoo_health_check
+#: model:ir.model,name:odoo_health_check.model_ir_cron
+msgid "Scheduled Actions"
+msgstr "إجراءات مجدولة"
+
+#. module: odoo_health_check
+#: model:ir.model.fields,field_description:odoo_health_check.field_ir_cron_history__server_name
+#: model_terms:ir.ui.view,arch_db:odoo_health_check.ir_cron_history_view_search
+msgid "Server"
+msgstr "الخادم"
+
+#. module: odoo_health_check
+#: model:ir.ui.menu,name:odoo_health_check.menu_settings
+msgid "Settings"
+msgstr "الإعدادات"
+
+#. module: odoo_health_check
+#: model_terms:ir.ui.view,arch_db:odoo_health_check.health_check_dashboard_view_form
+msgid "Snapshot at page load. Click Refresh for a fresh sample."
+msgstr "لقطة عند تحميل الصفحة. انقر تحديث للحصول على عينة جديدة."
+
+#. module: odoo_health_check
+#: model_terms:ir.ui.view,arch_db:odoo_health_check.ir_cron_history_view_search
+msgid "Start Day"
+msgstr "يوم البدء"
+
+#. module: odoo_health_check
+#: model:ir.model.fields,field_description:odoo_health_check.field_ir_cron_history__date_start
+msgid "Started"
+msgstr "بدأ"
+
+#. module: odoo_health_check
+#: model:ir.model.fields,field_description:odoo_health_check.field_ir_cron_history__state
+msgid "State"
+msgstr "الحالة"
+
+#. module: odoo_health_check
+#: model:ir.model.fields,field_description:odoo_health_check.field_health_check_result__status
+#: model_terms:ir.ui.view,arch_db:odoo_health_check.health_check_result_view_search
+#: model_terms:ir.ui.view,arch_db:odoo_health_check.ir_cron_history_view_search
+msgid "Status"
+msgstr "الحالة"
+
+#. module: odoo_health_check
+#: model:ir.model.fields.selection,name:odoo_health_check.selection__ir_cron_history__state__success
+#: model_terms:ir.ui.view,arch_db:odoo_health_check.ir_cron_history_view_search
+msgid "Success"
+msgstr "نجح"
+
+#. module: odoo_health_check
+#: model_terms:ir.actions.act_window,help:odoo_health_check.health_check_result_action
+msgid "The hourly disk check cron will start populating this list shortly after install."
+msgstr "سيبدأ المجدوِل الساعي لفحص القرص بملء هذه القائمة بعد التثبيت بفترة وجيزة."
+
+#. module: odoo_health_check
+#: model_terms:ir.actions.act_window,help:odoo_health_check.health_check_pg_report_action
+msgid "The monthly PostgreSQL growth report runs on the 1st of each month at 08:00. You can also trigger it manually from the cron list."
+msgstr "يعمل تقرير نمو PostgreSQL الشهري في اليوم الأول من كل شهر الساعة 08:00. يمكن تشغيله يدويًا من قائمة المجدوِل."
+
+#. module: odoo_health_check
+#: model_terms:ir.ui.view,arch_db:odoo_health_check.health_check_result_view_list
+msgid "Total (bytes)"
+msgstr "إجمالي (بايت)"
+
+#. module: odoo_health_check
+#: model:ir.model.fields,field_description:odoo_health_check.field_health_check_result__total_bytes
+msgid "Total Bytes"
+msgstr "إجمالي البايتات"
+
+#. module: odoo_health_check
+#: model_terms:ir.ui.view,arch_db:odoo_health_check.ir_cron_history_view_list
+msgid "Total Duration"
+msgstr "إجمالي المدة"
+
+#. module: odoo_health_check
+#: model:ir.model.fields,field_description:odoo_health_check.field_health_check_result__used_pct
+msgid "Used %"
+msgstr "% المستخدم"
+
+#. module: odoo_health_check
+#: model:ir.model.fields.selection,name:odoo_health_check.selection__health_check_dashboard__disk_filestore_status__warn
+#: model:ir.model.fields.selection,name:odoo_health_check.selection__health_check_dashboard__disk_root_status__warn
+#: model:ir.model.fields.selection,name:odoo_health_check.selection__health_check_result__status__warn
+#: model_terms:ir.ui.view,arch_db:odoo_health_check.health_check_result_view_search
+msgid "Warning"
+msgstr "تحذير"
+
+#. module: odoo_health_check
+#: model_terms:ir.ui.view,arch_db:odoo_health_check.res_config_settings_view_form
+msgid "Warning Threshold (%)"
+msgstr "حد التحذير (%)"
+
+#. module: odoo_health_check
+#: model:mail.template,subject:odoo_health_check.mail_template_cron_failure
+msgid "[Odoo Health] Cron failure: {{ object.cron_id.name }} on {{ object.server_name }}"
+msgstr "[Odoo Health] عطل المجدوِل: {{ object.cron_id.name }} على {{ object.server_name }}"
+
+#. module: odoo_health_check
+#: model:mail.template,subject:odoo_health_check.mail_template_disk_alert
+msgid "[Odoo Health] Disk {{ object.status }}: {{ object.mount_path }} at {{ '%.1f' % (object.used_pct or 0) }}% used"
+msgstr "[Odoo Health] القرص {{ object.status }}: {{ object.mount_path }} مستخدم بنسبة {{ '%.1f' % (object.used_pct or 0) }}%"
+
+#. module: odoo_health_check
+#: model:mail.template,subject:odoo_health_check.mail_template_pg_monthly
+msgid "[Odoo Health] PG monthly report: {{ object.env.cr.dbname }} ({{ object.date and object.date.strftime('%Y-%m') or '' }})"
+msgstr "[Odoo Health] تقرير PG الشهري: {{ object.env.cr.dbname }} ({{ object.date and object.date.strftime('%Y-%m') or '' }})"
+
+#. module: odoo_health_check
+#: model:ir.model.fields,help:odoo_health_check.field_ir_cron_history__duration_sec
+msgid "date_end - date_start in seconds. NULL while the run is in flight."
+msgstr "date_end - date_start بالثواني. NULL أثناء التشغيل الجاري."
+
+#. module: odoo_health_check
+#: model_terms:ir.ui.view,arch_db:odoo_health_check.res_config_settings_view_form
+msgid "ops@example.com, admin@example.com"
+msgstr "ops@example.com, admin@example.com"
+
+#. module: odoo_health_check
+#: model_terms:ir.ui.view,arch_db:odoo_health_check.res_config_settings_view_form
+msgid "ops@example.com, dba@example.com"
+msgstr "ops@example.com, dba@example.com"
+
+#. module: odoo_health_check
+#: model_terms:ir.ui.view,arch_db:odoo_health_check.res_config_settings_view_form
+msgid "ops@example.com, sysadmin@example.com"
+msgstr "ops@example.com, sysadmin@example.com"

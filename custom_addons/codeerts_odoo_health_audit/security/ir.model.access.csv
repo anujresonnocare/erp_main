@@ -1,0 +1,9 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_health_check_user,health.check.user,model_health_check,codeerts_odoo_health_audit.group_health_audit_user,1,0,0,0
+access_health_check_manager,health.check.manager,model_health_check,codeerts_odoo_health_audit.group_health_audit_manager,1,1,1,1
+access_health_check_param_user,health.check.param.user,model_health_check_param,codeerts_odoo_health_audit.group_health_audit_user,1,0,0,0
+access_health_check_param_manager,health.check.param.manager,model_health_check_param,codeerts_odoo_health_audit.group_health_audit_manager,1,1,1,1
+access_health_audit_run_user,health.audit.run.user,model_health_audit_run,codeerts_odoo_health_audit.group_health_audit_user,1,1,1,0
+access_health_audit_run_manager,health.audit.run.manager,model_health_audit_run,codeerts_odoo_health_audit.group_health_audit_manager,1,1,1,1
+access_health_audit_finding_user,health.audit.finding.user,model_health_audit_finding,codeerts_odoo_health_audit.group_health_audit_user,1,1,1,0
+access_health_audit_finding_manager,health.audit.finding.manager,model_health_audit_finding,codeerts_odoo_health_audit.group_health_audit_manager,1,1,1,1

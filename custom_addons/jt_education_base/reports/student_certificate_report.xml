@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="paperformat_student_certificate" model="report.paperformat">
+            <field name="name">A4 Label Sheet</field>
+            <field name="default" eval="True" />
+            <field name="format">A4</field>
+            <field name="page_height">0</field>
+            <field name="page_width">0</field>
+            <field name="orientation">Portrait</field>
+            <field name="margin_top">5</field>
+            <field name="margin_bottom">5</field>
+            <field name="margin_left">0</field>
+            <field name="margin_right">0</field>
+            <field name="disable_shrinking" eval="True"/>
+            <field name="dpi">96</field>
+        </record>
+        <template id="report_student_certi">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="certi">
+                    <div style="width: 100%; max-width: 675px; margin: 0 auto; padding: 40px; border: 2px solid #D4B996; position: relative; background-color:#f0ece9;">
+                        <!-- Border Design -->
+                        <div style="position: absolute; top: 20px; left: 20px; right: 20px; bottom: 20px; border: 1px solid #D4B996;"></div>
+                        
+                        <!-- Certificate Header -->
+                        <div style="text-align: center; padding-top: 40px; padding-bottom: 20px;">
+                            <p style="font-family: Arial; color: #D4B996; font-size: 36px; margin: 0; font-weight: 300; letter-spacing: 4px;"><strong>CERTIFICATE</strong></p>
+                            <h3 style="font-family: Arial; color: #D4B996; font-size: 18px; margin-top: 10px; font-weight: 300; letter-spacing: 2px;"><strong>OF COMPETITION</strong></h3>
+                        </div>
+
+                        <!-- Present To Section -->
+                        <div style="text-align: center; margin-top: 60px;">
+                            <p style="font-family: Arial; color: #666; font-size: 16px; margin-bottom: 30px;">PROUDLY PRESENT TO</p>
+                            <h2 style="font-family: 'Times New Roman', serif; color: #D4B996; font-size: 32px; font-style: italic; margin-bottom: 30px;"><t t-esc="certi.student_id.name"/> <t t-esc="certi.student_id.surname"/> </h2>
+                        </div>
+
+                        <!-- Certificate Text -->
+                        <div style="text-align: center; margin-top: 30px;">
+
+                            <p style="font-size: 18px; line-height: 1.6; margin-top: 20px; color: #666;">
+                                Has successfully completed the academic year 
+                                <strong><t t-esc="certi.year.name"/></strong> 
+                                with outstanding performance. With <strong><t t-esc="certi.stu_percentage"/>%</strong> and rank <strong><t t-esc="certi.average_rank"/></strong>, 
+                                they have demonstrated excellence in their studies.
+                            </p>
+                            <p style="font-size: 18px; line-height: 1.6; margin-top: 10px; color: #666;">
+                                The student is now promoted to the next academic year, continuing their journey of learning and growth.
+                            </p>
+                            <p style="font-size: 18px; line-height: 1.6; margin-top: 10px; color: #666;">
+                                This achievement reflects their dedication and commitment to academic excellence. The course was successfully completed from 
+                                <strong>
+                                    <t t-set="start_year" t-value="certi.year.name.split('-')[0]"/>
+                                    <t t-esc="datetime.date(int(start_year), 6, 1).strftime('%d %B %Y')"/>
+                                </strong> 
+                                to 
+                                <strong>
+                                    <t t-set="end_year" t-value="certi.year.name.split('-')[1]"/>
+                                    <t t-esc="datetime.date(int(end_year), 5, 30).strftime('%d %B %Y')"/>
+                                </strong>.
+                            </p>
+                            <p style="font-size: 18px; margin-top: 30px; line-height: 1.4; color: #666;">
+                                Congratulations and best wishes for future success!
+                            </p>
+                        </div>
+
+                        <!-- Certificate Seal -->
+                        <div style="text-align: center; margin-top: 70px;">
+                            <div style="width: 80px; height: 80px; margin: 0 auto; border: 2px solid #D4B996; border-radius: 50%;"></div>
+                        </div>
+
+                        <!-- Signatures -->
+
+                        <!-- <table style="margin-top: 60px;">
+                            <thead>
+                                
+                                    <th rowspan="4">Product</th>
+                                    <th rowspan="4">Quantity</th>
+                                
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table> -->
+                        
+                        <div class="row" style="margin-top: 70px;">
+                            <div class="col-6">
+                                <div style="margin-top:0px;align:center;text-align:center;margin-right:0px;margin-left:30px;">
+                                    <!-- <t t-if="res_company.stamp_image">
+                                        <img t-att-src="image_data_uri(res_company.stamp_image)" style="height:70px;width:70px;"/>
+                                    </t> -->
+                                    <p style="color:black;font-weight:bold;margin-top:0px;">__________________________</p>
+                                    <p style="color:black;font-weight:bold;margin-top:0px;"> <t t-esc="res_company.name"/></p>
+                                </div>
+                            </div>
+
+                            <div class="col-6">
+                                <div style="margin-top:0px;align:center;text-align:center;margin-right:0px;margin-left:30px;">
+                                    <!-- <t t-if="res_company.signature">
+                                        <img t-att-src="image_data_uri(res_company.signature)" style="height:70px;width:70px;"/>
+                                    </t> -->
+                                    <p style="color:black;font-weight:bold;margin-top:0px;">__________________________</p>
+                                    <p style="color:black;font-weight:bold;margin-top:0px;"> Trusty Sign</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </template>
+        <record id="report_student_certi_template" model="ir.actions.report">
+            <field name="name">Student Certificate (PDF)</field>
+            <field name="model">student.yearly.result</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">jt_education_base.report_student_certi</field>
+            <field name="report_file">jt_education_base.report_student_certi</field>
+            <field name="paperformat_id" ref="jt_education_base.paperformat_student_certificate"/>
+            <field name="print_report_name">'Student Certificate - %s'</field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Demo data for standard -->
+        <record id="standard_1" model="student.standard">
+            <field name="name">1</field>
+        </record>        
+
+        <record id="standard_2" model="student.standard">
+            <field name="name">2</field>
+        </record>
+
+        <record id="standard_3" model="student.standard">
+            <field name="name">3</field>
+        </record>
+
+        <record id="standard_4" model="student.standard">
+            <field name="name">4</field>
+        </record>
+
+        <record id="standard_5" model="student.standard">
+            <field name="name">5</field>
+        </record>
+
+        <record id="standard_6" model="student.standard">
+            <field name="name">6</field>
+        </record>
+
+        <record id="standard_7" model="student.standard">
+            <field name="name">7</field>
+        </record>
+
+        <record id="standard_8" model="student.standard">
+            <field name="name">8</field>
+        </record>
+
+        <record id="standard_9" model="student.standard">
+            <field name="name">9</field>
+        </record>
+        <record id="standard_10" model="student.standard">
+            <field name="name">10</field>
+        </record>
+        <record id="standard_11" model="student.standard">
+            <field name="name">11</field>
+        </record>
+        <record id="standard_12" model="student.standard">
+            <field name="name">12</field>
+        </record>        
+        
+
+        <!-- Demo data for academic year -->
+        <record id="year_1" model="year.year">
+            <field name="name">2015-2016</field>
+        </record>
+
+        <record id="year_2" model="year.year">
+            <field name="name">2016-2017</field>
+        </record>
+
+        <record id="year_3" model="year.year">
+            <field name="name">2017-2018</field>
+        </record>
+
+        <record id="year_4" model="year.year">
+            <field name="name">2018-2019</field>
+        </record>
+
+        <record id="year_5" model="year.year">
+            <field name="name">2019-2020</field>
+        </record>
+
+        <record id="year_6" model="year.year">
+            <field name="name">2020-2021</field>
+        </record>
+
+        <record id="year_7" model="year.year">
+            <field name="name">2021-2022</field>
+        </record>
+
+        <record id="year_8" model="year.year">
+            <field name="name">2022-2023</field>
+        </record>
+
+        <record id="year_9" model="year.year">
+            <field name="name">2023-2024</field>
+        </record>
+
+        <record id="year_10" model="year.year">
+            <field name="name">2024-2025</field>
+        </record>
+
+
+        <!-- Demo data for standard division -->
+        <record id="division_1" model="standard.division">
+            <field name="name">A</field>
+        </record>
+
+        <record id="division_2" model="standard.division">
+            <field name="name">B</field>
+        </record>
+
+        <record id="division_3" model="standard.division">
+            <field name="name">C</field>
+        </record>
+
+        <record id="division_4" model="standard.division">
+            <field name="name">D</field>
+        </record>
+
+        <record id="division_5" model="standard.division">
+            <field name="name">E</field>
+        </record>
+
+        <record id="division_6" model="standard.division">
+            <field name="name">F</field>
+        </record>
+    </data>
+</odoo>

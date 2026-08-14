@@ -1,0 +1,207 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* jt_education_health
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 18.0+e\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-07-23 07:24+0000\n"
+"PO-Revision-Date: 2025-07-23 07:24+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+
+#. module: jt_education_health
+#: model_terms:ir.ui.view,arch_db:jt_education_health.template_health_history_id
+msgid "<strong>Blood Group:</strong>"
+msgstr "<strong>Blodtype:</strong>"
+
+#. module: jt_education_health
+#: model_terms:ir.ui.view,arch_db:jt_education_health.template_health_history_id
+msgid "<strong>Eye Glasses No:</strong>"
+msgstr "<strong>Brillenummer:</strong>"
+
+#. module: jt_education_health
+#: model_terms:ir.ui.view,arch_db:jt_education_health.template_health_history_id
+msgid "<strong>Height:</strong>"
+msgstr "<strong>Højde:</strong>"
+
+#. module: jt_education_health
+#: model_terms:ir.ui.view,arch_db:jt_education_health.template_health_history_id
+msgid "<strong>Major Diseases:</strong>"
+msgstr "<strong>Alvorlige sygdomme:</strong>"
+
+#. module: jt_education_health
+#: model_terms:ir.ui.view,arch_db:jt_education_health.template_health_history_id
+msgid "<strong>Name:</strong>"
+msgstr "<strong>Navn:</strong>"
+
+#. module: jt_education_health
+#: model_terms:ir.ui.view,arch_db:jt_education_health.template_health_history_id
+msgid "<strong>Physical Challenged:</strong>"
+msgstr "<strong>Fysisk udfordret:</strong>"
+
+#. module: jt_education_health
+#: model_terms:ir.ui.view,arch_db:jt_education_health.template_health_history_id
+msgid "<strong>Type:</strong>"
+msgstr "<strong>Type:</strong>"
+
+#. module: jt_education_health
+#: model_terms:ir.ui.view,arch_db:jt_education_health.template_health_history_id
+msgid "<strong>Weight:</strong>"
+msgstr "<strong>Vægt:</strong>"
+
+#. module: jt_education_health
+#: model:ir.model.fields.selection,name:jt_education_health.selection__health_health__blood_group__a+
+msgid "A+ve"
+msgstr "A+"
+
+#. module: jt_education_health
+#: model:ir.model.fields.selection,name:jt_education_health.selection__health_health__blood_group__a-
+msgid "A-ve"
+msgstr "A-"
+
+#. module: jt_education_health
+#: model:ir.model.fields.selection,name:jt_education_health.selection__health_health__blood_group__ab+
+msgid "AB+ve"
+msgstr "AB+"
+
+#. module: jt_education_health
+#: model:ir.model.fields.selection,name:jt_education_health.selection__health_health__blood_group__ab-
+msgid "AB-ve"
+msgstr "AB-"
+
+#. module: jt_education_health
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health__regular_checkup
+msgid "Any Regular Checkup Required?"
+msgstr "Er der behov for regelmæssig helbredsundersøgelse?"
+
+#. module: jt_education_health
+#: model:ir.model.fields.selection,name:jt_education_health.selection__health_health__blood_group__b+
+msgid "B+ve"
+msgstr "B+"
+
+#. module: jt_education_health
+#: model:ir.model.fields.selection,name:jt_education_health.selection__health_health__blood_group__b-
+msgid "B-ve"
+msgstr "B-"
+
+#. module: jt_education_health
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health__blood_group
+#: model_terms:ir.ui.view,arch_db:jt_education_health.template_health_register_id
+#: model_terms:ir.ui.view,arch_db:jt_education_health.view_health_search
+msgid "Blood Group"
+msgstr "Blodtype"
+
+#. module: jt_education_health
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health_line__name
+#: model_terms:ir.ui.view,arch_db:jt_education_health.template_health_history_id
+msgid "Checkup Detail"
+msgstr "Undersøgelsesdetalje"
+
+#. module: jt_education_health
+#: model_terms:ir.ui.view,arch_db:jt_education_health.health_faculty_form_view
+#: model_terms:ir.ui.view,arch_db:jt_education_health.health_student_form_view
+#: model_terms:ir.ui.view,arch_db:jt_education_health.view_health_form
+msgid "Checkup Details"
+msgstr "Undersøgelsesdetaljer"
+
+#. module: jt_education_health
+#: model_terms:ir.ui.view,arch_db:jt_education_health.health_faculty_form_view
+#: model_terms:ir.ui.view,arch_db:jt_education_health.health_student_form_view
+#: model_terms:ir.ui.view,arch_db:jt_education_health.view_health_form
+msgid "Checkup Line"
+msgstr "Undersøgelseslinje"
+
+#. module: jt_education_health
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health__health_line
+msgid "Checkup Lines"
+msgstr "Undersøgelseslinjer"
+
+#. module: jt_education_health
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health_line__recommendation
+msgid "Checkup Recommendation"
+msgstr "Anbefaling ved undersøgelse"
+
+#. module: jt_education_health
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health_line__date
+#: model_terms:ir.ui.view,arch_db:jt_education_health.template_health_history_id
+msgid "Date"
+msgstr "Dato"
+
+#. module: jt_education_health
+#. odoo-python
+#: code:addons/jt_education_health/models/health.py:0
+msgid "Enter proper height and weight!"
+msgstr "Indtast korrekt højde og vægt!"
+
+#. module: jt_education_health
+#: model_terms:ir.ui.view,arch_db:jt_education_health.view_health_search
+msgid "Eye Glasses"
+msgstr "Briller"
+
+#. module: jt_education_health
+#: model_terms:ir.ui.view,arch_db:jt_education_health.template_health_register_id
+msgid "Eye Glasses No"
+msgstr "Brillenummer"
+
+#. module: jt_education_health
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health__eyeglasses_no
+msgid "Eye Glasses Number"
+msgstr "Brillenummer"
+
+#. module: jt_education_health
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health__eyeglasses
+msgid "Eye Glasses?"
+msgstr "Bruger briller?"
+
+#. module: jt_education_health
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health__faculty_id
+#: model:ir.model.fields.selection,name:jt_education_health.selection__health_health__type__faculty
+msgid "Faculty"
+msgstr "Fakultet"
+
+#. module: jt_education_health
+#: model_terms:ir.ui.view,arch_db:jt_education_health.view_health_search
+msgid "Group By..."
+msgstr "Gruppér efter..."
+
+#. module: jt_education_health
+#: model:ir.actions.act_window,name:jt_education_health.action_health_view
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health_line__health_id
+#: model_terms:ir.ui.view,arch_db:jt_education_health.view_health_form
+#: model_terms:ir.ui.view,arch_db:jt_education_health.view_health_search
+#: model_terms:ir.ui.view,arch_db:jt_education_health.view_health_tree
+msgid "Health"
+msgstr "Sundhed"
+
+#. module: jt_education_health
+#: model:ir.model,name:jt_education_health.model_health_health
+msgid "Health Detail for Students and Faculties"
+msgstr "Sundhedsoplysninger for studerende og fakulteter"
+
+#. module: jt_education_health
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health__major_diseases_note
+#: model_terms:ir.ui.view,arch_db:jt_education_health.template_health_register_id
+msgid "Major Diseases"
+msgstr "Alvorlige sygdomme"
+
+#. module: jt_education_health
+#: model:ir.model.fields.selection,name:jt_education_health.selection__health_health__blood_group__o+
+msgid "O+ve"
+msgstr "O+"
+
+#. module: jt_education_health
+#: model:ir.model.fields.selection,name:jt_education_health.selection__health_health__blood_group__o-
+msgid "O-ve"
+msgstr "O-"
+
+#. module: jt_education_health
+#: model_terms:ir.ui.view,arch_db:jt_education_health.template_health_register_id
+msgid "Weight"
+msgstr "Vægt"

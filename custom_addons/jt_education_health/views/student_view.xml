@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="health_student_form_view">
+            <field name="name">res.partner.student.form</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="jt_education_base.student_profile" />
+            <field name="arch" type="xml">
+                <xpath expr="//notebook/page[@name='student_info']" position="after">
+                    <page name="health_detail" string="Health Detail">
+                        <field name="health_lines" nolabel="1">
+                            <list>
+                                <field width="80px" name="blood_group" />
+                                <field name="height" />
+                                <field name="weight" />
+                                <field name="eyeglasses" />
+                                <field name="physical_challenges" />
+                                <field name="major_diseases" />
+                                <field name="regular_checkup" />
+                            </list>
+
+                            <form>
+                                <group>
+                                    <group>
+                                        <field name="type" />
+                                        <field name="student_id" style="width: 100%%" required="type == 'student'" invisible="type == 'student'" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True,'no_create':True}"/>
+                                        <field name="faculty_id" style="width: 100%%" required="type == 'faculty'" invisible="type != 'faculty'" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True,'no_create':True}"/>
+                                    </group>
+                                    <group>
+                                        <field name="height" />
+                                        <field name="weight" />
+                                        <field name="blood_group" />
+                                    </group>
+                                </group>
+                                <group string="Other Details">
+                                    <group>
+                                        <field name="eyeglasses" />
+                                        <field name="eyeglasses_no" invisible="not eyeglasses" />
+                                        <field name="major_diseases" />
+                                        
+                                    </group>
+                                    <group>
+                                        <field name="physical_challenges" />
+                                        <field name="physical_challenges_note"
+                                            invisible="not physical_challenges" />
+                                        <field name="regular_checkup" />
+                                    </group>                                    
+                                </group>
+                                <label for="major_diseases_note" invisible="not major_diseases"/>
+                                <field name="major_diseases_note"
+                                            invisible="not major_diseases" />
+                                <separator string="Checkup Details" />
+                                
+                                <field name="health_line" nolabel="1">
+                                    <list string="Checkup Line" editable='top'>
+                                        <field name="date" />
+                                        <field name="name" />
+                                        <field name="recommendation" />
+                                    </list>
+                                    <form string="Checkup Line">
+                                        <group>
+                                            <field name="date" />
+                                            <field name="name" />
+                                            <field name="recommendation" />
+                                        </group>
+                                    </form>
+                                </field>
+                                
+                            </form>
+                        </field>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

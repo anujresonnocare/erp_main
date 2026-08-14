@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="report_health_register" model="ir.actions.report">
+        <field name="name">Education Health Register</field>
+        <field name="model">health.health</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">jt_education_health.template_health_register_id</field>
+        <field name="report_file">jt_education_health.template_health_register_id</field>
+        <field name="binding_model_id" ref="model_health_health"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <record id="report_health_history" model="ir.actions.report">
+        <field name="name">Education Health History</field>
+        <field name="model">health.health</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">jt_education_health.template_health_history_id</field>
+        <field name="report_file">jt_education_health.template_health_history_id</field>
+        <field name="binding_model_id" ref="model_health_health"/>
+        <field name="binding_type">report</field>
+    </record>
+
+</odoo>
+
+<!-- <?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        
+        <report
+            id="report_health_register"
+            model="health.health"
+            menu="True"
+            report_type="qweb-pdf"
+            string="Education Health Register"
+            name="jt_education_health.template_health_register_id"
+            file="jt_education_health.template_health_register_id"
+         />
+        <report
+            id="report_health_history"
+            model="health.health"
+            menu="True"
+            report_type="qweb-pdf"
+            string="Education Health History"
+            name="jt_education_health.template_health_history_id"
+            file="jt_education_health.template_health_history_id"
+         />
+        
+    </data>
+</odoo>
+ -->

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record model="ir.cron" id="cron_next_medical_examination">
+        <field name="name">Next Medical Examination</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="model_id" ref="model_hr_employee_medical_examination"/>
+        <field name="state">code</field>
+        <field name="user_id" ref="base.user_admin"/>
+        <field name="code">model.cron_next_medical_examination()</field>
+    </record>
+
+    <record model="ir.ui.view" id="hr_employee_medical_examination_form_view">
+        <field name="name">hr.employee.medical.examination.form.view</field>
+        <field name="model">hr.employee.medical.examination</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="back_to_pending" string="Back To Pending" type="object"
+                            invisible = "state not in ['done', 'cancelled', 'rejected']"/>
+                    <button name="to_done" string="Mark as Done" type="object" class="btn btn-primary"
+                            invisible = "state not in 'pending'"/>
+                    <button name="to_cancelled" string="Mark as Cancelled" type="object" class="btn btn-primary"
+                            invisible = "state not in 'pending'"/>
+                    <button name="to_rejected" string="Mark as Rejected" type="object" class="btn btn-primary"
+                            invisible = "state not in 'pending'"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="employee_id"/>
+                            <field name="date" required="1"/>
+                        </group>
+                        <group>
+                            <field name="result"/>
+                            <field name="next_examination_date" required="1"/>
+                            <field name="notification_type"/>
+                            <field name="before_days" invisible = "notification_type =='single' or
+                            notification_type =='everyday'"/>
+                        </group>
+                    </group>
+                    <div>
+                        <separator string="Note"/>
+                        <field name="note" placeholder="Add note..." required="1"/>
+                    </div>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="hr_employee_medical_examination_search_view">
+        <field name="name">hr.employee.medical.examination.search.view</field>
+        <field name="model">hr.employee.medical.examination</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="employee_id"/>
+                <field name="state"/>
+                <group>
+                    <filter string="Passed" name="passed" domain="[('result','=','passed')]"/>
+                    <filter string="Failed" name="failed" domain="[('result','=','failed')]"/>
+                </group>
+                <filter string="Pending" name="pending" domain="[('state','=','pending')]"/>
+            </search>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="hr_employee_medical_examination_tree_view">
+        <field name="name">hr.employee.medical.examination.list.view</field>
+        <field name="model">hr.employee.medical.examination</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="employee_id"/>
+                <field name="date"/>
+                <field name="note"/>
+                <field name="result"/>
+                <field name="state"/>
+            </list>
+        </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="hr_employee_medical_examination_action">
+        <field name="name">Employee Medical Examinations</field>
+        <field name="res_model">hr.employee.medical.examination</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem id="hr_employee_medical_examination_menu" name="Medical Examinations"
+              parent="hr.menu_hr_root" sequence="95"/>
+
+    <menuitem id="hr_employee_medical_examination_all" name="View Medical Examinations"
+              parent="hr_employee_medical_examination_menu"
+              action="hr_employee_medical_examination_action"
+              sequence="1"/>
+</odoo>

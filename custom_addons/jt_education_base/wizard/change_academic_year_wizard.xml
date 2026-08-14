@@ -1,0 +1,30 @@
+<odoo>
+    <record id="change_academic_year_wizard" model="ir.ui.view">
+        <field name="name">change.academic.year.wizard.view</field>
+        <field name="model">change.year.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Change Academic Year Wizard">
+                <group>
+                    <field name="reason_to_change"/>
+                    <field name="current_year"/>
+                    <field name="year_to_change"/>      
+                </group>
+                      <field name="reason_to_change"/>
+                      <field name="current_year"/>
+                      <field name="year_to_change"/>          
+                </group>     
+                <footer>
+                    <button name="year_to_change_button" string="Change" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+    <record id="action_change_acedamic_year" model="ir.actions.act_window">
+        <field name="name">Change Academic Year</field>
+        <field name="res_model">change.year.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="change_academic_year_wizard"/>
+        <field name="target">new</field>           
+    </record>
+</odoo>

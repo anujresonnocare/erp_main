@@ -1,0 +1,352 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* jt_education_health
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 18.0+e\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-07-23 07:37+0000\n"
+"PO-Revision-Date: 2025-07-23 07:37+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: jt_education_health
+#: model_terms:ir.ui.view,arch_db:jt_education_health.template_health_history_id
+msgid "<strong>Blood Group:</strong>"
+msgstr "<strong>रक्त समूह:</strong>"
+
+#. module: jt_education_health
+#: model_terms:ir.ui.view,arch_db:jt_education_health.template_health_history_id
+msgid "<strong>Eye Glasses No:</strong>"
+msgstr "<strong>चश्मे का नंबर:</strong>"
+
+#. module: jt_education_health
+#: model_terms:ir.ui.view,arch_db:jt_education_health.template_health_history_id
+msgid "<strong>Height:</strong>"
+msgstr "<strong>ऊंचाई:</strong>"
+
+#. module: jt_education_health
+#: model_terms:ir.ui.view,arch_db:jt_education_health.template_health_history_id
+msgid "<strong>Major Diseases:</strong>"
+msgstr "<strong>प्रमुख बीमारियाँ:</strong>"
+
+#. module: jt_education_health
+#: model_terms:ir.ui.view,arch_db:jt_education_health.template_health_history_id
+msgid "<strong>Name:</strong>"
+msgstr "<strong>नाम:</strong>"
+
+#. module: jt_education_health
+#: model_terms:ir.ui.view,arch_db:jt_education_health.template_health_history_id
+msgid "<strong>Physical Challenged:</strong>"
+msgstr "<strong>शारीरिक रूप से विकलांग:</strong>"
+
+#. module: jt_education_health
+#: model_terms:ir.ui.view,arch_db:jt_education_health.template_health_history_id
+msgid "<strong>Type:</strong>"
+msgstr "<strong>प्रकार:</strong>"
+
+#. module: jt_education_health
+#: model_terms:ir.ui.view,arch_db:jt_education_health.template_health_history_id
+msgid "<strong>Weight:</strong>"
+msgstr "<strong>वजन:</strong>"
+
+#. module: jt_education_health
+#: model:ir.model.fields.selection,name:jt_education_health.selection__health_health__blood_group__a+
+msgid "A+ve"
+msgstr "ए+"
+
+#. module: jt_education_health
+#: model:ir.model.fields.selection,name:jt_education_health.selection__health_health__blood_group__a-
+msgid "A-ve"
+msgstr "ए−"
+
+#. module: jt_education_health
+#: model:ir.model.fields.selection,name:jt_education_health.selection__health_health__blood_group__ab+
+msgid "AB+ve"
+msgstr "एबी+"
+
+#. module: jt_education_health
+#: model:ir.model.fields.selection,name:jt_education_health.selection__health_health__blood_group__ab-
+msgid "AB-ve"
+msgstr "एबी−"
+
+#. module: jt_education_health
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health__regular_checkup
+msgid "Any Regular Checkup Required?"
+msgstr "क्या नियमित जांच की आवश्यकता है?"
+
+#. module: jt_education_health
+#: model:ir.model.fields.selection,name:jt_education_health.selection__health_health__blood_group__b+
+msgid "B+ve"
+msgstr "बी+"
+
+#. module: jt_education_health
+#: model:ir.model.fields.selection,name:jt_education_health.selection__health_health__blood_group__b-
+msgid "B-ve"
+msgstr "बी−"
+
+#. module: jt_education_health
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health__blood_group
+#: model_terms:ir.ui.view,arch_db:jt_education_health.template_health_register_id
+#: model_terms:ir.ui.view,arch_db:jt_education_health.view_health_search
+msgid "Blood Group"
+msgstr "रक्त समूह"
+
+#. module: jt_education_health
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health_line__name
+#: model_terms:ir.ui.view,arch_db:jt_education_health.template_health_history_id
+msgid "Checkup Detail"
+msgstr "जांच विवरण"
+
+#. module: jt_education_health
+#: model_terms:ir.ui.view,arch_db:jt_education_health.health_faculty_form_view
+#: model_terms:ir.ui.view,arch_db:jt_education_health.health_student_form_view
+#: model_terms:ir.ui.view,arch_db:jt_education_health.view_health_form
+msgid "Checkup Details"
+msgstr "जांच विवरण"
+
+#. module: jt_education_health
+#: model_terms:ir.ui.view,arch_db:jt_education_health.health_faculty_form_view
+#: model_terms:ir.ui.view,arch_db:jt_education_health.health_student_form_view
+#: model_terms:ir.ui.view,arch_db:jt_education_health.view_health_form
+msgid "Checkup Line"
+msgstr "जांच पंक्ति"
+
+#. module: jt_education_health
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health__health_line
+msgid "Checkup Lines"
+msgstr "जांच पंक्तियाँ"
+
+#. module: jt_education_health
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health_line__recommendation
+msgid "Checkup Recommendation"
+msgstr "जांच की सिफारिश"
+
+#. module: jt_education_health
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health__create_uid
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health_line__create_uid
+msgid "Created by"
+msgstr "निर्माता"
+
+#. module: jt_education_health
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health__create_date
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health_line__create_date
+msgid "Created on"
+msgstr "पर बनाया गया"
+
+#. module: jt_education_health
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health_line__date
+#: model_terms:ir.ui.view,arch_db:jt_education_health.template_health_history_id
+msgid "Date"
+msgstr "तारीख"
+
+#. module: jt_education_health
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health__display_name
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health_line__display_name
+msgid "Display Name"
+msgstr "प्रदर्शित नाम"
+
+#. module: jt_education_health
+#. odoo-python
+#: code:addons/jt_education_health/models/health.py:0
+msgid "Enter proper height and weight!"
+msgstr "कृपया उचित ऊंचाई और वजन दर्ज करें!"
+
+#. module: jt_education_health
+#: model_terms:ir.ui.view,arch_db:jt_education_health.view_health_search
+msgid "Eye Glasses"
+msgstr "चश्मा"
+
+#. module: jt_education_health
+#: model_terms:ir.ui.view,arch_db:jt_education_health.template_health_register_id
+msgid "Eye Glasses No"
+msgstr "चश्मे का नंबर"
+
+#. module: jt_education_health
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health__eyeglasses_no
+msgid "Eye Glasses Number"
+msgstr "चश्मे का नंबर"
+
+#. module: jt_education_health
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health__eyeglasses
+msgid "Eye Glasses?"
+msgstr "क्या चश्मा पहनते हैं?"
+
+#. module: jt_education_health
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health__faculty_id
+#: model:ir.model.fields.selection,name:jt_education_health.selection__health_health__type__faculty
+msgid "Faculty"
+msgstr "संकाय"
+
+#. module: jt_education_health
+#: model_terms:ir.ui.view,arch_db:jt_education_health.view_health_search
+msgid "Group By..."
+msgstr "समूहबद्ध करें..."
+
+#. module: jt_education_health
+#: model:ir.actions.act_window,name:jt_education_health.action_health_view
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health_line__health_id
+#: model_terms:ir.ui.view,arch_db:jt_education_health.view_health_form
+#: model_terms:ir.ui.view,arch_db:jt_education_health.view_health_search
+#: model_terms:ir.ui.view,arch_db:jt_education_health.view_health_tree
+msgid "Health"
+msgstr "स्वास्थ्य"
+
+#. module: jt_education_health
+#: model:ir.model.fields,field_description:jt_education_health.field_res_partner__health_faculty_lines
+#: model:ir.model.fields,field_description:jt_education_health.field_res_users__health_faculty_lines
+#: model_terms:ir.ui.view,arch_db:jt_education_health.health_faculty_form_view
+#: model_terms:ir.ui.view,arch_db:jt_education_health.health_student_form_view
+msgid "Health Detail"
+msgstr "स्वास्थ्य विवरण"
+
+#. module: jt_education_health
+#: model:ir.model,name:jt_education_health.model_health_health
+msgid "Health Detail for Students and Faculties"
+msgstr "छात्रों और संकायों के लिए स्वास्थ्य विवरण"
+
+#. module: jt_education_health
+#: model:ir.model.fields,field_description:jt_education_health.field_res_partner__health_lines
+#: model:ir.model.fields,field_description:jt_education_health.field_res_users__health_lines
+msgid "Health Details"
+msgstr "स्वास्थ्य विवरण"
+
+#. module: jt_education_health
+#: model_terms:ir.ui.view,arch_db:jt_education_health.template_health_history_id
+msgid "Health History"
+msgstr "स्वास्थ्य इतिहास"
+
+#. module: jt_education_health
+#: model_terms:ir.ui.view,arch_db:jt_education_health.template_health_register_id
+msgid "Health Register"
+msgstr "स्वास्थ्य रजिस्टर"
+
+#. module: jt_education_health
+#: model:ir.model,name:jt_education_health.model_health_health_line
+msgid "Health line"
+msgstr "स्वास्थ्य पंक्ति"
+
+#. module: jt_education_health
+#: model_terms:ir.ui.view,arch_db:jt_education_health.template_health_register_id
+msgid "Height"
+msgstr "ऊंचाई"
+
+#. module: jt_education_health
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health__height
+msgid "Height(C.M.)"
+msgstr "ऊंचाई (से.मी.)"
+
+#. module: jt_education_health
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health__id
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health_line__id
+msgid "ID"
+msgstr "पहचान क्रमांक"
+
+#. module: jt_education_health
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health__write_uid
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health_line__write_uid
+msgid "Last Updated by"
+msgstr "अंतिम अद्यतनकर्ता"
+
+#. module: jt_education_health
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health__write_date
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health_line__write_date
+msgid "Last Updated on"
+msgstr "अंतिम अद्यतन दिनांक"
+
+#. module: jt_education_health
+#: model_terms:ir.ui.view,arch_db:jt_education_health.view_health_search
+msgid "Major Disease"
+msgstr "प्रमुख बीमारी"
+
+#. module: jt_education_health
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health__major_diseases_note
+#: model_terms:ir.ui.view,arch_db:jt_education_health.template_health_register_id
+msgid "Major Diseases"
+msgstr "प्रमुख बीमारियाँ"
+
+#. module: jt_education_health
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health__major_diseases
+msgid "Major Diseases?"
+msgstr "क्या प्रमुख बीमारियाँ हैं?"
+
+#. module: jt_education_health
+#: model_terms:ir.ui.view,arch_db:jt_education_health.template_health_register_id
+msgid "Name"
+msgstr "नाम"
+
+#. module: jt_education_health
+#: model:ir.model.fields.selection,name:jt_education_health.selection__health_health__blood_group__o+
+msgid "O+ve"
+msgstr "ओ+"
+
+#. module: jt_education_health
+#: model:ir.model.fields.selection,name:jt_education_health.selection__health_health__blood_group__o-
+msgid "O-ve"
+msgstr "ओ−"
+
+#. module: jt_education_health
+#: model_terms:ir.ui.view,arch_db:jt_education_health.health_faculty_form_view
+#: model_terms:ir.ui.view,arch_db:jt_education_health.health_student_form_view
+#: model_terms:ir.ui.view,arch_db:jt_education_health.view_health_form
+msgid "Other Details"
+msgstr "अन्य विवरण"
+
+#. module: jt_education_health
+#: model:ir.model,name:jt_education_health.model_res_partner
+msgid "Parent Information"
+msgstr "अभिभावक की जानकारी"
+
+#. module: jt_education_health
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health__physical_challenges_note
+#: model_terms:ir.ui.view,arch_db:jt_education_health.view_health_search
+msgid "Physical Challenge"
+msgstr "शारीरिक चुनौती"
+
+#. module: jt_education_health
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health__physical_challenges
+msgid "Physical Challenge?"
+msgstr "क्या शारीरिक चुनौती है?"
+
+#. module: jt_education_health
+#: model_terms:ir.ui.view,arch_db:jt_education_health.template_health_register_id
+msgid "Physical Challenged"
+msgstr "शारीरिक रूप से विकलांग"
+
+#. module: jt_education_health
+#: model_terms:ir.ui.view,arch_db:jt_education_health.template_health_history_id
+msgid "Recommendation"
+msgstr "सिफारिश"
+
+#. module: jt_education_health
+#: model_terms:ir.ui.view,arch_db:jt_education_health.view_health_search
+msgid "Regular Checkup"
+msgstr "नियमित जांच"
+
+#. module: jt_education_health
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health__student_id
+#: model:ir.model.fields.selection,name:jt_education_health.selection__health_health__type__student
+msgid "Student"
+msgstr "छात्र"
+
+#. module: jt_education_health
+#: model_terms:ir.ui.view,arch_db:jt_education_health.view_health_search
+msgid "Student Name"
+msgstr "छात्र का नाम"
+
+#. module: jt_education_health
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health__type
+#: model_terms:ir.ui.view,arch_db:jt_education_health.template_health_register_id
+msgid "Type"
+msgstr "प्रकार"
+
+#. module: jt_education_health
+#: model:ir.model.fields,field_description:jt_education_health.field_health_health__weight
+#: model_terms:ir.ui.view,arch_db:jt_education_health.template_health_register_id
+msgid "Weight"
+msgstr "वजन"

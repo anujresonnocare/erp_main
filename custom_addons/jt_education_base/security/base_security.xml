@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Create Security Category -->
+        <record model="ir.module.category" id="module_category_jt_education_base">
+            <field name="name">Education</field>
+        </record>
+
+        <record id="group_school" model="res.groups">
+            <field name="name">School</field>
+            <field name="category_id" ref="module_category_jt_education_base"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <record id="group_principle" model="res.groups">
+            <field name="name">Principle</field>
+            <field name="category_id" ref="module_category_jt_education_base"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <record id="group_faculty" model="res.groups">
+            <field name="name">Faculty</field>
+            <field name="category_id" ref="module_category_jt_education_base"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <record id="group_college" model="res.groups">
+            <field name="name">College</field>
+            <field name="category_id" ref="module_category_jt_education_base"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <!-- <record id="group_parent" model="res.groups">
+            <field name="name">Parents</field>
+            <field name="category_id" ref="module_category_jt_education_base"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>-->
+    </data>
+</odoo>

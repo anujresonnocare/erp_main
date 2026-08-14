@@ -1,0 +1,17 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_standard_division,Access standard division,model_standard_division,,1,1,1,1
+access_student_standard,Access student standard,model_student_standard,,1,1,1,1
+access_year_year,Access year year,model_year_year,,1,1,1,1
+access_how_know,Access How Know,model_how_know,base.group_user,1,1,1,1
+access_admission_inquiry,Access admission inquiry,model_admission_inquiry,base.group_user,1,1,1,1
+district_district_access,district_access,model_district_district,,1,1,1,1
+village_village_access,village_access,model_village_village,,1,1,1,1
+province_province_access,province_access,model_province_province,,1,1,1,1
+student_history_access,student_access,model_student_history,,1,1,1,1
+access_change_year_wizard,Access change year wizard,model_change_year_wizard,,1,1,1,1
+medium_medium_access,medium_access,model_medium_medium,,1,1,1,1
+board_board_access,board_access,model_board_board,,1,1,1,1
+student_meeting_access,student_meeting_access,model_student_meeting,,1,1,1,1
+access_change_year_wizard,Access change year wizard,model_change_year_wizard,,1,1,1,1
+access_student_transfer_wizard,student.transfer.wizard,model_student_transfer_wizard,,1,1,1,1
+access_student_update_all_wizard,student.update.all.wizard,model_student_update_all_wizard,,1,1,1,1

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record model="ir.ui.view" id="view_health_check_list">
+        <field name="name">health.check.list</field>
+        <field name="model">health.check</field>
+        <field name="arch" type="xml">
+            <list string="Health Checks">
+                <field name="category"/>
+                <field name="name"/>
+                <field name="module_dependency"/>
+                <field name="default_severity"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="view_health_check_form">
+        <field name="name">health.check.form</field>
+        <field name="model">health.check</field>
+        <field name="arch" type="xml">
+            <form string="Health Check">
+                <sheet>
+                    <div class="alert alert-info" role="status" style="margin-bottom:12px;">
+                        To configure a check: untick <b>Active</b> to mute it, change <b>Default Severity</b>
+                        to control how much a finding affects the score, and edit a <b>Parameter value</b>
+                        (in the Parameters tab) to change a threshold. Do not change Module Dependency or
+                        Method Name; those wire the check to Odoo and are set by the app.
+                    </div>
+                    <widget name="web_ribbon" title="Muted" bg_color="text-bg-secondary" invisible="active"/>
+                    <group>
+                        <group string="Configuration">
+                            <field name="name"
+                                   help="Display name shown on the dashboard and in lists."/>
+                            <field name="category"
+                                   help="Business area this check scores: Finance, Sales, Inventory, Data Quality or Security."/>
+                            <field name="default_severity"
+                                   help="How much a finding deducts from the score. Critical weighs most, Info least."/>
+                            <field name="active"
+                                   help="Untick to mute this check. A muted check does not run and does not affect the score."/>
+                        </group>
+                        <group string="Technical (set by the app)">
+                            <field name="module_dependency" readonly="1"
+                                   help="Odoo app this check needs installed. The check runs only when this app is present, which is how the audit scope grows automatically."/>
+                            <field name="method_name" readonly="1"
+                                   help="Engine method that performs the check. Wired by the module; do not change."/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Parameters" name="parameters">
+                            <div class="text-muted" style="margin-bottom:8px;">
+                                Edit the <b>Value</b> of a parameter to change a threshold (for example, months without sales).
+                                It must stay between Min and Max. Leave Key and Type as they are.
+                            </div>
+                            <field name="param_ids">
+                                <list editable="bottom">
+                                    <field name="key" readonly="1"/>
+                                    <field name="label"/>
+                                    <field name="ptype" readonly="1"/>
+                                    <field name="value"/>
+                                    <field name="default"/>
+                                    <field name="min_val"/>
+                                    <field name="max_val"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Description" name="description">
+                            <field name="description"/>
+                        </page>
+                        <page string="Why It Matters" name="why_it_matters">
+                            <field name="why_it_matters"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="action_health_check">
+        <field name="name">Checks</field>
+        <field name="res_model">health.check</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

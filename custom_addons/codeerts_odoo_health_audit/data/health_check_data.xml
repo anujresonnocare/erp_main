@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="check_partner_no_email" model="health.check">
+        <field name="name">Contacts missing an email address</field>
+        <field name="category">data_quality</field>
+        <field name="module_dependency">base</field>
+        <field name="method_name">_check_partner_no_email</field>
+        <field name="default_severity">warning</field>
+        <field name="description">Finds contact records that have no email address.</field>
+        <field name="why_it_matters">Contacts without an email cannot receive invoices, quotations, or portal invitations, which blocks automated communication.</field>
+    </record>
+
+    <record id="check_partner_no_country" model="health.check">
+        <field name="name">Contacts missing a country</field>
+        <field name="category">data_quality</field>
+        <field name="module_dependency">base</field>
+        <field name="method_name">_check_partner_no_country</field>
+        <field name="default_severity">info</field>
+        <field name="description">Finds contact records with no country set.</field>
+        <field name="why_it_matters">A missing country weakens tax mapping, delivery logic, and geographic reporting.</field>
+    </record>
+
+    <record id="check_product_no_cost" model="health.check">
+        <field name="name">Products with no cost price</field>
+        <field name="category">data_quality</field>
+        <field name="module_dependency">product</field>
+        <field name="method_name">_check_product_no_cost</field>
+        <field name="default_severity">warning</field>
+        <field name="description">Finds products whose cost price is zero.</field>
+        <field name="why_it_matters">A zero cost distorts margin analysis and inventory valuation.</field>
+    </record>
+
+    <record id="check_product_no_sale_price" model="health.check">
+        <field name="name">Products with no sales price</field>
+        <field name="category">data_quality</field>
+        <field name="module_dependency">product</field>
+        <field name="method_name">_check_product_no_sale_price</field>
+        <field name="default_severity">info</field>
+        <field name="description">Finds products whose sales price is zero.</field>
+        <field name="why_it_matters">A zero sales price can lead to free orders and revenue leakage if the product is sold.</field>
+    </record>
+
+    <record id="check_partner_no_phone" model="health.check">
+        <field name="name">Contacts missing a phone number</field>
+        <field name="category">data_quality</field>
+        <field name="module_dependency">base</field>
+        <field name="method_name">_check_partner_no_phone</field>
+        <field name="default_severity">info</field>
+        <field name="description">Finds contact records with no phone number.</field>
+        <field name="why_it_matters">Contacts without a phone are harder to reach for delivery, collections and support follow-up.</field>
+    </record>
+
+    <record id="check_draft_customer_invoices" model="health.check">
+        <field name="name">Draft customer invoices not posted</field>
+        <field name="category">finance</field>
+        <field name="module_dependency">account</field>
+        <field name="method_name">_check_draft_customer_invoices</field>
+        <field name="default_severity">warning</field>
+        <field name="description">Finds customer invoices still sitting in draft instead of posted.</field>
+        <field name="why_it_matters">Draft invoices are not in your accounts yet, so revenue and receivables are understated until they are posted.</field>
+    </record>
+
+    <record id="check_so_to_invoice" model="health.check">
+        <field name="name">Confirmed orders waiting to be invoiced</field>
+        <field name="category">sales</field>
+        <field name="module_dependency">sale</field>
+        <field name="method_name">_check_so_to_invoice</field>
+        <field name="default_severity">warning</field>
+        <field name="description">Finds confirmed sales orders whose invoice status is still To Invoice.</field>
+        <field name="why_it_matters">Delivered or confirmed orders that are never invoiced are unbilled revenue leaking out of your sales process.</field>
+    </record>
+</odoo>

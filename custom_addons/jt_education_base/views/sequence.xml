@@ -1,0 +1,55 @@
+<odoo>
+    <data noupdate="1">
+        <!-- Sequences for Students -->
+        <record id="seq_student_information" model="ir.sequence">
+            <field name="name">Student ID Sequence</field>
+            <field name="code">studentinformation.seq</field>
+            <field name="prefix">STUD/%(year)s/%(month)s/</field>
+            <field name="number_next">1</field>
+            <field name="padding">1</field>
+        </record>
+
+        <!-- Sequences for Faculty -->
+        <record id="seq_faculty" model="ir.sequence">
+            <field name="name">faculty ID Sequence</field>
+            <field name="code">faculty.seq</field>
+            <field name="prefix">FAC/%(year)s/%(month)s/</field>
+            <field name="number_next">1</field>
+            <field name="padding">1</field>
+        </record>
+
+        <!-- Sequences for Parent -->
+        <record id="seq_parent" model="ir.sequence">
+            <field name="name">parent ID Sequence</field>
+            <field name="code">parent.seq</field>
+            <field name="prefix">PAR/%(year)s/%(month)s/</field>
+            <field name="number_next">1</field>
+            <field name="padding">1</field>
+        </record>
+
+        <!-- Sequences for Roll Number -->
+        <record id="seq_roll_number" model="ir.sequence">
+            <field name="name">Roll Number Sequence</field>
+            <field name="code">roll.no.seq</field>
+            <field name="number_next">1</field>
+            <field name="number_increment">1</field>
+        </record>
+
+        <record id="seq_admission_inquiry" model="ir.sequence">
+            <field name="name">Admission Inquiry Sequence</field>
+            <field name="code">admissioninformation.seq</field>
+            <field name="prefix">INQ/%(year)s/%(month)s/</field>
+            <field name="number_next">001</field>
+            <field name="padding">1</field>
+        </record>
+
+        <!-- Sequences for Meetings -->
+        <record id="seq_meeting" model="ir.sequence">
+            <field name="name">Meeting Sequence</field>
+            <field name="code">studentmeetings.seq</field>
+            <field name="prefix">ME/%(year)s/%(month)s/</field>
+            <field name="number_next">1</field>
+            <field name="padding">1</field>
+        </record>
+    </data>
+</odoo>

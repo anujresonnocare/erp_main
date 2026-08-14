@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="admission_cancel_template" model="mail.template">
+            <field name="name">Admission Cancellation</field>
+            <field name="model_id" ref="base.model_res_partner"/>
+            <field name="body_html" type="html">
+                <p>Your admission has been cancelled</p>
+            </field>
+        </record>
+    </data>
+</odoo>

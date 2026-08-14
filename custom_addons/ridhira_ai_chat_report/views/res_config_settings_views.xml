@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.ridhira.ai.chat.report</field>
+        <field name="model">res.config.settings</field>
+        <field name="priority" eval="90"/>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app data-string="AI Chat Report" string="AI Chat Report" name="ridhira_ai_chat_report" groups="base.group_system">
+                    <block title="AI Provider Settings" name="ai_provider_settings">
+                        <setting string="LLM Provider" help="Select the AI provider for generating reports">
+                            <field name="ridhira_llm_provider" widget="radio"/>
+                        </setting>
+                        <setting string="OpenAI" help="Configure OpenAI API Key" invisible="ridhira_llm_provider != 'openai'">
+                            <field name="ridhira_openai_api_key" password="True"/>
+                        </setting>
+                        <setting string="Google Gemini" help="Configure Gemini API Key" invisible="ridhira_llm_provider != 'gemini'">
+                            <field name="ridhira_gemini_api_key" password="True"/>
+                        </setting>
+                        <setting string="Anthropic" help="Configure Anthropic API Key" invisible="ridhira_llm_provider != 'anthropic'">
+                            <field name="ridhira_anthropic_api_key" password="True"/>
+                        </setting>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+    
+    <record id="action_ai_chat_report_config_settings" model="ir.actions.act_window">
+        <field name="name">Settings</field>
+        <field name="res_model">res.config.settings</field>
+        <field name="view_mode">form</field>
+        <field name="target">inline</field>
+        <field name="context">{'module' : 'ridhira_ai_chat_report', 'bin_size': False}</field>
+    </record>
+</odoo>

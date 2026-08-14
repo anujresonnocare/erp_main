@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="view_health_tree" model="ir.ui.view">
+            <field name="name">health.health.tree</field>
+            <field name="model">health.health</field>
+            <field name="arch" type="xml">
+                <list string="Health">
+                    <field name="type" />
+                    <field name="student_id" />
+                    <field name="faculty_id" />
+                    <field name="blood_group" />
+                    <field name="height"/>
+                    <field name="weight"/>
+                    <field name="eyeglasses" />
+                    <field name="physical_challenges" />
+                    <field name="major_diseases" />
+                    <field name="regular_checkup" />
+                </list>
+            </field>
+        </record>
+
+        <record id="view_health_form" model="ir.ui.view">
+            <field name="name">health.health.form</field>
+            <field name="model">health.health</field>
+            <field name="arch" type="xml">
+                <form string="Health">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="type" />
+                                <field name="student_id" style="width: 100%%" required="type == 'student'" invisible="type != 'student'" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True,'no_create':True}"/>
+                                <field name="faculty_id" style="width: 100%%" required="type == 'faculty'" invisible = "type != 'faculty'" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True,'no_create':True}"/>
+                            </group>
+                            <group>
+                                <field name="height" required="1"/>
+                                <field name="weight" required="1"/>
+                                <field name="blood_group" required="1"/>
+                            </group>
+                        </group>
+                        <group string="Other Details">
+                            <group>
+                                <field name="eyeglasses" />
+                                <field name="eyeglasses_no" invisible="not eyeglasses" />
+                            </group>
+                            <group>
+                                <field name="physical_challenges" />
+                                <field name="physical_challenges_note"
+                                    invisible="not physical_challenges" />
+                            </group>
+                            <group>
+                                <field name="major_diseases" />
+                                <field name="major_diseases_note"
+                                    invisible="not major_diseases" />
+                            </group>
+                            <field name="regular_checkup" />
+                        </group>
+                        <separator string="Checkup Details" />
+                        <group>
+                            <field name="health_line" nolabel="1">
+                                <list string="Checkup Line">
+                                    <field name="date" />
+                                    <field name="name" required="1" />
+                                </list>
+                                <form string="Checkup Line">
+                                    <group>
+                                        <field name="date" />
+                                        <field name="name" />
+                                        <field name="recommendation" />
+                                    </group>
+                                </form>
+                            </field>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_health_search" model="ir.ui.view">
+            <field name="name">health.health.search</field>
+            <field name="model">health.health</field>
+            <field name="arch" type="xml">
+                <search string="Health">
+                    <field name="student_id" />
+                    <field name="faculty_id" />
+                    <field name="blood_group" />
+                    <field name="eyeglasses" />
+                    <field name="physical_challenges" />
+                    <field name="major_diseases" />
+                    <field name="regular_checkup" />
+                    <separator />
+                    <group expand="0" string="Group By...">
+                        <filter name="filter_student_name" string="Student Name" domain="[]" context="{'group_by':'student_id'}" />
+                        <filter name="filter_eye_glass" string="Eye Glasses" domain="[]"
+                            context="{'group_by':'eyeglasses'}" />
+                        <filter name="filter_blood_group" string="Blood Group" domain="[]"
+                            context="{'group_by':'blood_group'}" />
+                        <filter name="filter_physical_challenge" string="Physical Challenge" domain="[]"
+                            context="{'group_by':'physical_challenges'}" />
+                        <filter name="filter_major_disease" string="Major Disease" domain="[]"
+                            context="{'group_by':'major_diseases'}" />
+                        <filter name="filter_regular_checkup" string="Regular Checkup" domain="[]"
+                            context="{'group_by':'regular_checkup'}" />
+                    </group>
+                </search>
+            </field>
+        </record>
+        
+    </data>
+</odoo>

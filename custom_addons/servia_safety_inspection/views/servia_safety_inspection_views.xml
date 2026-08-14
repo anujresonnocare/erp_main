@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="servia_safety_inspection_view_form" model="ir.ui.view">
+        <field name="name">servia.safety.inspection.form</field>
+        <field name="model">servia.safety.inspection</field>
+        <field name="arch" type="xml">
+            <form string="Safety Inspections">
+                <header>
+                    <button name="action_confirm" string="Confirm" type="object"
+                            class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_reset" string="Reset" type="object"
+                            invisible="state != 'confirmed'"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="Inspection Title"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="area"/>
+                            <field name="inspector"/>
+                            <field name="inspect_date"/>
+                        </group>
+                        <group>
+                            <field name="result"/>
+                            <field name="risk"/>
+                            <field name="action_by"/>
+                        </group>
+                    </group>
+                    <field name="findings" placeholder="Findings / Actions..."/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="servia_safety_inspection_view_list" model="ir.ui.view">
+        <field name="name">servia.safety.inspection.list</field>
+        <field name="model">servia.safety.inspection</field>
+        <field name="arch" type="xml">
+            <list string="Safety Inspections" decoration-success="state=='confirmed'" decoration-muted="state=='draft'">
+                <field name="inspect_date"/>
+                <field name="name"/>
+                <field name="area"/>
+                <field name="inspector"/>
+                <field name="result"/>
+                <field name="risk"/>
+                <field name="state"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="servia_safety_inspection_view_search" model="ir.ui.view">
+        <field name="name">servia.safety.inspection.search</field>
+        <field name="model">servia.safety.inspection</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="area"/>
+                <field name="inspector"/>
+                <filter name="f_result_pass" string="Pass" domain="[('result','=','pass')]"/>
+                <filter name="f_result_fail" string="Fail" domain="[('result','=','fail')]"/>
+                <filter name="f_result_na" string="N/A" domain="[('result','=','na')]"/>
+                <filter name="draft" string="Draft" domain="[('state','=','draft')]"/>
+                <filter name="confirmed" string="Confirmed" domain="[('state','=','confirmed')]"/>
+                <group expand="0" string="Group By">
+                    <filter name="g_area" string="Area" context="{'group_by':'area'}"/>
+                    <filter name="g_result" string="Result" context="{'group_by':'result'}"/>
+                    <filter name="g_risk" string="Risk Level" context="{'group_by':'risk'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="servia_safety_inspection_action" model="ir.actions.act_window">
+        <field name="name">Safety Inspections</field>
+        <field name="res_model">servia.safety.inspection</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Record your first entry</p>
+            <p>Record workplace safety inspections.<br/>
+               Need dashboards, PDF exports, approval flows or automation?
+               <b>Servia Pro</b> and full A-Z installation are available - email <b>support@servia.ae</b>.</p>
+        </field>
+    </record>
+
+    <record id="servia_safety_inspection_more_apps_action" model="ir.actions.act_url">
+        <field name="name">Servia Pro &amp; More Apps</field>
+        <field name="url">https://apps.odoo.com/apps/modules/browse?author=Servia</field>
+        <field name="target">new</field>
+    </record>
+
+    <record id="servia_safety_inspection_setup_action" model="ir.actions.act_url">
+        <field name="name">Get Free Setup &amp; Support</field>
+        <field name="url">mailto:support@servia.ae?subject=Servia%20Setup%20/%20Quote%20Request%20-%20Servia%20Safety%20Inspection%20Checklist&amp;body=Hello%20Servia%20team%2C%0D%0A%0D%0AI%20am%20using%20your%20Servia%20Safety%20Inspection%20Checklist%20app%20and%20would%20like%20help.%0D%0A%0D%0AName%3A%0D%0ACompany%3A%0D%0AEmail%3A%0D%0APhone%3A%0D%0AWhat%20I%20need%20%28install%20/%20white-label%20/%20custom%20feature%20/%20support%29%3A%0D%0A%0D%0AThank%20you.</field>
+        <field name="target">new</field>
+    </record>
+
+    <menuitem id="servia_safety_inspection_menu_root" name="Safety Inspections"
+              web_icon="servia_safety_inspection,static/description/icon.png"/>
+    <menuitem id="servia_safety_inspection_menu_main" name="Safety Inspections"
+              parent="servia_safety_inspection_menu_root" action="servia_safety_inspection_action" sequence="10"/>
+    <menuitem id="servia_safety_inspection_menu_setup" name="&#9889; Get Free Setup &amp; Support"
+              parent="servia_safety_inspection_menu_root" action="servia_safety_inspection_setup_action" sequence="80"/>
+    <menuitem id="servia_safety_inspection_menu_more" name="&#9733; Servia Pro &amp; More Apps"
+              parent="servia_safety_inspection_menu_root" action="servia_safety_inspection_more_apps_action" sequence="90"/>
+
+</odoo>

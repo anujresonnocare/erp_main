@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record model="ir.actions.server" id="action_confirm_student">
+        <field name="name">Confirm Students</field>
+        <field name="model_id" ref="jt_education_base.model_res_partner"/>
+        <field name="binding_model_id" ref="jt_education_base.model_res_partner" />
+        <field name="state">code</field>
+        <field name="code">
+for record in records:
+    record.confirm_student()
+        </field>
+    </record>
+</odoo>

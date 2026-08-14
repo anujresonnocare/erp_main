@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_users_form_simple_modif_notification" model="ir.ui.view">
+        <field name="name">res.users.form.notification.settings</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_form_simple_modif"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page name="notification_settings" string="CRM Notifications">
+                    <group string="Lead Notifications">
+                        <field name="crm_lead_stage_notification"/>
+                        <field name="crm_lead_email_notification"/>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+
+    <!-- Add notification button to partner form -->
+    <record id="view_partner_form_notification" model="ir.ui.view">
+        <field name="name">res.partner.form.notification</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_view_notifications" 
+                        type="object" 
+                        class="oe_stat_button" 
+                        icon="fa-bell-o"
+                        invisible="notification_count == 0">
+                    <field name="notification_count" widget="statinfo" string="Notifications"/>
+                </button>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

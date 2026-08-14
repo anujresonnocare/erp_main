@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="template_health_register_id">
+		    <t t-call="web.html_container">
+          <!--<t t-foreach="docs" t-as="doc">-->
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <div>
+                            <p>
+                                <h3 class="text-center">
+                                    Health Register
+                                </h3>
+                            </p>
+                            <br/>
+                            <table class="table table-responsive">
+                                <tr style="border: 2px solid black;">
+                                    <th>Type</th>
+                                    <th>Name</th>
+                                    <th>Height</th>
+                                    <th>Weight</th>
+                                    <th>Blood Group</th>
+    								<th>Eye Glasses No</th>
+    								<th>Physical Challenged</th>
+    							    <th>Major Diseases</th>
+                                </tr>
+                                <t t-foreach="docs" t-as="line">
+                                    <tr style="border: 2px solid black;">
+                                        <td><span t-field="line.type"/></td>
+                                        <td><span t-if="line.type == 'student'"><span t-field="line.student_id"/></span>
+    									<span t-if="line.type == 'faculty'"><span t-field="line.faculty_id"/></span></td>
+                                        <td><span t-field="line.height" /></td>
+                                        <td><span t-field="line.weight" /></td>
+                                        <td><span t-field="line.blood_group" /></td>
+    									<td><span t-field="line.eyeglasses_no" /></td>
+    									<td><span t-field="line.physical_challenges_note" /></td>
+    									<td><span t-field="line.major_diseases_note" /></td>
+                                    </tr>
+                                </t>
+                            </table>
+                        </div>
+					 <!--<p style="page-break-after:always;">   </p> -->
+                    </div>
+                </t>
+          <!-- </t> -->
+		    </t>
+        </template>
+        
+    </data>
+</odoo>

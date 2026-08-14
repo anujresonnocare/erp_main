@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_ir_cron_history_system,ir.cron.history system,model_ir_cron_history,base.group_system,1,1,1,1
+access_health_check_result_system,health.check.result system,model_health_check_result,base.group_system,1,1,1,1
+access_health_check_dashboard_system,health.check.dashboard system,model_health_check_dashboard,base.group_system,1,1,1,1

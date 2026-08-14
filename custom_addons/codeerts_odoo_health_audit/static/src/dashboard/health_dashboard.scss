@@ -1,0 +1,197 @@
+// The dashboard is a fixed light "report" theme. Odoo dark mode swaps the asset
+// bundle and recolors Bootstrap components (esp. tables) via CSS variables, which
+// would make the light text unreadable. We therefore force light surfaces + dark
+// text explicitly so it renders identically in both light and dark mode.
+// The parent .o_action (Odoo client-action root) is a height:100% flex column
+// with overflow:hidden, so the dashboard body must be the flex:1 scroller.
+.o_health_dashboard {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    background-color: #eef9f7 !important;
+    color: #0b1a2e;
+
+    .o_health_good { color: #0e8377 !important; }
+    .o_health_warn { color: #b8860b !important; }
+    .o_health_bad  { color: #c0392b !important; }
+
+    .o_health_title {
+        font-size: 28px;
+        font-weight: 800;
+        color: #0b1a2e;
+    }
+    .o_health_scope {
+        font-size: 13px;
+        color: #5a6b7f;
+        margin-top: 4px;
+    }
+    .o_health_lastrun {
+        font-size: 13px;
+        color: #5a6b7f;
+    }
+    .o_health_run_btn {
+        background-color: #15a89b;
+        border-color: #15a89b;
+        color: #fff;
+        font-weight: 700;
+        &:hover { background-color: #0e8377; border-color: #0e8377; color: #fff; }
+    }
+
+    // --- hero / gauge ---
+    .o_health_hero {
+        background-color: #fafdfd !important;
+        border: 1px solid #d9ece8;
+        border-radius: 16px;
+        padding: 28px 24px;
+    }
+    .o_health_gauge_wrap {
+        position: relative;
+        width: 160px;
+        height: 160px;
+    }
+    .o_health_gauge {
+        width: 160px;
+        height: 160px;
+        transform: rotate(-90deg);
+        .o_health_gauge_bg {
+            fill: none;
+            stroke: #e1efec;
+            stroke-width: 12;
+        }
+        .o_health_gauge_fg {
+            fill: none;
+            stroke-width: 12;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 0.8s ease;
+        }
+    }
+    .o_health_gauge_center {
+        position: absolute;
+        top: 0; left: 0; right: 0; bottom: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+    .o_health_gauge_score {
+        font-size: 46px;
+        font-weight: 800;
+        line-height: 1;
+    }
+    .o_health_gauge_out {
+        font-size: 13px;
+        color: #5a6b7f;
+    }
+    .o_health_hero_status {
+        font-size: 24px;
+        font-weight: 800;
+    }
+    .o_health_hero_sub {
+        font-size: 13px;
+        color: #5a6b7f;
+    }
+    .o_health_delta {
+        font-size: 14px;
+        font-weight: 700;
+        margin-top: 6px;
+    }
+
+    // --- pills ---
+    .o_health_pill {
+        display: inline-block;
+        padding: 3px 12px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 700;
+    }
+    .o_health_pill_critical { background-color: #fbe3e0 !important; color: #c0392b !important; }
+    .o_health_pill_warning  { background-color: #fbf0d8 !important; color: #9a6a00 !important; }
+    .o_health_pill_info     { background-color: #dcefec !important; color: #0e8377 !important; }
+
+    // --- category cards ---
+    .o_health_cat_card {
+        background-color: #fafdfd !important;
+        border: 1px solid #d9ece8;
+        border-radius: 16px;
+        padding: 18px 16px;
+        text-align: center;
+        height: 100%;
+        box-shadow: 0 6px 18px rgba(14, 131, 119, 0.08);
+        transition: transform 0.18s ease, box-shadow 0.18s ease;
+        &:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 26px rgba(14, 131, 119, 0.16);
+        }
+    }
+    .o_health_cat_label {
+        font-size: 13px;
+        font-weight: 700;
+        color: #415062;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+    }
+    .o_health_cat_score {
+        font-size: 30px;
+        font-weight: 800;
+        margin: 4px 0 8px;
+    }
+    .o_health_cat_bar {
+        height: 6px;
+        border-radius: 999px;
+        background-color: #e1efec;
+        overflow: hidden;
+    }
+    .o_health_cat_bar_fill {
+        height: 100%;
+        border-radius: 999px;
+        transition: width 0.8s ease;
+    }
+    .o_health_cat_issues {
+        font-size: 12px;
+        color: #5a6b7f;
+        margin-top: 8px;
+    }
+
+    // --- findings table ---
+    .o_health_findings_title {
+        font-weight: 800;
+        color: #0b1a2e;
+    }
+    .o_health_findings_table {
+        // Override Bootstrap dark-mode table variables so the table stays light.
+        --bs-table-bg: #fafdfd;
+        --bs-table-color: #0b1a2e;
+        --bs-table-border-color: #e1efec;
+        background-color: #fafdfd !important;
+        border-radius: 12px;
+        overflow: hidden;
+        thead th {
+            background-color: #e8f6f3 !important;
+            color: #415062 !important;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            border-bottom: none;
+        }
+        tbody td {
+            background-color: #fafdfd !important;
+            color: #0b1a2e !important;
+            border-color: #e1efec !important;
+            vertical-align: middle;
+        }
+    }
+    .o_health_cat_badge {
+        display: inline-block;
+        padding: 3px 10px;
+        border-radius: 6px;
+        background-color: #e8f6f3 !important;
+        color: #0e8377 !important;
+        font-size: 12px;
+        font-weight: 700;
+    }
+    .o_health_count { font-weight: 700; }
+    .o_health_view_btn {
+        color: #0e8377 !important;
+        font-weight: 700;
+        &:hover { color: #15a89b !important; text-decoration: underline; }
+    }
+}

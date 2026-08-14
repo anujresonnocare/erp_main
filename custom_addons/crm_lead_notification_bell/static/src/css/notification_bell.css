@@ -1,0 +1,211 @@
+/* Main container */
+.o_crm_notification_bell {
+    position: relative;
+    display: inline-block;
+    margin: 0 5px;
+}
+
+/* Bell icon link */
+.o_crm_notification_bell .dropdown-toggle {
+    display: block;
+    padding: 0 8px;
+    color: #7c7bad;
+    font-size: 18px;
+    line-height: 32px;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.o_crm_notification_bell .dropdown-toggle:hover {
+    color: #5c5c8a;
+}
+
+/* Notification badge */
+.o_crm_notification_bell .o_notification_badge {
+    position: absolute;
+    top: -2px;
+    right: -5px;
+    background-color: #dc3545;
+    color: white;
+    font-size: 10px;
+    font-weight: bold;
+    padding: 2px 5px;
+    border-radius: 10px;
+    min-width: 16px;
+    height: 16px;
+    line-height: 12px;
+    text-align: center;
+    z-index: 1;
+}
+
+/* Dropdown menu */
+.o_notification_dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    width: 380px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    margin-top: 5px;
+    overflow: hidden;
+    animation: slideDown 0.2s ease;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Dropdown header */
+.o_dropdown_header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.o_dropdown_title {
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.o_mark_all_read_btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    font-size: 11px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.o_mark_all_read_btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* Notification items container */
+.o_notification_items {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+/* Individual notification item */
+.o_notification_item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    border-bottom: 1px solid #f0f0f0;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.o_notification_item:hover {
+    background-color: #f8f9fa;
+}
+
+.o_notification_item.o_unread {
+    background-color: #e3f2fd;
+    border-left: 3px solid #2196f3;
+}
+
+.o_notification_item.o_unread:hover {
+    background-color: #d4e9ff;
+}
+
+/* Notification content */
+.o_notification_item_content {
+    flex: 1;
+    margin-right: 10px;
+}
+
+.o_notification_item_title {
+    font-weight: 600;
+    font-size: 13px;
+    color: #333;
+    margin-bottom: 4px;
+}
+
+.o_notification_item_message {
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 4px;
+    line-height: 1.4;
+}
+
+.o_notification_item_time {
+    font-size: 10px;
+    color: #999;
+}
+
+/* Mark read button */
+.o_mark_read_btn {
+    opacity: 0;
+    background: #28a745;
+    border: none;
+    color: white;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.o_notification_item:hover .o_mark_read_btn {
+    opacity: 1;
+}
+
+.o_mark_read_btn:hover {
+    background: #218838;
+    transform: scale(1.05);
+}
+
+/* Empty state */
+.o_empty_notifications {
+    text-align: center;
+    padding: 40px 20px;
+    color: #999;
+}
+
+.o_empty_notifications i {
+    margin-bottom: 10px;
+    color: #ddd;
+}
+
+.o_empty_notifications p {
+    margin: 0;
+    font-size: 13px;
+}
+
+/* Scrollbar styling */
+.o_notification_items::-webkit-scrollbar {
+    width: 6px;
+}
+
+.o_notification_items::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.o_notification_items::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+}
+
+.o_notification_items::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}

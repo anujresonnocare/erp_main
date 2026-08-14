@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- How Know Form View-->
+        <record id="howknow_form_view" model="ir.ui.view">
+            <field name="name">How Know Form View</field>
+            <field name="model">how.know</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name" required='1'/>
+                            </group>
+                        </group>
+                    </sheet>
+                    <!-- Chatter -->
+                     <chatter/>
+                </form>
+            </field>
+        </record>
+        <!--How know List View-->
+        <record id="howknow_list_view" model="ir.ui.view">
+            <field name="name">Student Standard Tree View</field>
+            <field name="model">how.know</field>
+            <field name="arch" type="xml">
+                <list editable='top'>
+                    <field name="name" required='1'/>
+                </list>
+            </field>
+        </record>
+    </data>
+</odoo>

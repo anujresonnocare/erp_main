@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        
+        <template id="template_health_history_id">
+		    <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="doc">
+                    <t t-call="web.external_layout">
+                        <div class="page">
+                            <div>
+                                <p>
+                                    <h3 class="text-center">
+                                        Health History
+                                    </h3>
+                                </p>
+						        <div class="col-xs-2">
+                                    <strong>Type:</strong>
+                                    <span t-field="doc.type"/>
+                                </div>
+						        <div class="col-xs-4">
+                                    <strong>Name:</strong>
+                                    <span t-if="doc.type == 'student'"><span t-field="doc.student_id"/></span>
+									<span t-if="doc.type == 'faculty'"><span t-field="doc.faculty_id"/></span>
+                                </div>
+						        <div class="col-xs-2">
+                                    <strong>Height:</strong>
+                                    <span t-field="doc.height"/>
+                                </div>
+						        <div class="col-xs-4">
+                                    <strong>Weight:</strong>
+                                    <span t-field="doc.weight"/>
+                                </div>
+						        <div class="col-xs-2">
+                                    <strong>Blood Group:</strong>
+                                    <span t-field="doc.blood_group"/>
+                                </div>
+        						<div class="col-xs-4">
+                                    <strong>Eye Glasses No:</strong>
+                                    <span t-field="doc.eyeglasses_no"/>
+                                </div>
+        						<div class="col-xs-2">
+                                    <strong>Physical Challenged:</strong>
+                                    <span t-field="doc.physical_challenges_note"/>
+                                </div>
+        						<div class="col-xs-4">
+                                    <strong>Major Diseases:</strong>
+                                    <span t-field="doc.major_diseases_note"/>
+                                </div>
+                                <br/>
+
+                                <table class="table table-responsive">
+                                    <thead>
+                                        <th>Date</th>
+                                        <th>Checkup Detail</th>
+                                        <th>Recommendation</th>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="doc.health_line" t-as="line">
+                                            <tr>
+                                                <td><span t-field="line.date"/></td>
+                                                <td><span t-field="line.name" /></td>
+                                                <td><span t-field="line.recommendation" /></td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </div>
+					        <p style="page-break-after:always;">   </p>
+                        </div>
+                    </t>
+                </t>
+		    </t>
+        </template>
+    </data>
+</odoo>

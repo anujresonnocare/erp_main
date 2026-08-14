@@ -1,0 +1,15 @@
+// Dark-mode-only icon override for the Health Check apps drawer tile.
+// This file ships in the `web.assets_web_dark` bundle which Odoo 18
+// Enterprise loads ONLY when the user has Dark color scheme. There is
+// no .o_dark_mode body class to gate on in 18 - the bundle gating IS
+// the gate. So no theme-conditional wrapper is needed; the rule is
+// simply unconditional within this bundle.
+//
+// Manifest icon.png stays as the LIGHT variant (light theme + apps.odoo.com
+// listing cover). This bundle swaps the apps drawer <img.o_app_icon>
+// inside the Health Check tile to the DARK variant via CSS `content`,
+// which replaces the rendered image on the <img> element.
+
+.o_app[data-menu-xmlid="odoo_health_check.menu_root"] img.o_app_icon {
+    content: url("/odoo_health_check/static/description/icon_dark.png") !important;
+}

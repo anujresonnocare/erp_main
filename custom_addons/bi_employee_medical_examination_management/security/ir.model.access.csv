@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+bi_employee_medical_examination_management.access_hr_employee_medical_examination,access_hr_employee_medical_examination,bi_employee_medical_examination_management.model_hr_employee_medical_examination,base.group_user,1,1,1,1

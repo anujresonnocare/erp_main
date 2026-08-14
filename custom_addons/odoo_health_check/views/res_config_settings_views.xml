@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="res_config_settings_view_form" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.odoo_health_check</field>
+        <field name="model">res.config.settings</field>
+        <field name="priority" eval="50"/>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app data-string="Health Check" string="Health Check" name="odoo_health_check" groups="base.group_system">
+                    <block title="Notifications" name="health_check_notifications">
+                        <setting id="health_check_notify_emails" string="Cron Failure Emails"
+                                 help="Comma-separated list of recipients. Leave empty to disable email alerts.">
+                            <field name="odoo_health_notify_emails" placeholder="ops@example.com, admin@example.com"/>
+                        </setting>
+                    </block>
+                    <block title="Retention" name="health_check_retention">
+                        <setting id="health_check_retention_days" string="History Retention (days)"
+                                 help="Cron execution history older than this is deleted daily. Zero or negative disables cleanup.">
+                            <field name="odoo_health_retention_days"/>
+                        </setting>
+                    </block>
+                    <block title="Disk Monitoring" name="health_check_disk">
+                        <setting id="health_check_disk_warn_pct" string="Warning Threshold (%)"
+                                 help="Disk usage above this percentage is flagged 'warn'. Default 80.">
+                            <field name="odoo_health_disk_warn_pct"/>
+                        </setting>
+                        <setting id="health_check_disk_critical_pct" string="Critical Threshold (%)"
+                                 help="Disk usage above this percentage is flagged 'critical'. Default 90.">
+                            <field name="odoo_health_disk_critical_pct"/>
+                        </setting>
+                        <setting id="health_check_disk_alert_emails" string="Disk Alert Emails"
+                                 help="Comma-separated recipients. One email per worsening transition (ok-&gt;warn, ok-&gt;critical, warn-&gt;critical). Leave empty to disable.">
+                            <field name="odoo_health_disk_alert_emails" placeholder="ops@example.com, sysadmin@example.com"/>
+                        </setting>
+                    </block>
+                    <block title="PostgreSQL Monthly Report" name="health_check_pg_report">
+                        <setting id="health_check_pg_report_emails" string="PG Report Emails"
+                                 help="Comma-separated recipients for the monthly PostgreSQL growth report (sent on the 1st of each month at 08:00). Leave empty to disable email - the report row is still created.">
+                            <field name="odoo_health_pg_report_emails" placeholder="ops@example.com, dba@example.com"/>
+                        </setting>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_open_health_check_settings" model="ir.actions.act_window">
+        <field name="name">Health Check Settings</field>
+        <field name="res_model">res.config.settings</field>
+        <field name="view_mode">form</field>
+        <field name="target">inline</field>
+        <field name="context">{"module": "odoo_health_check"}</field>
+    </record>
+
+</odoo>

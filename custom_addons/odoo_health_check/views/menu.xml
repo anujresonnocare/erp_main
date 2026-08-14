@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="menu_root"
+              name="Health Check"
+              web_icon="odoo_health_check,static/description/icon.png"
+              sequence="100"/>
+
+    <menuitem id="menu_dashboard"
+              name="Dashboard"
+              parent="menu_root"
+              action="health_check_dashboard_action"
+              sequence="5"/>
+
+    <menuitem id="menu_cron_history"
+              name="Cron History"
+              parent="menu_root"
+              action="ir_cron_history_action"
+              sequence="10"/>
+
+    <menuitem id="menu_disk_checks"
+              name="Disk Checks"
+              parent="menu_root"
+              action="health_check_result_action"
+              sequence="20"/>
+
+    <menuitem id="menu_pg_reports"
+              name="PG Reports"
+              parent="menu_root"
+              action="health_check_pg_report_action"
+              sequence="30"/>
+
+    <menuitem id="menu_settings"
+              name="Settings"
+              parent="menu_root"
+              action="action_open_health_check_settings"
+              sequence="90"/>
+
+</odoo>

@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="servia_incident_report_view_form" model="ir.ui.view">
+        <field name="name">servia.incident.report.form</field>
+        <field name="model">servia.incident.report</field>
+        <field name="arch" type="xml">
+            <form string="Incident Report">
+                <header>
+                    <button name="action_investigate" string="Investigate" type="object"
+                            class="btn-primary" attrs="{'invisible':[('state','!=','open')]}"/>
+                    <button name="action_close" string="Close" type="object"
+                            class="btn-primary" attrs="{'invisible':[('state','!=','investigating')]}"/>
+                    <button name="action_reopen" string="Reopen" type="object"
+                            attrs="{'invisible':[('state','!=','closed')]}"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="Incident title"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="date"/>
+                            <field name="location"/>
+                        </group>
+                        <group>
+                            <field name="severity"/>
+                            <field name="reported_by"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="description" placeholder="What happened..."/>
+                        <field name="action_taken" placeholder="Action taken..."/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="servia_incident_report_view_list" model="ir.ui.view">
+        <field name="name">servia.incident.report.list</field>
+        <field name="model">servia.incident.report</field>
+        <field name="arch" type="xml">
+            <list string="Incident Reports" decoration-danger="severity=='major'" decoration-warning="severity=='moderate'" decoration-muted="state=='closed'">
+                <field name="date"/>
+                <field name="name"/>
+                <field name="location"/>
+                <field name="severity"/>
+                <field name="reported_by"/>
+                <field name="state"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="servia_incident_report_view_search" model="ir.ui.view">
+        <field name="name">servia.incident.report.search</field>
+        <field name="model">servia.incident.report</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="location"/>
+                <field name="reported_by"/>
+                <filter name="open" string="Open" domain="[('state','=','open')]"/>
+                <filter name="investigating" string="Investigating" domain="[('state','=','investigating')]"/>
+                <filter name="closed" string="Closed" domain="[('state','=','closed')]"/>
+                <group expand="0" string="Group By">
+                    <filter name="g_severity" string="Severity" context="{'group_by':'severity'}"/>
+                    <filter name="g_state" string="Status" context="{'group_by':'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="servia_incident_report_action" model="ir.actions.act_window">
+        <field name="name">Incident Reports</field>
+        <field name="res_model">servia.incident.report</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Log your first incident</p>
+            <p>Record HSE incidents with severity, location, description and action taken.<br/>
+               Need root-cause analysis, PDF reports, dashboards or corrective-action tracking?
+               <b>Servia Pro</b> and full installation are available - email <b>support@servia.ae</b>.</p>
+        </field>
+    </record>
+
+    <record id="servia_more_apps_action" model="ir.actions.act_url">
+        <field name="name">Servia Pro &amp; More Apps</field>
+        <field name="url">https://apps.odoo.com/apps/modules/browse?author=Servia</field>
+        <field name="target">new</field>
+    </record>
+
+    <menuitem id="servia_incident_menu_root" name="Incidents"
+              web_icon="servia_incident_report,static/description/icon.png"/>
+    <menuitem id="servia_incident_menu_main" name="Incident Reports"
+              parent="servia_incident_menu_root" action="servia_incident_report_action" sequence="10"/>
+    <menuitem id="servia_incident_menu_more" name="&#9733; Servia Pro &amp; More Apps"
+              parent="servia_incident_menu_root" action="servia_more_apps_action" sequence="90"/>
+
+
+    <record id="servia_incident_report_setup_action" model="ir.actions.act_url">
+        <field name="name">Get Free Setup &amp; Support</field>
+        <field name="url">mailto:support@servia.ae?subject=Servia%20Setup%20/%20Quote%20Request%20-%20Servia%20HSE%20Incident%20Report%20%7C%20Accident%2C%20Near-Miss%20%26%20Safety%20Report&amp;body=Hello%20Servia%20team%2C%0D%0A%0D%0AI%20am%20using%20your%20Servia%20HSE%20Incident%20Report%20%7C%20Accident%2C%20Near-Miss%20%26%20Safety%20Report%20app%20and%20would%20like%20help.%0D%0A%0D%0AName%3A%0D%0ACompany%3A%0D%0AEmail%3A%0D%0APhone%3A%0D%0AWhat%20I%20need%20%28install%20/%20white-label%20/%20custom%20feature%20/%20support%29%3A%0D%0A%0D%0AThank%20you.</field>
+        <field name="target">new</field>
+    </record>
+    <menuitem id="servia_incident_report_menu_setup" name="&#9889; Get Free Setup &amp; Support"
+              parent="servia_incident_menu_root" action="servia_incident_report_setup_action" sequence="80"/>
+
+</odoo>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="email_template_lead_notification" model="mail.template">
+            <field name="name">Lead Stage Change Notification</field>
+            <field name="model_id" ref="crm.model_crm_lead"/>
+            <field name="subject">Lead Stage Changed: ${object.name}</field>
+            <field name="body_html" type="html">
+                <div style="font-family: Arial, sans-serif;">
+                    <h3>Lead Stage Change Notification</h3>
+                    <p>Dear ${object.user_id.name},</p>
+                    <p>The lead "<strong>${object.name}</strong>" has changed stage:</p>
+                    <ul>
+                        <li><strong>From:</strong> ${old_stage.name if old_stage else 'None'}</li>
+                        <li><strong>To:</strong> ${new_stage.name if new_stage else 'None'}</li>
+                    </ul>
+                    <p>You can view the lead <a href="${object.get_base_url()}/web#id=${object.id}&amp;model=crm.lead&amp;view_type=form">here</a>.</p>
+                </div>
+            </field>
+            <field name="email_to">${object.user_id.email}</field>
+            <field name="auto_delete" eval="True"/>
+        </record>
+    </data>
+</odoo>

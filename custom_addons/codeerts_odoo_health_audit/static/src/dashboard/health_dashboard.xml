@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="codeerts_odoo_health_audit.HealthDashboard">
+      <div t-att-class="props.className">
+        <div class="o_health_dashboard p-4">
+
+            <div class="o_health_header d-flex align-items-center justify-content-between mb-4">
+                <div>
+                    <h1 class="o_health_title m-0">Odoo Health</h1>
+                    <div t-if="state.run" class="o_health_scope">
+                        Auditing <b t-esc="state.run.scanned_app_count"/> apps
+                        and <b t-esc="state.run.active_check_count"/> checks
+                    </div>
+                </div>
+                <div class="d-flex align-items-center gap-3">
+                    <span class="o_health_lastrun">
+                        <t t-if="state.run">Last run: <t t-esc="formatRunDate(state.run.create_date)"/></t>
+                    </span>
+                    <button type="button" class="btn o_health_run_btn" t-on-click="runAudit">
+                        <i class="fa fa-refresh me-1"/> Run Audit Now
+                    </button>
+                </div>
+            </div>
+
+            <div t-if="state.loading" class="o_health_loading text-muted p-5 text-center">
+                <i class="fa fa-spinner fa-spin fa-2x"/>
+                <div class="mt-2">Running health audit...</div>
+            </div>
+
+            <div t-elif="!state.run" class="o_health_empty text-center p-5">
+                <i class="fa fa-heartbeat fa-3x mb-3 o_health_good"/>
+                <h3>No audit yet</h3>
+                <p class="text-muted">Click Run Audit Now to score your Odoo health.</p>
+            </div>
+
+            <div t-else="" class="o_health_body">
+
+                <div class="o_health_hero d-flex align-items-center justify-content-center gap-5 mb-4">
+                    <div class="o_health_gauge_wrap">
+                        <svg viewBox="0 0 120 120" class="o_health_gauge">
+                            <circle cx="60" cy="60" r="52" class="o_health_gauge_bg"/>
+                            <circle cx="60" cy="60" r="52" class="o_health_gauge_fg"
+                                    t-att-style="gaugeStyle(state.run.overall_score)"/>
+                        </svg>
+                        <div class="o_health_gauge_center">
+                            <div class="o_health_gauge_score"
+                                 t-att-class="scoreClass(state.run.overall_score)"
+                                 t-esc="state.run.overall_score"/>
+                            <div class="o_health_gauge_out">/ 100</div>
+                        </div>
+                    </div>
+                    <div class="o_health_hero_meta">
+                        <div class="o_health_hero_status"
+                             t-att-class="scoreClass(state.run.overall_score)"
+                             t-esc="scoreLabel(state.run.overall_score)"/>
+                        <div class="o_health_hero_sub">Overall health score</div>
+                        <div t-if="state.delta !== null" class="o_health_delta"
+                             t-att-class="state.delta >= 0 ? 'o_health_good' : 'o_health_bad'"
+                             t-esc="deltaText"/>
+                        <div class="o_health_sevline d-flex gap-2 mt-3">
+                            <span class="o_health_pill o_health_pill_critical">
+                                <t t-esc="state.run.count_critical"/> Critical
+                            </span>
+                            <span class="o_health_pill o_health_pill_warning">
+                                <t t-esc="state.run.count_warning"/> Warning
+                            </span>
+                            <span class="o_health_pill o_health_pill_info">
+                                <t t-esc="state.run.count_info"/> Info
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="o_health_categories row g-3 mb-4">
+                    <div class="col" t-foreach="categories" t-as="cat" t-key="cat.key">
+                        <div class="o_health_cat_card">
+                            <div class="o_health_cat_label" t-esc="cat.label"/>
+                            <div class="o_health_cat_score" t-att-class="scoreClass(cat.score)"
+                                 t-esc="cat.score"/>
+                            <div class="o_health_cat_bar">
+                                <div class="o_health_cat_bar_fill"
+                                     t-att-style="'width:' + cat.score + '%;background-color:' + scoreColor(cat.score) + ';'"/>
+                            </div>
+                            <div class="o_health_cat_issues">
+                                <t t-if="cat.issues">
+                                    <t t-esc="cat.issues"/> issue<t t-if="cat.issues > 1">s</t>
+                                </t>
+                                <t t-else="">No issues</t>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="o_health_findings">
+                    <h4 class="o_health_findings_title">Findings</h4>
+                    <table class="table o_health_findings_table">
+                        <thead>
+                            <tr>
+                                <th>Category</th>
+                                <th>Check</th>
+                                <th>Severity</th>
+                                <th class="text-end">Count</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="state.findings" t-as="finding" t-key="finding.id">
+                                <td>
+                                    <span class="o_health_cat_badge"
+                                          t-esc="categoryLabel(finding.category)"/>
+                                </td>
+                                <td t-esc="finding.check_id and finding.check_id[1]"/>
+                                <td>
+                                    <span class="o_health_pill"
+                                          t-att-class="'o_health_pill_' + finding.severity"
+                                          t-esc="severityLabel(finding.severity)"/>
+                                </td>
+                                <td class="text-end o_health_count" t-esc="finding.count"/>
+                                <td class="text-end">
+                                    <button type="button" class="btn btn-sm o_health_view_btn"
+                                            t-on-click="() => this.viewRecords(finding.id)">
+                                        View Records <i class="fa fa-arrow-right ms-1"/>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr t-if="!state.findings.length">
+                                <td colspan="5" class="text-center o_health_good p-4">
+                                    <i class="fa fa-check-circle me-1"/> No issues found. Your Odoo looks healthy.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+      </div>
+    </t>
+
+</templates>

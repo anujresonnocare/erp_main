@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="health_check_dashboard_view_form" model="ir.ui.view">
+        <field name="name">health.check.dashboard.form</field>
+        <field name="model">health.check.dashboard</field>
+        <field name="arch" type="xml">
+            <form string="Health Check Dashboard" create="0" edit="0" delete="0">
+                <header>
+                    <button name="action_refresh" type="object" string="Refresh"
+                            class="btn-primary"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>Health Check Dashboard</h1>
+                        <p class="text-muted">
+                            Snapshot at page load. Click Refresh for a fresh sample.
+                        </p>
+                    </div>
+                    <group>
+                        <group string="Cron health">
+                            <field name="failures_24h"/>
+                            <field name="failures_7d"/>
+                            <field name="history_total_7d"/>
+                        </group>
+                        <group string="OS root">
+                            <field name="disk_root_status"
+                                   widget="badge"
+                                   decoration-success="disk_root_status == 'ok'"
+                                   decoration-warning="disk_root_status == 'warn'"
+                                   decoration-danger="disk_root_status in ('critical', 'error')"
+                                   decoration-muted="disk_root_status == 'unknown'"/>
+                            <field name="disk_root_used_pct"/>
+                            <field name="disk_root_summary"/>
+                            <field name="disk_root_at"/>
+                        </group>
+                        <group string="Filestore">
+                            <field name="disk_filestore_status"
+                                   widget="badge"
+                                   decoration-success="disk_filestore_status == 'ok'"
+                                   decoration-warning="disk_filestore_status == 'warn'"
+                                   decoration-danger="disk_filestore_status in ('critical', 'error')"
+                                   decoration-muted="disk_filestore_status == 'unknown'"/>
+                            <field name="disk_filestore_used_pct"/>
+                            <field name="disk_filestore_summary"/>
+                            <field name="disk_filestore_at"/>
+                        </group>
+                        <group string="Latest PG report">
+                            <field name="last_pg_report_at"/>
+                            <field name="last_pg_report_db_size"/>
+                            <field name="last_pg_report_db_delta"/>
+                            <field name="last_pg_report_table"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="health_check_dashboard_action" model="ir.actions.server">
+        <field name="name">Health Check Dashboard</field>
+        <field name="model_id" ref="model_health_check_dashboard"/>
+        <field name="state">code</field>
+        <field name="code">action = model.action_open()</field>
+    </record>
+
+</odoo>

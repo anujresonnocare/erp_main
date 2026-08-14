@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="crm_lead_notification_bell.NotificationBell" owl="1">
+        <div class="o_crm_notification_bell o_nav_entry">
+            <!-- Bell Icon -->
+            <a href="#" class="dropdown-toggle" role="button" t-on-click="toggleDropdown">
+                <i class="fa fa-bell-o fa-lg"/>
+                <span t-if="state.unreadCount > 0" class="o_notification_badge">
+                    <t t-esc="state.unreadCount > 99 ? '99+' : state.unreadCount"/>
+                </span>
+            </a>
+            
+            <!-- Dropdown Menu -->
+            <div t-if="state.isOpen" class="o_notification_dropdown">
+                <div class="o_dropdown_header">
+                    <span class="o_dropdown_title">Notifications</span>
+                    <button t-if="state.unreadCount > 0" 
+                            class="o_mark_all_read_btn" 
+                            t-on-click="markAllAsRead">
+                        Mark all as read
+                    </button>
+                </div>
+                
+                <div class="o_notification_items">
+                    <t t-if="state.notifications.length === 0">
+                        <div class="o_empty_notifications">
+                            <i class="fa fa-bell-slash-o fa-2x"/>
+                            <p>No notifications</p>
+                        </div>
+                    </t>
+                    
+                    <t t-else="">
+                        <t t-foreach="state.notifications" t-as="notification" t-key="notification.id">
+                            <t t-if="notification and notification.id">
+                                <div class="o_notification_item" 
+                                     t-att-class="{'o_unread': !notification.is_read}"
+                                      t-on-click="() => this.openRecord(
+                                        notification.record_id,
+                                        notification.model
+                                    )">
+                                    <div class="o_notification_item_content">
+                                        <div class="o_notification_item_title">
+                                            <t t-esc="notification.title"/>
+                                        </div>
+                                        <div class="o_notification_item_message">
+                                            <t t-esc="notification.message"/>
+                                        </div>
+                                        <div class="o_notification_item_time">
+                                            <t t-esc="getFormattedDate(notification.create_date)"/>
+                                        </div>
+                                    </div>
+                                    <t t-if="!notification.is_read">
+                                        <button class="o_mark_read_btn"
+                                                  t-on-click="(ev) => this.markAsRead(notification.id, ev)">
+                                            <i class="fa fa-check"/>
+                                        </button>
+                                    </t>
+                                </div>
+                            </t>
+                        </t>
+                    </t>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>

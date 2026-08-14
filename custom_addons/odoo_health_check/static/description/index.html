@@ -1,0 +1,305 @@
+<section class="oe_container">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12" style="text-align:center;">
+      <h2 style="color:#0A1628;font-weight:700;letter-spacing:-0.02em;margin-top:24px;">
+        Daily health check for your Odoo
+      </h2>
+      <h3 class="oe_slogan" style="color:#90A4B8;font-weight:400;margin-top:8px;">
+        Catch cron failures, monitor disk space, see PostgreSQL growth - before your users complain.
+      </h3>
+      <p style="font-size:15px;color:#0A1628;font-weight:600;margin-top:18px;border:2px solid #00D4AA;border-radius:6px;display:inline-block;padding:8px 18px;">
+        Localized in 8 languages:
+        English &middot;
+        &#1056;&#1091;&#1089;&#1089;&#1082;&#1080;&#1081; &middot;
+        &#1059;&#1082;&#1088;&#1072;&#1111;&#1085;&#1089;&#1100;&#1082;&#1072; &middot;
+        Deutsch &middot;
+        Espa&#241;ol &middot;
+        Rom&#226;n&#259; &middot;
+        Polski &middot;
+        &#1575;&#1604;&#1593;&#1585;&#1576;&#1610;&#1577;
+      </p>
+    </div>
+  </div>
+</section>
+
+<section class="oe_container oe_dark">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12">
+      <h2 style="color:#0A1628;font-weight:700;">What it does</h2>
+      <p style="font-size:16px;line-height:1.6;color:#333;max-width:780px;margin:0 auto;">
+        Self-hosted Odoo runs dozens of scheduled actions that you never see -
+        until one quietly fails and a customer notices first. <strong>Odoo Health
+        Check</strong> turns that black box into a visible audit trail and a
+        small set of focused alerts. Install it, configure two email addresses,
+        and the module runs the rest.
+      </p>
+      <p style="font-size:14px;color:#666;text-align:center;margin-top:18px;">
+        <span style="display:inline-block;padding:4px 12px;background:#0A1628;color:#fff;border-radius:3px;font-family:monospace;font-size:12px;margin:2px;">Odoo 18</span>
+        <span style="display:inline-block;padding:4px 12px;background:#00D4AA;color:#0A1628;border-radius:3px;font-weight:bold;font-size:12px;margin:2px;">LGPL-3</span>
+        <span style="display:inline-block;padding:4px 12px;background:#0A1628;color:#fff;border-radius:3px;font-size:12px;margin:2px;">Free</span>
+        <span style="display:inline-block;padding:4px 12px;background:#7C5CFC;color:#fff;border-radius:3px;font-size:12px;margin:2px;">No external dependencies</span>
+      </p>
+    </div>
+  </div>
+</section>
+
+<section class="oe_container">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12">
+      <h2 style="color:#0A1628;font-weight:700;">Key features</h2>
+    </div>
+  </div>
+
+  <div class="oe_row oe_spaced">
+    <div class="oe_span6">
+      <h3 style="color:#0A1628;">
+        <span style="display:inline-block;width:32px;height:32px;background:#00D4AA;color:#0A1628;border-radius:50%;text-align:center;line-height:32px;font-weight:bold;margin-right:8px;">1</span>
+        At-a-glance dashboard
+      </h3>
+      <p style="font-size:15px;line-height:1.6;color:#333;">
+        Four tiles in one form view: cron failures in the last 24h and 7d, current
+        disk usage on OS root and the Odoo filestore, and the most recent
+        PostgreSQL growth report. No stored state - every open re-reads the
+        underlying models. The Refresh button takes a fresh snapshot in one click.
+      </p>
+    </div>
+    <div class="oe_span6">
+      <img src="screenshots/01_dashboard.png" alt="Health Check Dashboard with 4 tiles"
+           style="max-width:100%;border:1px solid #e0e0e0;border-radius:4px;"/>
+    </div>
+  </div>
+
+  <div class="oe_row oe_spaced">
+    <div class="oe_span6">
+      <img src="screenshots/02_cron_history.png" alt="Cron Execution History with status badges"
+           style="max-width:100%;border:1px solid #e0e0e0;border-radius:4px;"/>
+    </div>
+    <div class="oe_span6">
+      <h3 style="color:#0A1628;">
+        <span style="display:inline-block;width:32px;height:32px;background:#00D4AA;color:#0A1628;border-radius:50%;text-align:center;line-height:32px;font-weight:bold;margin-right:8px;">2</span>
+        Cron execution history with traceback
+      </h3>
+      <p style="font-size:15px;line-height:1.6;color:#333;">
+        Every scheduled action run is logged with start time, end time, duration
+        (millisecond precision via <code>perf_counter</code>), and execution
+        state. When a cron fails, the full Python traceback is captured and
+        attached to the row. The history table writes through an independent
+        database cursor, so a cron rollback never erases the audit trail.
+      </p>
+      <p style="font-size:15px;line-height:1.6;color:#333;">
+        Optional email alert on every failure with a one-click "View in Cron
+        History" deep link and the traceback collapsed inside a
+        <code>&lt;details&gt;</code> block - the inbox preview stays clean.
+      </p>
+    </div>
+  </div>
+
+  <div class="oe_row oe_spaced">
+    <div class="oe_span6">
+      <h3 style="color:#0A1628;">
+        <span style="display:inline-block;width:32px;height:32px;background:#00D4AA;color:#0A1628;border-radius:50%;text-align:center;line-height:32px;font-weight:bold;margin-right:8px;">3</span>
+        Disk monitoring with smart alerts
+      </h3>
+      <p style="font-size:15px;line-height:1.6;color:#333;">
+        Hourly samples of OS root and the Odoo filestore mount via
+        <code>shutil.disk_usage</code>. Each sample stores total / free bytes,
+        used percentage, and a status badge - OK, Warning, Critical, or Error.
+        Thresholds are configurable per environment.
+      </p>
+      <p style="font-size:15px;line-height:1.6;color:#333;">
+        Email alerts fire <strong>only on worsening transitions</strong> (ok &#8594;
+        warn, ok &#8594; critical, warn &#8594; critical). Steady state and recovery never
+        notify - no hourly spam. A measurement error between two healthy samples
+        is skipped when computing transitions, so a flaky filesystem read
+        doesn't generate false alarms.
+      </p>
+    </div>
+    <div class="oe_span6">
+      <img src="screenshots/03_disk_checks.png" alt="Disk Checks list with status badges"
+           style="max-width:100%;border:1px solid #e0e0e0;border-radius:4px;"/>
+    </div>
+  </div>
+
+  <div class="oe_row oe_spaced">
+    <div class="oe_span6">
+      <img src="screenshots/04_pg_reports.png" alt="Monthly PostgreSQL growth report list"
+           style="max-width:100%;border:1px solid #e0e0e0;border-radius:4px;"/>
+    </div>
+    <div class="oe_span6">
+      <h3 style="color:#0A1628;">
+        <span style="display:inline-block;width:32px;height:32px;background:#00D4AA;color:#0A1628;border-radius:50%;text-align:center;line-height:32px;font-weight:bold;margin-right:8px;">4</span>
+        Monthly PostgreSQL growth report
+      </h3>
+      <p style="font-size:15px;line-height:1.6;color:#333;">
+        On the 1st of each month at 08:00, a snapshot of the top-10 tables by
+        total relation size is captured (including indexes and TOAST). The
+        report compares against the previous month and emails the recipients an
+        HTML digest with size, &#916; size, row count, and &#916; rows per table, plus
+        total database size delta.
+      </p>
+      <p style="font-size:15px;line-height:1.6;color:#333;">
+        Row counts use <code>pg_class.reltuples</code> (PostgreSQL's own
+        statistics from the last <code>ANALYZE</code>) - fast on multi-million-row
+        tables, never times out, accurate enough for trend reports.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section class="oe_container oe_dark">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12" style="text-align:center;">
+      <h2 style="color:#0A1628;font-weight:700;">Alerts in your inbox</h2>
+      <p style="font-size:15px;line-height:1.6;color:#333;max-width:780px;margin:0 auto 24px;">
+        Each alert email opens with a colour-coded severity badge, the key
+        metadata in a tight table, and a one-click button that deep-links into
+        the corresponding record in Odoo. Long content (like a Python traceback)
+        is collapsed inside a <code>&lt;details&gt;</code> block so the inbox
+        preview stays readable.
+      </p>
+    </div>
+    <div class="oe_span12" style="text-align:center;">
+      <img src="screenshots/06_email_inbox.png" alt="Inbox showing four alert types from Odoo Health Check"
+           style="max-width:100%;border:1px solid #e0e0e0;border-radius:4px;margin-bottom:18px;"/>
+    </div>
+  </div>
+
+  <div class="oe_row oe_spaced">
+    <div class="oe_span4" style="text-align:center;">
+      <img src="screenshots/09_email_cron_failure.png" alt="Cron failure email with CRITICAL badge and collapsed traceback"
+           style="max-width:100%;border:1px solid #e0e0e0;border-radius:4px;"/>
+      <p style="font-size:13px;color:#666;margin-top:8px;"><strong>Cron failure</strong> - red CRITICAL badge, metadata table, View in Cron History button, traceback under a "Show full error traceback" toggle</p>
+    </div>
+    <div class="oe_span4" style="text-align:center;">
+      <img src="screenshots/07_email_disk_alert.png" alt="Disk alert email with severity badge and View button"
+           style="max-width:100%;border:1px solid #e0e0e0;border-radius:4px;"/>
+      <p style="font-size:13px;color:#666;margin-top:8px;"><strong>Disk alert</strong> - amber WARNING or red CRITICAL badge depending on threshold crossed, mount + used % + total/free in GB, View in Disk Checks button</p>
+    </div>
+    <div class="oe_span4" style="text-align:center;">
+      <img src="screenshots/08_email_pg_report.png" alt="Monthly PostgreSQL growth report email with top tables"
+           style="max-width:100%;border:1px solid #e0e0e0;border-radius:4px;"/>
+      <p style="font-size:13px;color:#666;margin-top:8px;"><strong>PG monthly digest</strong> - top-10 tables with size, &#916; size, rows, &#916; rows columns; total DB size delta vs the previous report; View in PG Reports button</p>
+    </div>
+  </div>
+</section>
+
+<section class="oe_container">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12" style="text-align:center;">
+      <h2 style="color:#0A1628;font-weight:700;">Available in your language</h2>
+      <p style="font-size:15px;line-height:1.6;color:#333;max-width:780px;margin:0 auto 18px;">
+        Field labels, settings help text, search filters, dashboard tiles,
+        action menus, cron names, and the three alert emails are translated
+        to seven additional languages. Translations apply automatically based
+        on each user's Odoo language preference - no extra configuration.
+      </p>
+      <p style="font-size:18px;line-height:2.0;color:#0A1628;font-weight:600;margin:18px 0 6px;">
+        English &middot;
+        &#1056;&#1091;&#1089;&#1089;&#1082;&#1080;&#1081; &middot;
+        &#1059;&#1082;&#1088;&#1072;&#1111;&#1085;&#1089;&#1100;&#1082;&#1072; &middot;
+        Deutsch &middot;
+        Espa&#241;ol &middot;
+        Rom&#226;n&#259; &middot;
+        Polski &middot;
+        &#1575;&#1604;&#1593;&#1585;&#1576;&#1610;&#1577;
+      </p>
+      <p style="font-size:13px;color:#666;margin-top:8px;">
+        en &middot; ru &middot; uk &middot; de &middot; es &middot; ro &middot; pl &middot; ar
+      </p>
+    </div>
+  </div>
+</section>
+
+<section class="oe_container">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12">
+      <h2 style="color:#0A1628;font-weight:700;">Configuration</h2>
+      <p style="font-size:15px;line-height:1.6;color:#333;max-width:780px;">
+        Open <strong>Health Check &#8594; Settings</strong> after installation and fill in
+        whichever fields are relevant. Every email address is independent - you
+        can route cron failures to engineering, disk alerts to sysadmins, and
+        the PG digest to a DBA, all from one screen.
+      </p>
+      <ul style="font-size:15px;line-height:1.8;color:#333;max-width:780px;">
+        <li><strong>Cron Failure Emails</strong> - recipients of immediate alerts when any scheduled action fails</li>
+        <li><strong>History Retention (days)</strong> - how long execution rows are kept (default 30, set 0 to disable cleanup)</li>
+        <li><strong>Disk Warning / Critical Threshold (%)</strong> - usage levels that flip a sample to warn or critical (defaults 80 and 90)</li>
+        <li><strong>Disk Alert Emails</strong> - recipients for disk transition alerts</li>
+        <li><strong>PG Report Emails</strong> - recipients for the monthly PostgreSQL growth digest</li>
+      </ul>
+    </div>
+    <div class="oe_span12" style="margin-top:18px;text-align:center;">
+      <img src="screenshots/05_settings.png" alt="Health Check Settings page with all four blocks"
+           style="max-width:100%;border:1px solid #e0e0e0;border-radius:4px;"/>
+    </div>
+  </div>
+</section>
+
+<section class="oe_container oe_dark">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12">
+      <h2 style="color:#0A1628;font-weight:700;">Technical details</h2>
+      <ul style="font-size:15px;line-height:1.8;color:#333;max-width:780px;">
+        <li><strong>Targets:</strong> Odoo 18 Enterprise self-hosted. Community installations also work - the module depends only on <code>base</code> and <code>mail</code>.</li>
+        <li><strong>License:</strong> LGPL-3, free.</li>
+        <li><strong>Security:</strong> all menus and records restricted to <code>base.group_system</code> (admin only). No public HTTP endpoints, no external network calls.</li>
+        <li><strong>Storage:</strong> two new tables (<code>ir_cron_history</code>, <code>health_check_result</code>). Retention cleanup keeps both bounded.</li>
+        <li><strong>No external dependencies:</strong> no Slack, no PagerDuty, no third-party APIs. Email goes through your existing Odoo outgoing mail server.</li>
+      </ul>
+      <p style="font-size:14px;color:#666;margin-top:18px;">
+        Test coverage: 60+ unit and integration tests covering every cron path,
+        every email transition, every threshold edge case, and the dashboard
+        snapshot logic.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section class="oe_container">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12">
+      <h2 style="color:#0A1628;font-weight:700;">What this module does <em>not</em> do</h2>
+      <ul style="font-size:15px;line-height:1.8;color:#333;max-width:780px;">
+        <li>It does not page on-call (no Slack, PagerDuty, SMS - only email)</li>
+        <li>It does not monitor remote servers - only the host Odoo runs on</li>
+        <li>It does not predict future disk usage - only reports current state and month-over-month deltas</li>
+        <li>Database row counts are PostgreSQL estimates from <code>pg_class.reltuples</code>, accurate enough for trends but not for billing or audit</li>
+      </ul>
+      <p style="font-size:14px;color:#666;margin-top:12px;">
+        If you need any of the above, we are working on a Pro variant - get in
+        touch.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section class="oe_container oe_dark">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12" style="text-align:center;">
+      <h2 style="color:#0A1628;font-weight:700;">Support</h2>
+      <p style="font-size:15px;line-height:1.6;color:#333;">
+        Source code, issues, and feature requests:
+        <a href="https://github.com/alex-odoo/odoo-health-check"
+           style="color:#00D4AA;font-weight:600;text-decoration:none;">
+          github.com/alex-odoo/odoo-health-check
+        </a>
+      </p>
+      <p style="font-size:15px;line-height:1.6;color:#333;">
+        Built and maintained by <strong>Rteam</strong>, an Odoo Enterprise
+        consulting agency.
+        <a href="https://rteam.agency"
+           style="color:#00D4AA;font-weight:600;text-decoration:none;">
+          rteam.agency
+        </a>
+      </p>
+      <p style="font-size:14px;color:#666;margin-top:24px;">
+        Verification guide:
+        <a href="https://github.com/alex-odoo/odoo-health-check/blob/main/TESTING.md"
+           style="color:#00D4AA;text-decoration:none;">
+          TESTING.md
+        </a>
+        - a 10-minute walkthrough to confirm everything works on your install.
+      </p>
+    </div>
+  </div>
+</section>

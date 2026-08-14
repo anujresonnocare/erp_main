@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="ir_cron_history_view_list" model="ir.ui.view">
+        <field name="name">ir.cron.history.list</field>
+        <field name="model">ir.cron.history</field>
+        <field name="arch" type="xml">
+            <list string="Cron Execution History" create="0" edit="0">
+                <field name="date_start"/>
+                <field name="cron_id"/>
+                <field name="duration_sec" sum="Total Duration"/>
+                <field name="state"
+                       widget="badge"
+                       decoration-success="state == 'success'"
+                       decoration-danger="state == 'failed'"
+                       decoration-muted="state == 'running'"/>
+                <field name="server_name" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="ir_cron_history_view_form" model="ir.ui.view">
+        <field name="name">ir.cron.history.form</field>
+        <field name="model">ir.cron.history</field>
+        <field name="arch" type="xml">
+            <form string="Cron Execution" create="0" edit="0">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="cron_id"/>
+                            <field name="state"
+                                   widget="badge"
+                                   decoration-success="state == 'success'"
+                                   decoration-danger="state == 'failed'"
+                                   decoration-muted="state == 'running'"/>
+                            <field name="server_name"/>
+                        </group>
+                        <group>
+                            <field name="date_start"/>
+                            <field name="date_end"/>
+                            <field name="duration_sec"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Error Traceback" invisible="state != 'failed'">
+                            <field name="error_traceback" widget="text" nolabel="1"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="ir_cron_history_view_search" model="ir.ui.view">
+        <field name="name">ir.cron.history.search</field>
+        <field name="model">ir.cron.history</field>
+        <field name="arch" type="xml">
+            <search string="Cron History">
+                <field name="cron_id"/>
+                <field name="server_name"/>
+                <filter string="Last 24 Hours" name="last_24h"
+                        domain="[('date_start', '>=', (context_today() - datetime.timedelta(days=1)).strftime('%Y-%m-%d'))]"/>
+                <filter string="Last 7 Days" name="last_7d"
+                        domain="[('date_start', '>=', (context_today() - datetime.timedelta(days=7)).strftime('%Y-%m-%d'))]"/>
+                <separator/>
+                <filter string="Running" name="running" domain="[('state', '=', 'running')]"/>
+                <filter string="Success" name="success" domain="[('state', '=', 'success')]"/>
+                <filter string="Failed" name="failed" domain="[('state', '=', 'failed')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Scheduled Action" name="group_cron" context="{'group_by': 'cron_id'}"/>
+                    <filter string="Status" name="group_state" context="{'group_by': 'state'}"/>
+                    <filter string="Server" name="group_server" context="{'group_by': 'server_name'}"/>
+                    <filter string="Start Day" name="group_start_day" context="{'group_by': 'date_start:day'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="ir_cron_history_action" model="ir.actions.act_window">
+        <field name="name">Cron History</field>
+        <field name="res_model">ir.cron.history</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="ir_cron_history_view_search"/>
+        <field name="context">{"search_default_last_7d": 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No cron executions recorded yet.</p>
+            <p>Cron execution history will appear here after scheduled actions run.</p>
+        </field>
+    </record>
+
+</odoo>

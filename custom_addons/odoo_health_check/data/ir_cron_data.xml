@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <record id="ir_cron_history_retention_cleanup" model="ir.cron">
+        <field name="name">Odoo Health Check: Cron history retention cleanup</field>
+        <field name="model_id" ref="model_ir_cron_history"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_cleanup_history()</field>
+        <field name="user_id" ref="base.user_root"/>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="active" eval="True"/>
+        <field name="nextcall" eval="(DateTime.now() + timedelta(hours=4)).strftime('%Y-%m-%d %H:%M:%S')"/>
+    </record>
+
+    <record id="ir_cron_health_disk_check" model="ir.cron">
+        <field name="name">Odoo Health Check: Disk usage check</field>
+        <field name="model_id" ref="model_health_check_result"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_check_disk()</field>
+        <field name="user_id" ref="base.user_root"/>
+        <field name="interval_number">1</field>
+        <field name="interval_type">hours</field>
+        <field name="active" eval="True"/>
+        <field name="nextcall" eval="(DateTime.now() + timedelta(minutes=5)).strftime('%Y-%m-%d %H:%M:%S')"/>
+    </record>
+
+    <record id="ir_cron_health_pg_report" model="ir.cron">
+        <field name="name">Odoo Health Check: Monthly PostgreSQL growth report</field>
+        <field name="model_id" ref="model_health_check_result"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_pg_report()</field>
+        <field name="user_id" ref="base.user_root"/>
+        <field name="interval_number">1</field>
+        <field name="interval_type">months</field>
+        <field name="active" eval="True"/>
+        <field name="nextcall" eval="(DateTime.now().replace(day=1, hour=8, minute=0, second=0, microsecond=0) + relativedelta(months=1)).strftime('%Y-%m-%d %H:%M:%S')"/>
+    </record>
+
+</odoo>

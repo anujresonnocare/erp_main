@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="menu_health_root"
+              name="Odoo Health"
+              web_icon="codeerts_odoo_health_audit,static/description/icon.png"
+              groups="codeerts_odoo_health_audit.group_health_audit_user"/>
+
+    <menuitem id="menu_health_dashboard"
+              name="Dashboard"
+              parent="menu_health_root"
+              action="action_health_dashboard"
+              sequence="10"/>
+
+    <!-- Reporting: read-only audit outputs -->
+    <menuitem id="menu_health_reporting"
+              name="Reporting"
+              parent="menu_health_root"
+              groups="codeerts_odoo_health_audit.group_health_audit_user"
+              sequence="80"/>
+
+    <menuitem id="menu_health_history"
+              name="Audit History"
+              parent="menu_health_reporting"
+              action="action_health_audit_run"
+              sequence="10"/>
+
+    <!-- Configuration: setup -->
+    <menuitem id="menu_health_config"
+              name="Configuration"
+              parent="menu_health_root"
+              groups="codeerts_odoo_health_audit.group_health_audit_manager"
+              sequence="90"/>
+
+    <menuitem id="menu_health_checks"
+              name="Checks"
+              parent="menu_health_config"
+              action="action_health_check"
+              groups="codeerts_odoo_health_audit.group_health_audit_manager"
+              sequence="30"/>
+
+</odoo>
