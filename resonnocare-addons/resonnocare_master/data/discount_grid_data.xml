@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo noupdate="1">
+    <!-- Corporate -->
+    <record id="discount_grid_corporate_0_50000" model="resonnocare.discount.grid">
+        <field name="channel">corporate</field>
+        <field name="mrp_from">0</field>
+        <field name="mrp_to">50000</field>
+        <field name="slab1_max">20</field>
+        <field name="slab2_max">40</field>
+    </record>
+    <record id="discount_grid_corporate_50001_100000" model="resonnocare.discount.grid">
+        <field name="channel">corporate</field>
+        <field name="mrp_from">50001</field>
+        <field name="mrp_to">100000</field>
+        <field name="slab1_max">20</field>
+        <field name="slab2_max">40</field>
+    </record>
+    <record id="discount_grid_corporate_100001_150000" model="resonnocare.discount.grid">
+        <field name="channel">corporate</field>
+        <field name="mrp_from">100001</field>
+        <field name="mrp_to">150000</field>
+        <field name="slab1_max">25</field>
+        <field name="slab2_max">45</field>
+    </record>
+    <record id="discount_grid_corporate_150001_above" model="resonnocare.discount.grid">
+        <field name="channel">corporate</field>
+        <field name="mrp_from">150001</field>
+        <field name="mrp_to">0</field>
+        <field name="slab1_max">30</field>
+        <field name="slab2_max">45</field>
+    </record>
+
+    <!-- H / SIS -->
+    <record id="discount_grid_hsis_0_50000" model="resonnocare.discount.grid">
+        <field name="channel">hsis</field>
+        <field name="mrp_from">0</field>
+        <field name="mrp_to">50000</field>
+        <field name="slab1_max">15</field>
+        <field name="slab2_max">35</field>
+    </record>
+    <record id="discount_grid_hsis_50001_100000" model="resonnocare.discount.grid">
+        <field name="channel">hsis</field>
+        <field name="mrp_from">50001</field>
+        <field name="mrp_to">100000</field>
+        <field name="slab1_max">15</field>
+        <field name="slab2_max">35</field>
+    </record>
+    <record id="discount_grid_hsis_100001_150000" model="resonnocare.discount.grid">
+        <field name="channel">hsis</field>
+        <field name="mrp_from">100001</field>
+        <field name="mrp_to">150000</field>
+        <field name="slab1_max">20</field>
+        <field name="slab2_max">40</field>
+    </record>
+    <record id="discount_grid_hsis_150001_above" model="resonnocare.discount.grid">
+        <field name="channel">hsis</field>
+        <field name="mrp_from">150001</field>
+        <field name="mrp_to">0</field>
+        <field name="slab1_max">25</field>
+        <field name="slab2_max">40</field>
+    </record>
+</odoo>

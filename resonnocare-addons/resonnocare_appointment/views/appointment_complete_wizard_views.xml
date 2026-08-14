@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="view_resonnocare_appointment_complete_wizard_form" model="ir.ui.view">
+        <field name="name">resonnocare.appointment.complete.wizard.form</field>
+        <field name="model">resonnocare.appointment.complete.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Complete Appointment">
+                <group>
+                    <field name="appointment_id"/>
+                    <field
+                        name="outcome_ids"
+                        widget="many2many_tags"
+                        options="{'no_create': True, 'no_quick_create': True}"
+                    />
+                </group>
+                <footer>
+                    <button
+                        name="action_confirm_complete"
+                        type="object"
+                        string="Complete"
+                        class="btn-primary"
+                    />
+                    <button string="Cancel" special="cancel" class="btn-secondary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

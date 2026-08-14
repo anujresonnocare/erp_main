@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Repair Finance Group -->
+        <record id="group_resonnocare_repair_finance" model="res.groups">
+            <field name="name">Resonnocare Repair Finance</field>
+            <field name="category_id" ref="resonnocare_base.module_category_resonnocare"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <!-- Repair SCM Group -->
+        <record id="group_resonnocare_repair_scm" model="res.groups">
+            <field name="name">Resonnocare Repair SCM / Purchase</field>
+            <field name="category_id" ref="resonnocare_base.module_category_resonnocare"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+    </data>
+</odoo>

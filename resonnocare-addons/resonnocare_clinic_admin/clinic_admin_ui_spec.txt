@@ -1,0 +1,494 @@
+# CLINIC ADMIN — UI & ACTIONS (CLIENT-ALIGNED, PROD-READY)
+
+## 1️⃣ WHO THIS UI IS FOR (RECONFIRM)
+
+**Clinic Admin = Operational owner of ONE Resonnocare Clinic (RC / Store)**
+
+From client requirements, this role exists to:
+
+- Run **daily clinic operations**
+    
+- Coordinate staff, appointments, inventory
+    
+- Monitor performance
+    
+- Act as interface with HQ
+    
+
+They **do NOT**:
+
+- Configure platform
+    
+- Change master data
+    
+- Handle payments (B2B)
+    
+- See other clinics
+    
+
+This UI must feel like:
+
+> “I run _my_ clinic, nothing else.”
+
+---
+
+## 2️⃣ LOGIN & CONTEXT SETUP
+
+### Login Screen
+
+- Email / Password
+    
+- First login → force password reset
+    
+
+### Context (AUTO, NO UI)
+
+- Clinic locked (RC XYZ)
+    
+- Timezone = clinic timezone
+    
+- Language (if needed)
+    
+
+🚫 No clinic switcher  
+🚫 No company dropdown
+
+---
+
+## 3️⃣ LANDING SCREEN — CLINIC DASHBOARD
+
+### Screen: **Clinic Admin Dashboard**
+
+This is the **home screen**.
+
+### Purpose
+
+> “How is my clinic doing **today**?”
+
+---
+
+### DASHBOARD WIDGETS (STRICTLY FROM CLIENT OPS VIEW)
+
+#### Operations (Top Priority)
+
+- Today’s Appointments
+    
+- Walk-ins Today
+    
+- Registrations Today
+    
+- Patients Waiting
+    
+- Pending Consultations
+    
+
+#### Clinical
+
+- Doctors On Duty
+    
+- Pending Reports
+    
+- Follow-ups Due Today
+    
+
+#### Inventory
+
+- Devices Available
+    
+- Devices Assigned
+    
+- Low Stock Alerts
+    
+
+#### Alerts
+
+- Missed Appointments
+    
+- System Issues (if any)
+    
+
+🚫 No revenue totals  
+🚫 No cross-clinic data  
+🚫 No CRM lead funnel
+
+---
+
+## 4️⃣ MAIN NAVIGATION (LEFT SIDEBAR)
+
+Clinic Admin should see **only what they can act on**.
+
+### Menus Visible
+
+1. **Dashboard**
+    
+2. **Staff**
+    
+3. **Appointments**
+    
+4. **Patients**
+    
+5. **Inventory**
+    
+6. **Billing (Reference)**
+    
+7. **Reports**
+    
+8. **Support / Escalations**
+    
+9. **Clinic Profile (Read-Only)**
+    
+
+That’s it.  
+No CRM config, no HR policies, no integrations.
+
+---
+
+## 5️⃣ STAFF MENU (LOCAL CONTROL)
+
+### Screen: Staff List (Clinic-Scoped)
+
+**List Columns**
+
+- Name
+    
+- Role (Doctor / Front Desk / Technician)
+    
+- Status (Active / Inactive)
+    
+- Shift
+    
+
+---
+
+### Actions Allowed
+
+#### ➕ Create Staff User
+
+- Front Desk
+    
+- Doctor / Audiologist
+    
+- Technician
+    
+- Call Centre (if clinic-specific)
+    
+
+**Form Fields**
+
+- Name
+    
+- Phone
+    
+- Email
+    
+- Role
+    
+- Shift timing
+    
+- Doctor availability (if doctor)
+    
+
+➡️ User auto-assigned to this clinic  
+➡️ No role creation here (only assignment)
+
+---
+
+#### ✏️ Edit Staff
+
+- Change shift
+    
+- Activate / deactivate
+    
+
+🚫 Cannot change role definitions  
+🚫 Cannot see staff of other clinics
+
+---
+
+## 6️⃣ APPOINTMENTS MENU
+
+### Screen: Appointment Overview
+
+Views available:
+
+- Day view
+    
+- Week view
+    
+- Doctor-wise view
+    
+
+**Columns**
+
+- Time
+    
+- Patient ID
+    
+- Patient Name
+    
+- Visit Type
+    
+- Doctor
+    
+- Status
+    
+
+---
+
+### Actions Allowed
+
+- Reassign doctor
+    
+- Reschedule
+    
+- Cancel (with reason)
+    
+- Mark “No-show”
+    
+
+🚫 Cannot create medical notes  
+🚫 Cannot edit appointment templates
+
+---
+
+### Sub-Screen: Calendar Settings (Clinic-Level)
+
+**Fields**
+
+- Slot duration
+    
+- Buffer time
+    
+- Walk-in allowed (Yes/No)
+    
+- Doctor availability rules
+    
+
+These settings affect:
+
+- Front Desk
+    
+- Patient portal
+    
+
+---
+
+## 7️⃣ PATIENTS MENU (OVERSIGHT, NOT ENTRY)
+
+### Screen: Patient Registry (Clinic View)
+
+**List View**
+
+- Patient ID (Phone)
+    
+- Name
+    
+- Registration Date
+    
+- Last Visit
+    
+- Status
+    
+
+---
+
+### Patient Detail (Read-Only)
+
+Tabs:
+
+- Overview
+    
+- Visit History
+    
+- Documents (reports)
+    
+- Follow-ups
+    
+
+🚫 Cannot register patients  
+🚫 Cannot edit demographics  
+🚫 Cannot edit medical data
+
+---
+
+### Special Actions
+
+- Flag patient (data issue)
+    
+- Lock patient (edge cases)
+    
+
+---
+
+## 8️⃣ INVENTORY MENU (CLINIC-LEVEL)
+
+### Screen: Inventory Dashboard
+
+**Views**
+
+- Available Devices
+    
+- Assigned Devices
+    
+- Pending Fitments
+    
+- Damaged / Returned
+    
+
+---
+
+### Actions Allowed
+
+- Request stock from HQ
+    
+- Mark device damaged
+    
+- Acknowledge receipt
+    
+
+🚫 Cannot create products  
+🚫 Cannot edit pricing  
+🚫 Cannot assign devices to patients
+
+---
+
+## 9️⃣ BILLING MENU (REFERENCE-ONLY, B2B SAFE)
+
+### Screen: Billing Overview
+
+**Views**
+
+- Invoices (informational)
+    
+- Patient-wise billing
+    
+- Service-wise totals
+    
+
+---
+
+### Invoice Detail
+
+- Services
+    
+- Tests
+    
+- Devices
+    
+- Total Amount
+    
+- Status = “Externally Settled”
+    
+
+🚫 No “Register Payment”  
+🚫 No receipt printing
+
+This exists **only for audit & reference**, as per client requirement.
+
+---
+
+## 🔟 REPORTS MENU (CLINIC PERFORMANCE)
+
+### Reports (FROM EXCEL SHEET)
+
+- Registrations (date range)
+    
+- Test → Conversion
+    
+- Device Fitment Rate
+    
+- Doctor Utilization
+    
+- Follow-up Compliance
+    
+
+**Exports**
+
+- Excel
+    
+- PDF
+    
+
+🚫 No financial P&L here  
+🚫 No cross-clinic comparison
+
+---
+
+## 1️⃣1️⃣ SUPPORT / ESCALATIONS
+
+### Screen: Raise Issue to HQ
+
+Use cases:
+
+- Inventory shortage
+    
+- Staff access issue
+    
+- System bug
+    
+
+**Fields**
+
+- Issue type
+    
+- Description
+    
+- Priority
+    
+
+Creates:
+
+- Internal ticket / activity to HQ Admin
+    
+
+---
+
+## 1️⃣2️⃣ CLINIC PROFILE (READ-ONLY)
+
+### Screen: Clinic Profile
+
+**Visible**
+
+- Clinic name & code
+    
+- Type (B2B / B2C)
+    
+- Partner hospital
+    
+- Go-live date
+    
+- Status
+    
+
+🚫 Cannot edit  
+🚫 Cannot deactivate clinic
+
+---
+
+## 1️⃣3️⃣ WHAT CLINIC ADMIN UI MUST **NOT** SHOW
+
+This is critical for alignment.
+
+🚫 CRM lead creation  
+🚫 OTP / registration UI  
+🚫 Patient portal controls  
+🚫 Financial settlement  
+🚫 HR payroll  
+🚫 Integrations  
+🚫 Master data
+
+---
+
+## 1️⃣4️⃣ CLINIC ADMIN UI — ONE-LINE SUMMARY
+
+> “Clinic Admin **runs the clinic**, not the platform.”
+
+---
+
+## FINAL ALIGNMENT CHECK
+
+✔ Matches client Excel ops ownership  
+✔ Respects B2B payment model  
+✔ Keeps HQ & clinic responsibilities clean  
+✔ Odoo CE friendly  
+✔ Minimal customization risk

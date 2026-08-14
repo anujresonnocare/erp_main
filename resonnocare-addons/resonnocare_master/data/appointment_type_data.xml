@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="appointment_type_hearing_test_trial" model="resonnocare.appointment.type">
+            <field name="name">Hearing Test &amp; Trial</field>
+            <field name="duration">45</field>
+            <field name="sequence">10</field>
+            <field name="active">1</field>
+        </record>
+        <record id="appointment_type_hearing_aid_trial_only" model="resonnocare.appointment.type">
+            <field name="name">Hearing Aid Trial only</field>
+            <field name="duration">30</field>
+            <field name="sequence">20</field>
+            <field name="active">1</field>
+        </record>
+        <record id="appointment_type_diagnostics" model="resonnocare.appointment.type">
+            <field name="name">Diagnostics</field>
+            <field name="duration">20</field>
+            <field name="sequence">30</field>
+            <field name="active">1</field>
+        </record>
+        <record id="appointment_type_bera_diagnostics" model="resonnocare.appointment.type">
+            <field name="name">BERA Diagnostics</field>
+            <field name="duration">45</field>
+            <field name="sequence">40</field>
+            <field name="active">1</field>
+        </record>
+        <record id="appointment_type_fine_tuning" model="resonnocare.appointment.type">
+            <field name="name">Fine Tuning</field>
+            <field name="duration">15</field>
+            <field name="sequence">50</field>
+            <field name="active">1</field>
+        </record>
+        <record id="appointment_type_fitting" model="resonnocare.appointment.type">
+            <field name="name">Fitting</field>
+            <field name="duration">45</field>
+            <field name="sequence">60</field>
+            <field name="active">1</field>
+        </record>
+        <record id="appointment_type_service_repair" model="resonnocare.appointment.type">
+            <field name="name">Service &amp; Repair</field>
+            <field name="duration">15</field>
+            <field name="sequence">70</field>
+            <field name="active">1</field>
+        </record>
+        <record id="appointment_type_accesories_purchase" model="resonnocare.appointment.type">
+            <field name="name">Accesories Purchase</field>
+            <field name="duration">15</field>
+            <field name="sequence">80</field>
+            <field name="active">1</field>
+        </record>
+        <record id="appointment_type_speech_consultation" model="resonnocare.appointment.type">
+            <field name="name">Speech Consultation</field>
+            <field name="duration">30</field>
+            <field name="sequence">90</field>
+            <field name="active">1</field>
+        </record>
+        <record id="appointment_type_speech_therapy" model="resonnocare.appointment.type">
+            <field name="name">Speech Therapy</field>
+            <field name="duration">30</field>
+            <field name="sequence">100</field>
+            <field name="active">1</field>
+        </record>
+        <record id="appointment_type_sleep_consultation" model="resonnocare.appointment.type">
+            <field name="name">Sleep Consultation</field>
+            <field name="duration">30</field>
+            <field name="sequence">110</field>
+            <field name="active">1</field>
+        </record>
+        <record id="appointment_type_migrane_consultation" model="resonnocare.appointment.type">
+            <field name="name">Migrane Consultation</field>
+            <field name="duration">30</field>
+            <field name="sequence">120</field>
+            <field name="active">1</field>
+        </record>
+        <record id="appointment_type_tinnitus_consultation" model="resonnocare.appointment.type">
+            <field name="name">Tinnitus Consultation</field>
+            <field name="duration">30</field>
+            <field name="sequence">130</field>
+            <field name="active">1</field>
+        </record>
+        <record id="appointment_type_swallowing_consultation" model="resonnocare.appointment.type">
+            <field name="name">Swallowing Consultation</field>
+            <field name="duration">30</field>
+            <field name="sequence">140</field>
+            <field name="active">1</field>
+        </record>
+        <record id="appointment_type_allergy_consultation" model="resonnocare.appointment.type">
+            <field name="name">Allergy Consultation</field>
+            <field name="duration">45</field>
+            <field name="sequence">150</field>
+            <field name="active">1</field>
+        </record>
+        <record id="appointment_type_oral_cancer_screening" model="resonnocare.appointment.type">
+            <field name="name">Oral Cancer Screening</field>
+            <field name="duration">15</field>
+            <field name="sequence">160</field>
+            <field name="active">1</field>
+        </record>
+        <record id="appointment_type_vertigo_test" model="resonnocare.appointment.type">
+            <field name="name">Vertigo Test</field>
+            <field name="duration">75</field>
+            <field name="sequence">170</field>
+            <field name="active">1</field>
+        </record>
+        <record id="appointment_type_device_sale" model="resonnocare.appointment.type">
+            <field name="name">Device Sale</field>
+            <field name="sale_type">device</field>
+            <field name="duration">30</field>
+            <field name="sequence">180</field>
+            <field name="active">1</field>
+        </record>
+    </data>
+</odoo>

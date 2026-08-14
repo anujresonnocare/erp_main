@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <template id="portal_my_home_resonnocare_patient" inherit_id="portal.portal_my_home" priority="30">
+        <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
+            <t t-call="portal.portal_docs_entry">
+                <t t-set="title">My Profile</t>
+                <t t-set="url" t-value="'/my/profile'"/>
+                <t t-set="text">View and update profile details</t>
+                <t t-set="config_card" t-value="True"/>
+            </t>
+            <t t-call="portal.portal_docs_entry">
+                <t t-set="title">My Appointments</t>
+                <t t-set="url" t-value="'/my/appointments'"/>
+                <t t-set="text">View appointment history and details</t>
+                <t t-set="count" t-value="appointment_count"/>
+                <t t-set="config_card" t-value="True"/>
+            </t>
+            <t t-call="portal.portal_docs_entry">
+                <t t-set="title">My Reports</t>
+                <t t-set="url" t-value="'/my/audiometry-results'"/>
+                <t t-set="text">View and download your audiometry reports</t>
+                <t t-set="config_card" t-value="True"/>
+            </t>
+        </xpath>
+    </template>
+
+    <template id="portal_my_home_hide_spinner" inherit_id="portal.portal_my_home" priority="31">
+        <xpath expr="//div[contains(@class, 'o_portal_doc_spinner')]" position="replace"/>
+    </template>
+
+    <template id="portal_my_home_hide_sale_card_source" inherit_id="sale.portal_my_home_sale" priority="99">
+        <xpath expr="//div[@id='portal_client_category']" position="attributes">
+            <attribute name="t-if">False</attribute>
+        </xpath>
+        <xpath expr="//div[@id='portal_alert_category']" position="attributes">
+            <attribute name="t-if">False</attribute>
+        </xpath>
+    </template>
+
+    <template id="portal_my_home_hide_invoice_card_source" inherit_id="account.portal_my_home_invoice" priority="99">
+        <xpath expr="//div[@id='portal_client_category']" position="attributes">
+            <attribute name="t-if">False</attribute>
+        </xpath>
+        <xpath expr="//div[@id='portal_vendor_category']" position="attributes">
+            <attribute name="t-if">False</attribute>
+        </xpath>
+    </template>
+
+    <template id="portal_side_content_hide_edit_info" inherit_id="portal.side_content" priority="60">
+        <xpath expr="//a[@href='/my/account']" position="replace"/>
+    </template>
+
+    <template id="portal_hide_sales_invoice_cards_globally" inherit_id="portal.portal_docs_entry" priority="120">
+        <xpath expr="//div[1]" position="attributes">
+            <attribute name="t-if">
+                not (
+                    (url or '').startswith('/my/orders')
+                    or (url or '').startswith('/my/invoices')
+                    or (url or '').startswith('/my/quotes')
+                    or title in ('Your Orders', 'Your Invoices', 'Our Invoices', 'Quotations to review')
+                )
+            </attribute>
+        </xpath>
+    </template>
+
+    <template id="portal_my_home_hide_cards_css_fallback" inherit_id="portal.portal_my_home" priority="130">
+        <xpath expr="//div[hasclass('o_portal_my_home')]" position="inside">
+            <style>
+                a[href*="/my/orders"], a[href*="/my/invoices"], a[href*="/my/quotes"] { display: none !important; }
+            </style>
+        </xpath>
+    </template>
+
+    <template id="portal_my_profile" name="Patient Portal: My Profile">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="True"/>
+            <t t-call="portal.portal_searchbar">
+                <t t-set="title">My Profile</t>
+            </t>
+            <div class="table-responsive mt-3">
+                <table class="table table-striped">
+                    <tbody>
+                        <tr t-foreach="profile_rows" t-as="row">
+                            <th class="w-25"><t t-esc="row.get('label')"/></th>
+                            <td><t t-esc="row.get('value')"/></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="alert alert-info mt-3" role="alert" t-if="not profile_rows">
+                No profile data available.
+            </div>
+        </t>
+    </template>
+
+    <template id="portal_my_appointments" name="Patient Portal: My Appointments">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="True"/>
+            <t t-call="portal.portal_searchbar">
+                <t t-set="title">My Appointments</t>
+            </t>
+
+            <t t-if="appointments">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Appointment</th>
+                                <th>Date</th>
+                                <th>Time</th>
+                                <th>Type</th>
+                                <th>Clinic</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="appointments" t-as="appt">
+                                <td>
+                                    <a t-att-href="'/my/appointments/%s' % appt.id">
+                                        <t t-esc="appt.appointment_id or appt.name"/>
+                                    </a>
+                                </td>
+                                <td><a t-att-href="'/my/appointments/%s' % appt.id"><span t-field="appt.appointment_date"/></a></td>
+                                <td><a t-att-href="'/my/appointments/%s' % appt.id"><t t-esc="('%0.2f' % (appt.appointment_start_time or 0.0))"/></a></td>
+                                <td><a t-att-href="'/my/appointments/%s' % appt.id"><span t-esc="appt.appointment_type_id.name"/></a></td>
+                                <td><a t-att-href="'/my/appointments/%s' % appt.id"><span t-esc="appt.clinic_id.name"/></a></td>
+                                <td><a t-att-href="'/my/appointments/%s' % appt.id"><span t-field="appt.status"/></a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <t t-call="portal.pager"/>
+            </t>
+            <t t-else="">
+                <div class="alert alert-info" role="alert">
+                    No appointments found.
+                </div>
+            </t>
+        </t>
+    </template>
+
+    <template id="portal_my_audiometry_results" name="Patient Portal: My Audiometry Results">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="True"/>
+            <t t-call="portal.portal_searchbar">
+                <t t-set="title">My Reports</t>
+            </t>
+
+            <t t-if="audiometry_results">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>UID</th>
+                                <th>Test</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="audiometry_results" t-as="r">
+                                <td><t t-esc="r.uid"/></td>
+                                <td><t t-esc="r.test_name"/></td>
+                                <td><t t-esc="r.created_at"/></td>
+                                <td>
+                                    <a t-att-href="'/my/audiometry-results/%s' % r.uid" class="btn btn-sm btn-primary">View</a>
+                                    <a t-att-href="download_base + r.uid" class="btn btn-sm btn-secondary" target="_blank">Download</a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <t t-call="portal.pager"/>
+            </t>
+            <t t-else="">
+                <div class="alert alert-info" role="alert">No reports found.</div>
+            </t>
+        </t>
+    </template>
+
+    <template id="portal_audiometry_result_detail" name="Patient Portal: Audiometry Result Detail">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="True"/>
+            <t t-call="portal.portal_searchbar">
+                <t t-set="title">Report Detail</t>
+            </t>
+
+            <div class="table-responsive mt-3">
+                <table class="table table-striped">
+                    <tbody>
+                        <tr>
+                            <th class="w-25">UID</th>
+                            <td><t t-esc="result.uid"/></td>
+                        </tr>
+                        <tr>
+                            <th>Test</th>
+                            <td><t t-esc="result.test_name"/></td>
+                        </tr>
+                        <tr>
+                            <th>Date</th>
+                            <td><t t-esc="result.created_at"/></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h5>Attachments</h5>
+            <t t-if="attachments">
+                <ul>
+                    <li t-foreach="attachments" t-as="a">
+                        <a t-att-href="a.get('url')" target="_blank"><t t-esc="a.get('name')"/></a>
+                    </li>
+                </ul>
+            </t>
+            <t t-else="">
+                <div class="alert alert-info">No attachments found for this report.</div>
+            </t>
+        </t>
+    </template>
+
+    <template id="portal_appointment_detail" name="Patient Portal: Appointment Detail">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="True"/>
+            <t t-call="portal.portal_searchbar">
+                <t t-set="title">Appointment Details</t>
+            </t>
+            <div class="table-responsive mt-3">
+                <table class="table table-striped">
+                    <tbody>
+                        <tr t-foreach="appointment_rows" t-as="row">
+                            <th class="w-25"><t t-esc="row.get('label')"/></th>
+                            <td><t t-esc="row.get('value')"/></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="alert alert-info mt-3" role="alert" t-if="not appointment_rows">
+                No appointment data available.
+            </div>
+        </t>
+    </template>
+</odoo>

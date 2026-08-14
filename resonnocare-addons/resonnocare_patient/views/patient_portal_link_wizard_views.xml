@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="view_patient_portal_link_wizard_form" model="ir.ui.view">
+        <field name="name">resonnocare.patient.portal.link.wizard.form</field>
+        <field name="model">resonnocare.patient.portal.link.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Patient Portal Signup Link" create="false" edit="false" delete="false">
+                <group>
+                    <field name="partner_id" readonly="1"/>
+                    <field name="portal_signup_url" readonly="1" widget="CopyClipboardChar"/>
+                </group>
+                <footer>
+                    <button
+                        name="action_send_email"
+                        type="object"
+                        string="Send to Email"
+                        class="btn-primary"
+                    />
+                    <button string="Close" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

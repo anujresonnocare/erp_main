@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <template id="report_resonnocare_reimbursement_slip_document">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h2>Reimbursement Slip</h2>
+                        <p><strong>Employee:</strong> <span t-esc="o.employee_id.name"/></p>
+                        <p><strong>Period:</strong> <span t-esc="o.date_from"/> to <span t-esc="o.date_to"/></p>
+                        <table class="table table-sm table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Type</th>
+                                    <th class="text-end">Approved Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="o.res_get_approved_claim_lines()" t-as="c">
+                                    <td><span t-esc="c.claim_date"/></td>
+                                    <td><span t-esc="c.claim_type"/></td>
+                                    <td class="text-end"><span t-esc="c.amount_approved"/></td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="2"><strong>Total Approved Reimbursement</strong></td>
+                                    <td class="text-end"><strong t-esc="o.res_get_total_approved_claim_amount()"/></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <template id="report_resonnocare_tax_worksheet_document">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h2>Tax Worksheet</h2>
+                        <p><strong>Employee:</strong> <span t-esc="o.employee_id.name"/></p>
+                        <p><strong>Payslip:</strong> <span t-esc="o.name"/></p>
+                        <t t-set="contract" t-value="o.contract_id"/>
+                        <table class="table table-sm table-bordered">
+                            <tbody>
+                                <tr><td>Annual Projected Income</td><td class="text-end"><span t-esc="contract.res_annual_projected_income if contract else 0.0"/></td></tr>
+                                <tr><td>Standard Deduction</td><td class="text-end"><span t-esc="contract.res_standard_deduction if contract else 0.0"/></td></tr>
+                                <tr><td>80C</td><td class="text-end"><span t-esc="contract.res_declared_80c if contract else 0.0"/></td></tr>
+                                <tr><td>80D</td><td class="text-end"><span t-esc="contract.res_declared_80d if contract else 0.0"/></td></tr>
+                                <tr><td>Other Deductions</td><td class="text-end"><span t-esc="contract.res_other_deductions if contract else 0.0"/></td></tr>
+                                <tr><td>Annual Taxable Income</td><td class="text-end"><span t-esc="contract.res_annual_taxable_income if contract else 0.0"/></td></tr>
+                                <tr><td>Annual Tax Liability</td><td class="text-end"><span t-esc="contract.res_annual_tax_liability if contract else 0.0"/></td></tr>
+                                <tr><td>Remaining FY Months</td><td class="text-end"><span t-esc="contract.res_remaining_fy_months if contract else 0"/></td></tr>
+                                <tr><td>Monthly TDS</td><td class="text-end"><span t-esc="contract.res_monthly_tds if contract else 0.0"/></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <record id="action_report_resonnocare_reimbursement_slip" model="ir.actions.report">
+        <field name="name">Reimbursement Slip</field>
+        <field name="model">hr.payslip</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">resonnocare_hr.report_resonnocare_reimbursement_slip_document</field>
+        <field name="report_file">resonnocare_hr.report_resonnocare_reimbursement_slip_document</field>
+        <field name="binding_model_id" search="[('model','=','hr.payslip')]"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <record id="action_report_resonnocare_tax_worksheet" model="ir.actions.report">
+        <field name="name">Tax Worksheet</field>
+        <field name="model">hr.payslip</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">resonnocare_hr.report_resonnocare_tax_worksheet_document</field>
+        <field name="report_file">resonnocare_hr.report_resonnocare_tax_worksheet_document</field>
+        <field name="binding_model_id" search="[('model','=','hr.payslip')]"/>
+        <field name="binding_type">report</field>
+    </record>
+
+</odoo>

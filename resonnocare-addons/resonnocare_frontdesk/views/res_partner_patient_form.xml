@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- ============================== -->
+    <!-- Patient Form (Front Desk View) -->
+    <!-- ============================== -->
+    <record id="view_res_partner_patient_form" model="ir.ui.view">
+        <field name="name">res.partner.patient.form</field>
+        <field name="model">res.partner</field>
+        <field name="priority">20</field>
+        <field name="arch" type="xml">
+            <form string="Patient Profile" create="false" edit="true" delete="false">
+                <sheet>
+
+                    <!-- Header -->
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name"/>
+                        </h1>
+                        <h3 class="text-muted">
+                            Patient ID:
+                            <field name="patient_id" readonly="1"/>
+                        </h3>
+                    </div>
+
+                    <!-- ================= -->
+                    <!-- Identity Section -->
+                    <!-- ================= -->
+                    <group string="Identity">
+                        <group>
+                            <field name="patient_id" readonly="1"/>
+                            <field name="name"/>
+                        </group>
+                        <group>
+                            <field name="gender"/>
+                            <field name="birthdate_date"/>
+                            <field name="clinic_id"/>
+                        </group>
+                    </group>
+
+                    <!-- ===================== -->
+                    <!-- Contact Information -->
+                    <!-- ===================== -->
+                    <group string="Contact Details">
+                        <group>
+                            <field name="phone"/>
+                            <field name="alternate_mobile"/>
+                            <field name="email"/>
+                        </group>
+                        <group>
+                            <field name="street"/>
+                            <field name="city"/>
+                            <field name="state_id"/>
+                            <field name="zip"/>
+                        </group>
+                    </group>
+
+                    <!-- ================= -->
+                    <!-- Visit Information -->
+                    <!-- ================= -->
+                    <group string="Visit Context">
+                        <group>
+                            <field name="visit_type"/>
+                            <field name="referral_source"/>
+                        </group>
+                        <group>
+                            <field name="visit_reason"/>
+                        </group>
+                    </group>
+
+                    <!-- ========================= -->
+                    <!-- Additional Patient Info -->
+                    <!-- ========================= -->
+                    <group string="Additional Information">
+                        <group>
+                            <field name="occupation"/>
+                            <field name="health_expense_management"/>
+                        </group>
+                        <group>
+                            <field name="accompanied_by"/>
+                            <field name="heard_about_resonnocare"/>
+                        </group>
+                    </group>
+
+                    <group string="Case History" col="2">
+
+                        <!-- ========================= -->
+                        <!-- About Your Ears -->
+                        <!-- ========================= -->
+                        <group string="About Your Ears">
+
+                            <field name="ear_infection_history" widget="radio"/>
+                            <field name="ear_infection_details"
+                                invisible="ear_infection_history != 'yes'"/>
+
+                            <field name="difficulty_following_conversation" widget="radio"/>
+
+                            <field name="sudden_hearing_loss" widget="radio"/>
+
+                            <field name="dizziness" widget="radio"/>
+
+                            <field name="ear_pain" widget="radio"/>
+                            <field name="ear_pain_details"
+                                invisible="ear_pain != 'yes'"/>
+
+                            <field name="tinnitus" widget="radio"/>
+
+                            <field name="noise_exposure" widget="radio"/>
+
+                            <field name="known_hearing_loss_cause" widget="radio"/>
+                            <field name="known_hearing_loss_details"
+                                invisible="known_hearing_loss_cause != 'yes'"/>
+
+                            <field name="ear_surgery_history" widget="radio"/>
+                            <field name="ear_surgery_details"
+                                invisible="ear_surgery_history != 'yes'"/>
+
+                            <field name="memory_or_recall_issues" widget="radio"/>
+
+                            <field name="long_conversation_difficulty" widget="radio"/>
+
+                            <field name="other_significant_medical_problems"/>
+
+                        </group>
+
+                        <!-- ========================= -->
+                        <!-- About Your Communication -->
+                        <!-- ========================= -->
+                        <group string="About Your Communication">
+
+                            <field name="communication_repetition_home_office"
+                                widget="radio" options="{'horizontal': true}"/>
+
+                            <field name="communication_specific_speech_sounds"
+                                widget="radio" options="{'horizontal': true}"/>
+
+                            <field name="communication_crowd_noise"
+                                widget="radio" options="{'horizontal': true}"/>
+
+                            <field name="communication_telephone"
+                                widget="radio" options="{'horizontal': true}"/>
+
+                            <field name="communication_tv_loud_volume"
+                                widget="radio" options="{'horizontal': true}"/>
+
+                            <field name="communication_distance_vague"
+                                widget="radio" options="{'horizontal': true}"/>
+
+                            <field name="communication_other_situations"
+                                placeholder="Describe other situations where speech is not heard clearly"/>
+
+                        </group>
+
+                        <!-- ========================= -->
+                        <!-- Take Action on Hearing Loss -->
+                        <!-- ========================= -->
+                        <group string="Take Action on Hearing Loss">
+
+                            <field name="family_hearing_problem" widget="radio"/>
+                            <field name="family_hearing_problem_details"
+                                invisible="family_hearing_problem != 'yes'"/>
+
+                            <field name="others_notice_hearing_problem" widget="radio"/>
+
+                            <field name="used_hearing_aid_before" widget="radio"/>
+                            <field name="used_hearing_aid_details"
+                                invisible="used_hearing_aid_before != 'yes'"/>
+
+                            <field name="important_to_improve_hearing" widget="radio"/>
+
+                            <field name="interested_in_hearing_aid" widget="radio"/>
+
+                            <field name="happy_with_hearing_status" widget="radio"/>
+
+                            <field name="consent_hearing_aid_info" widget="radio"/>
+
+                        </group>
+
+                        <!-- ========================= -->
+                        <!-- Additional Information -->
+                        <!-- ========================= -->
+                        <group string="Additional Notes">
+
+                            <field name="additional_information"
+                                placeholder="Any other information you would like to share"/>
+
+                            <field name="referring_doctor"
+                                placeholder="Referring doctor's name"/>
+
+                        </group>
+
+
+
+                    </group>                        
+
+
+                    <!-- ================= -->
+                    <!-- System Context -->
+                    <!-- ================= -->
+                    <group string="System Information">
+                        <group>
+                            <field name="company_id" readonly="1"/>
+                            <field name="registration_date" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="registered_by_id" readonly="1"/>
+                        </group>
+                    </group>
+
+                    <!-- ================= -->
+                    <!-- Safety Note -->
+                    <!-- ================= -->
+                    <div class="alert alert-info mt-3" role="alert">
+                        <strong>Note:</strong>
+                        Patient details can be updated after registration whenever required.
+                    </div>
+
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+</odoo>

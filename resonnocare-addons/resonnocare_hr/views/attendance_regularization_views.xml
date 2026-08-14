@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="view_resonnocare_attendance_regularization_list" model="ir.ui.view">
+        <field name="name">resonnocare.attendance.regularization.list</field>
+        <field name="model">resonnocare.attendance.regularization</field>
+        <field name="arch" type="xml">
+            <list default_order="date desc, id desc">
+                <field name="date"/>
+                <field name="employee_id"/>
+                <field name="reason"/>
+                <field name="requested_check_in"/>
+                <field name="requested_check_out"/>
+                <field name="state"/>
+                <field name="submitted_on"/>
+                <field name="manager_id"/>
+                <field name="hr_id"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_resonnocare_attendance_regularization_form" model="ir.ui.view">
+        <field name="name">resonnocare.attendance.regularization.form</field>
+        <field name="model">resonnocare.attendance.regularization</field>
+        <field name="arch" type="xml">
+            <form string="Attendance Regularization">
+                <header>
+                    <button name="action_submit" type="object" string="Submit" class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_manager_approve" type="object" string="Manager Approve" class="btn-primary" invisible="state != 'submitted'"/>
+                    <button name="action_hr_approve" type="object" string="HR Final Approve" class="btn-success" invisible="state not in ('submitted', 'manager_approved')"/>
+                    <button name="action_reject" type="object" string="Reject" class="btn-danger" invisible="state not in ('submitted', 'manager_approved')"/>
+                    <button name="action_cancel" type="object" string="Cancel" invisible="state not in ('draft', 'submitted')"/>
+                    <button name="action_reset_to_draft" type="object" string="Reset to Draft" invisible="state in ('draft', 'hr_approved', 'cancelled')"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,submitted,manager_approved,hr_approved,rejected,cancelled"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="employee_id" readonly="state != 'draft'"/>
+                            <field name="date" readonly="state != 'draft'"/>
+                            <field name="attendance_summary_id" readonly="1"/>
+                            <field name="reason" readonly="state != 'draft'"/>
+                            <field name="reason_details" readonly="state != 'draft'" required="requires_reason_details"/>
+                            <field name="requires_reason_details" invisible="1"/>
+                        </group>
+                        <group>
+                            <field name="requested_check_in" readonly="state != 'draft'"/>
+                            <field name="requested_check_out" readonly="state != 'draft'"/>
+                            <field name="attachment" filename="attachment_filename" readonly="state != 'draft'"/>
+                            <field name="attachment_filename" invisible="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Approval Notes">
+                            <group>
+                                <group string="Manager">
+                                    <field name="manager_id" readonly="1"/>
+                                    <field name="manager_decision_on" readonly="1"/>
+                                    <field name="manager_notes" readonly="state not in ('submitted', 'manager_approved')"/>
+                                </group>
+                                <group string="HR">
+                                    <field name="hr_id" readonly="1"/>
+                                    <field name="hr_decision_on" readonly="1"/>
+                                    <field name="hr_notes" readonly="state not in ('manager_approved', 'submitted')"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Tracking">
+                            <group>
+                                <field name="submitted_by" readonly="1"/>
+                                <field name="submitted_on" readonly="1"/>
+                                <field name="reminder_sent" readonly="1"/>
+                                <field name="escalation_sent" readonly="1"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_resonnocare_attendance_regularization_my" model="ir.actions.act_window">
+        <field name="name">My Regularizations</field>
+        <field name="res_model">resonnocare.attendance.regularization</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('employee_id.user_id', '=', uid)]</field>
+    </record>
+
+    <record id="action_resonnocare_attendance_regularization_team" model="ir.actions.act_window">
+        <field name="name">Team Regularizations</field>
+        <field name="res_model">resonnocare.attendance.regularization</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[
+            ('state', '=', 'submitted'),
+            '|',
+            ('employee_id.parent_id.user_id', '=', uid),
+            ('employee_id.leave_manager_id.user_id', '=', uid)
+        ]</field>
+    </record>
+
+    <record id="action_resonnocare_attendance_regularization_hr" model="ir.actions.act_window">
+        <field name="name">HR Regularizations</field>
+        <field name="res_model">resonnocare.attendance.regularization</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('state', 'in', ['submitted', 'manager_approved'])]</field>
+    </record>
+
+    <record id="action_resonnocare_attendance_regularization_all" model="ir.actions.act_window">
+        <field name="name">All Regularizations</field>
+        <field name="res_model">resonnocare.attendance.regularization</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

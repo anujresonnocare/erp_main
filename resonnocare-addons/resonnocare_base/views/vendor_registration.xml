@@ -1,0 +1,69 @@
+<odoo>
+    <record id="view_res_partner_vendor_form_inherit" model="ir.ui.view">
+        <field name="name">res.partner.vendor.form.inherit</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="groups_id" eval="[(5, 0, 0)]"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//sheet/notebook" position="inside">
+
+                <!-- Vendor Details -->
+                <page string="Vendor Details"
+                      groups="purchase.group_purchase_user">
+                    <group>
+                        <field name="vendor_code"/>
+                        <field name="vendor_type"/>
+                    </group>
+                </page>
+
+                <!-- Statutory Details -->
+                <page string="Statutory Details"
+                      groups="purchase.group_purchase_user">
+                    <group>
+                        <field name="pan_no"/>
+                        <field name="gst_no"/>
+                        <field name="gst_type"/>
+                        <field name="msme_registered"/>
+                        <field name="msme_no"/>
+                    </group>
+                </page>
+
+                <!-- Bank Details -->
+                <page string="Bank Details"
+                      groups="purchase.group_purchase_user">
+                    <group>
+                        <field name="bank_name"/>
+                        <field name="bank_branch"/>
+                        <field name="bank_account_no"/>
+                        <field name="ifsc_code"/>
+                        <field name="account_type"/>
+                    </group>
+                </page>
+
+                <!-- Payment & TDS -->
+                <page string="Payment &amp; TDS"
+                      groups="purchase.group_purchase_user">
+                    <group>
+                        <field name="payment_mode"/>
+                        <field name="tds_applicable"/>
+                        <field name="tds_section"/>
+                        <field name="tds_exemption"/>
+                    </group>
+                </page>
+
+                <!-- Contact Person -->
+                <page string="Contact Person"
+                      groups="purchase.group_purchase_user">
+                    <group>
+                        <field name="contact_person_name"/>
+                        <field name="contact_person_designation"/>
+                        <field name="contact_person_mobile"/>
+                        <field name="contact_person_email"/>
+                    </group>
+                </page>
+
+            </xpath>
+        </field>
+    </record>
+</odoo>

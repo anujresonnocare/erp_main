@@ -1,0 +1,29 @@
+Folder PATH listing
+Volume serial number is 5C2C-A870
+C:.
+|   appointment_module_spec.txt
+|   tree.txt
+|   __init__.py
+|   __manifest__.py
+|   
++---data
+|       appointment_sequence.xml
+|       
++---models
+|   |   appointment.py
+|   |   __init__.py
+|   |   
+|   \---__pycache__
+|           appointment.cpython-312.pyc
+|           __init__.cpython-312.pyc
+|           
++---security
+|       ir.model.access.csv
+|       
++---views
+|       appointment_menu.xml
+|       appointment_views.xml
+|       
+\---__pycache__
+        __init__.cpython-312.pyc
+        

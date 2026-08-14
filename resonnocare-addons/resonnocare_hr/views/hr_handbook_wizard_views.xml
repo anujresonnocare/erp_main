@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="view_hr_handbook_accept_wizard_form" model="ir.ui.view">
+        <field name="name">hr.handbook.accept.wizard.form</field>
+        <field name="model">resonnocare.hr.handbook.accept.wizard</field>
+        <field name="arch" type="xml">
+            <form string="HR Handbook Acknowledgment" create="0" delete="0">
+                <header>
+                    <button name="action_accept"
+                            string="Accept and Continue"
+                            type="object"
+                            class="btn-primary"
+                            invisible="accepted_already or (contract_required and not contract_ready)"/>
+                </header>
+                <sheet>
+                    <group invisible="1">
+                        <field name="employee_id"/>
+                        <field name="handbook_version_id"/>
+                        <field name="accepted_already"/>
+                        <field name="accepted_on"/>
+                        <field name="accepted_ip"/>
+                        <field name="contract_required"/>
+                        <field name="contract_ready"/>
+                    </group>
+
+                    <div class="alert alert-warning" role="alert" invisible="not contract_required or contract_ready">
+                        Payroll contract is not configured yet. Contact HR before completing onboarding.
+                    </div>
+
+                    <separator string="Handbook"/>
+                    <field name="handbook_content_html" nolabel="1" readonly="1"/>
+
+                    <group invisible="accepted_already">
+                        <field name="acknowledge"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_hr_handbook_accept_wizard" model="ir.actions.act_window">
+        <field name="name">HR Handbook Acknowledgment</field>
+        <field name="res_model">resonnocare.hr.handbook.accept.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="domain">[('user_id', '=', uid)]</field>
+        <field name="target">fullscreen</field>
+        <field name="view_id" ref="view_hr_handbook_accept_wizard_form"/>
+        <field name="context">{'create': False, 'form_view_initial_mode': 'edit', 'default_user_id': uid}</field>
+    </record>
+
+</odoo>

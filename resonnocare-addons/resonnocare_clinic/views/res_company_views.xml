@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="view_res_company_form_resonnocare_ho" model="ir.ui.view">
+        <field name="name">res.company.form.resonnocare.ho</field>
+        <field name="model">res.company</field>
+        <field name="inherit_id" ref="base.view_company_form"/>
+        <field name="groups_id" eval="[(5, 0, 0)]"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Resonnocare HO" groups="resonnocare_base.group_resonnocare_super_admin">
+                    <group>
+                        <group string="HO Warehouse">
+                            <field name="ho_warehouse_id" readonly="1"/>
+                        </group>
+                        <group string="HO Locations">
+                            <field name="ho_hearing_aid_sale_location_id" readonly="1"/>
+                            <field name="ho_demo_hearing_aid_location_id" readonly="1"/>
+                            <field name="ho_saleable_accessories_location_id" readonly="1"/>
+                            <field name="ho_repair_service_location_id" readonly="1"/>
+                            <field name="ho_equipment_location_id" readonly="1"/>
+                            <field name="ho_consumable_location_id" readonly="1"/>
+                            <field name="ho_rtv_location_id" readonly="1"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_backfill_ho_inventory_locations" model="ir.actions.server">
+        <field name="name">Backfill HO Inventory Locations</field>
+        <field name="model_id" ref="base.model_res_company"/>
+        <field name="binding_model_id" ref="base.model_res_company"/>
+        <field name="binding_type">action</field>
+        <field name="groups_id" eval="[(4, ref('resonnocare_base.group_resonnocare_super_admin'))]"/>
+        <field name="state">code</field>
+        <field name="code">records.action_backfill_ho_inventory_locations()</field>
+    </record>
+
+    <record id="action_create_resonnocare_locations_warehouse" model="ir.actions.server">
+        <field name="name">Create Resonnocare Locations (HO)</field>
+        <field name="model_id" ref="stock.model_stock_warehouse"/>
+        <field name="binding_model_id" ref="stock.model_stock_warehouse"/>
+        <field name="binding_type">action</field>
+        <field name="groups_id" eval="[(4, ref('resonnocare_base.group_resonnocare_super_admin'))]"/>
+        <field name="state">code</field>
+        <field name="code">records.action_create_resonnocare_locations()</field>
+    </record>
+</odoo>

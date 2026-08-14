@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- 
+    NOTE: action_open_patient_registration is defined in patient_registration_wizard.xml
+    This file kept for reference but should not contain duplicate action definitions
+    -->
+</odoo>

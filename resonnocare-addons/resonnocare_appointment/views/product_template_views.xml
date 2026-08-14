@@ -1,0 +1,54 @@
+<odoo>
+    <record id="view_product_product_tree_hide_cost_frontdesk" model="ir.ui.view">
+        <field name="name">product.product.tree.hide.cost.frontdesk</field>
+        <field name="model">product.product</field>
+        <field name="inherit_id" ref="product.product_product_tree_view"/>
+        <field name="priority" eval="99"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='standard_price']" position="attributes">
+                <attribute name="invisible">1</attribute>
+                <attribute name="optional">hide</attribute>
+                <attribute name="groups">resonnocare_base.group_front_desk</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_product_product_frontdesk_search" model="ir.ui.view">
+        <field name="name">product.product.frontdesk.search</field>
+        <field name="model">product.product</field>
+        <field name="arch" type="xml">
+            <search string="Products">
+                <field name="name"/>
+                <field name="default_code"/>
+                <filter name="filter_sale_ok" string="Can be Sold" domain="[('sale_ok', '=', True)]"/>
+                <filter name="filter_active" string="Active" domain="[('active', '=', True)]"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_product_product_frontdesk_tree" model="ir.ui.view">
+        <field name="name">product.product.frontdesk.tree</field>
+        <field name="model">product.product</field>
+        <field name="arch" type="xml">
+            <list string="Products">
+                <field name="name"/>
+                <field name="default_code"/>
+                <field name="lst_price" string="Sales Price"/>
+                <field name="qty_available" optional="show"/>
+                <field name="active" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_product_template_form_ear_mould_flag" model="ir.ui.view">
+        <field name="name">product.template.form.ear.mould.flag</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_only_form_view"/>
+        <field name="groups_id" eval="[(5, 0, 0)]"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='type']" position="after">
+                <field name="is_ear_mould"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

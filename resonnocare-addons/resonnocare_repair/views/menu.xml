@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Repairs Submenu -->
+    <menuitem id="menu_resonnocare_repairs_parent" 
+              name="Repairs" 
+              parent="resonnocare_frontdesk.menu_front_desk_root" 
+              sequence="26" 
+              groups="resonnocare_base.group_front_desk,resonnocare_base.group_clinic_admin,resonnocare_base.group_resonnocare_super_admin,resonnocare_base.group_doctor"/>
+
+    <!-- Repair Contracts Link -->
+    <menuitem id="menu_resonnocare_repair_contracts" 
+              name="Repair Contracts" 
+              parent="menu_resonnocare_repairs_parent" 
+              action="action_repair_contract" 
+              sequence="10"/>
+
+    <!-- Clinic Device Maintenance Link -->
+    <menuitem id="menu_resonnocare_device_maintenance" 
+              name="Clinic Device Maintenance" 
+              parent="menu_resonnocare_repairs_parent" 
+              action="action_device_maintenance" 
+              sequence="20"
+              groups="resonnocare_base.group_clinic_admin,resonnocare_base.group_resonnocare_super_admin"/>
+</odoo>

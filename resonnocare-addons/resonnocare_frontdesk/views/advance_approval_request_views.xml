@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_advance_approval_request_list" model="ir.ui.view">
+        <field name="name">resonnocare.advance.approval.request.list</field>
+        <field name="model">resonnocare.advance.approval.request</field>
+        <field name="arch" type="xml">
+            <list create="1" edit="1" delete="0">
+                <field name="name"/>
+                <field name="state"/>
+                <field name="clinic_id"/>
+                <field name="patient_id"/>
+                <field name="sale_order_id"/>
+                <field name="sale_order_total"/>
+                <field name="min_advance_required"/>
+                <field name="amount_paid"/>
+                <field name="requested_min_advance"/>
+                <field name="requested_by_id"/>
+                <field name="approved_by_id"/>
+                <field name="approved_on"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_advance_approval_request_form" model="ir.ui.view">
+        <field name="name">resonnocare.advance.approval.request.form</field>
+        <field name="model">resonnocare.advance.approval.request</field>
+        <field name="arch" type="xml">
+            <form string="Minimum Advance Approval Request">
+                <header>
+                    <button name="action_submit" type="object" string="Submit" class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_approve" type="object" string="Approve" class="btn-success" groups="resonnocare_base.group_clinic_admin,resonnocare_base.group_resonnocare_super_admin" invisible="state != 'submitted'"/>
+                    <button name="action_reject" type="object" string="Reject" class="btn-danger" groups="resonnocare_base.group_clinic_admin,resonnocare_base.group_resonnocare_super_admin" invisible="state != 'submitted'"/>
+                    <button name="action_cancel" type="object" string="Cancel" invisible="state not in ('draft','submitted')"/>
+                    <button name="action_reset_draft" type="object" string="Reset to Draft" invisible="state not in ('rejected','cancelled')"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,submitted,approved,rejected,cancelled"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name" readonly="1"/>
+                            <field name="sale_order_id" readonly="state != 'draft'"/>
+                            <field name="clinic_id" readonly="1"/>
+                            <field name="patient_id" readonly="1"/>
+                            <field name="patient_code" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="sale_order_total" readonly="1"/>
+                            <field name="min_advance_required" readonly="1"/>
+                            <field name="amount_paid" readonly="1"/>
+                            <field name="shortfall_vs_30" readonly="1"/>
+                            <field name="requested_min_advance" readonly="state != 'draft'"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group>
+                            <field name="reason" readonly="state != 'draft'"/>
+                            <field name="rejection_reason" readonly="state == 'approved'"/>
+                        </group>
+                        <group>
+                            <field name="requested_by_id" readonly="1"/>
+                            <field name="approved_by_id" readonly="1"/>
+                            <field name="approved_on" readonly="1"/>
+                        </group>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_advance_approval_request_search" model="ir.ui.view">
+        <field name="name">resonnocare.advance.approval.request.search</field>
+        <field name="model">resonnocare.advance.approval.request</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="clinic_id"/>
+                <field name="patient_id"/>
+                <field name="sale_order_id"/>
+                <field name="state"/>
+                <filter name="f_draft" string="Draft" domain="[('state','=','draft')]"/>
+                <filter name="f_submitted" string="Submitted" domain="[('state','=','submitted')]"/>
+                <filter name="f_approved" string="Approved" domain="[('state','=','approved')]"/>
+                <filter name="f_rejected" string="Rejected" domain="[('state','=','rejected')]"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_advance_approval_requests" model="ir.actions.act_window">
+        <field name="name">Min Advance Requests</field>
+        <field name="res_model">resonnocare.advance.approval.request</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_advance_approval_request_search"/>
+        <field name="context">{}</field>
+    </record>
+</odoo>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="action_resonnocare_hq_dashboard" model="ir.actions.act_window">
+        <field name="name">HQ Dashboard</field>
+        <field name="res_model">resonnocare.hq.dashboard</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_resonnocare_hq_dashboard_form"/>
+        <field name="res_id" ref="resonnocare_hq_dashboard_singleton"/>
+        <field name="target">current</field>
+
+        <field name="context">
+        {
+            'create': False,
+            'edit': False,
+            'delete': False,
+            'duplicate': False,
+            'search_disable_custom_filters': True,
+            'no_breadcrumbs': True,
+            'no_open_record': True,
+            'no_record_switch': True
+        }
+        </field>
+    </record>
+
+
+</odoo>

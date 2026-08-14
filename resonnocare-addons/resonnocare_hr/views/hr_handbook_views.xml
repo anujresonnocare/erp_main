@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="view_resonnocare_hr_handbook_version_tree" model="ir.ui.view">
+        <field name="name">resonnocare.hr.handbook.version.tree</field>
+        <field name="model">resonnocare.hr.handbook.version</field>
+        <field name="arch" type="xml">
+            <list default_order="effective_date desc, id desc">
+                <field name="name"/>
+                <field name="version"/>
+                <field name="effective_date"/>
+                <field name="state"/>
+                <field name="published_on"/>
+                <field name="acceptance_count"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_resonnocare_hr_handbook_version_form" model="ir.ui.view">
+        <field name="name">resonnocare.hr.handbook.version.form</field>
+        <field name="model">resonnocare.hr.handbook.version</field>
+        <field name="arch" type="xml">
+            <form string="HR Handbook Version">
+                <header>
+                    <button name="action_publish" type="object" string="Publish" class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_set_draft" type="object" string="Move to Draft" invisible="state != 'archived'"/>
+                    <button name="action_download_acceptance_log" type="object" string="Download Audit Log" class="btn-secondary"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,published,archived"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="version"/>
+                            <field name="effective_date"/>
+                        </group>
+                        <group>
+                            <field name="published_by" readonly="1"/>
+                            <field name="published_on" readonly="1"/>
+                            <field name="acceptance_count" readonly="1"/>
+                        </group>
+                    </group>
+                    <separator string="Handbook Content"/>
+                    <field name="content_html" nolabel="1"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_resonnocare_hr_handbook_acceptance_tree" model="ir.ui.view">
+        <field name="name">resonnocare.hr.handbook.acceptance.tree</field>
+        <field name="model">resonnocare.hr.handbook.acceptance</field>
+        <field name="arch" type="xml">
+            <list create="0" edit="0" delete="0" default_order="accepted_on desc">
+                <field name="employee_id"/>
+                <field name="user_id"/>
+                <field name="handbook_version_id"/>
+                <field name="accepted_on"/>
+                <field name="accepted_ip"/>
+                <field name="employee_evidence_attachment_id"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_resonnocare_hr_handbook_versions" model="ir.actions.act_window">
+        <field name="name">HR Handbook Versions</field>
+        <field name="res_model">resonnocare.hr.handbook.version</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_published': 1}</field>
+    </record>
+
+    <record id="action_resonnocare_hr_handbook_acceptance_logs" model="ir.actions.act_window">
+        <field name="name">Handbook Acceptance Logs</field>
+        <field name="res_model">resonnocare.hr.handbook.acceptance</field>
+        <field name="view_mode">list</field>
+    </record>
+
+    <menuitem id="menu_resonnocare_hr_handbook_root"
+              name="HR Handbook"
+              parent="hr.menu_human_resources_configuration"
+              sequence="90"
+              groups="resonnocare_base.group_resonnocare_hr,resonnocare_base.group_resonnocare_super_admin"/>
+
+    <menuitem id="menu_resonnocare_hr_handbook_versions"
+              name="Versions"
+              parent="menu_resonnocare_hr_handbook_root"
+              sequence="10"
+              action="action_resonnocare_hr_handbook_versions"
+              groups="resonnocare_base.group_resonnocare_hr,resonnocare_base.group_resonnocare_super_admin"/>
+
+    <menuitem id="menu_resonnocare_hr_handbook_logs"
+              name="Acceptance Logs"
+              parent="menu_resonnocare_hr_handbook_root"
+              sequence="20"
+              action="action_resonnocare_hr_handbook_acceptance_logs"
+              groups="resonnocare_base.group_resonnocare_hr,resonnocare_base.group_resonnocare_super_admin"/>
+
+</odoo>

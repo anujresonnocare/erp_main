@@ -1,0 +1,371 @@
+# 🧭 GLOBAL UI MAP (AT A GLANCE)
+
+| Stage            | Native Screen            | Customization Level |
+| ---------------- | ------------------------ | ------------------- |
+| Lead Creation    | CRM → Leads              | Minimal (fields)    |
+| Allocation       | CRM Automation           | Zero UI             |
+| Calling          | Lead Form + Activity     | Medium              |
+| Disposition      | Lead Form (custom panel) | Medium              |
+| Follow-ups       | Activities View          | Native              |
+| Visit Intent     | Lead Form (Intent tab)   | Light               |
+| Expected Walk-in | CRM Filtered View        | Light               |
+| Registration     | Front Desk Module        | Already built       |
+| Conversion       | System Action            | Zero UI             |
+| Retention        | Activities + Campaigns   | Native              |
+
+---
+
+# 🟢 STAGE 1 — LEAD CREATION
+
+### (CRM ENTRY POINT)
+
+![Image](https://www.images.cybrosys.com/blog/Uploads/BlogImage/how-to-create-and-manage-leads-in-odoo-18-crm-16.png)
+
+![Image](https://www.images.cybrosys.com/blog/Uploads/BlogImage/how-to-create-a-lead-in-odoo-17-crm-11.png)
+
+### Native Screen
+
+**CRM → Leads → Create**
+
+### Native Model
+
+`crm.lead`
+
+### What stays native
+
+* Lead creation form
+* Lead ID generation
+* Source tracking (UTM)
+* Assigned Salesperson
+
+### Required Extensions (SAFE)
+
+Add fields to `crm.lead`:
+
+```text
+x_phone (required)
+x_interested_clinic_id (Many2one → res.company)
+x_lead_source (Selection / Many2one)
+```
+
+### Hard Rules Enforced
+
+✔ Phone NOT unique
+✔ Name optional
+✔ No OTP
+✔ No patient creation
+✔ No clinic lock
+
+📌 **UI RESULT**
+A normal Odoo Lead form — just richer.
+
+---
+
+# 🟢 STAGE 2 — LEAD ALLOCATION (AUTO)
+
+### Native Mechanism
+
+**CRM → Sales Teams → Assignment Rules**
+
+or
+
+* Round-robin via `crm.team`
+* Automated server action
+
+### UI
+
+❌ No new screen
+❌ No user interaction
+
+### Agent Sees
+
+Lead appears in:
+
+* **My Leads**
+* **My Pipeline**
+
+📌 This already exists in Odoo.
+
+---
+
+# 🟢 STAGE 3 — CALL HANDLING & DISPOSITION
+
+### (MOST IMPORTANT UI PART)
+
+![Image](https://www.images.cybrosys.com/blog/Uploads/BlogImage/how-to-add-chatter-to-form-view-in-odoo-17-1.png)
+
+![Image](https://www.images.cybrosys.com/images/odoo-book/v17-ce/community/crm/odoo-book-v17-ce-crm-035.gif)
+
+### Native Screens Used
+
+1. **Lead Form**
+2. **Chatter**
+3. **Activities Panel**
+
+---
+
+## 🔹 Disposition UI (EXTENSION)
+
+### Where it lives
+
+👉 **Inside Lead Form (New Section)**
+Not a new page.
+
+### UI Block: **Call Disposition**
+
+Fields:
+
+```text
+x_disposition_id (Many2one → crm.disposition)
+x_attempt_count (Integer – readonly)
+x_next_followup_date (Computed)
+x_lead_relevant (Boolean)
+```
+
+Disposition master (NEW model):
+
+```text
+crm.disposition
+- name
+- follow_up_days
+- max_attempts
+- lead_relevant
+```
+
+📌 This maps **1:1** with your Excel sheet
+📌 Sheet is COMPLETE → no edits allowed
+
+---
+
+## 🔹 What Happens on Save (SYSTEM LOGIC)
+
+When agent selects Disposition:
+
+* Call log created (`mail.message`)
+* Attempt count incremented
+* Next follow-up auto-computed
+* Activity auto-created (if applicable)
+
+🚫 If max attempts reached:
+
+* Lead auto-moves to **Churned**
+* Activities blocked
+
+✔ CRM is **persistence-driven**, not conversion-driven
+
+---
+
+# 🟢 STAGE 4 — FOLLOW-UP CYCLE
+
+![Image](https://www.odoo.com/documentation/19.0/_images/schedule-list-activity.png)
+
+![Image](https://www.odoo.com/documentation/19.0/_images/activities-view.png)
+
+### Native Screen
+
+**CRM → Activities**
+
+### What Agents Use
+
+* “Today”
+* “Overdue”
+* “Planned”
+
+### Behavior
+
+Every follow-up:
+
+* Is a call
+* Requires disposition
+* Re-evaluates rules
+
+📌 No new UI needed
+📌 Native activity system is PERFECT here
+
+---
+
+# 🟢 STAGE 5 — VISIT INTENT CAPTURE
+
+### (NOT APPOINTMENT)
+
+![Image](https://www.images.cybrosys.com/blog/Uploads/BlogImage/how-to-create-and-manage-opportunity-using-odoo-14-crm-1.png)
+
+![Image](https://i.sstatic.net/4xDmz.png)
+
+### Native Screen
+
+**Lead Form → New Tab: Visit Intent**
+
+Fields:
+
+```text
+x_visit_intent = Yes/No
+x_preferred_clinic_id
+x_preferred_visit_date
+x_appointment_type_id
+```
+
+🚫 What is intentionally missing
+
+* No slot
+* No doctor
+* No payment
+* No confirmation
+
+📌 This is **INTENT ONLY**, exactly as required.
+
+---
+
+# 🟢 STAGE 6 — EXPECTED WALK-IN
+
+### Native Screen (REUSED)
+
+**CRM → Leads (Filtered View)**
+
+Create a saved filter:
+
+```text
+Expected Walk-Ins:
+- visit_intent = true
+- preferred_visit_date = today
+```
+
+### Visibility Rule
+
+* Visible ONLY to:
+
+  * Front Desk users of that clinic
+* Filtered by `x_preferred_clinic_id`
+
+📌 CRM still OWNS the lead
+📌 Front Desk only SEES it
+
+---
+
+# 🟢 STAGE 7 — FRONT DESK REGISTRATION
+
+### (HARD BOUNDARY)
+
+![Image](https://www.candidroot.com/web/image/7306-cc7f8283/2%20-Events.png?access_token=84cb7308-a954-41ff-bdfb-6dbac5956a9b)
+
+![Image](https://cdn.jotfor.ms/templates/screenshot/form-templates/clinic-patient-registration-form.png?t=classic\&v=626294210)
+
+### Module
+
+`resonnocare_frontdesk` (already built ✅)
+
+### Flow (UNCHANGED)
+
+* Search by phone
+* Lead detected
+* OTP sent & verified
+* Patient created (`res.partner`)
+* Clinic locked
+* Patient ID generated
+
+### CRM Reaction (AUTOMATED)
+
+```text
+crm.lead.x_patient_id = res.partner.id
+crm.lead.stage = Converted
+crm.lead.conversion_date = now()
+```
+
+🚫 CRM cannot:
+
+* Send OTP
+* Create patient
+* Override Front Desk
+
+---
+
+# 🟢 STAGE 8 — POST-VISIT CRM
+
+![Image](https://www.odoo.com/documentation/19.0/_images/workflow-activities.png)
+
+![Image](https://www.images.cybrosys.com/blog/Uploads/BlogImage/customer-payment-follow-up-management-in-odoo-4.png)
+
+### Native Screens
+
+* Lead Form
+* Activities
+* Campaigns (optional)
+
+### Use Cases
+
+* Missed visit
+* Deferred decision
+* Hearing aid follow-ups
+* AMC reminders
+
+🚫 Still forbidden
+
+* Medical data
+* Prescriptions
+* Billing
+* Appointments
+
+---
+
+# 🟢 STAGE 9 — CHURN MANAGEMENT
+
+### Native Screen
+
+**CRM → Leads → Churned**
+
+Driven by:
+
+* Max attempts
+* Non-relevant disposition
+
+### Analytics
+
+* Disposition-wise churn
+* Campaign targeting
+* Cold / Warm / Hot tagging
+
+---
+
+# 🧱 FINAL SCREEN → FLOW → MODEL MAP
+
+| UI Screen         | Model                      | Owner      |
+| ----------------- | -------------------------- | ---------- |
+| Lead Form         | crm.lead                   | CRM        |
+| Disposition Panel | crm.lead + crm.disposition | CRM        |
+| Activities        | mail.activity              | CRM        |
+| Call Logs         | mail.message               | CRM        |
+| Visit Intent      | crm.lead                   | CRM        |
+| Expected Walk-ins | crm.lead (filtered)        | Shared     |
+| Registration      | res.partner                | Front Desk |
+| Conversion        | crm.lead (system)          | System     |
+
+---
+
+# 🧠 HOW THIS FITS YOUR MODULE STRUCTURE (CLEANLY)
+
+### Where CRM code goes
+
+Create:
+
+```text
+resonnocare_crm/
+├── models/
+│   ├── crm_lead.py
+│   ├── crm_disposition.py
+├── views/
+│   ├── crm_lead_form.xml
+│   ├── crm_lead_filters.xml
+│   ├── crm_disposition_views.xml
+├── security/
+├── data/
+│   └── dispositions.xml
+```
+
+🚫 Do NOT touch:
+
+* `resonnocare_frontdesk`
+* `res_partner` logic
+* OTP flows
+
+
+

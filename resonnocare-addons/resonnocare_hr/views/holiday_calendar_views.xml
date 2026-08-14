@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="view_resonnocare_holiday_calendar_list" model="ir.ui.view">
+        <field name="name">resonnocare.holiday.calendar.list</field>
+        <field name="model">resonnocare.holiday.calendar</field>
+        <field name="arch" type="xml">
+            <list string="Holiday Calendar">
+                <field name="name"/>
+                <field name="scope"/>
+                <field name="region_id" optional="hide"/>
+                <field name="state_id" optional="hide"/>
+                <field name="clinic_id" optional="hide"/>
+                <field name="date_from"/>
+                <field name="date_to"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_resonnocare_holiday_calendar_form" model="ir.ui.view">
+        <field name="name">resonnocare.holiday.calendar.form</field>
+        <field name="model">resonnocare.holiday.calendar</field>
+        <field name="arch" type="xml">
+            <form string="Holiday Calendar">
+                <header>
+                    <button name="action_resync_timeoff_calendar"
+                            type="object"
+                            string="Resync To Time Off Calendar"
+                            class="btn-secondary"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="scope"/>
+                            <field name="date_from"/>
+                            <field name="date_to"/>
+                            <field name="active"/>
+                        </group>
+                        <group>
+                            <field name="region_id" invisible="scope != 'region'"/>
+                            <field name="state_id" invisible="scope != 'state'"/>
+                            <field name="clinic_id" invisible="scope != 'clinic'"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="description" nolabel="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_resonnocare_holiday_calendar_calendar" model="ir.ui.view">
+        <field name="name">resonnocare.holiday.calendar.calendar</field>
+        <field name="model">resonnocare.holiday.calendar</field>
+        <field name="arch" type="xml">
+            <calendar string="Holiday Calendar" date_start="date_from" date_stop="date_to" color="scope" mode="month">
+                <field name="name"/>
+                <field name="scope_display"/>
+                <field name="scope_target_display"/>
+            </calendar>
+        </field>
+    </record>
+
+    <record id="action_resonnocare_holiday_calendar" model="ir.actions.act_window">
+        <field name="name">Holiday Calendar</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">resonnocare.holiday.calendar</field>
+        <field name="view_mode">calendar,list,form</field>
+    </record>
+
+</odoo>

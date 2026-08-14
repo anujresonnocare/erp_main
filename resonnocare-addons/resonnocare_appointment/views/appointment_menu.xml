@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Appointments menu under Front Desk -->
+    <record id="menu_frontdesk_appointments" model="ir.ui.menu">
+        <field name="action" eval="False"/>
+    </record>
+
+    <record id="action_frontdesk_expected_walkins" model="ir.actions.act_window">
+        <field name="name">Expected Walk-ins</field>
+        <field name="res_model">crm.lead</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_id" ref="resonnocare_crm.view_resonnocare_crm_lead_list_clean"/>
+        <field name="search_view_id" ref="resonnocare_crm.view_crm_lead_search_inherit_resonnocare"/>
+        <field name="target">current</field>
+        <field name="context">{'create': False, 'edit': False, 'delete': False, 'form_view_initial_mode': 'readonly'}</field>
+        <field name="domain">[('x_visit_intent', '=', True)]</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No expected walk-ins found for your clinic.</p>
+        </field>
+    </record>
+
+    <record id="action_frontdesk_expected_walkins_list_view" model="ir.actions.act_window.view">
+        <field name="sequence" eval="1"/>
+        <field name="view_mode">list</field>
+        <field name="view_id" ref="resonnocare_crm.view_resonnocare_crm_lead_list_clean"/>
+        <field name="act_window_id" ref="action_frontdesk_expected_walkins"/>
+    </record>
+
+    <record id="action_frontdesk_expected_walkins_server" model="ir.actions.server">
+        <field name="name">Open Expected Walk-ins</field>
+        <field name="model_id" ref="base.model_res_users"/>
+        <field name="state">code</field>
+        <field name="code"><![CDATA[action = env.ref('resonnocare_appointment.action_frontdesk_expected_walkins').sudo().read()[0]
+clinic_id = env.user.clinic_id.id or env.user.employee_id.clinic_id.id
+if not clinic_id:
+    raise UserError("You are not assigned to any clinic.")
+action['domain'] = [
+    ('x_visit_intent', '=', True),
+    ('x_preferred_clinic_id', '=', clinic_id),
+]
+action['context'] = {
+    'create': False,
+    'edit': False,
+    'delete': False,
+    'form_view_initial_mode': 'readonly',
+}
+clean_list_view = env.ref('resonnocare_crm.view_resonnocare_crm_lead_list_clean', raise_if_not_found=False)
+if clean_list_view:
+    action['views'] = [(clean_list_view.id, 'list'), (False, 'form')]
+    action['view_mode'] = 'list,form'
+action]]></field>
+    </record>
+
+    <menuitem
+        id="menu_frontdesk_appointments_list"
+        name="Appointments"
+        parent="menu_frontdesk_appointments"
+        action="action_resonnocare_appointment"
+        sequence="1"
+        groups="resonnocare_base.group_front_desk,resonnocare_base.group_resonnocare_super_admin"
+    />
+
+    <menuitem
+        id="menu_frontdesk_expected_walkins"
+        name="Expected Walk-ins"
+        parent="menu_frontdesk_appointments"
+        action="action_frontdesk_expected_walkins_server"
+        sequence="2"
+        groups="resonnocare_base.group_front_desk,resonnocare_base.group_clinic_admin"
+    />
+
+</odoo>

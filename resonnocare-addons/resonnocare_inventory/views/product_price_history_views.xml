@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="view_resonnocare_product_price_history_tree" model="ir.ui.view">
+        <field name="name">resonnocare.product.price.history.tree</field>
+        <field name="model">resonnocare.product.price.history</field>
+        <field name="arch" type="xml">
+            <list string="Price History" default_order="change_date desc">
+                <field name="change_date"/>
+                <field name="product_tmpl_id"/>
+                <field name="old_list_price" widget="monetary"/>
+                <field name="new_list_price" widget="monetary"/>
+                <field name="old_standard_price" widget="monetary"/>
+                <field name="new_standard_price" widget="monetary"/>
+                <field name="changed_by"/>
+                <field name="company_id"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_resonnocare_product_price_history_form" model="ir.ui.view">
+        <field name="name">resonnocare.product.price.history.form</field>
+        <field name="model">resonnocare.product.price.history</field>
+        <field name="arch" type="xml">
+            <form string="Price History">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="product_tmpl_id"/>
+                            <field name="company_id"/>
+                            <field name="change_date"/>
+                            <field name="changed_by"/>
+                            <field name="change_note"/>
+                            <field name="description"/>
+                        </group>
+                        <group string="Sales Price">
+                            <field name="old_list_price" widget="monetary"/>
+                            <field name="new_list_price" widget="monetary"/>
+                        </group>
+                        <group string="Cost">
+                            <field name="old_standard_price" widget="monetary"/>
+                            <field name="new_standard_price" widget="monetary"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_resonnocare_product_price_history_search" model="ir.ui.view">
+        <field name="name">resonnocare.product.price.history.search</field>
+        <field name="model">resonnocare.product.price.history</field>
+        <field name="arch" type="xml">
+            <search string="Price History">
+                <field name="product_tmpl_id" string="Product"/>
+                <field name="changed_by"/>
+                <field name="company_id"/>
+                <field name="change_date"/>
+                <filter
+                    string="Last 30 Days"
+                    name="last_30_days"
+                    domain="[('change_date', '>=', (context_today() - relativedelta(days=30)).strftime('%Y-%m-%d 00:00:00'))]"
+                />
+                <group expand="0" string="Group By">
+                    <filter string="Product" name="group_product" context="{'group_by': 'product_tmpl_id'}"/>
+                    <filter string="Changed By" name="group_changed_by" context="{'group_by': 'changed_by'}"/>
+                    <filter string="Company" name="group_company" context="{'group_by': 'company_id'}"/>
+                    <filter string="Date" name="group_date" context="{'group_by': 'change_date'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_resonnocare_product_price_history" model="ir.actions.act_window">
+        <field name="name">Price History</field>
+        <field name="res_model">resonnocare.product.price.history</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_resonnocare_product_price_history_search"/>
+        <field name="groups_id" eval="[(4, ref('resonnocare_base.group_resonnocare_super_admin'))]"/>
+    </record>
+</odoo>

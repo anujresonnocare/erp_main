@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- Masters menu under Resonnocare root -->
+    <menuitem id="menu_resonnocare_masters" name="Masters" parent="resonnocare_base.menu_resonnocare_root" sequence="50" groups="resonnocare_base.group_resonnocare_super_admin"/>
+
+    <!-- CRM Call Dispositions -->
+    <menuitem id="menu_crm_disposition" name="Call Dispositions" parent="menu_resonnocare_masters" action="action_crm_disposition" sequence="10" groups="resonnocare_base.group_resonnocare_super_admin"/>
+
+     <!-- Appointment Types -->
+    <menuitem
+        id="menu_appointment_type"
+        name="Appointment Types"
+        parent="menu_resonnocare_masters"
+        action="action_appointment_type"
+        sequence="20"
+        groups="resonnocare_base.group_resonnocare_super_admin"
+    />
+
+    <!-- Appointment Outcomes -->
+    <menuitem
+        id="menu_appointment_outcome"
+        name="Appointment Outcomes"
+        parent="menu_resonnocare_masters"
+        action="action_appointment_outcome"
+        sequence="30"
+        groups="resonnocare_base.group_resonnocare_super_admin"
+    />
+
+    
+    <!-- Diagnostic Items -->
+    <menuitem
+        id="menu_diagnostic_item"
+        name="Diagnostic Tests"
+        parent="menu_resonnocare_masters"
+        action="action_diagnostic_item"
+        sequence="40"
+        groups="resonnocare_base.group_resonnocare_super_admin"
+    />
+
+    <menuitem
+        id="menu_discount_grid"
+        name="Discount Grid"
+        parent="menu_resonnocare_masters"
+        action="action_resonnocare_discount_grid"
+        sequence="50"
+        groups="resonnocare_base.group_resonnocare_super_admin"
+    />
+
+    <menuitem
+        id="menu_gst_rate_matrix"
+        name="GST Rate Matrix"
+        parent="menu_resonnocare_masters"
+        action="action_resonnocare_gst_rate_matrix"
+        sequence="60"
+        groups="resonnocare_base.group_resonnocare_super_admin"
+    />
+
+</odoo>

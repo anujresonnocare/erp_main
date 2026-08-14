@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo noupdate="1">
+    <record id="gst_rate_hearing_aid_90214090" model="resonnocare.gst.rate.matrix">
+        <field name="company_id" ref="base.main_company"/>
+        <field name="supply_type">goods</field>
+        <field name="hsn_sac_code">90214090</field>
+        <field name="gst_rate">0</field>
+        <field name="is_exempt">1</field>
+        <field name="remarks">Hearing Aid - Exempted</field>
+    </record>
+
+    <record id="gst_rate_hearing_aid_accessories_90219010" model="resonnocare.gst.rate.matrix">
+        <field name="company_id" ref="base.main_company"/>
+        <field name="supply_type">goods</field>
+        <field name="hsn_sac_code">90219010</field>
+        <field name="gst_rate">18</field>
+        <field name="is_exempt">0</field>
+        <field name="remarks">Hearing Aid Accessories</field>
+    </record>
+
+    <record id="gst_rate_diagnostic_services_999316" model="resonnocare.gst.rate.matrix">
+        <field name="company_id" ref="base.main_company"/>
+        <field name="supply_type">services</field>
+        <field name="hsn_sac_code">999316</field>
+        <field name="gst_rate">0</field>
+        <field name="is_exempt">1</field>
+        <field name="remarks">Diagnostic Services - Exempted</field>
+    </record>
+
+    <record id="gst_rate_repair_998729" model="resonnocare.gst.rate.matrix">
+        <field name="company_id" ref="base.main_company"/>
+        <field name="supply_type">services</field>
+        <field name="hsn_sac_code">998729</field>
+        <field name="gst_rate">18</field>
+        <field name="is_exempt">0</field>
+        <field name="remarks">Repair of Hearing Aid</field>
+    </record>
+
+    <record id="gst_rate_battery_85068010" model="resonnocare.gst.rate.matrix">
+        <field name="company_id" ref="base.main_company"/>
+        <field name="supply_type">goods</field>
+        <field name="hsn_sac_code">85068010</field>
+        <field name="gst_rate">18</field>
+        <field name="is_exempt">0</field>
+        <field name="remarks">Batteries for Hearing Aid</field>
+    </record>
+</odoo>

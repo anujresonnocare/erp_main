@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Report Action -->
+    <record id="action_report_repair_contract" model="ir.actions.report">
+        <field name="name">Hearing Aid Repair Contract</field>
+        <field name="model">resonnocare.repair.contract</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">resonnocare_repair.report_repair_contract_template</field>
+        <field name="report_file">resonnocare_repair.report_repair_contract_template</field>
+        <field name="print_report_name">'Repair_Contract_%s' % (object.name)</field>
+        <field name="binding_model_id" ref="model_resonnocare_repair_contract"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <!-- Report Template -->
+    <template id="report_repair_contract_template">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <t t-set="clinic" t-value="o.clinic_id"/>
+                    <div class="page" style="font-family:Arial, Helvetica, sans-serif; font-size:13px;">
+                        
+                        <div class="row align-items-center mb-2">
+                            <div class="col-7 d-flex align-items-center">
+                                <div t-if="res_company.logo" class="me-3">
+                                    <img t-att-src="image_data_uri(res_company.logo)" style="max-height:60px; max-width:150px;"/>
+                                </div>
+                                <div>
+                                    <div style="font-size:24px; font-weight:700; letter-spacing:0.4px; color:#1f4e78; line-height:1;">RESONNOCARE</div>
+                                    <div style="font-size:12px; letter-spacing:0.6px; color:#555;">Health-tech Private limited</div>
+                                </div>
+                            </div>
+                            <div class="col-5 text-end">
+                                <div style="font-size:20px; font-weight:700;">Hearing Aid Repair Contract</div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-2">
+                            <div class="col-6">
+                                Date Received : <span t-field="o.create_date" t-options='{"widget": "date"}'/>
+                            </div>
+                            <div class="col-6 text-end">
+                                Ref. No <span style="display:inline-block; width:120px; text-align:center;"><span t-field="o.name"/></span>
+                            </div>
+                        </div>
+
+                        <table style="width: 100%; border: 1px solid black; border-collapse: collapse; font-family: Arial, Helvetica, sans-serif; font-size: 13px;">
+                            <!-- Row 1 -->
+                            <tr>
+                                <td style="width: 50%; border: 1px solid black; padding: 6px 10px; vertical-align: top;">
+                                    <div><span style="display:inline-block; width: 100px;">Clinic Name</span> : <span t-field="o.clinic_id.name"/></div>
+                                    <div><span style="display:inline-block; width: 100px;">Address</span> : <span t-field="o.clinic_id.street"/>, <span t-field="o.clinic_id.city"/></div>
+                                    <div><span style="display:inline-block; width: 100px;">Phone</span> : <span t-field="o.clinic_id.company_id.phone"/></div>
+                                    <div><span style="display:inline-block; width: 100px;"><b>Email</b></span> : <span t-field="o.clinic_id.company_id.email"/></div>
+                                </td>
+                                <td style="width: 50%; border: 1px solid black; padding: 6px 10px; vertical-align: top;">
+                                    <div><b>Patient name<br/>and Patient ID</b>: <span t-field="o.patient_id.name"/> <t t-if="o.patient_id.patient_id">(<span t-field="o.patient_id.patient_id"/>)</t></div>
+                                    <div><span style="display:inline-block; width: 70px;">Address</span> : <span t-field="o.patient_id.street"/></div>
+                                    <div><span style="display:inline-block; width: 70px;">Phone</span> : <span t-field="o.patient_id.phone"/></div>
+                                    <div><span style="display:inline-block; width: 70px;"><b>Email</b></span> : <span t-field="o.patient_id.email"/></div>
+                                    <div><span style="display:inline-block; width: 70px;"><b>GST</b></span> : <span t-field="o.patient_id.vat"/></div>
+                                </td>
+                            </tr>
+                            <!-- Row 2 -->
+                            <tr>
+                                <td style="border: 1px solid black; padding: 6px 10px; vertical-align: top;">
+                                    <div><span style="display:inline-block; width: 130px;">Manufacturer</span> : <span t-field="o.left_manufacturer_id.name"/></div>
+                                    <div><span style="display:inline-block; width: 130px;">Left Serial Number</span> : <span t-field="o.left_lot_id.name"/></div>
+                                    <div><span style="display:inline-block; width: 130px;">Device Code</span> : <span t-field="o.left_device_code"/></div>
+                                    <div><span style="display:inline-block; width: 130px;">Warranty Status</span> : <t t-if="o.left_is_under_warranty"><span style="color:green; font-weight:bold;">Under Warranty</span></t><t t-elif="o.left_lot_id or o.left_product_id">Out of Warranty</t><t t-else="">-</t></div>
+                                </td>
+                                <td style="border: 1px solid black; padding: 6px 10px; vertical-align: top;">
+                                    <div><span style="display:inline-block; width: 130px;">Manufacturer</span> : <span t-field="o.right_manufacturer_id.name"/></div>
+                                    <div><span style="display:inline-block; width: 130px;">Right Serial Number</span> : <span t-field="o.right_lot_id.name"/></div>
+                                    <div><span style="display:inline-block; width: 130px;">Device Code</span> : <span t-field="o.right_device_code"/></div>
+                                    <div><span style="display:inline-block; width: 130px;">Warranty Status</span> : <t t-if="o.right_is_under_warranty"><span style="color:green; font-weight:bold;">Under Warranty</span></t><t t-elif="o.right_lot_id or o.right_product_id">Out of Warranty</t><t t-else="">-</t></div>
+                                </td>
+                            </tr>
+                            <!-- Row 3 -->
+                            <tr>
+                                <td style="border: 1px solid black; padding: 6px 10px; font-weight: bold;">
+                                    Overall Warranty &amp;nbsp;&amp;nbsp;&amp;nbsp; <span style="font-size: 16px;"><t t-if="o.is_under_warranty">&#9745;</t><t t-else="">&#9744;</t></span> Under warranty
+                                </td>
+                                <td style="border: 1px solid black; padding: 6px 10px; font-weight: bold;">
+                                    Date Required: &amp;nbsp;&amp;nbsp; <span t-field="o.date_required" t-options='{"widget": "date"}'/>
+                                </td>
+                            </tr>
+                            <!-- Row 4 -->
+                            <tr>
+                                <td style="border: 1px solid black; padding: 10px; vertical-align: top;">
+                                    <table style="width: 100%; border: none; font-size: 12px;">
+                                        <tr>
+                                            <td style="font-weight:bold; width:20%;">Repair</td>
+                                            <td style="font-weight:bold; text-align:center; width:20%;">Left</td>
+                                            <td style="width:40%;"></td>
+                                            <td style="font-weight:bold; text-align:center; width:20%;">Right</td>
+                                        </tr>
+                                        <tr><td></td><td class="text-center"><span t-out="'&#9745;' if o.dead_left else '&#9744;'"/></td><td class="text-center">Dead</td><td class="text-center"><span t-out="'&#9745;' if o.dead_right else '&#9744;'"/></td></tr>
+                                        <tr><td></td><td class="text-center"><span t-out="'&#9745;' if o.intermittent_left else '&#9744;'"/></td><td class="text-center">Intermittant</td><td class="text-center"><span t-out="'&#9745;' if o.intermittent_right else '&#9744;'"/></td></tr>
+                                        <tr><td></td><td class="text-center"><span t-out="'&#9745;' if o.distorted_left else '&#9744;'"/></td><td class="text-center">Distorted</td><td class="text-center"><span t-out="'&#9745;' if o.distorted_right else '&#9744;'"/></td></tr>
+                                        <tr><td></td><td class="text-center"><span t-out="'&#9745;' if o.recircuit_left else '&#9744;'"/></td><td class="text-center">Recircuit</td><td class="text-center"><span t-out="'&#9745;' if o.recircuit_right else '&#9744;'"/></td></tr>
+                                        <tr><td></td><td class="text-center"><span t-out="'&#9745;' if o.programming_left else '&#9744;'"/></td><td class="text-center">Programming</td><td class="text-center"><span t-out="'&#9745;' if o.programming_right else '&#9744;'"/></td></tr>
+                                        <tr><td></td><td class="text-center"><span t-out="'&#9745;' if o.battery_door_left else '&#9744;'"/></td><td class="text-center">Battery Door</td><td class="text-center"><span t-out="'&#9745;' if o.battery_door_right else '&#9744;'"/></td></tr>
+                                        <tr><td></td><td class="text-center"><span t-out="'&#9745;' if o.shell_left else '&#9744;'"/></td><td class="text-center">Shell</td><td class="text-center"><span t-out="'&#9745;' if o.shell_right else '&#9744;'"/></td></tr>
+                                        <tr><td></td><td class="text-center"><span t-out="'&#9745;' if o.retube_left else '&#9744;'"/></td><td class="text-center">Retube</td><td class="text-center"><span t-out="'&#9745;' if o.right_retube else '&#9744;'"/></td></tr>
+                                        <tr><td></td><td class="text-center"><span t-out="'&#9745;' if o.volume_control_left else '&#9744;'"/></td><td class="text-center">Volume Control</td><td class="text-center"><span t-out="'&#9745;' if o.volume_control_right else '&#9744;'"/></td></tr>
+                                        <tr><td></td><td class="text-center"><span t-out="'&#9745;' if o.wax_management_left else '&#9744;'"/></td><td class="text-center">Wax Management</td><td class="text-center"><span t-out="'&#9745;' if o.wax_management_right else '&#9744;'"/></td></tr>
+                                        <tr><td></td><td class="text-center"><span t-out="'&#9745;' if o.general_service_left else '&#9744;'"/></td><td class="text-center">General Service</td><td class="text-center"><span t-out="'&#9745;' if o.general_service_right else '&#9744;'"/></td></tr>
+                                    </table>
+                                    
+                                    <div style="margin-top: 25px; text-align: center; font-weight: bold;">
+                                        <span style="font-size: 16px;"><t t-if="o.quotation_required">&#9745;</t><t t-else="">&#9744;</t></span> Quotation Required
+                                    </div>
+                                </td>
+                                <td style="border: 1px solid black; padding: 10px; vertical-align: top;">
+                                    <div><b>Repair Notes &amp; Symptoms:</b></div>
+                                    <div t-if="o.left_repair_notes" style="font-size: 12px; margin-top: 4px;"><b>Left Ear:</b> <span t-field="o.left_repair_notes"/></div>
+                                    <div t-if="o.right_repair_notes" style="font-size: 12px; margin-top: 4px;"><b>Right Ear:</b> <span t-field="o.right_repair_notes"/></div>
+                                    <div t-if="o.notes" style="font-size: 12px; margin-top: 4px;"><b>General Notes:</b> <span t-field="o.notes"/></div>
+                                    
+                                    <table style="width: 100%; border: 2px solid black; border-collapse: collapse; margin-top: 20px; font-weight: bold; font-size: 12px;">
+                                        <tr>
+                                            <td style="border: 1px solid black; padding: 4px 8px; width: 60%;">Handling Charges</td>
+                                            <td style="border: 1px solid black; padding: 4px 8px; text-align: right;"><span t-field="o.handling_charges" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="border: 1px solid black; padding: 4px 8px;">Estimated Repair Charges</td>
+                                            <td style="border: 1px solid black; padding: 4px 8px; text-align: right;"><span t-field="o.estimated_repair_charges" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/></td>
+                                        </tr>
+                                        <tr t-if="o.repair_charges > 0">
+                                            <td style="border: 1px solid black; padding: 4px 8px;">Actual Repair Charges</td>
+                                            <td style="border: 1px solid black; padding: 4px 8px; text-align: right;"><span t-field="o.repair_charges" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="border: 1px solid black; padding: 4px 8px; border-top: 2px solid black;">Estimate Amount (Subtotal)</td>
+                                            <td style="border: 1px solid black; padding: 4px 8px; text-align: right; border-top: 2px solid black;"><span t-esc="o.handling_charges + (o.repair_charges if o.repair_charges > 0 else o.estimated_repair_charges)" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="border: 1px solid black; padding: 4px 8px;">SGST Rate</td>
+                                            <td style="border: 1px solid black; padding: 4px 8px; text-align: right;"><span t-field="o.sgst_rate"/>%</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="border: 1px solid black; padding: 4px 8px;">SGST Amt</td>
+                                            <td style="border: 1px solid black; padding: 4px 8px; text-align: right;"><span t-field="o.sgst_amount" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="border: 1px solid black; padding: 4px 8px;">CGST Rate</td>
+                                            <td style="border: 1px solid black; padding: 4px 8px; text-align: right;"><span t-field="o.cgst_rate"/>%</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="border: 1px solid black; padding: 4px 8px;">CGST Amt</td>
+                                            <td style="border: 1px solid black; padding: 4px 8px; text-align: right;"><span t-field="o.cgst_amount" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="border: 1px solid black; padding: 4px 8px;">IGST Rate</td>
+                                            <td style="border: 1px solid black; padding: 4px 8px; text-align: right;"><span t-field="o.igst_rate"/>%</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="border: 1px solid black; padding: 4px 8px;">IGST Amt</td>
+                                            <td style="border: 1px solid black; padding: 4px 8px; text-align: right;"><span t-field="o.igst_amount" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="border: 1px solid black; padding: 4px 8px; border-bottom: 2px solid black;">Total</td>
+                                            <td style="border: 1px solid black; padding: 4px 8px; border-bottom: 2px solid black; text-align: right;"><span t-field="o.total_charges" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/></td>
+                                        </tr>
+                                    </table>
+                                    
+                                    <div style="margin-top: 15px; font-size: 12px;">
+                                        Total Estimate Amount (In Words) :- <br/>
+                                        <span t-field="o.total_charges_in_words"/>
+                                    </div>
+                                </td>
+                            </tr>
+                            <!-- Acknowledgement Row -->
+                            <tr>
+                                <td colspan="2" style="border: 1px solid black; padding: 15px 10px;">
+                                    <div style="font-weight: bold; font-size: 15px; text-decoration: underline; margin-bottom: 30px;">
+                                        Acknowledgement
+                                    </div>
+                                    
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 40px; margin-left: 20px; margin-right: 50px;">
+                                        <div>Client's Signature : <span style="display:inline-block; width: 150px; border-bottom: 1px solid #ccc;"></span></div>
+                                        <div>Date: <span style="display:inline-block; width: 150px; border-bottom: 1px solid #ccc;"></span></div>
+                                    </div>
+                                    
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px; margin-left: 20px; margin-right: 50px;">
+                                        <div>Clinician's Signature : <span style="display:inline-block; width: 150px; border-bottom: 1px solid #ccc;"></span></div>
+                                        <div>Date: <span style="display:inline-block; width: 150px; border-bottom: 1px solid #ccc;"></span></div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                        
+                        <!-- Footer Info -->
+                        <div style="margin-top: 10px; font-size: 11px; display: flex; justify-content: space-between;">
+                            <div>
+                                <div><b>Corporate Address:</b> <span t-out="res_company.street or ''"/> <span t-out="res_company.city or ''"/> <span t-out="res_company.state_id.name or ''"/></div>
+                                <div>Email: <span t-out="res_company.email or ''"/> &amp;nbsp;&amp;nbsp;&amp;nbsp; Phone: <span t-out="res_company.phone or ''"/></div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div><b>Registered Office:</b></div>
+                                <div>www.resonnocare.com</div>
+                            </div>
+                        </div>
+
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

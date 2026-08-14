@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="action_home_front_desk" model="ir.actions.act_window">
+        <field name="name">Home</field>
+        <field name="res_model">res.company</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_front_desk_dashboard"/>
+        <field name="target">current</field>
+        <field name="context">{'form_view_initial_mode': 'readonly', 'create': False, 'edit': False, 'delete': False}</field>
+        <field name="groups_id" eval="[(4, ref('resonnocare_base.group_front_desk'))]"/>
+    </record>
+</odoo>

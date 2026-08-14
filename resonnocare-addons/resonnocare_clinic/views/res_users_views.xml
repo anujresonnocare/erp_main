@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="view_res_users_form_inherit_clinic" model="ir.ui.view">
+        <field name="name">res.users.form.inherit.clinic</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_form"/>
+        <field name="groups_id" eval="[(5, 0, 0)]"/>
+        <field name="arch" type="xml">
+
+            <!-- Add Assigned Clinic under Preferences -->
+            <xpath expr="//group[@name='preferences']" position="inside">
+                <field name="clinic_id" groups="resonnocare_base.group_resonnocare_hr,resonnocare_base.group_resonnocare_super_admin"/>
+            </xpath>
+
+        </field>
+    </record>
+
+</odoo>

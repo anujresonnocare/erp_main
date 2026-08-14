@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="view_resonnocare_stock_move_supply_planning_tree" model="ir.ui.view">
+        <field name="name">stock.move.list.resonnocare.supply.planning</field>
+        <field name="model">stock.move</field>
+        <field name="arch" type="xml">
+            <list string="Supply Planning" create="0" edit="0" delete="0">
+                <field name="picking_id" string="Order for Supply"/>
+                <field name="state" string="Status"/>
+                <field name="product_id" string="Product"/>
+                <field name="product_uom_qty" string="Required Qty"/>
+                <field name="quantity" string="Done Qty" optional="hide"/>
+                <field name="product_uom" string="UoM" optional="hide"/>
+                <field name="supply_clinic_id" string="Clinic"/>
+                <field name="supply_warehouse_id" string="Warehouse" optional="hide"/>
+                <field name="ho_available_qty" string="HO Available Qty"/>
+                <field name="shortfall_qty" string="Qty to Purchase"/>
+                <field name="supply_readiness" string="Readiness"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_resonnocare_stock_move_supply_planning_search" model="ir.ui.view">
+        <field name="name">stock.move.search.resonnocare.supply.planning</field>
+        <field name="model">stock.move</field>
+        <field name="arch" type="xml">
+            <search string="Supply Planning">
+                <field name="product_id"/>
+                <field name="supply_clinic_id"/>
+                <field name="supply_warehouse_id"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_by_product" string="Product" context="{'group_by': 'product_id'}"/>
+                    <filter name="group_by_clinic" string="Clinic" context="{'group_by': 'supply_clinic_id'}"/>
+                    <filter name="group_by_status" string="Status" context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_resonnocare_stock_move_supply_planning_pivot" model="ir.ui.view">
+        <field name="name">stock.move.pivot.resonnocare.supply.planning</field>
+        <field name="model">stock.move</field>
+        <field name="arch" type="xml">
+            <pivot string="Supply Planning">
+                <field name="product_id" type="row"/>
+                <field name="supply_clinic_id" type="col"/>
+                <field name="product_uom_qty" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+</odoo>

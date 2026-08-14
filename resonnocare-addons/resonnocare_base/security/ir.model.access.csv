@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_res_users_super_admin,res.users.super.admin,base.model_res_users,resonnocare_base.group_resonnocare_super_admin,1,1,1,0
+access_res_users_hr,res.users.hr,base.model_res_users,resonnocare_base.group_resonnocare_hr,1,1,1,0
+access_res_partner_super_admin,res.partner.super.admin,base.model_res_partner,resonnocare_base.group_resonnocare_super_admin,1,1,1,0
+access_res_groups_super_admin,res.groups.super.admin,base.model_res_groups,resonnocare_base.group_resonnocare_super_admin,1,0,0,0
+access_res_company_super_admin,res.company.super.admin,base.model_res_company,resonnocare_base.group_resonnocare_super_admin,1,1,1,0
+access_resource_resource_super_admin,resource.resource.super.admin,resource.model_resource_resource,resonnocare_base.group_resonnocare_super_admin,1,1,1,0

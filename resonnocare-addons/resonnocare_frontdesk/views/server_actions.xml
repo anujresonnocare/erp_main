@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="action_open_front_desk_dashboard_server" model="ir.actions.server">
+        <field name="name">Open Front Desk Dashboard</field>
+        <field name="model_id" ref="base.model_res_company"/>
+        <field name="state">code</field>
+        <field name="code"><![CDATA[action = env.ref('resonnocare_frontdesk.action_front_desk_dashboard').sudo().read()[0]
+company_id = env.company.id
+action['res_id'] = company_id
+action['domain'] = [('id', '=', company_id)]
+action['context'] = {'create': False, 'edit': False, 'delete': False, 'form_view_initial_mode': 'readonly'}
+action]]></field>
+    </record>
+
+    <record id="action_register_patient_from_frontdesk" model="ir.actions.server">
+        <field name="name">Register New Patient</field>
+        <field name="model_id" ref="base.model_res_partner"/>
+        <field name="state">code</field>
+        <field name="code"><![CDATA[action = env.ref('resonnocare_frontdesk.action_open_patient_registration').sudo().read()[0]
+ctx = action.get('context') or {}
+if isinstance(ctx, str):
+    ctx = eval(ctx)
+ctx['form_view_initial_mode'] = 'edit'
+action['context'] = ctx
+action]]></field>
+    </record>
+
+    <record id="action_open_frontdesk_clinic_dashboard_server" model="ir.actions.server">
+        <field name="name">Open Clinic Dashboard</field>
+        <field name="model_id" ref="base.model_res_company"/>
+        <field name="state">code</field>
+        <field name="code"><![CDATA[action = env.ref('resonnocare_frontdesk.action_frontdesk_clinic_dashboard').sudo().read()[0]
+clinic_id = env.user.clinic_id.id or env.user.employee_id.clinic_id.id
+if not clinic_id:
+    raise UserError("You are not assigned to any clinic.")
+action['res_id'] = clinic_id
+action['domain'] = [('id', '=', clinic_id)]
+action['context'] = {'create': False, 'edit': False, 'delete': False, 'form_view_initial_mode': 'readonly'}
+action]]></field>
+    </record>
+
+    <record id="action_open_frontdesk_clinic_profile_server" model="ir.actions.server">
+        <field name="name">Open Clinic Profile</field>
+        <field name="model_id" ref="base.model_res_company"/>
+        <field name="state">code</field>
+        <field name="code"><![CDATA[action = env.ref('resonnocare_frontdesk.action_frontdesk_clinic_profile').sudo().read()[0]
+clinic_id = env.user.clinic_id.id or env.user.employee_id.clinic_id.id
+if not clinic_id:
+    raise UserError("You are not assigned to any clinic.")
+action['res_id'] = clinic_id
+action['domain'] = [('id', '=', clinic_id)]
+action['context'] = {'create': False, 'edit': False, 'delete': False, 'form_view_initial_mode': 'readonly'}
+action]]></field>
+    </record>
+
+</odoo>

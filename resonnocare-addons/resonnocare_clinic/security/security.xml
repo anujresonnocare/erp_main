@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- Super Admin: All Clinics -->
+        <record id="resonnocare_clinic_rule_super_admin" model="ir.rule">
+            <field name="name">Clinics: Super Admin - All</field>
+            <field name="model_id" ref="model_resonnocare_clinic"/>
+            <field name="groups" eval="[(4, ref('resonnocare_base.group_resonnocare_super_admin'))]"/>
+            <field name="domain_force">[(1,'=',1)]</field>
+        </record>
+
+        <!-- Front Desk: Own Clinic Only -->
+        <record id="resonnocare_clinic_rule_front_desk" model="ir.rule">
+            <field name="name">Clinics: Front Desk - Own Clinic</field>
+            <field name="model_id" ref="model_resonnocare_clinic"/>
+            <field name="groups" eval="[(4, ref('resonnocare_base.group_front_desk'))]"/>
+            <field name="domain_force">[('id','=',user.employee_id.clinic_id.id)]</field>
+        </record>
+
+    </data>
+</odoo>

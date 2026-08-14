@@ -1,0 +1,14 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_crm_lead_super_admin,crm.lead.super.admin,crm.model_crm_lead,resonnocare_base.group_resonnocare_super_admin,1,1,1,1
+access_crm_lead_crm,crm.lead.crm,crm.model_crm_lead,resonnocare_base.group_crm,1,1,1,0
+access_crm_lead_internal,crm.lead.internal,crm.model_crm_lead,resonnocare_base.group_resonnocare_internal,1,0,0,0
+access_crm_lead_clinic_admin,crm.lead.clinic.admin,crm.model_crm_lead,resonnocare_base.group_clinic_admin,1,0,0,0
+access_crm_lead_front_desk,crm.lead.front.desk,crm.model_crm_lead,resonnocare_base.group_front_desk,1,0,0,0
+access_crm_call_log_super_admin,resonnocare.crm.call.log.super.admin,resonnocare_crm.model_resonnocare_crm_call_log,resonnocare_base.group_resonnocare_super_admin,1,1,1,1
+access_crm_call_log_crm,resonnocare.crm.call.log.crm,resonnocare_crm.model_resonnocare_crm_call_log,resonnocare_base.group_crm,1,1,1,0
+access_crm_call_log_internal,resonnocare.crm.call.log.internal,resonnocare_crm.model_resonnocare_crm_call_log,resonnocare_base.group_resonnocare_internal,1,0,0,0
+access_crm_call_log_clinic_admin,resonnocare.crm.call.log.clinic.admin,resonnocare_crm.model_resonnocare_crm_call_log,resonnocare_base.group_clinic_admin,1,0,0,0
+access_crm_call_log_front_desk,resonnocare.crm.call.log.front.desk,resonnocare_crm.model_resonnocare_crm_call_log,resonnocare_base.group_front_desk,1,0,0,0
+access_crm_churn_campaign_super_admin,resonnocare.crm.churn.campaign.super.admin,resonnocare_crm.model_resonnocare_crm_churn_campaign,resonnocare_base.group_resonnocare_super_admin,1,1,1,1
+access_crm_churn_campaign_internal,resonnocare.crm.churn.campaign.internal,resonnocare_crm.model_resonnocare_crm_churn_campaign,resonnocare_base.group_resonnocare_internal,1,1,1,0
+access_crm_churn_campaign_crm,resonnocare.crm.churn.campaign.crm,resonnocare_crm.model_resonnocare_crm_churn_campaign,resonnocare_base.group_crm,1,0,0,0

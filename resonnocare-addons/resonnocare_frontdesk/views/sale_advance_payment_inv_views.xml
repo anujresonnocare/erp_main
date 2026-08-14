@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_sale_advance_payment_inv_inherit_resonnocare" model="ir.ui.view">
+        <field name="name">sale.advance.payment.inv.form.inherit.resonnocare</field>
+        <field name="model">sale.advance.payment.inv</field>
+        <field name="inherit_id" ref="sale.view_sale_advance_payment_inv"/>
+        <field name="groups_id" eval="[(5, 0, 0)]"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='advance_payment_method']" position="before">
+                <field name="is_service_only_flow" invisible="1"/>
+            </xpath>
+            <xpath expr="//field[@name='advance_payment_method']" position="attributes">
+                <attribute name="invisible">is_service_only_flow</attribute>
+            </xpath>
+            <xpath expr="//field[@name='advance_payment_method']" position="after">
+                <div
+                    class="o_form_label"
+                    invisible="not is_service_only_flow"
+                >
+                    Create Invoice
+                </div>
+                <div invisible="not is_service_only_flow">
+                    <span>Regular invoice (Full payment)</span>
+                </div>
+            </xpath>
+        </field>
+    </record>
+</odoo>

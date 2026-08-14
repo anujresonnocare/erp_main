@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="view_attendance_tree_resonnocare_inherit" model="ir.ui.view">
+        <field name="name">hr.attendance.list.resonnocare</field>
+        <field name="model">hr.attendance</field>
+        <field name="inherit_id" ref="hr_attendance.view_attendance_tree"/>
+        <field name="groups_id" eval="[(5, 0, 0)]"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='worked_hours']" position="after">
+                <field name="resonnocare_punch_source"
+                       widget="badge"
+                       decoration-info="resonnocare_punch_source == 'actual'"
+                       decoration-warning="resonnocare_punch_source == 'regularized'"/>
+                <field name="resonnocare_check_in_regularized" optional="hide"/>
+                <field name="resonnocare_check_out_regularized" optional="hide"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_attendance_tree_management_resonnocare_inherit" model="ir.ui.view">
+        <field name="name">hr.attendance.list.management.resonnocare</field>
+        <field name="model">hr.attendance</field>
+        <field name="inherit_id" ref="hr_attendance.view_attendance_tree_management"/>
+        <field name="groups_id" eval="[(5, 0, 0)]"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='worked_hours']" position="after">
+                <field name="resonnocare_punch_source"
+                       widget="badge"
+                       decoration-info="resonnocare_punch_source == 'actual'"
+                       decoration-warning="resonnocare_punch_source == 'regularized'"/>
+                <field name="resonnocare_check_in_regularized" optional="hide"/>
+                <field name="resonnocare_check_out_regularized" optional="hide"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="hr_attendance_view_form_resonnocare_inherit" model="ir.ui.view">
+        <field name="name">hr.attendance.form.resonnocare</field>
+        <field name="model">hr.attendance</field>
+        <field name="inherit_id" ref="hr_attendance.hr_attendance_view_form"/>
+        <field name="groups_id" eval="[(5, 0, 0)]"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='check_in_group']/group[1]/group" position="inside">
+                <field name="resonnocare_punch_source" widget="badge"/>
+                <field name="resonnocare_regularization_id" invisible="resonnocare_punch_source != 'regularized'"/>
+                <field name="resonnocare_regularized_by" invisible="resonnocare_punch_source != 'regularized'"/>
+                <field name="resonnocare_regularized_on" invisible="resonnocare_punch_source != 'regularized'"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

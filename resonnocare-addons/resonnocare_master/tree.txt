@@ -1,0 +1,29 @@
+[4.0K]  .
+├── [4.0K]  data
+│   ├── [ 467]  appointment_type_sequence.xml
+│   └── [1.8K]  crm_disposition_data.xml
+├── [4.0K]  models
+│   ├── [4.0K]  __pycache__
+│   │   ├── [1.5K]  appointment_outcome.cpython-312.pyc
+│   │   ├── [1.9K]  appointment_type.cpython-312.pyc
+│   │   ├── [1.6K]  crm_disposition.cpython-312.pyc
+│   │   └── [ 312]  __init__.cpython-312.pyc
+│   ├── [1.1K]  appointment_outcome.py
+│   ├── [1.1K]  appointment_type.py
+│   ├── [1.1K]  crm_disposition.py
+│   └── [ 119]  __init__.py
+├── [4.0K]  __pycache__
+│   └── [ 213]  __init__.cpython-312.pyc
+├── [4.0K]  security
+│   ├── [1.1K]  ir.model.access.csv
+│   └── [ 527]  security.xml
+├── [4.0K]  views
+│   ├── [1.6K]  appointment_outcome_views.xml
+│   ├── [1.5K]  appointment_type_views.xml
+│   ├── [3.0K]  crm_disposition_views.xml
+│   └── [1.1K]  menu.xml
+├── [  44]  __init__.py
+├── [1.0K]  __manifest__.py
+└── [   0]  tree.txt
+
+7 directories, 20 files

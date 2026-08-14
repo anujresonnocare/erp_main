@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="view_resonnocare_supply_purchase_plan_tree" model="ir.ui.view">
+        <field name="name">resonnocare.supply.purchase.plan.list</field>
+        <field name="model">resonnocare.supply.purchase.plan</field>
+        <field name="arch" type="xml">
+            <list string="Supply Planning (Bulk)" create="0" edit="0" delete="0">
+                <field name="product_id"/>
+                <field name="company_id" optional="hide"/>
+                <field name="uom_id" optional="hide"/>
+                <field name="pending_order_count"/>
+                <field name="clinic_count"/>
+                <field name="total_required_qty"/>
+                <field name="ho_available_qty"/>
+                <field name="qty_to_purchase"/>
+                <field name="generated_on" optional="show"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_resonnocare_supply_purchase_plan_search" model="ir.ui.view">
+        <field name="name">resonnocare.supply.purchase.plan.search</field>
+        <field name="model">resonnocare.supply.purchase.plan</field>
+        <field name="arch" type="xml">
+            <search string="Supply Planning">
+                <field name="product_id"/>
+                <field name="company_id"/>
+                <filter name="filter_purchase_required" string="Purchase Required" domain="[('qty_to_purchase','&gt;',0)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Product" name="group_by_product" context="{'group_by': 'product_id'}"/>
+                    <filter string="Company" name="group_by_company" context="{'group_by': 'company_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_resonnocare_supply_purchase_plan_pivot" model="ir.ui.view">
+        <field name="name">resonnocare.supply.purchase.plan.pivot</field>
+        <field name="model">resonnocare.supply.purchase.plan</field>
+        <field name="arch" type="xml">
+            <pivot string="Supply Planning (Bulk)">
+                <field name="product_id" type="row"/>
+                <field name="qty_to_purchase" type="measure"/>
+                <field name="total_required_qty" type="measure"/>
+                <field name="ho_available_qty" type="measure"/>
+                <field name="pending_order_count" type="measure"/>
+                <field name="clinic_count" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+</odoo>

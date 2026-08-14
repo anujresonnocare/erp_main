@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data noupdate="0">
+
+        <record id="disposition_another_provider" model="resonnocare.crm.disposition">
+            <field name="name">Another Provider</field>
+            <field name="rule_definition">Test already done and NI for Re-test</field>
+            <field name="follow_up_days">90</field>
+            <field name="max_attempts">1</field>
+            <field name="lead_relevant">True</field>
+            <field name="sequence">10</field>
+        </record>
+
+        <record id="disposition_appointment_fixed" model="resonnocare.crm.disposition">
+            <field name="name">Appointment Fixed</field>
+            <field name="rule_definition">Appointment fixed for technician</field>
+            <field name="follow_up_days">0</field>
+            <field name="max_attempts">0</field>
+            <field name="lead_relevant">True</field>
+            <field name="sequence">20</field>
+        </record>
+
+        <record id="disposition_attended_already" model="resonnocare.crm.disposition">
+            <field name="name">Attended Already</field>
+            <field name="rule_definition">Client has been tested at NE</field>
+            <field name="follow_up_days">0</field>
+            <field name="max_attempts">0</field>
+            <field name="lead_relevant">True</field>
+            <field name="sequence">30</field>
+        </record>
+
+        <record id="disposition_call_disconnected" model="resonnocare.crm.disposition">
+            <field name="name">Call disconnected</field>
+            <field name="rule_definition">If customer disconnected the call without any discussion or call opening</field>
+            <field name="follow_up_days">1</field>
+            <field name="max_attempts">4</field>
+            <field name="lead_relevant">False</field>
+            <field name="sequence">40</field>
+        </record>
+
+        <record id="disposition_call_not_connected" model="resonnocare.crm.disposition">
+            <field name="name">Call not Connected</field>
+            <field name="rule_definition">If call disconnected while connectiing</field>
+            <field name="follow_up_days">1</field>
+            <field name="max_attempts">4</field>
+            <field name="lead_relevant">False</field>
+            <field name="sequence">50</field>
+        </record>
+
+        <record id="disposition_call_transferred" model="resonnocare.crm.disposition">
+            <field name="name">Call Transferred</field>
+            <field name="rule_definition">Call transferred to other agent</field>
+            <field name="follow_up_days">0</field>
+            <field name="max_attempts">0</field>
+            <field name="lead_relevant">True</field>
+            <field name="sequence">60</field>
+        </record>
+
+        <record id="disposition_callback_requested" model="resonnocare.crm.disposition">
+            <field name="name">Callback 1st half</field>
+            <field name="rule_definition">If connected and customer asking to call back or busy</field>
+            <field name="follow_up_days">1</field>
+            <field name="max_attempts">7</field>
+            <field name="lead_relevant">True</field>
+            <field name="sequence">70</field>
+        </record>
+
+        <record id="disposition_callback_2nd_half" model="resonnocare.crm.disposition">
+            <field name="name">Callback 2nd Half</field>
+            <field name="rule_definition">If connected and customer asking to call back or busy</field>
+            <field name="follow_up_days">1</field>
+            <field name="max_attempts">7</field>
+            <field name="lead_relevant">True</field>
+            <field name="sequence">80</field>
+        </record>
+
+        <record id="disposition_callback_weekend" model="resonnocare.crm.disposition">
+            <field name="name">Callback weekend</field>
+            <field name="rule_definition">If connected and customer asking to call back or busy</field>
+            <field name="follow_up_days">2</field>
+            <field name="max_attempts">7</field>
+            <field name="lead_relevant">True</field>
+            <field name="sequence">90</field>
+        </record>
+
+        <record id="disposition_cannot_afford" model="resonnocare.crm.disposition">
+            <field name="name">Can not Afford</field>
+            <field name="rule_definition">Client feel test cost is expensive</field>
+            <field name="follow_up_days">90</field>
+            <field name="max_attempts">1</field>
+            <field name="lead_relevant">False</field>
+            <field name="sequence">100</field>
+        </record>
+
+        <record id="disposition_client_will_call_come" model="resonnocare.crm.disposition">
+            <field name="name">Client will call &amp; Come</field>
+            <field name="rule_definition">Client will call or come to clinic on his own</field>
+            <field name="follow_up_days">3</field>
+            <field name="max_attempts">4</field>
+            <field name="lead_relevant">True</field>
+            <field name="sequence">110</field>
+        </record>
+
+        <record id="disposition_clinic_too_far" model="resonnocare.crm.disposition">
+            <field name="name">Clinic Location too far</field>
+            <field name="rule_definition">Can be used only for Fresh leads if client lives more than 40 kms away from any of our clinic in his closest vicinity</field>
+            <field name="follow_up_days">90</field>
+            <field name="max_attempts">1</field>
+            <field name="lead_relevant">False</field>
+            <field name="sequence">120</field>
+        </record>
+
+        <record id="disposition_concern_person_not_available" model="resonnocare.crm.disposition">
+            <field name="name">Concern Person Not Available</field>
+            <field name="rule_definition">If patient is not on call/ Or Client&apos;s query could not be addressed as could not complete or asked for call back.</field>
+            <field name="follow_up_days">2</field>
+            <field name="max_attempts">4</field>
+            <field name="lead_relevant">False</field>
+            <field name="sequence">130</field>
+        </record>
+
+        <record id="disposition_confirmation_reconfirmation" model="resonnocare.crm.disposition">
+            <field name="name">Confirmation/Reconfirmation Call</field>
+            <field name="rule_definition">Confirmation or reconfirmation call, Don&apos;t forget to mention remarks</field>
+            <field name="follow_up_days">0</field>
+            <field name="max_attempts">0</field>
+            <field name="lead_relevant">True</field>
+            <field name="sequence">140</field>
+        </record>
+
+        <record id="disposition_internal_number" model="resonnocare.crm.disposition">
+            <field name="name">Internal Number</field>
+            <field name="rule_definition">testing purpose</field>
+            <field name="follow_up_days">0</field>
+            <field name="max_attempts">0</field>
+            <field name="lead_relevant">False</field>
+            <field name="sequence">150</field>
+        </record>
+
+        <record id="disposition_line_busy" model="resonnocare.crm.disposition">
+            <field name="name">Line Busy</field>
+            <field name="rule_definition">Line is engaged</field>
+            <field name="follow_up_days">2</field>
+            <field name="max_attempts">4</field>
+            <field name="lead_relevant">False</field>
+            <field name="sequence">160</field>
+        </record>
+
+        <record id="disposition_need_time_talk_family" model="resonnocare.crm.disposition">
+            <field name="name">Need Time_Will talk to family</field>
+            <field name="rule_definition">Needs time to book appoitment</field>
+            <field name="follow_up_days">2</field>
+            <field name="max_attempts">7</field>
+            <field name="lead_relevant">True</field>
+            <field name="sequence">170</field>
+        </record>
+
+        <record id="disposition_not_interested" model="resonnocare.crm.disposition">
+            <field name="name">Not Interested</field>
+            <field name="rule_definition">Client denied to give feedback/ Fix appt</field>
+            <field name="follow_up_days">90</field>
+            <field name="max_attempts">2</field>
+            <field name="lead_relevant">True</field>
+            <field name="sequence">180</field>
+        </record>
+
+        <record id="disposition_not_reachable" model="resonnocare.crm.disposition">
+            <field name="name">Not reachable</field>
+            <field name="rule_definition">Number is not in network range</field>
+            <field name="follow_up_days">1</field>
+            <field name="max_attempts">4</field>
+            <field name="lead_relevant">False</field>
+            <field name="sequence">190</field>
+        </record>
+
+        <record id="disposition_not_well" model="resonnocare.crm.disposition">
+            <field name="name">Not Well</field>
+            <field name="rule_definition">Not Well</field>
+            <field name="follow_up_days">6</field>
+            <field name="max_attempts">4</field>
+            <field name="lead_relevant">False</field>
+            <field name="sequence">200</field>
+        </record>
+
+        <record id="disposition_number_not_exist" model="resonnocare.crm.disposition">
+            <field name="name">Number Does not Exist</field>
+            <field name="rule_definition">Invalid Number/ incorrect number/ incomplete number</field>
+            <field name="follow_up_days">0</field>
+            <field name="max_attempts">0</field>
+            <field name="lead_relevant">False</field>
+            <field name="sequence">210</field>
+        </record>
+
+        <record id="disposition_out_of_service" model="resonnocare.crm.disposition">
+            <field name="name">Out Of Service</field>
+            <field name="rule_definition">Number is not in use or ivr says invalid</field>
+            <field name="follow_up_days">10</field>
+            <field name="max_attempts">4</field>
+            <field name="lead_relevant">False</field>
+            <field name="sequence">220</field>
+        </record>
+
+        <record id="disposition_out_of_station" model="resonnocare.crm.disposition">
+            <field name="name">Out Of Station</field>
+            <field name="rule_definition">Client out of station</field>
+            <field name="follow_up_days">8</field>
+            <field name="max_attempts">4</field>
+            <field name="lead_relevant">False</field>
+            <field name="sequence">230</field>
+        </record>
+
+        <record id="disposition_redial" model="resonnocare.crm.disposition">
+            <field name="name">Redial</field>
+            <field name="rule_definition">if client was call again at the same time due to some error/ disturbance/Ameyo issues</field>
+            <field name="follow_up_days">0</field>
+            <field name="max_attempts">0</field>
+            <field name="lead_relevant">False</field>
+            <field name="sequence">240</field>
+        </record>
+
+        <record id="disposition_ringing" model="resonnocare.crm.disposition">
+            <field name="name">Ringing</field>
+            <field name="rule_definition">Line is ringing and client not picking</field>
+            <field name="follow_up_days">1</field>
+            <field name="max_attempts">7</field>
+            <field name="lead_relevant">False</field>
+            <field name="sequence">250</field>
+        </record>
+
+        <record id="disposition_switched_off" model="resonnocare.crm.disposition">
+            <field name="name">Switched off</field>
+            <field name="rule_definition">Number is switched off</field>
+            <field name="follow_up_days">1</field>
+            <field name="max_attempts">7</field>
+            <field name="lead_relevant">False</field>
+            <field name="sequence">260</field>
+        </record>
+
+        <record id="disposition_under_ent" model="resonnocare.crm.disposition">
+            <field name="name">Under ENT</field>
+            <field name="rule_definition">Client taking ENT treatment</field>
+            <field name="follow_up_days">15</field>
+            <field name="max_attempts">2</field>
+            <field name="lead_relevant">True</field>
+            <field name="sequence">270</field>
+        </record>
+
+        <record id="disposition_wrong_number" model="resonnocare.crm.disposition">
+            <field name="name">Wrong No</field>
+            <field name="rule_definition">Call was answered but connected to Wrong person</field>
+            <field name="follow_up_days">30</field>
+            <field name="max_attempts">2</field>
+            <field name="lead_relevant">False</field>
+            <field name="sequence">280</field>
+        </record>
+
+        <record id="disposition_no_answer" model="resonnocare.crm.disposition">
+            <field name="name">No Answer</field>
+            <field name="rule_definition">Legacy disposition retained for backward compatibility.</field>
+            <field name="follow_up_days">1</field>
+            <field name="max_attempts">5</field>
+            <field name="lead_relevant">True</field>
+            <field name="sequence">999</field>
+            <field name="active">False</field>
+        </record>
+
+    </data>
+</odoo>

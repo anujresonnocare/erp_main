@@ -1,0 +1,551 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="view_resonnocare_doctor_profile_tree" model="ir.ui.view">
+        <field name="name">resonnocare.doctor.profile.tree</field>
+        <field name="model">resonnocare.doctor.profile</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="state"/>
+                <field name="doctor_type"/>
+                <field name="team_source"/>
+                <field name="mobile"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_resonnocare_doctor_profile_form" model="ir.ui.view">
+        <field name="name">resonnocare.doctor.profile.form</field>
+        <field name="model">resonnocare.doctor.profile</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,under_review,reviewed,approved,rejected"/>
+                    <button name="action_submit_for_review" type="object" string="Submit for Review" class="btn-primary" invisible="state not in ('draft','rejected')"/>
+                    <button name="action_mark_reviewed" type="object" string="Mark Reviewed" class="btn-secondary" invisible="state not in ('draft','under_review')" groups="resonnocare_base.group_crm,resonnocare_base.group_resonnocare_super_admin"/>
+                    <button name="action_approve" type="object" string="Approve" class="btn-success" invisible="state not in ('under_review','reviewed')" groups="resonnocare_base.group_resonnocare_hr,resonnocare_base.group_resonnocare_super_admin"/>
+                    <button name="action_reject" type="object" string="Reject" class="btn-danger" invisible="state == 'approved'"/>
+                    <button name="action_reset_to_draft" type="object" string="Reset to Draft" invisible="state == 'draft'"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Doctor Info">
+                            <field name="active"/>
+                            <field name="team_source"/>
+                            <field name="request_date"/>
+                            <field name="abm_name"/>
+                            <field name="change_type"/>
+                            <field name="effective_date"/>
+                            <field name="city"/>
+                            <field name="region_name"/>
+                            <field name="doctor_type"/>
+                            <field name="enrolment_date"/>
+                            <field name="mobile"/>
+                            <field name="email"/>
+                            <field name="clinic_address"/>
+                            <field name="remarks"/>
+                        </group>
+                        <group string="Payee and Bank Details">
+                            <field name="payee_name"/>
+                            <field name="payee_pan_number"/>
+                            <field name="payee_aadhaar_number"/>
+                            <field name="bank_account_number"/>
+                            <field name="bank_account_type"/>
+                            <field name="bank_name"/>
+                            <field name="bank_address"/>
+                            <field name="bank_ifsc_code"/>
+                        </group>
+                        <group string="Documents">
+                            <field name="address_proof_file" filename="address_proof_filename"/>
+                            <field name="address_proof_filename" invisible="1"/>
+                            <field name="pan_card_file" filename="pan_card_filename"/>
+                            <field name="pan_card_filename" invisible="1"/>
+                            <field name="aadhaar_card_file" filename="aadhaar_card_filename"/>
+                            <field name="aadhaar_card_filename" invisible="1"/>
+                            <field name="cancelled_cheque_file" filename="cancelled_cheque_filename"/>
+                            <field name="cancelled_cheque_filename" invisible="1"/>
+                            <field name="bank_statement_file" filename="bank_statement_filename"/>
+                            <field name="bank_statement_filename" invisible="1"/>
+                            <field name="passbook_copy_file" filename="passbook_copy_filename"/>
+                            <field name="passbook_copy_filename" invisible="1"/>
+                        </group>
+                        <group string="Commission Setup">
+                            <field name="commission_ha_percent"/>
+                            <field name="commission_diagnostic_percent"/>
+                            <field name="user_id" readonly="1" groups="resonnocare_base.group_resonnocare_hr,resonnocare_base.group_crm,resonnocare_base.group_resonnocare_super_admin"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                        <group string="Doctor Sharing Master">
+                            <field name="use_different_sharing_by_clinic"/>
+                            <field name="apply_same_settings_all_clinics"/>
+                            <field name="supported_clinic_ids" widget="many2many_tags"/>
+                            <field name="different_sharing_clinic_ids" widget="many2many_tags" invisible="not use_different_sharing_by_clinic"/>
+                            <field name="enable_flat_sharing"/>
+                            <field name="enable_mrp_slab_sharing"/>
+                            <field name="enable_item_based_sharing"/>
+                            <field name="enable_source_based_sharing"/>
+                            <field name="sharing_applicable_from"/>
+                            <field name="sharing_applicable_to"/>
+                        </group>
+                        <group string="Doctor Sharing Rules" col="1" colspan="2">
+                            <div class="alert alert-info" role="alert">
+                                <strong>Rule Entry Guide</strong><br/>
+                                1. Keep Standard rules for normal clinics; use Different-Clinic rules only when exception sharing is needed.<br/>
+                                2. Add rows in Source / Item / MRP / Flat tabs as needed.<br/>
+                                3. Matching priority is always: Source &gt; Item &gt; MRP Slab &gt; Flat.
+                            </div>
+                            <div class="text-muted o_form_label">
+                                Maintain Standard and Different-Clinic rules separately. Validation Rank: 4 = Flat, 3 = MRP Slab, 2 = Item, 1 = Source.
+                            </div>
+                            <group string="Standard Sharing - Rank 4 Flat" invisible="not enable_flat_sharing" col="1" colspan="2">
+                                <field name="doctor_sharing_standard_flat_ids"
+                                    context="{'default_doctor_id': id, 'default_apply_scope': 'standard', 'default_rule_level': 'flat', 'default_product_category': 'hearing_device', 'default_sharing_percent': 0.0}"
+                                    nolabel="1"
+                                    colspan="2">
+                                    <list editable="bottom">
+                                        <field name="apply_scope" invisible="1"/>
+                                        <field name="rule_level" invisible="1"/>
+                                        <field name="clinic_id" domain="[('id','in', parent.selectable_standard_clinic_ids)]" invisible="parent.apply_same_settings_all_clinics"/>
+                                        <field name="clinic_display_name" string="Clinic Name" readonly="1" invisible="not parent.apply_same_settings_all_clinics"/>
+                                        <field name="product_category"/>
+                                        <field name="sharing_percent"/>
+                                        <field name="applicable_from"/>
+                                        <field name="applicable_to"/>
+                                    </list>
+                                </field>
+                            </group>
+                            <group string="Standard Sharing - Rank 3 MRP Slab" invisible="not enable_mrp_slab_sharing" col="1" colspan="2">
+                                <field name="doctor_sharing_standard_mrp_ids"
+                                    context="{'default_doctor_id': id, 'default_apply_scope': 'standard', 'default_rule_level': 'mrp', 'default_product_category': 'hearing_device', 'default_sharing_percent': 0.0}"
+                                    nolabel="1"
+                                    colspan="2">
+                                    <list editable="bottom">
+                                        <field name="apply_scope" invisible="1"/>
+                                        <field name="rule_level" invisible="1"/>
+                                        <field name="clinic_id" domain="[('id','in', parent.selectable_standard_clinic_ids)]" invisible="parent.apply_same_settings_all_clinics"/>
+                                        <field name="clinic_display_name" string="Clinic Name" readonly="1" invisible="not parent.apply_same_settings_all_clinics"/>
+                                        <field name="product_category"/>
+                                        <field name="mrp_range_from"/>
+                                        <field name="mrp_range_to"/>
+                                        <field name="sharing_percent"/>
+                                        <field name="applicable_from"/>
+                                        <field name="applicable_to"/>
+                                    </list>
+                                </field>
+                            </group>
+                            <group string="Standard Sharing - Rank 2 Item Based" invisible="not enable_item_based_sharing" col="1" colspan="2">
+                                <field name="doctor_sharing_standard_item_ids"
+                                    context="{'default_doctor_id': id, 'default_apply_scope': 'standard', 'default_rule_level': 'item', 'default_product_category': 'hearing_device', 'default_sharing_percent': 0.0}"
+                                    nolabel="1"
+                                    colspan="2">
+                                    <list editable="bottom">
+                                        <field name="apply_scope" invisible="1"/>
+                                        <field name="rule_level" invisible="1"/>
+                                        <field name="clinic_id" domain="[('id','in', parent.selectable_standard_clinic_ids)]" invisible="parent.apply_same_settings_all_clinics"/>
+                                        <field name="clinic_display_name" string="Clinic Name" readonly="1" invisible="not parent.apply_same_settings_all_clinics"/>
+                                        <field name="product_category"/>
+                                        <field name="billing_type"/>
+                                        <field name="product_tmpl_id"/>
+                                        <field name="sharing_percent"/>
+                                        <field name="billing_price"/>
+                                        <field name="applicable_from"/>
+                                        <field name="applicable_to"/>
+                                    </list>
+                                </field>
+                            </group>
+                            <group string="Standard Sharing - Rank 1 Source Based" invisible="not enable_source_based_sharing" col="1" colspan="2">
+                                <field name="doctor_sharing_standard_source_ids"
+                                    context="{'default_doctor_id': id, 'default_apply_scope': 'standard', 'default_rule_level': 'source', 'default_product_category': 'hearing_device', 'default_sharing_percent': 0.0}"
+                                    nolabel="1"
+                                    colspan="2">
+                                    <list editable="bottom">
+                                        <field name="apply_scope" invisible="1"/>
+                                        <field name="rule_level" invisible="1"/>
+                                        <field name="clinic_id" domain="[('id','in', parent.selectable_standard_clinic_ids)]" invisible="parent.apply_same_settings_all_clinics"/>
+                                        <field name="clinic_display_name" string="Clinic Name" readonly="1" invisible="not parent.apply_same_settings_all_clinics"/>
+                                        <field name="product_category"/>
+                                        <field name="billing_type"/>
+                                        <field name="source_category"/>
+                                        <field name="sharing_percent"/>
+                                        <field name="billing_price"/>
+                                        <field name="applicable_from"/>
+                                        <field name="applicable_to"/>
+                                    </list>
+                                </field>
+                            </group>
+                            <group string="Different-Clinic Sharing Rules" invisible="not use_different_sharing_by_clinic" col="1" colspan="2">
+                                <group string="Different Sharing - Rank 4 Flat" invisible="not enable_flat_sharing" col="1" colspan="2">
+                                    <field name="doctor_sharing_different_flat_ids"
+                                        context="{'default_doctor_id': id, 'default_apply_scope': 'different', 'default_rule_level': 'flat', 'default_product_category': 'hearing_device', 'default_sharing_percent': 0.0}"
+                                        nolabel="1"
+                                        colspan="2">
+                                        <list editable="bottom">
+                                            <field name="apply_scope" invisible="1"/>
+                                            <field name="rule_level" invisible="1"/>
+                                            <field name="clinic_id" domain="[('id','in', parent.different_sharing_clinic_ids)]"/>
+                                            <field name="product_category"/>
+                                            <field name="sharing_percent"/>
+                                            <field name="applicable_from"/>
+                                            <field name="applicable_to"/>
+                                        </list>
+                                    </field>
+                                </group>
+                                <group string="Different Sharing - Rank 3 MRP Slab" invisible="not enable_mrp_slab_sharing" col="1" colspan="2">
+                                    <field name="doctor_sharing_different_mrp_ids"
+                                        context="{'default_doctor_id': id, 'default_apply_scope': 'different', 'default_rule_level': 'mrp', 'default_product_category': 'hearing_device', 'default_sharing_percent': 0.0}"
+                                        nolabel="1"
+                                        colspan="2">
+                                        <list editable="bottom">
+                                            <field name="apply_scope" invisible="1"/>
+                                            <field name="rule_level" invisible="1"/>
+                                            <field name="clinic_id" domain="[('id','in', parent.different_sharing_clinic_ids)]"/>
+                                            <field name="product_category"/>
+                                            <field name="mrp_range_from"/>
+                                            <field name="mrp_range_to"/>
+                                            <field name="sharing_percent"/>
+                                            <field name="applicable_from"/>
+                                            <field name="applicable_to"/>
+                                        </list>
+                                    </field>
+                                </group>
+                                <group string="Different Sharing - Rank 2 Item Based" invisible="not enable_item_based_sharing" col="1" colspan="2">
+                                    <field name="doctor_sharing_different_item_ids"
+                                        context="{'default_doctor_id': id, 'default_apply_scope': 'different', 'default_rule_level': 'item', 'default_product_category': 'hearing_device', 'default_sharing_percent': 0.0}"
+                                        nolabel="1"
+                                        colspan="2">
+                                        <list editable="bottom">
+                                            <field name="apply_scope" invisible="1"/>
+                                            <field name="rule_level" invisible="1"/>
+                                            <field name="clinic_id" domain="[('id','in', parent.different_sharing_clinic_ids)]"/>
+                                            <field name="product_category"/>
+                                            <field name="billing_type"/>
+                                            <field name="product_tmpl_id"/>
+                                            <field name="sharing_percent"/>
+                                            <field name="billing_price"/>
+                                            <field name="applicable_from"/>
+                                            <field name="applicable_to"/>
+                                        </list>
+                                    </field>
+                                </group>
+                                <group string="Different Sharing - Rank 1 Source Based" invisible="not enable_source_based_sharing" col="1" colspan="2">
+                                    <field name="doctor_sharing_different_source_ids"
+                                        context="{'default_doctor_id': id, 'default_apply_scope': 'different', 'default_rule_level': 'source', 'default_product_category': 'hearing_device', 'default_sharing_percent': 0.0}"
+                                        nolabel="1"
+                                        colspan="2">
+                                        <list editable="bottom">
+                                            <field name="apply_scope" invisible="1"/>
+                                            <field name="rule_level" invisible="1"/>
+                                            <field name="clinic_id" domain="[('id','in', parent.different_sharing_clinic_ids)]"/>
+                                            <field name="product_category"/>
+                                            <field name="billing_type"/>
+                                            <field name="source_category"/>
+                                            <field name="sharing_percent"/>
+                                            <field name="billing_price"/>
+                                            <field name="applicable_from"/>
+                                            <field name="applicable_to"/>
+                                        </list>
+                                    </field>
+                                </group>
+                            </group>
+                        </group>
+                        <group string="Approval Workflow">
+                            <field name="request_reviewed_by" readonly="1"/>
+                            <field name="final_approved_by" readonly="1"/>
+                            <field name="approval_date" readonly="1"/>
+                            <field name="approver_remarks"/>
+                        </group>
+                    </group>
+                    <div class="alert alert-info" role="alert">
+                        This form is filled by concerned sales team users. Review is done by Sales Head, and final approval is done by Director Sales and Operations.
+                    </div>
+                    <group string="Performance">
+                        <group>
+                            <field name="patient_count" readonly="1"/>
+                            <field name="sale_count" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="commission_total" readonly="1"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_resonnocare_doctor_profiles" model="ir.actions.act_window">
+        <field name="name">Doctor Profiles</field>
+        <field name="res_model">resonnocare.doctor.profile</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="view_resonnocare_doctor_profile_form_readonly" model="ir.ui.view">
+        <field name="name">resonnocare.doctor.profile.form.readonly</field>
+        <field name="model">resonnocare.doctor.profile</field>
+        <field name="arch" type="xml">
+            <form create="0" edit="0" delete="0">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Doctor Info">
+                            <field name="team_source" readonly="1"/>
+                            <field name="doctor_type" readonly="1"/>
+                            <field name="mobile" readonly="1"/>
+                            <field name="email" readonly="1"/>
+                            <field name="clinic_address" readonly="1"/>
+                            <field name="supported_clinic_names" readonly="1"/>
+                        </group>
+                        <group string="Commission Setup">
+                            <field name="commission_ha_percent" readonly="1"/>
+                            <field name="commission_diagnostic_percent" readonly="1"/>
+                            <field name="company_id" readonly="1" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <group string="Performance">
+                        <group>
+                            <field name="patient_count" readonly="1"/>
+                            <field name="sale_count" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="commission_total" readonly="1"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_resonnocare_doctor_profile_kanban_my_profile" model="ir.ui.view">
+        <field name="name">resonnocare.doctor.profile.kanban.my.profile</field>
+        <field name="model">resonnocare.doctor.profile</field>
+        <field name="arch" type="xml">
+            <kanban create="0" edit="0" delete="0" class="o_resonnocare_doctor_my_profile_kanban">
+                <field name="name"/>
+                <field name="state"/>
+                <field name="team_source"/>
+                <field name="doctor_type"/>
+                <field name="enrolment_date"/>
+                <field name="city"/>
+                <field name="region_name"/>
+                <field name="mobile"/>
+                <field name="email"/>
+                <field name="clinic_address"/>
+                <field name="supported_clinic_names"/>
+                <field name="commission_ha_percent"/>
+                <field name="commission_diagnostic_percent"/>
+                <field name="patient_count"/>
+                <field name="sale_count"/>
+                <field name="commission_total"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="o_kanban_card p-3">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <div>
+                                    <div class="fw-bold fs-5">
+                                        <field name="name"/>
+                                    </div>
+                                    <div class="text-muted">
+                                        <field name="doctor_type"/>
+                                    </div>
+                                </div>
+                                <div class="badge text-bg-light border">
+                                    <field name="team_source"/>
+                                </div>
+                            </div>
+
+                            <div class="mb-2">
+                                <span class="badge text-bg-info">
+                                    <field name="state"/>
+                                </span>
+                            </div>
+
+                            <div class="row g-2 mb-3">
+                                <div class="col-12 col-md-6">
+                                    <div class="text-muted small">Email</div>
+                                    <div>
+                                        <field name="email"/>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <div class="text-muted small">Mobile</div>
+                                    <div>
+                                        <field name="mobile"/>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <div class="text-muted small">Enrolment Date</div>
+                                    <div>
+                                        <field name="enrolment_date"/>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <div class="text-muted small">City / Region</div>
+                                    <div>
+                                        <field name="city"/>
+ /                                        <field name="region_name"/>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="text-muted small">Clinic Address</div>
+                                    <div>
+                                        <field name="clinic_address"/>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="text-muted small">Supported Clinics</div>
+                                    <div>
+                                        <field name="supported_clinic_names"/>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row g-2 mb-3">
+                                <div class="col-12 col-md-6">
+                                    <div class="border rounded p-2 bg-light">
+                                        <div class="text-muted small">HA Commission %</div>
+                                        <div class="fw-semibold">
+                                            <field name="commission_ha_percent"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <div class="border rounded p-2 bg-light">
+                                        <div class="text-muted small">Diagnostic Commission %</div>
+                                        <div class="fw-semibold">
+                                            <field name="commission_diagnostic_percent"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row g-2">
+                                <div class="col-12 col-md-4">
+                                    <div class="border rounded p-2 text-center">
+                                        <div class="text-muted small">Patients</div>
+                                        <div class="fw-bold">
+                                            <field name="patient_count"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-md-4">
+                                    <div class="border rounded p-2 text-center">
+                                        <div class="text-muted small">Sales</div>
+                                        <div class="fw-bold">
+                                            <field name="sale_count"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-md-4">
+                                    <div class="border rounded p-2 text-center bg-light">
+                                        <div class="text-muted small">Total Commission</div>
+                                        <div class="fw-bold">
+                                            <field name="commission_total"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="action_resonnocare_doctor_my_profile_card" model="ir.actions.act_window">
+        <field name="name">My Profile</field>
+        <field name="res_model">resonnocare.doctor.profile</field>
+        <field name="view_mode">kanban</field>
+        <field name="view_id" ref="view_resonnocare_doctor_profile_kanban_my_profile"/>
+        <field name="domain">[('user_id', '=', uid)]</field>
+        <field name="context">{'create': 0, 'edit': 0, 'delete': 0}</field>
+    </record>
+
+    <record id="action_resonnocare_doctor_my_patients" model="ir.actions.act_window">
+        <field name="name">My Patients</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_id" ref="resonnocare_doctor.view_res_partner_patient_tree_doctor_readonly"/>
+        <field name="domain">[('is_patient','=',True)]</field>
+        <field name="context">{'create': 0, 'edit': 0, 'delete': 0}</field>
+    </record>
+    <record id="action_resonnocare_doctor_my_patients_list_view" model="ir.actions.act_window.view">
+        <field name="sequence" eval="1"/>
+        <field name="view_mode">list</field>
+        <field name="view_id" ref="resonnocare_doctor.view_res_partner_patient_tree_doctor_readonly"/>
+        <field name="act_window_id" ref="resonnocare_doctor.action_resonnocare_doctor_my_patients"/>
+    </record>
+    <record id="action_resonnocare_doctor_my_patients_form_view" model="ir.actions.act_window.view">
+        <field name="sequence" eval="2"/>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="resonnocare_frontdesk.view_res_partner_patient_form"/>
+        <field name="act_window_id" ref="resonnocare_doctor.action_resonnocare_doctor_my_patients"/>
+    </record>
+
+    <record id="action_resonnocare_doctor_my_sales" model="ir.actions.act_window">
+        <field name="name">My Sales</field>
+        <field name="res_model">sale.order</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[
+            ('state', 'in', ['sale', 'done']),
+            '|',
+            ('referring_doctor_id.user_id', '=', uid),
+            '|',
+            '&amp;', ('patient_id', '!=', False), ('patient_id.referring_doctor_id.user_id', '=', uid),
+            '&amp;', ('partner_id.is_patient', '=', True), ('partner_id.referring_doctor_id.user_id', '=', uid)
+        ]</field>
+        <field name="context">{'create': 0, 'edit': 0, 'delete': 0}</field>
+    </record>
+
+    <record id="action_resonnocare_doctor_my_commissions" model="ir.actions.act_window">
+        <field name="name">My Commissions</field>
+        <field name="res_model">sale.order</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_id" ref="resonnocare_doctor.view_sale_order_list_doctor_my_commissions"/>
+        <field name="domain">[
+            ('state', 'in', ['sale', 'done']),
+            ('doctor_commission_amount', '&gt;', 0),
+            '|',
+            ('referring_doctor_id.user_id', '=', uid),
+            '|',
+            '&amp;', ('patient_id', '!=', False), ('patient_id.referring_doctor_id.user_id', '=', uid),
+            '&amp;', ('partner_id.is_patient', '=', True), ('partner_id.referring_doctor_id.user_id', '=', uid)
+        ]</field>
+        <field name="context">{'create': 0, 'edit': 0, 'delete': 0}</field>
+    </record>
+    <record id="action_resonnocare_doctor_my_commissions_list_view" model="ir.actions.act_window.view">
+        <field name="sequence" eval="1"/>
+        <field name="view_mode">list</field>
+        <field name="view_id" ref="resonnocare_doctor.view_sale_order_list_doctor_my_commissions"/>
+        <field name="act_window_id" ref="resonnocare_doctor.action_resonnocare_doctor_my_commissions"/>
+    </record>
+
+    <record id="action_resonnocare_doctor_my_commissions_form_view" model="ir.actions.act_window.view">
+        <field name="sequence" eval="2"/>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="resonnocare_doctor.view_sale_order_form_doctor_commission_detail"/>
+        <field name="act_window_id" ref="resonnocare_doctor.action_resonnocare_doctor_my_commissions"/>
+    </record>
+
+    <menuitem id="menu_external_doctor_root" name="Doctor" sequence="-100" groups="resonnocare_base.group_external_doctor,resonnocare_base.group_resonnocare_hr,resonnocare_base.group_resonnocare_super_admin"/>
+
+    <menuitem id="menu_external_doctor_profiles" name="Doctor Profiles" parent="menu_external_doctor_root" action="action_resonnocare_doctor_profiles" sequence="1" groups="resonnocare_base.group_resonnocare_hr,resonnocare_base.group_resonnocare_super_admin"/>
+    <menuitem id="menu_external_doctor_audiometry_reports" name="Audiometry Reports" parent="menu_external_doctor_root" action="resonnocare_appointment.action_resonnocare_audiometry_results" sequence="2" groups="resonnocare_base.group_external_doctor,resonnocare_base.group_resonnocare_hr,resonnocare_base.group_resonnocare_super_admin"/>
+
+    <menuitem id="menu_external_doctor_my_profile" name="My Profile" parent="menu_external_doctor_root" action="action_resonnocare_doctor_my_profile_card" sequence="2" groups="resonnocare_base.group_external_doctor"/>
+
+    <menuitem id="menu_external_doctor_my_patients" name="My Patients" parent="menu_external_doctor_root" action="action_resonnocare_doctor_my_patients" sequence="3" groups="resonnocare_base.group_external_doctor"/>
+
+    <menuitem id="menu_external_doctor_my_sales" name="My Sales" parent="menu_external_doctor_root" action="action_resonnocare_doctor_my_sales" sequence="4" groups="resonnocare_base.group_external_doctor"/>
+
+    <menuitem id="menu_external_doctor_my_commissions" name="My Commissions" parent="menu_external_doctor_root" action="action_resonnocare_doctor_my_commissions" sequence="5" groups="resonnocare_base.group_external_doctor"/>
+
+</odoo>

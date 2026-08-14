@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="view_resonnocare_discount_grid_tree" model="ir.ui.view">
+        <field name="name">resonnocare.discount.grid.tree</field>
+        <field name="model">resonnocare.discount.grid</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="channel"/>
+                <field name="mrp_from"/>
+                <field name="mrp_to"/>
+                <field name="slab1_max"/>
+                <field name="slab2_max"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_resonnocare_discount_grid_form" model="ir.ui.view">
+        <field name="name">resonnocare.discount.grid.form</field>
+        <field name="model">resonnocare.discount.grid</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="channel"/>
+                            <field name="active"/>
+                        </group>
+                        <group>
+                            <field name="mrp_from"/>
+                            <field name="mrp_to"/>
+                            <field name="slab1_max"/>
+                            <field name="slab2_max"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_resonnocare_discount_grid" model="ir.actions.act_window">
+        <field name="name">Discount Grid</field>
+        <field name="res_model">resonnocare.discount.grid</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

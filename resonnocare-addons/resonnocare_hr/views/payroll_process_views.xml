@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="view_hr_contract_form_inherit_resonnocare_tax" model="ir.ui.view">
+        <field name="name">hr.contract.form.inherit.resonnocare.tax</field>
+        <field name="model">hr.contract</field>
+        <field name="inherit_id" search="[('model', '=', 'hr.contract'), ('type', '=', 'form')]" />
+        <field name="groups_id" eval="[(5, 0, 0)]"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet/notebook" position="inside">
+                <page string="Tax Projection">
+                    <group>
+                        <group>
+                            <field name="res_payroll_day_basis"/>
+                            <field name="res_tax_regime"/>
+                            <field name="res_tds_enabled"/>
+                            <field name="res_rebate_87a_enabled"/>
+                            <field name="res_cess_percent"/>
+                            <field name="res_surcharge_percent"/>
+                            <field name="res_standard_deduction"/>
+                            <field name="res_declared_80c"/>
+                            <field name="res_declared_80d"/>
+                            <field name="res_other_deductions"/>
+                        </group>
+                        <group>
+                            <field name="res_annual_projected_income" readonly="1"/>
+                            <field name="res_annual_taxable_income" readonly="1"/>
+                            <field name="res_annual_tax_liability" readonly="1"/>
+                            <field name="res_remaining_fy_months" readonly="1"/>
+                            <field name="res_monthly_tds" readonly="1"/>
+                        </group>
+                    </group>
+                    <group string="Statutory Applicability">
+                        <group>
+                            <field name="res_pf_applicable"/>
+                            <field name="res_pf_employee_rate" invisible="not res_pf_applicable"/>
+                            <field name="res_esic_applicable"/>
+                            <field name="res_esic_employee_rate" invisible="not res_esic_applicable"/>
+                        </group>
+                        <group>
+                            <field name="res_pt_applicable"/>
+                            <field name="res_pt_monthly_amount" invisible="not res_pt_applicable"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_resonnocare_payroll_variance_wizard_form" model="ir.ui.view">
+        <field name="name">resonnocare.payroll.variance.wizard.form</field>
+        <field name="model">resonnocare.payroll.variance.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Payroll Variance Report">
+                <group>
+                    <field name="month"/>
+                    <field name="threshold_percent"/>
+                    <button name="action_generate" type="object" string="Generate" class="btn-primary"/>
+                </group>
+                <field name="line_ids" nolabel="1">
+                    <list create="0" delete="0">
+                        <field name="employee_id"/>
+                        <field name="current_net"/>
+                        <field name="previous_net"/>
+                        <field name="variance_amount"/>
+                        <field name="variance_percent"/>
+                        <field name="is_alert" widget="boolean_toggle"/>
+                    </list>
+                </field>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_resonnocare_payroll_variance_wizard" model="ir.actions.act_window">
+        <field name="name">Payroll Variance Report</field>
+        <field name="res_model">resonnocare.payroll.variance.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <record id="view_resonnocare_payroll_disbursement_list" model="ir.ui.view">
+        <field name="name">resonnocare.payroll.disbursement.list</field>
+        <field name="model">resonnocare.payroll.disbursement</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="pay_month"/>
+                <field name="salary_date"/>
+                <field name="state"/>
+                <field name="total_employees"/>
+                <field name="total_net_amount"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_resonnocare_payroll_disbursement_form" model="ir.ui.view">
+        <field name="name">resonnocare.payroll.disbursement.form</field>
+        <field name="model">resonnocare.payroll.disbursement</field>
+        <field name="arch" type="xml">
+            <form string="Payroll Disbursement">
+                <header>
+                    <button name="action_fetch_payslips" type="object" string="Fetch Payslips" class="btn-secondary" invisible="state != 'draft'"/>
+                    <button name="action_freeze" type="object" string="Freeze" class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_disburse" type="object" string="Disburse" class="btn-primary" invisible="state != 'frozen'"/>
+                    <button name="action_export_bank_file" type="object" string="Export Bank File" class="btn-secondary"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,frozen,disbursed"/>
+                </header>
+                <sheet>
+                    <group>
+                        <field name="name" readonly="1"/>
+                        <field name="pay_month"/>
+                        <field name="salary_date"/>
+                    </group>
+                    <group>
+                        <field name="total_employees" readonly="1"/>
+                        <field name="total_net_amount" readonly="1"/>
+                        <field name="bank_export_filename" readonly="1"/>
+                    </group>
+                    <field name="line_ids" nolabel="1">
+                        <list create="0" delete="0">
+                            <field name="employee_id"/>
+                            <field name="payslip_id"/>
+                            <field name="net_amount"/>
+                            <field name="is_resigned"/>
+                        </list>
+                    </field>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_resonnocare_payroll_disbursement" model="ir.actions.act_window">
+        <field name="name">Payroll Disbursement</field>
+        <field name="res_model">resonnocare.payroll.disbursement</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

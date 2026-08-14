@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_res_company_front_desk,res.company.front.desk,base.model_res_company,resonnocare_base.group_front_desk,1,1,0,0
+access_resonnocare_hq_dashboard_super_admin,resonnocare.hq.dashboard,model_resonnocare_hq_dashboard,resonnocare_base.group_resonnocare_super_admin,1,1,1,1

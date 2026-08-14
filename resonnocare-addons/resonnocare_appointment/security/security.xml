@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- Super Admin: All Appointments -->
+        <record id="resonnocare_appointment_rule_super_admin" model="ir.rule">
+            <field name="name">Appointments: Super Admin - All</field>
+            <field name="model_id" ref="model_resonnocare_appointment"/>
+            <field name="groups" eval="[(4, ref('resonnocare_base.group_resonnocare_super_admin'))]"/>
+            <field name="domain_force">[(1,'=',1)]</field>
+        </record>
+
+        <!-- System Admin: All Appointments -->
+        <record id="resonnocare_appointment_rule_system_admin" model="ir.rule">
+            <field name="name">Appointments: System Admin - All</field>
+            <field name="model_id" ref="model_resonnocare_appointment"/>
+            <field name="groups" eval="[(4, ref('base.group_system'))]"/>
+            <field name="domain_force">[(1,'=',1)]</field>
+        </record>
+
+        <!-- Front Desk: Own Clinic Appointments Only -->
+        <record id="resonnocare_appointment_rule_front_desk" model="ir.rule">
+            <field name="name">Appointments: Front Desk - Own Clinic</field>
+            <field name="model_id" ref="model_resonnocare_appointment"/>
+            <field name="groups" eval="[(4, ref('resonnocare_base.group_front_desk'))]"/>
+            <field name="domain_force">[('clinic_id','=',user.employee_id.clinic_id.id)]</field>
+        </record>
+
+        <record id="resonnocare_ear_mould_form_rule_super_admin" model="ir.rule">
+            <field name="name">Ear Mould Form: Super Admin - All</field>
+            <field name="model_id" ref="model_resonnocare_ear_mould_form"/>
+            <field name="groups" eval="[(4, ref('resonnocare_base.group_resonnocare_super_admin'))]"/>
+            <field name="domain_force">[(1,'=',1)]</field>
+        </record>
+
+        <record id="resonnocare_ear_mould_form_rule_system_admin" model="ir.rule">
+            <field name="name">Ear Mould Form: System Admin - All</field>
+            <field name="model_id" ref="model_resonnocare_ear_mould_form"/>
+            <field name="groups" eval="[(4, ref('base.group_system'))]"/>
+            <field name="domain_force">[(1,'=',1)]</field>
+        </record>
+
+        <record id="resonnocare_ear_mould_form_rule_front_desk" model="ir.rule">
+            <field name="name">Ear Mould Form: Front Desk - Own Clinic</field>
+            <field name="model_id" ref="model_resonnocare_ear_mould_form"/>
+            <field name="groups" eval="[(4, ref('resonnocare_base.group_front_desk'))]"/>
+            <field name="domain_force">[('appointment_id.clinic_id','=',user.employee_id.clinic_id.id)]</field>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,9 @@
+<odoo>
+    <record id="seq_resonnocare_ear_mould_form" model="ir.sequence">
+        <field name="name">Ear Mould Form</field>
+        <field name="code">resonnocare.ear.mould.form</field>
+        <field name="prefix">EMF/%(year)s/</field>
+        <field name="padding">5</field>
+        <field name="company_id" eval="False"/>
+    </record>
+</odoo>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="view_resonnocare_uat_checklist_list" model="ir.ui.view">
+        <field name="name">resonnocare.uat.checklist.list</field>
+        <field name="model">resonnocare.uat.checklist</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="employee_id"/>
+                <field name="sequence"/>
+                <field name="name"/>
+                <field name="area"/>
+                <field name="owner_user_id"/>
+                <field name="status" widget="badge"/>
+                <field name="tested_on"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_resonnocare_uat_checklist_form" model="ir.ui.view">
+        <field name="name">resonnocare.uat.checklist.form</field>
+        <field name="model">resonnocare.uat.checklist</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_mark_passed" type="object" string="Mark Passed" class="btn-primary" invisible="status == 'passed'"/>
+                    <button name="action_mark_failed" type="object" string="Mark Failed" class="btn-secondary" invisible="status == 'failed'"/>
+                    <field name="status" widget="statusbar" statusbar_visible="pending,passed,failed"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="employee_id"/>
+                            <field name="sequence"/>
+                            <field name="name"/>
+                            <field name="area"/>
+                        </group>
+                        <group>
+                            <field name="owner_user_id"/>
+                            <field name="tested_on" readonly="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="note"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_resonnocare_uat_checklist" model="ir.actions.act_window">
+        <field name="name">UAT Checklist</field>
+        <field name="res_model">resonnocare.uat.checklist</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>
+

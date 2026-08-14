@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <menuitem id="menu_resonnocare_hq_dashboard" name="HQ Dashboard" parent="resonnocare_base.menu_resonnocare_root" action="action_resonnocare_hq_dashboard" sequence="1" groups="resonnocare_base.group_resonnocare_super_admin"/>
+
+</odoo>

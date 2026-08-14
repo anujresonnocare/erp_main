@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- Wizard Form View -->
+    <record id="view_patient_registration_wizard_form" model="ir.ui.view">
+        <field name="name">resonnocare.patient.registration.wizard.form</field>
+        <field name="model">resonnocare.patient.registration.wizard</field>
+        <field name="arch" type="xml">
+            <form string="New Patient Registration" create="true" edit="true" delete="false">
+                <field name="state" invisible="1"/>
+                <field name="otp_generated" invisible="1"/>
+                <field name="otp_required" invisible="1"/>
+                <field name="otp_code" invisible="1"/>
+                <field name="crm_lead_id" invisible="1"/>
+                <field name="matched_expected_walkin_id" invisible="1"/>
+
+                <sheet>
+                    <!-- STEP 1: OTP VERIFICATION -->
+                    <div invisible="state != 'otp'">
+                        <div class="text-center mb-4">
+                            <h2>Phone Verification</h2>
+                            <p class="text-muted">Enter patient's phone number to verify and register.</p>
+                        </div>
+
+                        <group>
+                            <field name="phone"
+                            
+                                   placeholder="e.g. 9876543210"
+                                   required="state == 'otp'"
+                                   options="{'mask': '0000000000'}"/>
+
+                        </group>
+
+                        <group invisible="not otp_generated">
+                            <field name="otp_input" placeholder="Enter OTP" force_save="1" options="{'mask': '000000'}"/>
+                        </group>
+
+                                            
+                        <div invisible="not otp_generated or not otp_required" class="alert alert-info" role="alert">
+                            OTP sent to <strong><field name="phone" readonly="1"/></strong>.
+                        </div>
+
+                        <!-- Non-B2C: Mock OTP hint -->
+                        <div invisible="not otp_generated or otp_required" class="alert alert-warning" role="alert">
+                            Mock OTP code is <b>222222</b>
+                        </div>
+                    </div>
+
+                    <!-- STEP 2: REGISTRATION FORM -->
+                    <div invisible="state != 'info'">
+                        <div class="alert alert-info" role="alert" invisible="not matched_expected_walkin_id">
+                            Matched Expected Walk-in: <field name="matched_expected_walkin_id" readonly="1"/>
+                        </div>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" placeholder="Full Name" required="state == 'info'"/>
+                            </h1>
+                        </div>
+
+                        <group string="Identity">
+                            <group>
+                                <field name="dob" required="state == 'info'"/>
+                                <field name="gender" required="state == 'info'"/>
+                            </group>
+                            <group>
+                                <field name="phone"/>
+                            </group>
+                        </group>
+
+                        <group string="Contact Details">
+                            <group>
+                                <field name="email" placeholder="email@example.com"/>
+                                <field name="alternate_mobile" placeholder="Secondary Phone"/>
+                            </group>
+                            <group>
+                                <label for="street" string="Address"/>
+                                <div class="o_address_format">
+                                    <field name="street" placeholder="Street..." class="o_address_street" required="state == 'info'"/>
+                                    <field name="city" placeholder="City" class="o_address_city" required="state == 'info'"/>
+                                    <field name="state_id" class="o_address_state" placeholder="State" options="{'no_open': True, 'no_create': True}" required="state == 'info'"/>
+                                    <field name="zip_code" placeholder="Pincode" class="o_address_zip" required="state == 'info'"/>
+                                </div>
+                            </group>
+                        </group>
+
+                        <group string="Visit Context">
+                            <group>
+                                <field name="visit_type" widget="radio" options="{'horizontal': true}"/>
+                                <field name="referral_source"/>
+                            </group>
+                            <group>
+                                <field name="visit_reason" placeholder="Why is the patient visiting today?"/>
+                            </group>
+                        </group>
+
+                        <group string="Additional Information" col="2">
+
+                            <field name="occupation"/>
+                            <field name="health_expense_management"/>
+                            <field name="accompanied_by" widget="radio"/>
+                            <field name="heard_about_resonnocare"/>
+
+                        </group>
+
+                        <group string="Case History" col="2">
+
+                            <group string="About Your Ears">
+
+                                <field name="ear_infection_history" widget="radio"/>
+                                <field name="ear_infection_details"
+                                    invisible="ear_infection_history != 'yes'"/>
+
+                                <field name="difficulty_following_conversation" widget="radio"/>
+
+                                <field name="sudden_hearing_loss" widget="radio"/>
+
+                                <field name="dizziness" widget="radio"/>
+
+                                <field name="ear_pain" widget="radio"/>
+                                <field name="ear_pain_details"
+                                    invisible="ear_pain != 'yes'"/>
+
+                                <field name="tinnitus" widget="radio"/>
+
+                                <field name="noise_exposure" widget="radio"/>
+
+                                <field name="known_hearing_loss_cause" widget="radio"/>
+                                <field name="known_hearing_loss_details"
+                                    invisible="known_hearing_loss_cause != 'yes'"/>
+
+                                <field name="ear_surgery_history" widget="radio"/>
+                                <field name="ear_surgery_details"
+                                    invisible="ear_surgery_history != 'yes'"/>
+
+                                <field name="memory_or_recall_issues" widget="radio"/>
+
+                                <field name="long_conversation_difficulty" widget="radio"/>
+
+                                <field name="other_significant_medical_problems"/>
+
+                            </group>
+
+                            
+                            <!-- About Communication -->
+                            <group string="About Your Communication">
+
+                                <field name="communication_repetition_home_office"
+                                    widget="radio" options="{'horizontal': true}"/>
+
+                                <field name="communication_specific_speech_sounds"
+                                    widget="radio" options="{'horizontal': true}"/>
+
+                                <field name="communication_crowd_noise"
+                                    widget="radio" options="{'horizontal': true}"/>
+
+                                <field name="communication_telephone"
+                                    widget="radio" options="{'horizontal': true}"/>
+
+                                <field name="communication_tv_loud_volume"
+                                    widget="radio" options="{'horizontal': true}"/>
+
+                                <field name="communication_distance_vague"
+                                    widget="radio" options="{'horizontal': true}"/>
+
+                                <field name="communication_other_situations"
+                                    placeholder="Describe other situations where speech is not heard clearly"/>
+
+                            </group>
+
+
+                            <group string="Take Action on Hearing Loss">
+
+                                <field name="family_hearing_problem" widget="radio"/>
+                                <field name="family_hearing_problem_details"
+                                    invisible="family_hearing_problem != 'yes'"/>
+
+                                <field name="others_notice_hearing_problem" widget="radio"/>
+
+                                <field name="used_hearing_aid_before" widget="radio"/>
+                                <field name="used_hearing_aid_details"
+                                    invisible="used_hearing_aid_before != 'yes'"/>
+
+                                <field name="important_to_improve_hearing" widget="radio"/>
+
+                                <field name="interested_in_hearing_aid" widget="radio"/>
+
+                                <field name="happy_with_hearing_status" widget="radio"/>
+
+                                <field name="consent_hearing_aid_info" widget="radio"/>
+
+                            </group>
+                            
+                            <!-- ========================= -->
+                            <!-- Additional Information -->
+                            <!-- ========================= -->
+                            <group string="Additional Notes">
+
+                                <field name="additional_information"
+                                    placeholder="Any other information you would like to share"/>
+
+                                <field name="referring_doctor"
+                                    placeholder="Referring doctor's name"/>
+
+                            </group>
+
+
+
+                        </group>
+                        
+                    </div>
+
+                    <footer>
+                        <!-- Step 1 Buttons (OTP Step) - Shows based on state set by clinic type -->
+                        <button string="Send OTP" name="action_send_otp" type="object" class="btn-primary" invisible="state != 'otp' or otp_generated"/>
+
+                        <button string="Verify OTP" name="action_verify_otp" type="object" class="btn-primary" invisible="state != 'otp' or not otp_generated"/>
+
+                        <!-- Step 2 Buttons (Registration) -->
+                        <button string="Register Patient" name="action_register_patient" type="object" class="btn-primary" invisible="state != 'info'"/>
+
+                        <button string="Cancel" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Wizard Action -->
+    <record id="action_open_patient_registration" model="ir.actions.act_window">
+        <field name="name">Register Patient</field>
+        <field name="res_model">resonnocare.patient.registration.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_patient_registration_wizard_form"/>
+        <field name="target">new</field>
+        <field name="context">{'form_view_initial_mode': 'edit', 'edit': True}</field>
+        <field name="binding_model_id" ref="model_resonnocare_patient_registration_wizard"/>
+    </record>
+
+</odoo>

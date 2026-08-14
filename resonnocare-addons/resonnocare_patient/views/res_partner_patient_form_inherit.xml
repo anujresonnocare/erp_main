@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="view_res_partner_patient_form_portal_link" model="ir.ui.view">
+        <field name="name">res.partner.patient.form.portal.link</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="resonnocare_frontdesk.view_res_partner_patient_form"/>
+        <field name="groups_id" eval="[(5, 0, 0)]"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[hasclass('oe_title')]" position="inside">
+                <div class="mt-2">
+                    <button
+                        name="action_generate_portal_signup_link"
+                        type="object"
+                        string="Generate Patient Portal Link"
+                        class="btn btn-primary"
+                    />
+                </div>
+            </xpath>
+        </field>
+    </record>
+</odoo>

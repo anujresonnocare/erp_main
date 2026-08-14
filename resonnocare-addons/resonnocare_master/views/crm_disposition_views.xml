@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- ================= -->
+    <!-- TREE VIEW -->
+    <!-- ================= -->
+    <record id="view_crm_disposition_tree" model="ir.ui.view">
+        <field name="name">resonnocare.crm.disposition.tree</field>
+        <field name="model">resonnocare.crm.disposition</field>
+        <field name="arch" type="xml">
+            <list string="Call Dispositions" multi_edit="0">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="rule_definition"/>
+                <field name="follow_up_days"/>
+                <field name="max_attempts"/>
+                <field name="lead_relevant"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ================= -->
+    <!-- FORM VIEW -->
+    <!-- ================= -->
+    <record id="view_crm_disposition_form" model="ir.ui.view">
+        <field name="name">resonnocare.crm.disposition.form</field>
+        <field name="model">resonnocare.crm.disposition</field>
+        <field name="arch" type="xml">
+            <form string="Call">
+                <sheet>
+
+                    <widget name="web_ribbon"
+                            title="Archived"
+                            bg_color="bg-danger"
+                            invisible="active"/>
+
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h3>
+                            <field name="name"/>
+                        </h3>
+                    </div>
+
+                    <div class="oe_title">
+                        <label for="rule_definition"/>
+                        <h4>
+                            <field name="rule_definition"/>
+                        </h4>
+                    </div>                    
+
+                    <group>
+                        <group string="Follow-up Rules">
+                            <field name="follow_up_days"/>
+                            <field name="max_attempts"/>
+                            <field name="lead_relevant"/>
+                        </group>
+
+                        <group string="Admin">
+                            <field name="sequence"/>
+                            <field name="active"/>
+                        </group>
+                    </group>
+
+                    <div class="alert alert-info mt16">
+                        <strong>Note:</strong>
+                        Follow-up logic and churn behaviour are driven by this configuration.
+                    </div>
+
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ================= -->
+    <!-- ACTION -->
+    <!-- ================= -->
+    <record id="action_crm_disposition" model="ir.actions.act_window">
+        <field name="name">Call Dispositions</field>
+        <field name="res_model">resonnocare.crm.disposition</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

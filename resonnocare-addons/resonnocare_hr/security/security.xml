@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- Super Admin can see all employees -->
+        <record id="hr_employee_rule_super_admin" model="ir.rule">
+            <field name="name">Employees: Super Admin - All Access</field>
+            <field name="model_id" ref="hr.model_hr_employee"/>
+            <field name="groups" eval="[(4, ref('resonnocare_base.group_resonnocare_super_admin'))]"/>
+            <field name="domain_force">[(1,'=',1)]</field>
+        </record>
+
+        <!-- HR can see all employees -->
+        <record id="hr_employee_rule_hr" model="ir.rule">
+            <field name="name">Employees: HR - All Access</field>
+            <field name="model_id" ref="hr.model_hr_employee"/>
+            <field name="groups" eval="[(4, ref('resonnocare_base.group_resonnocare_hr'))]"/>
+            <field name="domain_force">[(1,'=',1)]</field>
+        </record>
+
+        <!-- Front Desk can only read employees from their clinic -->
+        <record id="hr_employee_rule_front_desk" model="ir.rule">
+            <field name="name">Employees: Front Desk - Own Clinic Only</field>
+            <field name="model_id" ref="hr.model_hr_employee"/>
+            <field name="groups" eval="[(4, ref('resonnocare_base.group_front_desk'))]"/>
+            <field name="domain_force">[('clinic_id', '=', user.employee_id.clinic_id.id)]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Regular users can see employees from their clinic -->
+        <record id="hr_employee_rule_user" model="ir.rule">
+            <field name="name">Employees: User - Own Clinic</field>
+            <field name="model_id" ref="hr.model_hr_employee"/>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+            <field name="domain_force">[
+                ('company_id','in',company_ids),
+                ('id', '=', user.employee_id.id)
+            ]</field>
+        </record>
+
+        <!-- Front Desk: Own Departments Only -->
+        <record id="hr_department_rule_front_desk" model="ir.rule">
+            <field name="name">Departments: Front Desk - Own Clinic Only</field>
+            <field name="model_id" ref="hr.model_hr_department"/>
+            <field name="groups" eval="[(4, ref('resonnocare_base.group_front_desk'))]"/>
+            <field name="domain_force">[('clinic_id', '=', user.employee_id.clinic_id.id)]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Handbook Versions: HR and Super Admin can fully manage -->
+        <record id="resonnocare_hr_handbook_version_rule_hr" model="ir.rule">
+            <field name="name">Handbook Version: HR - All Access</field>
+            <field name="model_id" ref="model_resonnocare_hr_handbook_version"/>
+            <field name="groups" eval="[(4, ref('resonnocare_base.group_resonnocare_hr')), (4, ref('resonnocare_base.group_resonnocare_super_admin'))]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+        </record>
+
+        <!-- Handbook Versions: Employees can only read published version -->
+        <record id="resonnocare_hr_handbook_version_rule_user" model="ir.rule">
+            <field name="name">Handbook Version: User - Published Only</field>
+            <field name="model_id" ref="model_resonnocare_hr_handbook_version"/>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+            <field name="domain_force">[('state', '=', 'published')]</field>
+        </record>
+
+        <!-- Handbook Acceptance: HR and Super Admin can see all -->
+        <record id="resonnocare_hr_handbook_acceptance_rule_hr" model="ir.rule">
+            <field name="name">Handbook Acceptance: HR - All Access</field>
+            <field name="model_id" ref="model_resonnocare_hr_handbook_acceptance"/>
+            <field name="groups" eval="[(4, ref('resonnocare_base.group_resonnocare_hr')), (4, ref('resonnocare_base.group_resonnocare_super_admin'))]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+        </record>
+
+        <!-- Handbook Acceptance: Employee can only see own acknowledgment -->
+        <record id="resonnocare_hr_handbook_acceptance_rule_user" model="ir.rule">
+            <field name="name">Handbook Acceptance: User - Own Record Only</field>
+            <field name="model_id" ref="model_resonnocare_hr_handbook_acceptance"/>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+            <field name="domain_force">[('employee_id', '=', user.employee_id.id)]</field>
+        </record>
+
+        <!-- Handbook Accept Wizard: user can only access their own transient record -->
+        <record id="resonnocare_hr_handbook_accept_wizard_rule_user" model="ir.rule">
+            <field name="name">Handbook Accept Wizard: User Own</field>
+            <field name="model_id" ref="model_resonnocare_hr_handbook_accept_wizard"/>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+            <field name="domain_force">[('user_id', '=', user.id)]</field>
+        </record>
+
+        <!-- Education: HR and super admin can see all -->
+        <record id="resonnocare_hr_education_rule_hr" model="ir.rule">
+            <field name="name">Education: HR - All Access</field>
+            <field name="model_id" ref="model_resonnocare_hr_education"/>
+            <field name="groups" eval="[(4, ref('resonnocare_base.group_resonnocare_hr')), (4, ref('resonnocare_base.group_resonnocare_super_admin'))]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+        </record>
+
+        <!-- Education: users can access only own profile lines -->
+        <record id="resonnocare_hr_education_rule_user" model="ir.rule">
+            <field name="name">Education: User - Own Employee Only</field>
+            <field name="model_id" ref="model_resonnocare_hr_education"/>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+            <field name="domain_force">[('employee_id.user_id', '=', user.id)]</field>
+        </record>
+
+        <!-- Experience: HR and super admin can see all -->
+        <record id="resonnocare_hr_experience_rule_hr" model="ir.rule">
+            <field name="name">Experience: HR - All Access</field>
+            <field name="model_id" ref="model_resonnocare_hr_experience"/>
+            <field name="groups" eval="[(4, ref('resonnocare_base.group_resonnocare_hr')), (4, ref('resonnocare_base.group_resonnocare_super_admin'))]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+        </record>
+
+        <!-- Experience: users can access only own profile lines -->
+        <record id="resonnocare_hr_experience_rule_user" model="ir.rule">
+            <field name="name">Experience: User - Own Employee Only</field>
+            <field name="model_id" ref="model_resonnocare_hr_experience"/>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+            <field name="domain_force">[('employee_id.user_id', '=', user.id)]</field>
+        </record>
+
+        <!-- Licenses: HR and super admin can see all -->
+        <record id="resonnocare_hr_license_rule_hr" model="ir.rule">
+            <field name="name">License: HR - All Access</field>
+            <field name="model_id" ref="model_resonnocare_hr_license"/>
+            <field name="groups" eval="[(4, ref('resonnocare_base.group_resonnocare_hr')), (4, ref('resonnocare_base.group_resonnocare_super_admin'))]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+        </record>
+
+        <!-- Licenses: users can access only own profile lines -->
+        <record id="resonnocare_hr_license_rule_user" model="ir.rule">
+            <field name="name">License: User - Own Employee Only</field>
+            <field name="model_id" ref="model_resonnocare_hr_license"/>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+            <field name="domain_force">[('employee_id.user_id', '=', user.id)]</field>
+        </record>
+
+        <!-- Attendance summary: employee + manager scope -->
+        <record id="resonnocare_attendance_summary_rule_user_scope" model="ir.rule">
+            <field name="name">Attendance Summary: User Scope</field>
+            <field name="model_id" ref="model_resonnocare_attendance_summary"/>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+            <field name="domain_force">[
+                '|',
+                ('employee_id.user_id', '=', user.id),
+                '|',
+                ('employee_id.parent_id.user_id', '=', user.id),
+                ('employee_id.leave_manager_id.user_id', '=', user.id)
+            ]</field>
+        </record>
+
+        <!-- Attendance summary: HR + super admin full scope -->
+        <record id="resonnocare_attendance_summary_rule_hr_all" model="ir.rule">
+            <field name="name">Attendance Summary: HR All</field>
+            <field name="model_id" ref="model_resonnocare_attendance_summary"/>
+            <field name="groups" eval="[(4, ref('resonnocare_base.group_resonnocare_hr')), (4, ref('resonnocare_base.group_resonnocare_super_admin'))]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+        </record>
+
+        <!-- Regularization: employee can access own requests -->
+        <record id="resonnocare_attendance_regularization_rule_user_own" model="ir.rule">
+            <field name="name">Attendance Regularization: Own</field>
+            <field name="model_id" search="[('model', '=', 'resonnocare.attendance.regularization')]"/>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+            <field name="domain_force">[('employee_id.user_id', '=', user.id)]</field>
+        </record>
+
+        <!-- Regularization: manager can access direct report requests -->
+        <record id="resonnocare_attendance_regularization_rule_user_team" model="ir.rule">
+            <field name="name">Attendance Regularization: Team</field>
+            <field name="model_id" search="[('model', '=', 'resonnocare.attendance.regularization')]"/>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+            <field name="domain_force">['|', ('employee_id.parent_id.user_id', '=', user.id), ('employee_id.leave_manager_id.user_id', '=', user.id)]</field>
+        </record>
+
+        <!-- Regularization: HR + Super Admin all -->
+        <record id="resonnocare_attendance_regularization_rule_hr_all" model="ir.rule">
+            <field name="name">Attendance Regularization: HR All</field>
+            <field name="model_id" search="[('model', '=', 'resonnocare.attendance.regularization')]"/>
+            <field name="groups" eval="[(4, ref('resonnocare_base.group_resonnocare_hr')), (4, ref('resonnocare_base.group_resonnocare_super_admin'))]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+        </record>
+
+        <!-- Regularization ACLs: model lookup by technical name to avoid xmlid timing issues -->
+        <record id="access_resonnocare_attendance_regularization_super_admin_xml" model="ir.model.access">
+            <field name="name">resonnocare.attendance.regularization.super.admin.xml</field>
+            <field name="model_id" search="[('model', '=', 'resonnocare.attendance.regularization')]"/>
+            <field name="group_id" ref="resonnocare_base.group_resonnocare_super_admin"/>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_unlink" eval="1"/>
+        </record>
+
+        <record id="access_resonnocare_attendance_regularization_hr_xml" model="ir.model.access">
+            <field name="name">resonnocare.attendance.regularization.hr.xml</field>
+            <field name="model_id" search="[('model', '=', 'resonnocare.attendance.regularization')]"/>
+            <field name="group_id" ref="resonnocare_base.group_resonnocare_hr"/>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_unlink" eval="1"/>
+        </record>
+
+        <record id="access_resonnocare_attendance_regularization_user_xml" model="ir.model.access">
+            <field name="name">resonnocare.attendance.regularization.user.xml</field>
+            <field name="model_id" search="[('model', '=', 'resonnocare.attendance.regularization')]"/>
+            <field name="group_id" ref="base.group_user"/>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+
+        <!-- Time Off visibility: employee must see only own records -->
+        <record id="resonnocare_hr_leave_rule_user_own" model="ir.rule">
+            <field name="name">Time Off: User Own Leave</field>
+            <field name="model_id" ref="hr_holidays.model_hr_leave"/>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+            <field name="domain_force">[('employee_id.user_id', '=', user.id)]</field>
+        </record>
+
+        <record id="resonnocare_hr_leave_allocation_rule_user_own" model="ir.rule">
+            <field name="name">Time Off: User Own Allocation</field>
+            <field name="model_id" ref="hr_holidays.model_hr_leave_allocation"/>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+            <field name="domain_force">[('employee_id.user_id', '=', user.id)]</field>
+        </record>
+
+        <!-- Manager scope for leave/allocations -->
+        <record id="resonnocare_hr_leave_rule_manager_scope" model="ir.rule">
+            <field name="name">Time Off: Manager Team Scope</field>
+            <field name="model_id" ref="hr_holidays.model_hr_leave"/>
+            <field name="groups" eval="[(4, ref('hr_holidays.group_hr_holidays_user')), (4, ref('hr_holidays.group_hr_holidays_manager'))]"/>
+            <field name="domain_force">[
+                '|',
+                ('employee_id.user_id', '=', user.id),
+                '|',
+                ('employee_id.parent_id.user_id', '=', user.id),
+                ('employee_id.leave_manager_id.user_id', '=', user.id)
+            ]</field>
+        </record>
+
+        <record id="resonnocare_hr_leave_allocation_rule_manager_scope" model="ir.rule">
+            <field name="name">Time Off Allocation: Manager Team Scope</field>
+            <field name="model_id" ref="hr_holidays.model_hr_leave_allocation"/>
+            <field name="groups" eval="[(4, ref('hr_holidays.group_hr_holidays_user')), (4, ref('hr_holidays.group_hr_holidays_manager'))]"/>
+            <field name="domain_force">[
+                '|',
+                ('employee_id.user_id', '=', user.id),
+                '|',
+                ('employee_id.parent_id.user_id', '=', user.id),
+                ('employee_id.leave_manager_id.user_id', '=', user.id)
+            ]</field>
+        </record>
+
+        <!-- HR and super admin full scope -->
+        <record id="resonnocare_hr_leave_rule_hr_all" model="ir.rule">
+            <field name="name">Time Off: HR All</field>
+            <field name="model_id" ref="hr_holidays.model_hr_leave"/>
+            <field name="groups" eval="[(4, ref('resonnocare_base.group_resonnocare_hr')), (4, ref('resonnocare_base.group_resonnocare_super_admin'))]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+        </record>
+
+        <record id="resonnocare_hr_leave_allocation_rule_hr_all" model="ir.rule">
+            <field name="name">Time Off Allocation: HR All</field>
+            <field name="model_id" ref="hr_holidays.model_hr_leave_allocation"/>
+            <field name="groups" eval="[(4, ref('resonnocare_base.group_resonnocare_hr')), (4, ref('resonnocare_base.group_resonnocare_super_admin'))]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+        </record>
+
+        <!-- Payroll self-service: employee can read only own payslips -->
+        <record id="resonnocare_hr_payslip_rule_user_own" model="ir.rule">
+            <field name="name">Payroll: User Own Payslip</field>
+            <field name="model_id" search="[('model', '=', 'hr.payslip')]"/>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+            <field name="domain_force">[('employee_id.user_id', '=', user.id)]</field>
+        </record>
+
+        <record id="resonnocare_hr_payslip_rule_hr_all" model="ir.rule">
+            <field name="name">Payroll: HR/Admin All Payslips</field>
+            <field name="model_id" search="[('model', '=', 'hr.payslip')]"/>
+            <field name="groups" eval="[(4, ref('resonnocare_base.group_resonnocare_hr')), (4, ref('resonnocare_base.group_resonnocare_super_admin'))]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+        </record>
+
+        <record id="access_resonnocare_hr_payslip_user_readonly" model="ir.model.access">
+            <field name="name">hr.payslip.user.readonly</field>
+            <field name="model_id" search="[('model', '=', 'hr.payslip')]"/>
+            <field name="group_id" ref="base.group_user"/>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+
+        <!-- Payroll claims -->
+        <record id="resonnocare_payroll_claim_rule_user_own" model="ir.rule">
+            <field name="name">Payroll Claim: User Own</field>
+            <field name="model_id" search="[('model', '=', 'resonnocare.payroll.claim')]"/>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+            <field name="domain_force">[('employee_id.user_id', '=', user.id)]</field>
+        </record>
+
+        <record id="resonnocare_payroll_claim_rule_hr_all" model="ir.rule">
+            <field name="name">Payroll Claim: HR All</field>
+            <field name="model_id" search="[('model', '=', 'resonnocare.payroll.claim')]"/>
+            <field name="groups" eval="[(4, ref('resonnocare_base.group_resonnocare_hr')), (4, ref('resonnocare_base.group_resonnocare_super_admin'))]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+        </record>
+
+    </data>
+</odoo>

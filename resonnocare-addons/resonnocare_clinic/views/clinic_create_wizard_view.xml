@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- Wizard Line Tree -->
+    <record id="view_clinic_create_wizard_line_list" model="ir.ui.view">
+        <field name="name">clinic.create.wizard.line.list</field>
+        <field name="model">resonnocare.clinic.create.wizard.line</field>
+        <field name="arch" type="xml">
+            <list editable="bottom" create="0" delete="0">
+                <field name="diagnostic_item_id" readonly="1" force_save="1"/>
+                <field name="mrp"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Wizard View -->
+    <record id="clinic_create_wizard_view" model="ir.ui.view">
+        <field name="name">clinic.create.wizard</field>
+        <field name="model">resonnocare.clinic.create.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Create Clinic">
+                <!-- <group string="Select Company">
+                    <field name="company_id" required="1"/>
+                </group> -->
+
+                <group string="Clinic Type">
+                    <field name="clinic_type"/>
+                    <field name="clinic_logo"
+                        widget="image"
+                        class="oe_avatar"
+                        invisible="clinic_type != 'h'"/>
+                    <field name="clinic_subtype" invisible="clinic_type == 'coco'" required="clinic_type in ('h', 'sis')"/>
+                    <field name="clinic_category" placeholder="category"/>
+                    <field name="partner_name" invisible="clinic_type == 'coco'" required="clinic_type in ('h', 'sis')" placeholder="Partner name..."/>
+                
+                </group>
+                
+                <group string="State HQ Information">
+                    <field name="state_hq_name" placeholder="State Head Quarter Name"/>
+                    <field name="state_gst" placeholder="State GST Number"/>
+                </group>
+
+                <group string="State HQ Address" colspan="2">
+                    <field name="state_hq_address" placeholder="Address of State HQ" nolabel="1"/>
+                </group>
+                
+                <group string="Diagnostic Tests">
+                    <field name="diagnostic_item_ids" widget="many2many_tags"/>
+                </group>
+
+                <group string="Diagnostic Pricing">
+                    <field name="diagnostic_pricing_line_ids"
+                        nolabel="1"
+                        widget="one2many_list"
+                        context="{'tree_view_ref': 'resonnocare_clinic.view_clinic_create_wizard_line_list'}"/>
+                </group>
+
+
+                <group string="Address Details">
+                    <group>
+                        <field name="shop_clinic_number" placeholder="Shop/Clinic Number"/>
+                        <field name="address" placeholder="Full Address"/>
+                        <field name="location" placeholder="e.g., Lajpat Nagar, Palam Vihar"/>
+                        <field name="landmark" placeholder="Nearby landmark"/>
+                    </group>
+                    <group>
+                        <field name="city" placeholder="City"/>
+                        <field name="state_id"/>
+                        <field name="country_id"/>
+                        <field name="zip" placeholder="Pin Code"/>
+                    </group>
+                </group>
+
+                <group string="Geo-Location (Optional)">
+                    <field name="clinic_latitude" placeholder="e.g., 28.5355"/>
+                    <field name="clinic_longitude" placeholder="e.g., 77.2910"/>
+                </group>
+
+                <group string="Preview">
+                    <field name="preview_clinic_name" readonly="1"/>
+                    <field name="preview_clinic_code" readonly="1"/>
+                </group>
+
+
+
+                <footer>
+                    <button name="action_create_clinic" string="Create Clinic" type="object" class="btn-primary"/>
+                    <button string="Cancel" special="cancel" class="btn-secondary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Wizard Action -->
+    <record id="action_clinic_create_wizard" model="ir.actions.act_window">
+        <field name="name">Create New Clinic</field>
+        <field name="res_model">resonnocare.clinic.create.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+</odoo>

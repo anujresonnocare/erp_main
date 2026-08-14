@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- ========================= -->
+        <!-- MODULE CATEGORY (MUST BE FIRST) -->
+        <!-- ========================= -->
+        <record id="module_category_resonnocare" model="ir.module.category">
+            <field name="name">Resonnocare</field>
+            <field name="sequence">1</field>
+        </record>
+
+        <!-- ========================= -->
+        <!-- HQ / SUPER ADMIN (TOP LEVEL) -->
+        <!-- ========================= -->
+        <record id="group_resonnocare_super_admin" model="res.groups">
+            <field name="name">Resonnocare Super Admin</field>
+            <field name="category_id" ref="module_category_resonnocare"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <!-- ========================= -->
+        <!-- HR -->
+        <!-- ========================= -->
+        <record id="group_resonnocare_hr" model="res.groups">
+            <field name="name">HR</field>
+            <field name="category_id" ref="module_category_resonnocare"/>
+            <field name="implied_ids" eval="[
+        (4, ref('base.group_user')),
+        (4, ref('hr.group_hr_user'))
+    ]"/>
+        </record>
+
+
+        <!-- ========================= -->
+        <!-- CLINIC ADMIN -->
+        <!-- ========================= -->
+        <record id="group_clinic_admin" model="res.groups">
+            <field name="name">Clinic Admin</field>
+            <field name="category_id" ref="module_category_resonnocare"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <!-- ========================= -->
+        <!-- FRONT DESK -->
+        <!-- ========================= -->
+        <record id="group_front_desk" model="res.groups">
+            <field name="name">Front Desk</field>
+            <field name="category_id" ref="module_category_resonnocare"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <!-- ========================= -->
+        <!-- DOCTOR / AUDIOLOGIST -->
+        <!-- ========================= -->
+        <record id="group_doctor" model="res.groups">
+            <field name="name">Doctor / Audiologist</field>
+            <field name="category_id" ref="module_category_resonnocare"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <!-- ========================= -->
+        <!-- EXTERNAL DOCTOR -->
+        <!-- ========================= -->
+        <record id="group_external_doctor" model="res.groups">
+            <field name="name">External Doctor</field>
+            <field name="category_id" ref="module_category_resonnocare"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_portal'))]"/>
+        </record>
+
+        <!-- ========================= -->
+        <!-- CRM / CALL CENTRE -->
+        <!-- ========================= -->
+        <record id="group_crm" model="res.groups">
+            <field name="name">CRM / Call Centre</field>
+            <field name="category_id" ref="module_category_resonnocare"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <!-- ========================= -->
+        <!-- PATIENT (PORTAL ONLY) -->
+        <!-- ========================= -->
+        <record id="group_patient" model="res.groups">
+            <field name="name">Patient</field>
+            <field name="category_id" ref="module_category_resonnocare"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_portal'))]"/>
+        </record>
+
+        <!-- ========================= -->
+        <!-- TECHNICIAN -->
+        <!-- ========================= -->
+        <record id="group_resonnocare_internal" model="res.groups">
+            <field name="name">Technician</field>
+            <field name="category_id" ref="module_category_resonnocare"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <!-- ========================= -->
+        <!-- RES.USERS FULL ACCESS (ADMIN/HR) -->
+        <!-- ========================= -->
+        <record id="rule_res_users_full_admin_hr" model="ir.rule">
+            <field name="name">Users: Admin/HR Full Access</field>
+            <field name="model_id" ref="base.model_res_users"/>
+            <field name="groups" eval="[
+                (4, ref('resonnocare_base.group_resonnocare_super_admin')),
+                (4, ref('resonnocare_base.group_resonnocare_hr')),
+                (4, ref('base.group_system'))
+            ]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+        </record>
+
+    </data>
+</odoo>

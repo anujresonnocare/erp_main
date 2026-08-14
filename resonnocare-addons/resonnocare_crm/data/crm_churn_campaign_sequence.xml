@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="seq_resonnocare_crm_churn_campaign" model="ir.sequence">
+            <field name="name">Resonnocare CRM Churn Campaign</field>
+            <field name="code">resonnocare.crm.churn.campaign</field>
+            <field name="prefix">CHURN/%(year)s/</field>
+            <field name="padding">4</field>
+            <field name="company_id" eval="False"/>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_sale_return_request_form" model="ir.ui.view">
+        <field name="name">resonnocare.sale.return.request.form</field>
+        <field name="model">resonnocare.sale.return.request</field>
+        <field name="arch" type="xml">
+            <form string="Sale Return Request">
+                <header>
+                    <button name="action_submit" type="object" string="Submit" class="btn-primary" invisible="state != 'draft'"/>
+                    
+                    <button name="action_approve" type="object" string="Approve" class="btn-success" invisible="state != 'submitted'" groups="account.group_account_manager,resonnocare_admin.group_resonnocare_admin"/>
+                    <button name="action_reject" type="object" string="Reject" class="btn-danger" invisible="state != 'submitted'" groups="account.group_account_manager,resonnocare_admin.group_resonnocare_admin"/>
+                    
+                    <button name="action_set_under_cancellation" type="object" string="Set Under Cancellation" class="btn-secondary" invisible="state not in ('approved', 'pending_refund')" groups="account.group_account_manager,resonnocare_admin.group_resonnocare_admin"/>
+                    <button name="action_set_cancelled" type="object" string="Set Cancelled" class="btn-secondary" invisible="state not in ('under_cancellation', 'approved')" groups="account.group_account_manager,resonnocare_admin.group_resonnocare_admin"/>
+                    <button name="action_set_pending_refund" type="object" string="Set Pending Refund" class="btn-secondary" invisible="state not in ('cancelled', 'under_cancellation', 'approved')" groups="account.group_account_manager,resonnocare_admin.group_resonnocare_admin"/>
+                    <button name="action_set_refund_completed" type="object" string="Set Refund Completed" class="btn-success" invisible="state != 'pending_refund'" groups="account.group_account_manager,resonnocare_admin.group_resonnocare_admin"/>
+
+                    <field name="state" widget="statusbar" statusbar_visible="draft,submitted,approved,cancelled,refund_completed"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_pickings" type="object" class="oe_stat_button" icon="fa-truck" invisible="picking_count == 0">
+                            <field name="picking_count" widget="statinfo" string="Pickings"/>
+                        </button>
+                        <button name="action_view_credit_notes" type="object" class="oe_stat_button" icon="fa-pencil-square-o" invisible="credit_note_count == 0">
+                            <field name="credit_note_count" widget="statinfo" string="Credit Notes"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="sale_order_id"/>
+                            <field name="patient_id"/>
+                            <field name="clinic_id"/>
+                        </group>
+                        <group>
+                            <field name="courier_details" readonly="state != 'draft'"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="reason" readonly="state != 'draft'"/>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="activity_ids" widget="mail_activity"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_sale_return_request_tree" model="ir.ui.view">
+        <field name="name">resonnocare.sale.return.request.list</field>
+        <field name="model">resonnocare.sale.return.request</field>
+        <field name="arch" type="xml">
+            <list string="Return Requests" decoration-info="state == 'draft'" decoration-warning="state == 'submitted'" decoration-success="state == 'refund_completed'">
+                <field name="name"/>
+                <field name="sale_order_id"/>
+                <field name="patient_id"/>
+                <field name="clinic_id"/>
+                <field name="state"/>
+                <field name="create_date" string="Created On"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_sale_return_request" model="ir.actions.act_window">
+        <field name="name">Return Requests</field>
+        <field name="res_model">resonnocare.sale.return.request</field>
+        <field name="view_mode">list,form</field>
+    </record>
+    
+    <!-- We can add a menu item for Finance / Admin to view Return Requests -->
+    <menuitem id="menu_sale_return_request" name="Return Requests" parent="sale.sale_menu_root" action="action_sale_return_request" sequence="20"/>
+</odoo>

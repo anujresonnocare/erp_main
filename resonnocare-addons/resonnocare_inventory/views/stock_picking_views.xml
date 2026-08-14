@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="view_resonnocare_stock_picking_tree_stn" model="ir.ui.view">
+        <field name="name">stock.picking.list.resonnocare.grn</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.vpicktree"/>
+        <field name="groups_id" eval="[(5, 0, 0)]"/>
+        <field name="arch" type="xml">
+            <field name="name" position="after">
+                <field name="supply_warehouse_id" optional="show"/>
+                <field name="supply_clinic_id" optional="show"/>
+                <field name="stn_number" optional="show"/>
+                <field name="courier_name" optional="hide"/>
+                <field name="docket_number" optional="hide"/>
+                <field name="docket_date" optional="hide"/>
+            </field>
+            <field name="origin" position="after">
+                <field name="stn_acknowledged_by_id" optional="hide"/>
+                <field name="stn_acknowledged_on" optional="hide"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="view_resonnocare_stock_picking_form_stn" model="ir.ui.view">
+        <field name="name">stock.picking.form.resonnocare.grn</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.view_picking_form"/>
+        <field name="groups_id" eval="[(5, 0, 0)]"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button
+                    name="action_mark_dispatched"
+                    type="object"
+                    string="Mark Dispatched"
+                    class="btn-primary"
+                    invisible="picking_type_code != 'internal' or not is_clinic_supply or state in ('done','cancel')"
+                />
+                <button
+                    name="action_acknowledge_stn"
+                    type="object"
+                    string="Acknowledge GRN"
+                    class="btn-primary"
+                    invisible="not stn_can_acknowledge"
+                />
+                <button
+                    name="action_goods_returned_to_ho"
+                    type="object"
+                    string="Goods Returned to HO"
+                    class="btn-warning"
+                    invisible="state != 'assigned' or picking_type_code != 'incoming'"
+                    groups="resonnocare_admin.group_resonnocare_clinic_manager,resonnocare_admin.group_resonnocare_clinic_user"
+                />
+                <button
+                    name="action_grn_receive_at_ho"
+                    type="object"
+                    string="GRN (Receive at HO)"
+                    class="btn-success"
+                    invisible="state != 'assigned' or picking_type_code != 'internal'"
+                    groups="stock.group_stock_user"
+                />
+            </xpath>
+            <xpath expr="//field[@name='origin']" position="after">
+                <field name="is_clinic_supply" invisible="1"/>
+                <field name="supply_clinic_id" readonly="1"/>
+                <field name="supply_warehouse_id" readonly="1"/>
+                <field name="stn_number" readonly="1"/>
+                <field name="stn_acknowledged_by_id" readonly="1"/>
+                <field name="stn_acknowledged_on" readonly="1"/>
+                <field name="courier_name" readonly="state == 'done'"/>
+                <field name="docket_number" readonly="state == 'done'"/>
+                <field name="docket_date" readonly="state == 'done'"/>
+                <field name="docket_file_name" invisible="1"/>
+                <field name="docket_file" filename="docket_file_name" readonly="state == 'done'"/>
+                <field name="dispatch_remarks" readonly="state == 'done'"/>
+            </xpath>
+            <xpath expr="//sheet" position="inside">
+                <field name="stn_can_acknowledge" invisible="1"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_resonnocare_incoming_receipts" model="ir.actions.act_window">
+        <field name="name">GRN Acknowledgement</field>
+        <field name="res_model">stock.picking</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('picking_type_code','=','internal')]</field>
+        <field name="context">{'create': False}</field>
+    </record>
+
+    <record id="action_resonnocare_order_for_supply" model="ir.actions.act_window">
+        <field name="name">Order for Supply</field>
+        <field name="res_model">stock.picking</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('picking_type_code','=','internal'), ('is_clinic_supply','=',True), ('state','not in', ('done','cancel'))]</field>
+        <field name="context">{'create': False}</field>
+    </record>
+
+    <record id="action_resonnocare_dispatch_planning" model="ir.actions.act_window">
+        <field name="name">Dispatch Planning</field>
+        <field name="res_model">stock.picking</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('picking_type_code','=','internal'), ('is_clinic_supply','=',True), ('state','in', ('confirmed','assigned','waiting'))]</field>
+        <field name="context">{'create': False}</field>
+    </record>
+
+    <record id="action_resonnocare_goods_in_transit" model="ir.actions.act_window">
+        <field name="name">Goods in Transit</field>
+        <field name="res_model">stock.picking</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('picking_type_code','=','internal'), ('is_clinic_supply','=',True), ('state','=','done'), ('stn_acknowledged_by_id','=',False)]</field>
+        <field name="context">{'create': False}</field>
+    </record>
+
+    <record id="action_resonnocare_served_orders" model="ir.actions.act_window">
+        <field name="name">Served Orders</field>
+        <field name="res_model">stock.picking</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('picking_type_code','=','internal'), ('is_clinic_supply','=',True), ('state','=','done'), ('stn_acknowledged_by_id','!=',False)]</field>
+        <field name="context">{'create': False}</field>
+    </record>
+
+    <record id="action_open_clinic_incoming_receipts_server" model="ir.actions.server">
+        <field name="name">GRN Acknowledgement</field>
+        <field name="model_id" ref="stock.model_stock_picking"/>
+        <field name="state">code</field>
+        <field name="code">action = env["stock.picking"].action_open_clinic_incoming_receipts()</field>
+    </record>
+
+    <record id="action_open_clinic_deliveries_server" model="ir.actions.server">
+        <field name="name">Customer Deliveries</field>
+        <field name="model_id" ref="stock.model_stock_picking"/>
+        <field name="state">code</field>
+        <field name="code">action = env["stock.picking"].action_open_clinic_deliveries()</field>
+    </record>
+
+    <record id="action_open_clinic_goods_in_transit_server" model="ir.actions.server">
+        <field name="name">Goods in Transit</field>
+        <field name="model_id" ref="stock.model_stock_picking"/>
+        <field name="state">code</field>
+        <field name="code">action = env["stock.picking"].action_open_clinic_goods_in_transit()</field>
+    </record>
+
+    <record id="action_download_order_for_supply_excel_server" model="ir.actions.server">
+        <field name="name">Download Supply Excel</field>
+        <field name="model_id" ref="stock.model_stock_picking"/>
+        <field name="binding_model_id" ref="stock.model_stock_picking"/>
+        <field name="binding_view_types">list,form</field>
+        <field name="state">code</field>
+        <field name="code">action = env["stock.picking"].with_context(**env.context).action_download_order_for_supply_excel()</field>
+    </record>
+
+    <record id="action_open_docket_upload_wizard_server" model="ir.actions.server">
+        <field name="name">Bulk Docket Upload</field>
+        <field name="model_id" ref="stock.model_stock_picking"/>
+        <field name="binding_model_id" ref="stock.model_stock_picking"/>
+        <field name="binding_view_types">list,form</field>
+        <field name="state">code</field>
+        <field name="code">action = env["stock.picking"].action_open_docket_upload_wizard()</field>
+    </record>
+</odoo>

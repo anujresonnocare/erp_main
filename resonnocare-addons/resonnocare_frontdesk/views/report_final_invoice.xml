@@ -1,0 +1,480 @@
+<odoo>
+    <template id="report_final_invoice_document">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-set="clinic" t-value="o.clinic_id or o.partner_id.clinic_id"/>
+                <t t-set="clinic_type" t-value="o.clinic_id._get_effective_billing_type() if o.clinic_id else 'b2c'"/>
+                <t t-set="row_lines" t-value="o._get_b2b_report_lines() if clinic_type == 'b2b' else o._get_b2c_report_lines()"/>
+                <t t-set="hsn_rows" t-value="o._get_b2b_hsn_summary() if clinic_type == 'b2b' else o._get_b2c_hsn_summary()"/>
+                <t t-set="pay_rows" t-value="o._get_b2c_payment_lines()"/>
+
+                <t t-call="web.external_layout">
+                    <div class="page mb-4" t-if="clinic_type != 'b2b'" style="margin:0;padding:0;">
+                        <div style="font-family:Arial, Helvetica, sans-serif;font-size:12px;width:100%;box-sizing:border-box;">
+                           
+                            <h4 class="fw-bold mb-1" style="font-size:32px;letter-spacing:0.2px;text-align:center;">
+                                <span t-out="'Tax Invoice' if o._is_taxable_move() else 'Bill of Supply'"/>
+                            </h4>
+
+                            <table class="table table-sm mb-1" style="border-collapse:collapse;table-layout:fixed;border:1px solid #2a2a2a;">
+                                <tr>
+                                    <td style="width:46%;vertical-align:top;border:1px solid #2a2a2a;padding:6px 8px;line-height:1.2;">
+
+                                    <div style="display:flex;align-items:center;gap:10px;">
+                                        <div t-if="o.company_id.logo">
+                                            <img t-att-src="image_data_uri(o.company_id.logo)" style="max-height:95px;max-width:180px;"/>
+                                        </div>
+
+                                        <div>
+                                            <div style="font-size:30px;font-weight:700;letter-spacing:0.4px;line-height:1;">RESONNOCARE</div>
+                                            <div style="font-size:18px;line-height:1.05;">Health-tech Private limited</div>
+                                            <div t-if="clinic and clinic.street" t-out="clinic.street"/>
+                                            <div t-if="clinic and clinic.street2" t-out="clinic.street2"/>
+                                            <div t-if="(not clinic or (not clinic.street and not clinic.street2)) and o.company_id.street" t-out="o.company_id.street"/>
+                                            <div t-if="(not clinic or (not clinic.street and not clinic.street2)) and o.company_id.street2" t-out="o.company_id.street2"/>
+                                            <div>
+                                                <span t-if="clinic and clinic.city" t-out="clinic.city"/>
+                                                <span t-if="clinic and clinic.state_id">, <span t-out="clinic.state_id.name"/></span>
+                                                <span t-if="clinic and clinic.zip"> - <span t-out="clinic.zip"/></span>
+                                            </div>
+                                            <div t-if="(clinic and clinic.company_id and clinic.company_id.phone) or o.company_id.phone">Phone: <span t-out="(clinic and clinic.company_id and clinic.company_id.phone) or o.company_id.phone"/></div>
+                                            <div>GSTIN: <span t-out="o.company_id.vat or o.company_id.partner_id.vat or 'N/A'"/></div>
+                                        </div>
+                                    </div>
+                                    </td>
+                                    <td style="width:29%;vertical-align:top;border:1px solid #2a2a2a;padding:6px 8px;">
+                                        <div><strong>Invoice No.</strong>: <span t-out="o.name or ''"/></div>
+                                        <div><strong>Dated</strong>: <span t-field="o.invoice_date"/></div>
+                                        <div><strong>Customer Contact No.</strong>: <span t-out="o.partner_id.mobile or o.partner_id.phone or ''"/></div>
+                                    </td>
+                                    <td style="width:25%;vertical-align:top;border:1px solid #2a2a2a;padding:6px 8px;">
+                                        <div><strong>GST Treatment</strong>: <span t-out="o.gst_treatment or ''"/></div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="border:1px solid #2a2a2a;padding:6px 8px;line-height:1.2;">
+                                        <div><strong>Customer ID</strong>: <span t-out="o.partner_id.patient_id or ''"/></div>
+                                        <div><strong>Address</strong>: <span t-out="o.partner_id.contact_address or ''"/></div>
+                                        <div><strong>Phone</strong>: <span t-out="o.partner_id.mobile or o.partner_id.phone or ''"/></div>
+                                        <div t-if="o.partner_id.email">Email: <span t-out="o.partner_id.email"/></div>
+                                        <div t-if="o.partner_id.vat">GSTN: <span t-out="o.partner_id.vat"/></div>
+                                    </td>
+                                    <td colspan="2" style="border:1px solid #2a2a2a;padding:6px 8px;line-height:1.2;">
+                                        <div><strong>Other Reference(s)</strong>: <span t-out="o.invoice_origin or ''"/></div>
+                                        <div>
+                                            <strong>Patient</strong>: <span t-out="o.partner_id.name or ''"/>
+                                            <span t-if="o.partner_id.patient_id">(<span t-out="o.partner_id.patient_id"/>)</span>
+                                        </div>
+                                        <div><strong>Clinic Name</strong>: <span t-out="clinic.name or ''"/></div>
+                                        <div>
+                                            <span t-out="clinic.street or ''"/>
+                                            <span t-if="clinic.street2">, <span t-out="clinic.street2"/></span>
+                                            <span t-if="clinic.city">, <span t-out="clinic.city"/></span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <table class="table table-sm mb-0" style="border-collapse:collapse;table-layout:fixed;border:1px solid #9cc3dd;font-size:10px;">
+                                <thead>
+                                    <tr class="text-center" style="background:#d8e9f8;">
+                                        <th style="border:1px solid #9cc3dd;padding:6px 4px;">S. No</th>
+                                        <th style="border:1px solid #9cc3dd;width:12%;padding:6px 4px;">Description</th>
+                                        <th style="border:1px solid #9cc3dd;padding:6px 4px;">HSN/SAC</th>
+                                        <th style="border:1px solid #9cc3dd;width:4%;padding:6px 4px;">Item</th>
+                                        <th style="border:1px solid #9cc3dd;width:5%;padding:6px 4px;">Brand</th>
+                                        <th style="border:1px solid #9cc3dd;padding:6px 4px;">QTY</th>
+                                        <th style="border:1px solid #9cc3dd;padding:6px 4px;">MRP</th>
+                                        <th style="border:1px solid #9cc3dd;padding:6px 4px;">Total</th>
+                                        <th style="border:1px solid #9cc3dd;padding:6px 4px;">Disco unt</th>
+                                        <th style="border:1px solid #9cc3dd;padding:6px 4px;">Value</th>
+                                        <th style="border:1px solid #9cc3dd;width:3.5%;padding:2px;">CGST %</th>
+                                        <th style="border:1px solid #9cc3dd;width:8%;padding:2px;">CGST Amt</th>
+                                        <th style="border:1px solid #9cc3dd;width:3.5%;padding:2px;">SGST %</th>
+                                        <th style="border:1px solid #9cc3dd;width:8%;padding:2px;">SGST Amt</th>
+                                        <th style="border:1px solid #9cc3dd;width:3.5%;padding:2px;">IGST %</th>
+                                        <th style="border:1px solid #9cc3dd;width:8%;padding:2px;">IGST Amt</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr t-foreach="row_lines" t-as="r">
+                                        <td class="text-center" style="border:1px solid #9cc3dd;padding:6px 4px;"><span t-out="r['sl_no']"/></td>
+                                        <td style="border:1px solid #9cc3dd;padding:6px 4px;">
+                                            <span t-out="r['description']"/>
+                                            <t t-if="r.get('serial_numbers')">
+                                                <br/><span>Serial No: <span t-out="r['serial_numbers']"/></span>
+                                            </t>
+                                        </td>
+                                        <td class="text-center" style="border:1px solid #9cc3dd;padding:6px 4px;"><span t-out="r['hsn']"/></td>
+                                        <td class="text-center" style="border:1px solid #9cc3dd;padding:6px 4px;"><span t-out="r.get('item_code', '')" /></td>
+                                        <td style="border:1px solid #9cc3dd;padding:6px 4px;"><span t-out="r.get('brand', '') or r.get('manufacturer', '')"/></td>
+                                        <td class="text-end" style="border:1px solid #9cc3dd;padding:6px 4px;"><span t-out="r['qty']"/></td>
+                                        <td class="text-end" style="border:1px solid #9cc3dd;padding:6px 4px;"><span t-out="o._format_amount_compact(r['mrp'])"/></td>
+                                        <td class="text-end" style="border:1px solid #9cc3dd;padding:6px 4px;"><span t-out="o._format_amount_compact(r['total'])"/></td>
+                                        <td class="text-end" style="border:1px solid #9cc3dd;padding:6px 4px;"><span t-out="o._format_amount_compact(r['discount'])"/></td>
+                                        <td class="text-end" style="border:1px solid #9cc3dd;padding:6px 4px;"><span t-out="o._format_amount_compact(r['taxable_value'])"/></td>
+                                        <td class="text-end" style="border:1px solid #9cc3dd;white-space:nowrap;padding:2px;"><span t-out="r['cgst_rate']"/></td>
+                                        <td class="text-end" style="border:1px solid #9cc3dd;white-space:nowrap;padding:2px;"><span t-out="o._format_amount_compact(r['cgst_amount'])"/></td>
+                                        <td class="text-end" style="border:1px solid #9cc3dd;white-space:nowrap;padding:2px;"><span t-out="r['sgst_rate']"/></td>
+                                        <td class="text-end" style="border:1px solid #9cc3dd;white-space:nowrap;padding:2px;"><span t-out="o._format_amount_compact(r['sgst_amount'])"/></td>
+                                        <td class="text-end" style="border:1px solid #9cc3dd;white-space:nowrap;padding:2px;"><span t-out="r['igst_rate']"/></td>
+                                        <td class="text-end" style="border:1px solid #9cc3dd;white-space:nowrap;padding:2px;"><span t-out="o._format_amount_compact(r['igst_amount'])"/></td>
+                                    </tr>
+
+                                    <tr class="fw-bold">
+                                        <td colspan="9" class="text-end" style="border:1px solid #9cc3dd;">Total</td>
+                                        <td class="text-end" style="border:1px solid #9cc3dd; padding:6px 4px;"><span t-out="o._format_amount_compact(o.amount_untaxed)"/></td>
+                                        <td colspan="5" style="border:1px solid #9cc3dd; padding:6px 4px;"></td>
+                                        <td class="text-end" style="border:1px solid #9cc3dd;padding:6px 4px;"><span t-out="o._format_amount_compact(o.amount_total)"/></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <table class="table table-sm mb-2" style="border-collapse:collapse;table-layout:fixed;border:1px solid #9cc3dd;border-top:0;">
+                                <tr>
+                                    <td style="width:78%;border:1px solid #9cc3dd;padding:6px 4px;"><strong>Total Invoice Value (In Figure)</strong></td>
+                                    <td style="border:1px solid #9cc3dd;" class="text-end"><span t-out="o._format_amount_compact(o.amount_total)"/></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" style="border:1px solid #9cc3dd;padding:6px 4px;"><strong>Total Invoice Value (In Words)</strong>: <span t-out="o.amount_total_words or ''"/> Only</td>
+                                </tr>
+                                <tr>
+                                    <td style="border:1px solid #9cc3dd;padding:6px 4px;"><strong>Amount of Tax subject to Reverse Charges</strong></td>
+                                    <td style="border:1px solid #9cc3dd;padding:6px 4px;">-</td>
+                                </tr>
+                                <tr style="background:#5d9fda;color:#fff;font-weight:700;">
+                                    <td style="border:1px solid #4b88bf;"></td>
+                                    <td style="border:1px solid #4b88bf;" class="text-center">Total</td>
+                                </tr>
+                            </table>
+
+                            <h5 class="mt-1 mb-1">Payment Details:-</h5>
+                            <table class="table table-sm mb-2" style="border-collapse:collapse;table-layout:fixed;border:1px solid #2a2a2a;">
+                                <thead>
+                                    <tr>
+                                        <th style="padding:6px 4px;">S. No.</th>
+                                        <th style="padding:6px 4px;">Receipt No.</th>
+                                        <th style="padding:6px 4px;">Paid On</th>
+                                        <th style="padding:6px 4px;">Payment Mode</th>
+                                        <th style="padding:6px 4px;">Cheque No./Card No./Txn. Id</th>
+                                        <th style="padding:6px 4px;">Cheque Date</th>
+                                        <th class="text-end" style="padding:6px 4px;">Pay Amt</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr t-foreach="pay_rows" t-as="p">
+                                        <td style="padding:6px 4px;"><span t-out="p['sl_no']"/></td>
+                                        <td style="padding:6px 4px;"><span t-out="p['receipt_no']"/></td>
+                                        <td style="padding:6px 4px;"><span t-out="p['paid_on']"/></td>
+                                        <td style="padding:6px 4px;"><span t-out="p['payment_mode']"/></td>
+                                        <td style="padding:6px 4px;"><span t-out="p['reference']"/></td>
+                                        <td style="padding:6px 4px;"><span t-out="p['cheque_date'] or ''"/></td>
+                                        <td class="text-end" style="padding:6px 4px;"><span t-out="o._format_amount_compact(p['amount'])"/></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <h5 class="mt-2 mb-1" style="font-size:20px;">HSN Summary</h5>
+                            <table class="table table-sm mb-2" style="border-collapse:collapse;border:1px solid #2a2a2a;">
+                                <thead>
+                                    <tr>
+                                        <th style="border-bottom:1px solid #2a2a2a; padding:6px 4px;">HSN/SAC</th>
+                                        <th class="text-end" style="border-bottom:1px solid #2a2a2a; padding:6px 4px;">Quantity</th>
+                                        <th class="text-end" style="border-bottom:1px solid #2a2a2a; padding:6px 4px;">Rate %</th>
+                                        <th class="text-end" style="border-bottom:1px solid #2a2a2a; padding:6px 4px;">Taxable Value</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr t-foreach="hsn_rows" t-as="h">
+                                        <td style="padding:6px 4px;"><span t-out="h['hsn']"/></td>
+                                        <td class="text-end" style="padding:6px 4px;"><span t-out="h['qty']"/></td>
+                                        <td class="text-end" style="padding:6px 4px;"><span t-out="h['rate']"/></td>
+                                        <td class="text-end" style="padding:6px 4px;"><span t-out="o._format_amount_compact(h['taxable_value'])"/></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <table class="table table-sm" style="border-collapse:collapse;table-layout:fixed;border:1px solid #2a2a2a;">
+                                <tr>
+                                    <td style="border-bottom:1px solid #2a2a2a; padding:6px 4px;">
+                                        <strong>Declaration:</strong><br/>
+                                        We declare that this invoice shows the actual price as per the description and that all particulars are true and correct.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="border-bottom:1px solid #2a2a2a; padding:6px 4px;">
+                                        Now with standing your registration as NDNC anywhere, fully/partially blocked, you agree to receive a sales or service call from the company or its group company or associates based on information you have provided to the company.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="padding:0;">
+                                        <table style="width:100%;border-collapse:collapse;margin-top:8px;">
+                                            <tr>
+                                                <td style="width:50%;text-align:center;border-right:1px solid #2a2a2a;padding:12px 8px;">Signature of Customer</td>
+                                                <td style="width:50%;text-align:center;padding:12px 8px;">
+                                                    <div>For: Resonnocare Health-Tech Pvt Ltd.</div>
+                                                    <div style="height:28px;"></div>
+                                                    <div>Authorised Signatory</div>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                            <table class="table table-sm mb-0" style="border-collapse:collapse;">
+                                <tr>
+                                    <td style="width:50%;padding-top:2px;">
+                                        <strong>Corporate Address:</strong><br/>
+                                        <span>RESONNOCARE HEALTH-TECH PVT. LTD  403, Office Block 'C'  4th Floor – Above Retail Block R1 &amp; R5, M3M URBANA, Sector 67, Gurugram, 122101</span>
+                                        <br/>
+                                        <span t-if="o.company_id.phone">Phone: <span t-out="o.company_id.phone"/></span>
+                                    </td>
+                                    <td style="width:50%;padding-top:2px;">
+                                        <strong>Registered Address:</strong><br/>
+                                        <span t-out="o.company_id.partner_id.contact_address or ''"/>
+                                        <br/>
+                                        <span t-if="o.company_id.company_registry">CIN: <span t-out="o.company_id.company_registry"/></span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="page mb-4" t-if="clinic_type == 'b2b'" style="margin:0;padding:0;">
+                        <div style="font-family:Arial, Helvetica, sans-serif;font-size:12px;width:100%;box-sizing:border-box;">
+                           
+                            <h4 class="fw-bold mb-1" style="font-size:32px;letter-spacing:0.2px;text-align:center;">
+                                <span t-out="'Tax Invoice' if o._is_taxable_move() else 'Bill of Supply'"/>
+                            </h4>
+
+                            <table class="table table-sm mb-1" style="border-collapse:collapse;table-layout:fixed;border:1px solid #2a2a2a;">
+                               <tr>
+                                    <td style="width:46%;vertical-align:top;border:1px solid #2a2a2a;padding:6px 8px;line-height:1.2;">
+
+                                    <div style="display:flex;align-items:center;gap:10px;">
+                                        <div t-if="o.company_id.logo">
+                                            <img t-att-src="image_data_uri(o.company_id.logo)" style="max-height:95px;max-width:180px;"/>
+                                        </div>
+
+                                        <div>
+                                            <div style="font-size:30px;font-weight:700;letter-spacing:0.4px;line-height:1;">RESONNOCARE</div>
+                                            <div style="font-size:18px;line-height:1.05;">Health-tech Private limited</div>
+                                            <div t-if="clinic and clinic.street" t-out="clinic.street"/>
+                                            <div t-if="clinic and clinic.street2" t-out="clinic.street2"/>
+                                            <div t-if="(not clinic or (not clinic.street and not clinic.street2)) and o.company_id.street" t-out="o.company_id.street"/>
+                                            <div t-if="(not clinic or (not clinic.street and not clinic.street2)) and o.company_id.street2" t-out="o.company_id.street2"/>
+                                            <div>
+                                                <span t-if="clinic and clinic.city" t-out="clinic.city"/>
+                                                <span t-if="clinic and clinic.state_id">, <span t-out="clinic.state_id.name"/></span>
+                                                <span t-if="clinic and clinic.zip"> - <span t-out="clinic.zip"/></span>
+                                            </div>
+                                            <div t-if="(clinic and clinic.company_id and clinic.company_id.phone) or o.company_id.phone">Phone: <span t-out="(clinic and clinic.company_id and clinic.company_id.phone) or o.company_id.phone"/></div>
+                                            <div>GSTIN: <span t-out="o.company_id.vat or o.company_id.partner_id.vat or 'N/A'"/></div>
+                                        </div>
+                                    </div>
+                                    </td>
+                                    <td style="width:29%;vertical-align:top;border:1px solid #2a2a2a;padding:6px 8px;">
+                                        <div><strong>Invoice No.</strong>: <span t-out="o.name or ''"/></div>
+                                        <div><strong>Dated</strong>: <span t-field="o.invoice_date"/></div>
+                                        <div><strong>Customer Contact No.</strong>: <span t-out="o.partner_id.mobile or o.partner_id.phone or ''"/></div>
+                                    </td>
+                                    <td style="width:25%;vertical-align:top;border:1px solid #2a2a2a;padding:6px 8px;">
+                                        <div><strong>GST Treatment</strong>: <span t-out="o.gst_treatment or ''"/></div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="border:1px solid #2a2a2a;padding:6px 8px;line-height:1.2;">
+                                        <div><strong>Customer ID</strong>: <span t-out="o.partner_id.patient_id or ''"/></div>
+                                        <div><strong>Address</strong>: <span t-out="o.partner_id.contact_address or ''"/></div>
+                                        <div><strong>Mobile</strong>: <span t-out="o.partner_id.mobile or o.partner_id.phone or ''"/></div>
+                                        <div><strong>Email</strong>: <span t-out="o.partner_id.email or ''"/></div>
+                                        <div><strong>GSTN</strong>: <span t-out="o.partner_id.vat or ''"/></div>
+                                    </td>
+                                    <td colspan="2" style="border:1px solid #2a2a2a;padding:6px 8px;line-height:1.2;">
+                                        <div><strong>Other Reference(s)</strong>: <span t-out="o.invoice_origin or ''"/></div>
+                                        <div>
+                                            <strong>Patient Name and Patient ID</strong>: <span t-out="o.partner_id.name or ''"/>
+                                            <span t-if="o.partner_id.patient_id">(<span t-out="o.partner_id.patient_id"/>)</span>
+                                        </div>
+                                        <div><strong>Clinic Name</strong>: <span t-out="clinic.name or ''"/></div>
+                                        <div>
+                                            <strong>Address</strong>:
+                                            <span t-out="clinic.street or ''"/>
+                                            <span t-if="clinic.street2">, <span t-out="clinic.street2"/></span>
+                                            <span t-if="clinic.city">, <span t-out="clinic.city"/></span>
+                                            <span t-if="clinic.state_id">, <span t-out="clinic.state_id.name"/></span>
+                                            <span t-if="clinic.zip"> - <span t-out="clinic.zip"/></span>
+                                        </div>
+                                        <div><strong>Phone</strong>: <span t-out="(clinic.company_id.phone if clinic and clinic.company_id else '') or ''"/></div>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <table class="table table-sm mb-0" style="border-collapse:collapse;table-layout:fixed;border:1px solid #9cc3dd;font-size:10px;">
+                                <thead>
+                                    <tr class="text-center" style="background:#d8e9f8;">
+                                        <th style="border:1px solid #9cc3dd;">S. No</th>
+                                        <th style="border:1px solid #9cc3dd;">Description</th>
+                                        <th style="border:1px solid #9cc3dd;">HSN/SAC</th>
+                                        <th style="border:1px solid #9cc3dd;">Item</th>
+                                        <th style="border:1px solid #9cc3dd;">Brand</th>
+                                        <th style="border:1px solid #9cc3dd;">QTY</th>
+                                        <th style="border:1px solid #9cc3dd;">Patient Selling Price</th>
+                                        <th style="border:1px solid #9cc3dd;">Hospital Sharing %</th>
+                                        <th style="border:1px solid #9cc3dd;">Hospital Sharing (Rs)</th>
+                                        <th style="border:1px solid #9cc3dd;">Invoice Value (Rs)</th>
+                                        <th style="border:1px solid #9cc3dd;width:3.5%;padding:2px;">CGST %</th>
+                                        <th style="border:1px solid #9cc3dd;width:8%;padding:2px;">CGST Amt</th>
+                                        <th style="border:1px solid #9cc3dd;width:3.5%;padding:2px;">SGST %</th>
+                                        <th style="border:1px solid #9cc3dd;width:8%;padding:2px;">SGST Amt</th>
+                                        <th style="border:1px solid #9cc3dd;width:3.5%;padding:2px;">IGST %</th>
+                                        <th style="border:1px solid #9cc3dd;width:8%;padding:2px;">IGST Amt</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr t-foreach="row_lines" t-as="r">
+                                        <td class="text-center" style="border:1px solid #9cc3dd;"><span t-out="r['sl_no']"/></td>
+                                        <td style="border:1px solid #9cc3dd;">
+                                            <span t-out="r['description']"/>
+                                            <t t-if="r.get('serial_numbers')">
+                                                <br/><span>Serial No: <span t-out="r['serial_numbers']"/></span>
+                                            </t>
+                                        </td>
+                                        <td class="text-center" style="border:1px solid #9cc3dd;"><span t-out="r['hsn']"/></td>
+                                        <td class="text-center" style="border:1px solid #9cc3dd;"><span t-out="r['item_code']"/></td>
+                                        <td style="border:1px solid #9cc3dd;"><span t-out="r['brand']"/></td>
+                                        <td class="text-end" style="border:1px solid #9cc3dd;"><span t-out="r['qty']"/></td>
+                                        <td class="text-end" style="border:1px solid #9cc3dd;"><span t-out="o._format_amount_compact(r['patient_selling_price'])"/></td>
+                                        <td class="text-end" style="border:1px solid #9cc3dd;"><span t-out="r['hospital_sharing_pct']"/>%</td>
+                                        <td class="text-end" style="border:1px solid #9cc3dd;"><span t-out="o._format_amount_compact(r['hospital_sharing_amount'])"/></td>
+                                        <td class="text-end" style="border:1px solid #9cc3dd;"><span t-out="o._format_amount_compact(r['invoice_value'])"/></td>
+                                        <td class="text-end" style="border:1px solid #9cc3dd;white-space:nowrap;padding:2px;"><span t-out="r['cgst_rate']"/></td>
+                                        <td class="text-end" style="border:1px solid #9cc3dd;white-space:nowrap;padding:2px;"><span t-out="o._format_amount_compact(r['cgst_amount'])"/></td>
+                                        <td class="text-end" style="border:1px solid #9cc3dd;white-space:nowrap;padding:2px;"><span t-out="r['sgst_rate']"/></td>
+                                        <td class="text-end" style="border:1px solid #9cc3dd;white-space:nowrap;padding:2px;"><span t-out="o._format_amount_compact(r['sgst_amount'])"/></td>
+                                        <td class="text-end" style="border:1px solid #9cc3dd;white-space:nowrap;padding:2px;"><span t-out="r['igst_rate']"/></td>
+                                        <td class="text-end" style="border:1px solid #9cc3dd;white-space:nowrap;padding:2px;"><span t-out="o._format_amount_compact(r['igst_amount'])"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="3" style="border:1px solid #9cc3dd;"></td>
+                                        <td colspan="7" style="border:1px solid #9cc3dd;"><strong>Sharing Adjustment (if Any)</strong></td>
+                                        <td colspan="6" style="border:1px solid #9cc3dd;"></td>
+                                    </tr>
+                                    <tr class="fw-bold">
+                                        <td colspan="9" class="text-end" style="border:1px solid #9cc3dd;">Total</td>
+                                        <td class="text-end" style="border:1px solid #9cc3dd;"><span t-out="o._format_amount_compact(o.amount_untaxed)"/></td>
+                                        <td colspan="5" style="border:1px solid #9cc3dd;"></td>
+                                        <td class="text-end" style="border:1px solid #9cc3dd;"><span t-out="o._format_amount_compact(o.amount_total)"/></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <table class="table table-sm mb-2" style="border-collapse:collapse;table-layout:fixed;border:1px solid #9cc3dd;border-top:0;">
+                                <tr>
+                                    <td style="width:78%;border:1px solid #9cc3dd;"><strong>Final Invoice Value (In Figure)</strong></td>
+                                    <td style="border:1px solid #9cc3dd;" class="text-end"><span t-out="o._format_amount_compact(o.amount_total)"/></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" style="border:1px solid #9cc3dd;"><strong>Final Invoice Value (In Words)</strong>: <span t-out="o.amount_total_words or ''"/></td>
+                                </tr>
+                                <tr>
+                                    <td style="border:1px solid #9cc3dd;"><strong>Amount of Tax subject to Reverse Charges</strong></td>
+                                    <td style="border:1px solid #9cc3dd;">-</td>
+                                </tr>
+                                <tr style="background:#5d9fda;color:#fff;font-weight:700;">
+                                    <td style="border:1px solid #4b88bf;"></td>
+                                    <td style="border:1px solid #4b88bf;" class="text-center">Total</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" style="border:1px solid #9cc3dd;padding:12px 8px;">
+                                        Patient Name...............................................................
+                                        <br/>
+                                        Patient MRN / UHID................................................
+                                        <br/>
+                                        Hospital Receipt Numbers..........................................
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <h5 class="mt-2 mb-1" style="font-size:20px;">HSN Summary</h5>
+                            <table class="table table-sm mb-2" style="border-collapse:collapse;table-layout:fixed;border:1px solid #2a2a2a;">
+                                <thead>
+                                    <tr>
+                                        <th style="border-bottom:1px solid #2a2a2a;">HSN/SAC</th>
+                                        <th class="text-end" style="border-bottom:1px solid #2a2a2a;">Quantity</th>
+                                        <th class="text-end" style="border-bottom:1px solid #2a2a2a;">Rate %</th>
+                                        <th class="text-end" style="border-bottom:1px solid #2a2a2a;">Taxable Value</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr t-foreach="hsn_rows" t-as="h">
+                                        <td><span t-out="h['hsn']"/></td>
+                                        <td class="text-end"><span t-out="h['qty']"/></td>
+                                        <td class="text-end"><span t-out="h['rate']"/></td>
+                                        <td class="text-end"><span t-out="o._format_amount_compact(h['taxable_value'])"/></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <table class="table table-sm" style="border-collapse:collapse;table-layout:fixed;border:1px solid #2a2a2a;">
+                                <tr>
+                                    <td style="border-bottom:1px solid #2a2a2a;">
+                                        <strong>Declaration:</strong><br/>
+                                        We declare that this invoice shows the actual price as per the description and that all particulars are true and correct.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="border-bottom:1px solid #2a2a2a;">
+                                        Now with standing your registration as NDNC anywhere, fully/partially blocked, you agree to receive a sales or service call from the company or its group company or associates based on information you have provided to the company.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="padding:0;">
+                                        <table style="width:100%;border-collapse:collapse;margin-top:8px;">
+                                            <tr>
+                                                <td style="width:50%;text-align:center;border-right:1px solid #2a2a2a;padding:12px 8px;">Signature of Customer</td>
+                                                <td style="width:50%;text-align:center;padding:12px 8px;">
+                                                    <div>For: Resonnocare Health-Tech Pvt Ltd.</div>
+                                                    <div style="height:28px;"></div>
+                                                    <div>Authorised Signatory</div>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                            <table class="table table-sm mb-0" style="border-collapse:collapse;">
+                                <tr>
+                                    <td style="width:50%;padding-top:2px;">
+                                        <strong>Corporate Address:</strong><br/>
+                                        <span>RESONNOCARE HEALTH-TECH PVT. LTD  403, Office Block 'C'  4th Floor – Above Retail Block R1 &amp; R5, M3M URBANA, Sector 67, Gurugram, 122101</span>
+                                        <br/>
+                                        <span t-if="o.company_id.phone">Phone: <span t-out="o.company_id.phone"/></span>
+                                    </td>
+                                    <td style="width:50%;padding-top:2px;">
+                                        <strong>Registered Address:</strong><br/>
+                                        <span t-out="o.company_id.partner_id.contact_address or ''"/>
+                                        <br/>
+                                        <span t-if="o.company_id.company_registry">CIN: <span t-out="o.company_id.company_registry"/></span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <record id="action_report_final_invoice_document" model="ir.actions.report">
+        <field name="name">Final Invoice</field>
+        <field name="model">resonnocare.final.invoice</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">resonnocare_frontdesk.report_final_invoice_document</field>
+        <field name="report_file">resonnocare_frontdesk.report_final_invoice_document</field>
+        <field name="binding_model_id" ref="model_resonnocare_final_invoice"/>
+        <field name="binding_type">report</field>
+        <field name="print_report_name">'Final Invoice - %s' % (object.name or '')</field>
+    </record>
+</odoo>
+

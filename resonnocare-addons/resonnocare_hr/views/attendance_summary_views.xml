@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="view_resonnocare_attendance_summary_list" model="ir.ui.view">
+        <field name="name">resonnocare.attendance.summary.list</field>
+        <field name="model">resonnocare.attendance.summary</field>
+        <field name="arch" type="xml">
+            <list string="Attendance Summaries" decoration-danger="status == 'absent'" decoration-warning="status == 'half_day'" decoration-success="status == 'present'">
+                <field name="date"/>
+                <field name="employee_id"/>
+                <field name="total_worked_hours" widget="float_time"/>
+                <field name="is_late"/>
+                <field name="is_missing_punch"/>
+                <field name="payroll_locked"/>
+                <field name="payroll_window_deadline"/>
+                <field name="has_pending_leave"/>
+                <field name="cycle_total_days"/>
+                <field name="cycle_lop_days"/>
+                <field name="cycle_payable_days"/>
+                <field name="payroll_deduction_days"/>
+                <field name="payroll_deduction_type"/>
+                <field name="deduction_alert" widget="badge" decoration-danger="deduction_alert == 'yes'"/>
+                <field name="status"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_resonnocare_attendance_summary_form" model="ir.ui.view">
+        <field name="name">resonnocare.attendance.summary.form</field>
+        <field name="model">resonnocare.attendance.summary</field>
+        <field name="arch" type="xml">
+            <form string="Attendance Summary">
+                <header>
+                    <button name="action_evaluate_daily" string="Re-Evaluate" type="object" class="btn-primary"/>
+                    <button name="action_open_regularizations" string="Regularizations" type="object" class="btn-secondary"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group name="info">
+                            <field name="employee_id"/>
+                            <field name="date"/>
+                        </group>
+                        <group name="results">
+                            <field name="total_worked_hours" widget="float_time"/>
+                            <field name="status" widget="badge" decoration-danger="status == 'absent'" decoration-warning="status == 'half_day'" decoration-success="status == 'present'"/>
+                            <field name="payroll_locked"/>
+                            <field name="payroll_window_started_on" readonly="1"/>
+                            <field name="payroll_window_deadline" readonly="1"/>
+                            <field name="payroll_locked_on" readonly="1" invisible="not payroll_locked"/>
+                            <field name="has_pending_leave" readonly="1"/>
+                            <field name="cycle_total_days" readonly="1"/>
+                            <field name="cycle_lop_days" readonly="1"/>
+                            <field name="cycle_payable_days" readonly="1"/>
+                            <field name="payroll_deduction_days" readonly="1"/>
+                            <field name="payroll_deduction_type" readonly="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group name="audit">
+                            <field name="is_late"/>
+                            <field name="is_missing_punch"/>
+                            <field name="deduction_alert" widget="badge" decoration-danger="deduction_alert == 'yes'"/>
+                            <field name="deduction_alert_reason" readonly="1" invisible="not deduction_alert"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page name="attendances" string="Linked Punches">
+                            <field name="attendance_ids"/>
+                        </page>
+                        <page name="regularizations" string="Regularizations">
+                            <field name="regularization_ids" context="{'default_employee_id': employee_id, 'default_date': date, 'default_attendance_summary_id': id}">
+                                <list>
+                                    <field name="create_date" string="Created On"/>
+                                    <field name="reason"/>
+                                    <field name="requested_check_in"/>
+                                    <field name="requested_check_out"/>
+                                    <field name="state"/>
+                                    <field name="submitted_on"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_resonnocare_attendance_summary" model="ir.actions.act_window">
+        <field name="name">Attendance Evaluation</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">resonnocare.attendance.summary</field>
+        <field name="view_mode">list,form,pivot</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Daily attendance evaluations will appear here.
+            </p>
+        </field>
+    </record>
+
+    <record id="action_resonnocare_manager_team_attendance" model="ir.actions.act_window">
+        <field name="name">Team Attendance</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">resonnocare.attendance.summary</field>
+        <field name="view_mode">pivot,list,graph,form</field>
+        <field name="domain">[
+            '|',
+            ('employee_id.parent_id.user_id', '=', uid),
+            ('employee_id.leave_manager_id.user_id', '=', uid)
+        ]</field>
+    </record>
+
+    <record id="action_resonnocare_my_attendance_summary" model="ir.actions.act_window">
+        <field name="name">My Attendance Evaluation</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">resonnocare.attendance.summary</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('employee_id.user_id', '=', uid)]</field>
+        <field name="context">{'create': False, 'edit': False, 'delete': False}</field>
+    </record>
+
+    <record id="action_resonnocare_payroll_attendance_impact" model="ir.actions.act_window">
+        <field name="name">Payroll Impact (Attendance)</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">resonnocare.attendance.summary</field>
+        <field name="view_mode">pivot,list,graph,form</field>
+        <field name="domain">[
+            ('payroll_locked', '=', True),
+            ('payroll_deduction_days', '>', 0)
+        ]</field>
+        <field name="context">{'group_by': ['employee_id', 'payroll_deduction_type']}</field>
+    </record>
+
+</odoo>

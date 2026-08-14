@@ -1,0 +1,8 @@
+<odoo>
+    <record id="seq_resonnocare_contract" model="ir.sequence">
+        <field name="name">Contract ID</field>
+        <field name="code">resonnocare.contract</field>
+        <field name="prefix">CT/</field>
+        <field name="padding">5</field>
+    </record>
+</odoo>

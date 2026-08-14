@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_resonnocare_audiometry_result_tree" model="ir.ui.view">
+        <field name="name">resonnocare.audiometry.result.tree</field>
+        <field name="model">resonnocare.audiometry.result</field>
+        <field name="arch" type="xml">
+            <list string="Audiometry Results">
+                <field name="uid"/>
+                <field name="session_id"/>
+                <field name="patient_id"/>
+                <field name="test_name"/>
+                <field name="created_at"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_resonnocare_audiometry_result_form" model="ir.ui.view">
+        <field name="name">resonnocare.audiometry.result.form</field>
+        <field name="model">resonnocare.audiometry.result</field>
+        <field name="arch" type="xml">
+            <form string="Audiometry Result">
+                <sheet>
+                    <group>
+                        <field name="uid" readonly="1"/>
+                        <field name="session_id"/>
+                        <field name="patient_id"/>
+                        <field name="clinic_id"/>
+                        <field name="test_name"/>
+                        <field name="created_at"/>
+                    </group>
+                    <group>
+                        <field name="clinical_impresion_left"/>
+                        <field name="clinical_impresion_right"/>
+                        <field name="recommendation"/>
+                    </group>
+
+                    <notebook>
+                        <page string="Marks">
+                            <field name="mark_ids">
+                                <list editable="bottom">
+                                    <field name="ear"/>
+                                    <field name="mode"/>
+                                    <field name="frequency"/>
+                                    <field name="intensity"/>
+                                    <field name="response"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Attachments">
+                            <field name="report_attachment_id"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_resonnocare_audiometry_results" model="ir.actions.act_window">
+        <field name="name">Audiometry Results</field>
+        <field name="res_model">resonnocare.audiometry.result</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_id" ref="view_resonnocare_audiometry_result_tree"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No audiometry results found.</p>
+        </field>
+    </record>
+
+    <menuitem id="menu_audiometry_results" name="Audiometry Results" parent="menu_frontdesk_appointments" action="action_resonnocare_audiometry_results" sequence="10"/>
+
+</odoo>

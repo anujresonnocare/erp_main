@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_patient_search_wizard_form" model="ir.ui.view">
+        <field name="name">resonnocare.patient.search.wizard.form</field>
+        <field name="model">resonnocare.patient.search.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Search Patient">
+                <sheet>
+                    <group>
+                        <field name="search_term" placeholder="Enter Phone Number, ID, or Name..." force_save="1"/>
+                        <field name="warning_message" invisible="not warning_message" class="text-danger fw-bold"/>
+                    </group>
+                    <footer>
+                        <button name="action_search_patient" string="Search" type="object" class="btn-primary" default_focus="1"/>
+                        <button name="action_open_registration" string="Register New Patient" type="object" class="btn-secondary"/>
+                        <button string="Cancel" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_patient_search_wizard" model="ir.actions.act_window">
+        <field name="name">Search Patient</field>
+        <field name="res_model">resonnocare.patient.search.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="context">{'form_view_initial_mode': 'edit', 'edit': True}</field>
+    </record>
+
+</odoo>

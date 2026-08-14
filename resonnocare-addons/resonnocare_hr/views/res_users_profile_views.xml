@@ -1,0 +1,347 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="view_res_users_resonnocare_onboarding_form" model="ir.ui.view">
+        <field name="name">res.users.resonnocare.onboarding.form</field>
+        <field name="model">res.users</field>
+        <field name="arch" type="xml">
+            <form string="My Profile" create="0" delete="0">
+                <header>
+                    <button name="action_complete_onboarding"
+                            type="object"
+                            string="Complete Onboarding"
+                            class="btn-primary"
+                            invisible="resonnocare_onboarding_status == 'completed'"/>
+                </header>
+                <sheet>
+                    <notebook>
+                        <page name="resonnocare_account_privacy" string="Account &amp; Privacy">
+                            <group>
+                                <group string="Account">
+                                    <field name="name"/>
+                                    <field name="login" readonly="1"/>
+                                    <field name="lang"/>
+                                    <field name="tz"/>
+                                </group>
+                                <group string="Privacy">
+                                    <field name="resonnocare_private_email" required="1"/>
+                                    <field name="resonnocare_private_phone" required="1"/>
+                                    <field name="resonnocare_alternate_mobile"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page name="resonnocare_private_info" string="Private Info">
+                            <group>
+                                <group string="Employee Information">
+                                    <field name="resonnocare_employee_name" readonly="1"/>
+                                    <field name="resonnocare_work_email" readonly="1"/>
+                                    <field name="resonnocare_work_phone" readonly="1"/>
+                                    <field name="resonnocare_clinic_name" readonly="1"/>
+                                    <field name="resonnocare_clinic_role" readonly="1"/>
+                                    <field name="resonnocare_profile" readonly="1"/>
+                                    <field name="resonnocare_employee_code" readonly="1"/>
+                                </group>
+                                <group string="Onboarding Progress">
+                                    <field name="resonnocare_onboarding_status" readonly="1" widget="badge"/>
+                                    <field name="resonnocare_handbook_accepted" readonly="1"/>
+                                    <field name="resonnocare_contract_status" readonly="1" widget="badge"/>
+                                    <field name="resonnocare_profile_complete" readonly="1"/>
+                                    <field name="resonnocare_profile_missing_fields" readonly="1" invisible="resonnocare_profile_complete"/>
+                                    <field name="resonnocare_attendance_ready" readonly="1"/>
+                                    <field name="resonnocare_attendance_guide_url" readonly="1" widget="url" invisible="not resonnocare_attendance_ready"/>
+                                    <field name="resonnocare_attendance_guide_note" readonly="1" nolabel="1" invisible="not resonnocare_attendance_ready"/>
+                                    <field name="resonnocare_today_attendance_status" readonly="1" widget="badge"/>
+                                    <field name="resonnocare_today_deduction_alert" readonly="1" widget="badge" invisible="not resonnocare_today_deduction_alert"/>
+                                    <field name="resonnocare_today_deduction_reason" readonly="1" invisible="not resonnocare_today_deduction_alert"/>
+                                </group>
+                            </group>
+                            <group>
+                                <group string="Personal">
+                                    <field name="resonnocare_blood_group" required="1"/>
+                                </group>
+                                <group string="Emergency Contact">
+                                    <field name="resonnocare_emergency_contact_name" required="1"/>
+                                    <field name="resonnocare_emergency_contact_number" required="1"/>
+                                    <field name="resonnocare_emergency_contact_relation" required="1"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page name="resonnocare_education_experience" string="Education &amp; Experience">
+                            <group>
+                                <group string="Educational Qualifications">
+                                    <field name="resonnocare_education_ids" nolabel="1">
+                                        <list editable="bottom">
+                                            <field name="degree"/>
+                                            <field name="specialization"/>
+                                            <field name="university"/>
+                                            <field name="year_of_passing"/>
+                                            <field name="score"/>
+                                            <field name="mode"/>
+                                            <field name="certificate" filename="certificate_filename" widget="binary"/>
+                                            <field name="certificate_filename" column_invisible="True"/>
+                                        </list>
+                                    </field>
+                                </group>
+                                <group string="Professional Experience">
+                                    <field name="resonnocare_experience_ids" nolabel="1">
+                                        <list editable="bottom">
+                                            <field name="company_name"/>
+                                            <field name="designation"/>
+                                            <field name="department"/>
+                                            <field name="employment_type"/>
+                                            <field name="location"/>
+                                            <field name="start_date"/>
+                                            <field name="end_date"/>
+                                            <field name="ctc_at_exit"/>
+                                            <field name="reason_for_leaving"/>
+                                            <field name="reporting_manager"/>
+                                            <field name="relieving_letter" filename="relieving_letter_filename" widget="binary"/>
+                                            <field name="relieving_letter_filename" column_invisible="True"/>
+                                            <field name="experience_letter" filename="experience_letter_filename" widget="binary"/>
+                                            <field name="experience_letter_filename" column_invisible="True"/>
+                                        </list>
+                                    </field>
+                                </group>
+                                <group string="Experience Totals">
+                                    <field name="resonnocare_overall_experience_years" readonly="1"/>
+                                    <field name="resonnocare_relevant_experience_years"/>
+                                </group>
+                                <group string="Professional Licenses / Registrations">
+                                    <field name="resonnocare_license_ids" nolabel="1">
+                                        <list editable="bottom">
+                                            <field name="name"/>
+                                            <field name="license_number"/>
+                                            <field name="issuing_authority"/>
+                                            <field name="validity_start"/>
+                                            <field name="validity_end"/>
+                                            <field name="document" filename="document_filename" widget="binary"/>
+                                            <field name="document_filename" column_invisible="True"/>
+                                        </list>
+                                    </field>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_res_users_profile_inherit_resonnocare" model="ir.ui.view">
+        <field name="name">res.users.profile.inherit.resonnocare</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="hr.res_users_view_form_profile"/>
+        <field name="groups_id" eval="[(5, 0, 0)]"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="action_complete_onboarding"
+                        type="object"
+                        string="Complete Onboarding"
+                        class="btn-primary"
+                        invisible="resonnocare_onboarding_status == 'completed'"/>
+            </xpath>
+
+            <!-- Keep onboarding self-profile clean (no leave shortcut buttons here). -->
+            <xpath expr="//header/button[@name='%(hr_holidays.hr_leave_action_new_request)d']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//header/button[@name='%(hr_holidays.hr_leave_allocation_action_my)d']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+
+            <!-- Keep HR-owned work fields non-editable in self profile -->
+            <xpath expr="//field[@name='job_title']" position="attributes">
+                <attribute name="readonly">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='mobile_phone']" position="attributes">
+                <attribute name="readonly">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='work_phone']" position="attributes">
+                <attribute name="readonly">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='work_email']" position="attributes">
+                <attribute name="readonly">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='work_location_id']" position="attributes">
+                <attribute name="readonly">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='email']" position="attributes">
+                <attribute name="readonly">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='tz']" position="attributes">
+                <attribute name="readonly">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='lang']" position="attributes">
+                <attribute name="readonly">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='employee_parent_id']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='coach_id']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//page[@name='skills_resume']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//page[@name='page_devices']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+
+            <!-- Hide HR-only pages from employee self-service -->
+            <xpath expr="//page[@name='public']" position="attributes">
+                <attribute name="groups">resonnocare_base.group_resonnocare_hr,resonnocare_base.group_resonnocare_super_admin</attribute>
+            </xpath>
+            <xpath expr="//page[@name='hr_settings']" position="attributes">
+                <attribute name="groups">resonnocare_base.group_resonnocare_hr,resonnocare_base.group_resonnocare_super_admin</attribute>
+            </xpath>
+
+            <xpath expr="//notebook" position="inside">
+                <page name="resonnocare_personal_details" string="Personal Details">
+                    <group>
+                        <group string="Additional Info">
+                            <field name="resonnocare_alternate_mobile" readonly="not can_edit"/>
+                            <field name="resonnocare_blood_group" readonly="not can_edit"/>
+                        </group>
+                        <group string="Emergency Contact">
+                            <field name="resonnocare_emergency_contact_name" readonly="not can_edit"/>
+                            <field name="resonnocare_emergency_contact_number" readonly="not can_edit"/>
+                            <field name="resonnocare_emergency_contact_relation" readonly="not can_edit"/>
+                        </group>
+                    </group>
+                    <group string="Mediclaim Dependents">
+                        <field name="resonnocare_dependent_ids" nolabel="1" readonly="not can_edit">
+                            <list editable="bottom">
+                                <field name="name"/>
+                                <field name="date_of_birth"/>
+                                <field name="relation"/>
+                            </list>
+                        </field>
+                    </group>
+                </page>
+            </xpath>
+            <xpath expr="//page[@name='personal_information']//group[field[@name='employee_country_id']]" position="after">
+                <group string="Resume">
+                    <field mode="list" nolabel="1" name="resume_line_ids" widget="resume_one2many" readonly="not can_edit">
+                        <list>
+                            <field name="line_type_id"/>
+                            <field name="name"/>
+                            <field name="description"/>
+                            <field name="date_start"/>
+                            <field name="date_end"/>
+                            <field name="display_type" column_invisible="True"/>
+                        </list>
+                    </field>
+                </group>
+                <group string="Skills">
+                    <field mode="list" nolabel="1" name="employee_skill_ids" widget="skills_one2many" readonly="not can_edit">
+                        <list>
+                            <field name="skill_type_id" optional="hidden"/>
+                            <field name="skill_id"/>
+                            <field name="skill_level_id"/>
+                            <field name="level_progress" widget="progressbar"/>
+                        </list>
+                    </field>
+                </group>
+            </xpath>
+
+            <xpath expr="//group[field[@name='can_edit']]" position="after">
+                <group string="Onboarding Progress" colspan="2">
+                    <field name="resonnocare_employee_code" readonly="1"/>
+                    <field name="resonnocare_onboarding_status" readonly="1" widget="badge"/>
+                    <field name="resonnocare_handbook_accepted" readonly="1"/>
+                    <field name="resonnocare_contract_status" readonly="1" widget="badge"/>
+                    <field name="resonnocare_profile_complete" readonly="1"/>
+                    <field name="resonnocare_profile_missing_fields" readonly="1" invisible="resonnocare_profile_complete"/>
+                    <field name="resonnocare_joining_stage_state" readonly="1"/>
+                    <field name="resonnocare_attendance_ready" readonly="1"/>
+                    <field name="resonnocare_attendance_guide_url" readonly="1" widget="url" invisible="not resonnocare_attendance_ready"/>
+                    <field name="resonnocare_attendance_guide_note" readonly="1" nolabel="1" invisible="not resonnocare_attendance_ready"/>
+                    <field name="resonnocare_today_attendance_status" readonly="1" widget="badge"/>
+                    <field name="resonnocare_today_deduction_alert" readonly="1" widget="badge" invisible="not resonnocare_today_deduction_alert"/>
+                    <field name="resonnocare_today_deduction_reason" readonly="1" invisible="not resonnocare_today_deduction_alert"/>
+                </group>
+            </xpath>
+
+            <xpath expr="//notebook" position="inside">
+                <page name="resonnocare_education_experience" string="Education &amp; Experience">
+                    <group>
+                        <group string="Educational Qualifications">
+                            <field name="resonnocare_education_ids" nolabel="1">
+                                <list editable="bottom">
+                                    <field name="degree"/>
+                                    <field name="specialization"/>
+                                    <field name="university"/>
+                                    <field name="year_of_passing"/>
+                                    <field name="score"/>
+                                    <field name="mode"/>
+                                    <field name="certificate" filename="certificate_filename" widget="binary"/>
+                                    <field name="certificate_filename" column_invisible="True"/>
+                                </list>
+                            </field>
+                        </group>
+                        <group string="Professional Experience">
+                            <field name="resonnocare_experience_ids" nolabel="1">
+                                <list editable="bottom">
+                                    <field name="company_name"/>
+                                    <field name="designation"/>
+                                    <field name="department"/>
+                                    <field name="employment_type"/>
+                                    <field name="location"/>
+                                    <field name="start_date"/>
+                                    <field name="end_date"/>
+                                    <field name="ctc_at_exit"/>
+                                    <field name="reason_for_leaving"/>
+                                    <field name="reporting_manager"/>
+                                    <field name="relieving_letter" filename="relieving_letter_filename" widget="binary"/>
+                                    <field name="relieving_letter_filename" column_invisible="True"/>
+                                    <field name="experience_letter" filename="experience_letter_filename" widget="binary"/>
+                                    <field name="experience_letter_filename" column_invisible="True"/>
+                                </list>
+                            </field>
+                        </group>
+                        <group string="Experience Totals">
+                            <field name="resonnocare_overall_experience_years" readonly="1"/>
+                            <field name="resonnocare_relevant_experience_years" readonly="not can_edit"/>
+                        </group>
+                        <group string="Professional Licenses / Registrations">
+                            <field name="resonnocare_license_ids" nolabel="1" readonly="not can_edit">
+                                <list editable="bottom">
+                                    <field name="name"/>
+                                    <field name="license_number"/>
+                                    <field name="issuing_authority"/>
+                                    <field name="validity_start"/>
+                                    <field name="validity_end"/>
+                                    <field name="document" filename="document_filename" widget="binary"/>
+                                    <field name="document_filename" column_invisible="True"/>
+                                </list>
+                            </field>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_resonnocare_my_profile" model="ir.actions.act_window">
+        <field name="name">My Profile</field>
+        <field name="res_model">res.users</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="hr.res_users_view_form_profile"/>
+        <field name="context">{'from_my_profile': True, 'form_view_initial_mode': 'edit', 'create': False}</field>
+        <field name="target">current</field>
+    </record>
+
+    <record id="action_open_resonnocare_my_profile_server" model="ir.actions.server">
+        <field name="name">Open My Profile</field>
+        <field name="model_id" ref="base.model_res_users"/>
+        <field name="state">code</field>
+        <field name="code">
+action = env.ref("resonnocare_hr.action_resonnocare_my_profile").sudo().read()[0]
+action["res_id"] = env.user.id
+ctx = dict(env.context or {})
+ctx.update({"from_my_profile": True, "form_view_initial_mode": "edit", "create": False})
+action["context"] = ctx
+        </field>
+    </record>
+
+</odoo>

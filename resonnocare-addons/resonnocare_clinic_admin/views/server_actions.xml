@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="action_open_clinic_dashboard_server" model="ir.actions.server">
+        <field name="name">Open Dashboard</field>
+        <field name="model_id" ref="resonnocare_clinic.model_resonnocare_clinic"/>
+        <field name="state">code</field>
+        <field name="code"><![CDATA[action = env.ref('resonnocare_clinic_admin.action_clinic_dashboard').sudo().read()[0]
+clinic_id = env.user.employee_id.clinic_id.id
+if not clinic_id:
+    raise UserError("You are not assigned to any clinic.")
+action['res_id'] = clinic_id
+action['domain'] = [('id', '=', clinic_id)]
+action['context'] = {'default_id': clinic_id, 'create': False, 'edit': False, 'delete': False, 'form_view_initial_mode': 'readonly'}
+action]]></field>
+    </record>
+
+    <record id="action_open_clinic_profile_server" model="ir.actions.server">
+        <field name="name">Open Clinic Profile</field>
+        <field name="model_id" ref="resonnocare_clinic.model_resonnocare_clinic"/>
+        <field name="state">code</field>
+        <field name="code"><![CDATA[action = env.ref('resonnocare_clinic_admin.action_clinic_profile').sudo().read()[0]
+clinic_id = env.user.employee_id.clinic_id.id
+if not clinic_id:
+    raise UserError("You are not assigned to any clinic.")
+action['res_id'] = clinic_id
+action['domain'] = [('id', '=', clinic_id)]
+action['context'] = {'default_id': clinic_id, 'create': False, 'edit': False, 'delete': False, 'form_view_initial_mode': 'readonly'}
+action]]></field>
+    </record>
+
+</odoo>

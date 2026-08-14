@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="view_resonnocare_attendance_policy_list" model="ir.ui.view">
+        <field name="name">resonnocare.attendance.policy.list</field>
+        <field name="model">resonnocare.attendance.policy</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="priority"/>
+                <field name="name"/>
+                <field name="clinic_id"/>
+                <field name="attendance_profile"/>
+                <field name="clinic_role"/>
+                <field name="late_tolerance_minutes"/>
+                <field name="free_late_per_month"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_resonnocare_attendance_policy_form" model="ir.ui.view">
+        <field name="name">resonnocare.attendance.policy.form</field>
+        <field name="model">resonnocare.attendance.policy</field>
+        <field name="arch" type="xml">
+            <form string="Attendance Policy">
+                <header>
+                    <button name="action_seed_default_policies" type="object" string="Seed Defaults" class="btn-secondary"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="active"/>
+                            <field name="priority"/>
+                            <field name="clinic_id"/>
+                        </group>
+                        <group>
+                            <field name="attendance_profile"/>
+                            <field name="clinic_role"/>
+                        </group>
+                    </group>
+
+                    <group string="Late Marking">
+                        <group>
+                            <field name="late_tolerance_minutes"/>
+                            <field name="free_late_per_month"/>
+                        </group>
+                        <group>
+                            <field name="apply_late_penalty"/>
+                            <field name="half_day_penalty_for_late"/>
+                        </group>
+                    </group>
+
+                    <group string="Hours And Break">
+                        <group>
+                            <field name="full_day_min_hours"/>
+                            <field name="half_day_min_hours"/>
+                        </group>
+                        <group>
+                            <field name="mandatory_break_minutes"/>
+                        </group>
+                    </group>
+
+                    <group string="Deductions And Comp-Off">
+                        <group>
+                            <field name="auto_mark_absent_on_missing_punch"/>
+                            <field name="auto_create_lwp_for_absent"/>
+                            <field name="auto_create_half_day_deduction"/>
+                        </group>
+                        <group>
+                            <field name="compoff_validity_days"/>
+                        </group>
+                    </group>
+
+                    <group string="Attendance Cycle And Payroll">
+                        <group>
+                            <field name="attendance_cycle_close_day"/>
+                            <field name="salary_day"/>
+                        </group>
+                        <group>
+                            <field name="payroll_cycle_note"/>
+                        </group>
+                    </group>
+
+                    <group string="Employee Attendance Manual">
+                        <group>
+                            <field name="attendance_manual_url" widget="url"/>
+                        </group>
+                        <group>
+                            <field name="attendance_manual_note"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_resonnocare_attendance_policy" model="ir.actions.act_window">
+        <field name="name">Attendance Policies</field>
+        <field name="res_model">resonnocare.attendance.policy</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

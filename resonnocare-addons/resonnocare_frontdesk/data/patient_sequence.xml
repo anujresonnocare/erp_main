@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="seq_resonnocare_patient_id" model="ir.sequence">
+            <field name="name">Patient ID Sequence</field>
+            <field name="code">resonnocare.patient.id</field>
+            <field name="prefix">RC %(y)s </field>
+            <field name="padding">7</field>
+            <field name="number_next">1000001</field>
+            <field name="number_increment">1</field>
+            <field name="company_id" eval="False"/>
+        </record>
+    </data>
+</odoo>

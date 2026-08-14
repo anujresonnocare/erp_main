@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- Root menu - ONLY for Super Admin -->
+    <menuitem id="menu_resonnocare_root" name="Resonnocare" sequence="-300" groups="resonnocare_base.group_resonnocare_super_admin" web_icon="resonnocare_admin,static/description/icon.png"/>
+
+</odoo>

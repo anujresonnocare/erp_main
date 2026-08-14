@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- Clinics Menu -->
+    <menuitem id="menu_resonnocare_clinics" name="Clinics" parent="resonnocare_base.menu_resonnocare_root" action="action_resonnocare_clinics" sequence="10" groups="resonnocare_base.group_resonnocare_super_admin"/>
+
+    <!-- Quick Create Clinic Action (appears at same level as Clinics) -->
+    <menuitem id="menu_quick_create_clinic" name="➕ Create Clinic" parent="resonnocare_base.menu_resonnocare_root" action="action_clinic_create_wizard" sequence="11" groups="resonnocare_base.group_resonnocare_super_admin"/>
+
+</odoo>

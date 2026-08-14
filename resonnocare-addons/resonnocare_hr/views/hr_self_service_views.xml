@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- Cleanup old self-service app records to keep UI uncluttered. -->
+    <record id="action_resonnocare_my_attendance" model="ir.actions.act_window">
+        <field name="name">My Attendance Logs</field>
+        <field name="res_model">hr.attendance</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="hr_attendance.hr_attendance_view_filter"/>
+        <field name="domain">[('employee_id.user_id', '=', uid)]</field>
+        <field name="context">{'create': False, 'edit': False, 'delete': False}</field>
+    </record>
+
+    <menuitem id="menu_resonnocare_my_hr_root"
+              name="My HR"
+              sequence="210"
+              groups="base.group_user"
+              web_icon="hr,static/description/icon.png"
+              active="False"/>
+
+    <menuitem id="menu_resonnocare_my_hr_profile"
+              name="My Profile"
+              parent="menu_resonnocare_my_hr_root"
+              sequence="1"
+              action="resonnocare_hr.action_resonnocare_my_profile"
+              groups="base.group_user"
+              active="False"/>
+
+    <menuitem id="menu_resonnocare_my_hr_attendance"
+              name="My Attendance"
+              parent="menu_resonnocare_my_hr_root"
+              sequence="2"
+              action="action_resonnocare_my_attendance"
+              groups="base.group_user"
+              active="False"/>
+
+    <menuitem id="menu_resonnocare_my_hr_timeoff"
+              name="My Time Off"
+              parent="menu_resonnocare_my_hr_root"
+              sequence="3"
+              action="hr_holidays.hr_leave_action_my"
+              groups="base.group_user"
+              active="False"/>
+
+    <menuitem id="menu_resonnocare_my_hr_allocations"
+              name="My Allocations"
+              parent="menu_resonnocare_my_hr_root"
+              sequence="4"
+              action="hr_holidays.hr_leave_allocation_action_my"
+              groups="base.group_user"
+              active="False"/>
+
+</odoo>

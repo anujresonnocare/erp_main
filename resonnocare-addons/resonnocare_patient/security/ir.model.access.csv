@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_resonnocare_appointment_portal,resonnocare.appointment portal read,resonnocare_appointment.model_resonnocare_appointment,base.group_portal,1,0,0,0
+access_patient_portal_link_wizard_frontdesk,patient portal link wizard frontdesk,model_resonnocare_patient_portal_link_wizard,resonnocare_base.group_front_desk,1,1,1,1
+access_patient_portal_link_wizard_clinic_admin,patient portal link wizard clinic admin,model_resonnocare_patient_portal_link_wizard,resonnocare_base.group_clinic_admin,1,1,1,1

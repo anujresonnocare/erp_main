@@ -1,0 +1,398 @@
+# 🔐 ROLE MAPPING FOR RESONNOCARE CRM
+
+*(Based strictly on `resonnocare_base` groups)*
+
+## 🔑 AVAILABLE ROLES (AS DEFINED)
+
+| Role XML ID                     | Role Name               |
+| ------------------------------- | ----------------------- |
+| `group_resonnocare_super_admin` | Resonnocare Super Admin |
+| `group_clinic_admin`            | Clinic Admin            |
+| `group_front_desk`              | Front Desk              |
+| `group_doctor`                  | Doctor / Audiologist    |
+| `group_crm`                     | CRM / Call Centre       |
+| `group_patient`                 | Patient (Portal)        |
+| `group_resonnocare_internal`    | Resonnocare Internal    |
+
+---
+
+# 🎯 CRM MODULE — ROLE USAGE (FINAL)
+
+## ✅ ROLES THAT **WILL BE USED** IN CRM
+
+| Role                        | Used in CRM? | Reason                     |
+| --------------------------- | ------------ | -------------------------- |
+| **CRM / Call Centre**       | ✅ YES        | Core CRM users             |
+| **Resonnocare Super Admin** | ✅ YES        | Oversight, config          |
+| **Resonnocare Internal**    | ✅ YES        | Analytics, audits          |
+| **Clinic Admin**            | ⚠️ LIMITED   | View-only, clinic-specific |
+| **Front Desk**              | ⚠️ READ-ONLY | Expected walk-ins only     |
+
+---
+
+## ❌ ROLES THAT **WILL NOT BE USED** IN CRM
+
+| Role                 | Reason             |
+| -------------------- | ------------------ |
+| Doctor / Audiologist | No business in CRM |
+| Patient              | Portal only        |
+
+---
+
+# 🧭 CRM ACCESS CONTROL MATRIX (LOCK THIS)
+
+| Feature / Screen  | CRM Agent | Super Admin | Internal | Clinic Admin | Front Desk      |
+| ----------------- | --------- | ----------- | -------- | ------------ | --------------- |
+| Create Lead       | ✅         | ✅           | ❌        | ❌            | ⚠️ Enquiry only |
+| Edit Lead         | ✅ (Own)   | ✅ (All)     | ❌        | ❌            | ❌               |
+| Call Disposition  | ✅         | ❌           | ❌        | ❌            | ❌               |
+| Call Logs         | ✅         | ✅           | ✅        | ❌            | ❌               |
+| Follow-ups        | ✅         | ❌           | ❌        | ❌            | ❌               |
+| Visit Intent      | ✅         | ❌           | ❌        | ❌            | ❌               |
+| Expected Walk-ins | ❌         | ❌           | ❌        | ❌            | ✅               |
+| Convert Lead      | ❌         | ❌           | ❌        | ❌            | ❌ (System only) |
+| CRM Reports       | ❌         | ✅           | ✅        | ⚠️ Limited   | ❌               |
+| CRM Config        | ❌         | ✅           | ❌        | ❌            | ❌               |
+
+⚠️ = strictly limited
+❌ = no access
+
+---
+
+# 🧱 MODEL OWNERSHIP (ABSOLUTE)
+
+| Model                   | Owner Role                |
+| ----------------------- | ------------------------- |
+| `crm.lead`              | CRM / Call Centre         |
+| `crm.disposition`       | Super Admin               |
+| `mail.activity`         | CRM                       |
+| `mail.message`          | System                    |
+| `res.partner` (Patient) | Front Desk                |
+| Appointment models      | Front Desk / Clinic Admin |
+
+---
+
+# 🟢 FINAL CRM FLOW — ROLE-AWARE, SCREEN-BY-SCREEN
+
+Everything below **replaces previous drafts**.
+This is the **single source of truth**.
+
+---
+
+## 🟢 STAGE 0 — OUTSIDE SYSTEM (PRE-LEAD)
+
+### Actors
+
+* Marketing
+* Call Centre
+* Walk-in enquiry
+* Doctor referral
+
+### System State
+
+❌ No Lead
+❌ No Patient
+❌ No OTP
+❌ No Clinic ownership
+
+📌 **No role in system involved**
+
+---
+
+## 🟢 STAGE 1 — LEAD CREATION (CRM ENTRY)
+
+### Screen
+
+**CRM → Leads → Create**
+
+### Role Allowed
+
+* ✅ CRM / Call Centre
+* ⚠️ Front Desk (Enquiry only, no registration)
+
+### Model
+
+`crm.lead`
+
+### Mandatory Fields
+
+* Phone Number (required)
+* Lead Source (UTM / Manual)
+* Interested Clinic (preference)
+
+### Rules (ENFORCED)
+
+* Phone NOT unique
+* Name optional
+* No OTP
+* No patient creation
+* No clinic lock
+
+📌 Output: **Lead ID created**
+
+---
+
+## 🟢 STAGE 2 — LEAD ALLOCATION (AUTO)
+
+### Role
+
+* System (no human)
+
+### Mechanism
+
+* Round Robin via `crm.team`
+* Or assignment rules
+
+### UI
+
+❌ No screen
+❌ No manual override by agent
+
+📌 Agent becomes **Lead Owner**
+
+---
+
+## 🟢 STAGE 3 — CALL HANDLING & DISPOSITION
+
+(**CORE CRM ENGINE**)
+
+### Screen
+
+**CRM → Lead → Call Disposition Panel**
+
+![Image](https://www.images.cybrosys.com/blog/Uploads/BlogImage/how-to-add-chatter-to-form-view-in-odoo-17-1.png)
+
+![Image](https://www.images.cybrosys.com/images/odoo-book/v17-ce/community/crm/odoo-book-v17-ce-crm-035.gif)
+
+### Role
+
+* ✅ CRM / Call Centre ONLY
+
+### Required Action
+
+Every call attempt MUST end with:
+
+* Disposition selection
+* Remarks
+* Save
+
+---
+
+### 📌 Disposition Master (LOCKED)
+
+Mapped **1:1** from Excel
+Stored in `crm.disposition`
+
+Fields:
+
+* Disposition Name
+* Follow-up Days
+* Max Attempts
+* Lead Relevancy
+
+❌ CRM agents cannot edit this
+
+---
+
+### System Actions (AUTOMATIC)
+
+On disposition save:
+
+* Call log created (`mail.message`)
+* Attempt count incremented
+* Follow-up date computed
+* Activity auto-created (if allowed)
+
+### Enforcement
+
+* Max attempts reached → Lead auto-churned
+* Non-relevant → No follow-ups
+
+📌 CRM is **persistence-driven**
+
+---
+
+## 🟢 STAGE 4 — FOLLOW-UP CYCLE
+
+### Screen
+
+**CRM → Activities**
+
+### Role
+
+* ✅ CRM / Call Centre
+
+### Workflow
+
+* Agent works from Due list
+* Every follow-up = new call
+* Every call = new disposition
+
+📌 Fully native Odoo behavior
+
+---
+
+## 🟢 STAGE 5 — VISIT INTENT CAPTURE
+
+(**NOT APPOINTMENT**)
+
+### Screen
+
+**Lead → Visit Intent Tab**
+
+### Role
+
+* ✅ CRM / Call Centre
+
+### Fields
+
+* Preferred Clinic
+* Preferred Visit Date
+* Appointment Type
+
+### Explicitly Forbidden
+
+❌ Slot booking
+❌ Doctor assignment
+❌ OTP
+❌ Payment
+❌ Confirmation
+
+📌 **Intent only**
+
+---
+
+## 🟢 STAGE 6 — EXPECTED WALK-IN
+
+### Screen
+
+**CRM → Leads → Expected Walk-ins (Saved Filter)**
+
+### Role
+
+* 👀 Front Desk (READ ONLY)
+
+### Visibility Rule
+
+* Only for their clinic
+* Only on visit date
+
+📌 CRM still OWNS lead
+
+---
+
+## 🟢 STAGE 7 — FRONT DESK REGISTRATION
+
+(**HARD HANDOFF**)
+
+### Screen
+
+**Front Desk → Patient Search / Registration**
+
+![Image](https://www.candidroot.com/web/image/7306-cc7f8283/2%20-Events.png?access_token=84cb7308-a954-41ff-bdfb-6dbac5956a9b)
+
+![Image](https://cdn.jotfor.ms/templates/screenshot/form-templates/clinic-patient-registration-form.png?t=classic\&v=626294210)
+
+### Role
+
+* ✅ Front Desk ONLY
+
+### Flow
+
+1. Search by phone
+2. Lead detected
+3. OTP sent
+4. OTP verified
+5. Patient created (`res.partner`)
+6. Clinic locked
+7. Patient ID generated
+
+---
+
+### CRM REACTION (SYSTEM ONLY)
+
+* Lead marked Converted
+* Patient ID linked
+* Conversion timestamp stored
+
+❌ CRM cannot trigger this
+❌ CRM cannot bypass this
+
+---
+
+## 🟢 STAGE 8 — POST-VISIT CRM
+
+### Role
+
+* ✅ CRM / Call Centre
+
+### Screens
+
+* Lead Form
+* Activities
+* Campaigns
+
+### Use Cases
+
+* Missed appointment
+* Deferred decision
+* Trial follow-up
+* AMC reminders
+
+❌ No medical data
+❌ No billing
+❌ No appointments
+
+---
+
+## 🟢 STAGE 9 — CHURN MANAGEMENT
+
+### Triggered By
+
+* Max attempts exceeded
+* Non-relevant dispositions
+
+### Screen
+
+**CRM → Leads → Churned**
+
+### Usage
+
+* Campaigns
+* Re-engagement
+* Analytics
+
+---
+
+# 🔐 SECURITY & ACCESS (FINAL LOCK)
+
+## CRM Module Access Rules
+
+| Model           | CRM    | Super Admin | Internal | Clinic Admin | Front Desk   |
+| --------------- | ------ | ----------- | -------- | ------------ | ------------ |
+| crm.lead        | Own RW | All RW      | R        | R            | R (filtered) |
+| crm.disposition | R      | RW          | ❌        | ❌            | ❌            |
+| mail.activity   | RW     | R           | ❌        | ❌            | ❌            |
+| res.partner     | ❌      | ❌           | ❌        | ❌            | RW           |
+
+---
+
+# 🧠 IMPLEMENTATION GUIDELINE (VERY IMPORTANT)
+
+* **DO NOT modify native CRM flows**
+* **ONLY extend crm.lead**
+* **NO custom appointment logic inside CRM**
+* **NO OTP logic outside Front Desk**
+* **NO patient creation from CRM**
+
+---
+
+# ✅ FINAL GUARANTEES
+
+✔ Exact Excel disposition logic
+✔ Exact Lead → Appointment handoff
+✔ Absolute OTP & Patient ID safety
+✔ Native Odoo CRM preserved
+✔ Scales across clinics
+✔ Auditable & analytics-ready
+

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- Front Desk: Own Clinic's Patients Only -->
+        <record id="patient_rule_front_desk" model="ir.rule">
+            <field name="name">Patients: Front Desk - Own Clinic</field>
+            <field name="model_id" ref="base.model_res_partner"/>
+            <field name="groups" eval="[(4, ref('resonnocare_base.group_front_desk'))]"/>
+            <field name="domain_force">[
+                '|',
+                ('clinic_id', '=', user.employee_id.clinic_id.id),
+                ('id', '=', user.partner_id.id)
+            ]</field>
+        </record>
+
+        <record id="discount_approval_request_rule_front_desk" model="ir.rule">
+            <field name="name">Discount Approval Request: Front Desk Own Clinic</field>
+            <field name="model_id" search="[('model', '=', 'resonnocare.discount.approval.request')]"/>
+            <field name="groups" eval="[(4, ref('resonnocare_base.group_front_desk'))]"/>
+            <field name="domain_force">[
+                ('clinic_id', '=', user.employee_id.clinic_id.id)
+            ]</field>
+        </record>
+
+        <record id="discount_approval_request_rule_clinic_admin" model="ir.rule">
+            <field name="name">Discount Approval Request: Clinic Admin Own Clinic</field>
+            <field name="model_id" search="[('model', '=', 'resonnocare.discount.approval.request')]"/>
+            <field name="groups" eval="[(4, ref('resonnocare_base.group_clinic_admin'))]"/>
+            <field name="domain_force">[
+                ('clinic_id', '=', user.employee_id.clinic_id.id)
+            ]</field>
+        </record>
+
+        <record id="advance_approval_request_rule_front_desk" model="ir.rule">
+            <field name="name">Min Advance Approval Request: Front Desk Own Clinic</field>
+            <field name="model_id" search="[('model', '=', 'resonnocare.advance.approval.request')]"/>
+            <field name="groups" eval="[(4, ref('resonnocare_base.group_front_desk'))]"/>
+            <field name="domain_force">[
+                ('clinic_id', '=', user.employee_id.clinic_id.id)
+            ]</field>
+        </record>
+
+        <record id="advance_approval_request_rule_clinic_admin" model="ir.rule">
+            <field name="name">Min Advance Approval Request: Clinic Admin Own Clinic</field>
+            <field name="model_id" search="[('model', '=', 'resonnocare.advance.approval.request')]"/>
+            <field name="groups" eval="[(4, ref('resonnocare_base.group_clinic_admin'))]"/>
+            <field name="domain_force">[
+                ('clinic_id', '=', user.employee_id.clinic_id.id)
+            ]</field>
+        </record>
+
+        <record id="final_invoice_rule_front_desk" model="ir.rule">
+            <field name="name">Final Invoice: Front Desk Own Clinic</field>
+            <field name="model_id" search="[('model', '=', 'resonnocare.final.invoice')]"/>
+            <field name="groups" eval="[(4, ref('resonnocare_base.group_front_desk'))]"/>
+            <field name="domain_force">[
+                ('sale_order_id.clinic_id', '=', user.employee_id.clinic_id.id)
+            ]</field>
+        </record>
+
+        <record id="final_invoice_rule_clinic_admin" model="ir.rule">
+            <field name="name">Final Invoice: Clinic Admin Own Clinic</field>
+            <field name="model_id" search="[('model', '=', 'resonnocare.final.invoice')]"/>
+            <field name="groups" eval="[(4, ref('resonnocare_base.group_clinic_admin'))]"/>
+            <field name="domain_force">[
+                ('sale_order_id.clinic_id', '=', user.employee_id.clinic_id.id)
+            ]</field>
+        </record>
+
+        <record id="final_invoice_line_rule_front_desk" model="ir.rule">
+            <field name="name">Final Invoice Line: Front Desk Own Clinic</field>
+            <field name="model_id" search="[('model', '=', 'resonnocare.final.invoice.line')]"/>
+            <field name="groups" eval="[(4, ref('resonnocare_base.group_front_desk'))]"/>
+            <field name="domain_force">[
+                ('final_invoice_id.sale_order_id.clinic_id', '=', user.employee_id.clinic_id.id)
+            ]</field>
+        </record>
+
+        <record id="final_invoice_line_rule_clinic_admin" model="ir.rule">
+            <field name="name">Final Invoice Line: Clinic Admin Own Clinic</field>
+            <field name="model_id" search="[('model', '=', 'resonnocare.final.invoice.line')]"/>
+            <field name="groups" eval="[(4, ref('resonnocare_base.group_clinic_admin'))]"/>
+            <field name="domain_force">[
+                ('final_invoice_id.sale_order_id.clinic_id', '=', user.employee_id.clinic_id.id)
+            ]</field>
+        </record>
+
+    </data>
+</odoo>

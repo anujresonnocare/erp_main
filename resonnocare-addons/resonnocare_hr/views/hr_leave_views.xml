@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="view_hr_leave_form_resonnocare_rules" model="ir.ui.view">
+        <field name="name">hr.leave.form.resonnocare.rules</field>
+        <field name="model">hr.leave</field>
+        <field name="inherit_id" ref="hr_holidays.hr_leave_view_form"/>
+        <field name="groups_id" eval="[(5, 0, 0)]"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_approve']" position="attributes">
+                <attribute name="invisible">employee_id.user_id == uid or not can_approve or state != 'confirm'</attribute>
+            </xpath>
+            <xpath expr="//button[@name='action_validate']" position="attributes">
+                <attribute name="invisible">employee_id.user_id == uid or state != 'validate1'</attribute>
+            </xpath>
+            <xpath expr="//button[@name='action_refuse']" position="attributes">
+                <attribute name="invisible">employee_id.user_id == uid or not can_approve or state not in ('confirm', 'validate1', 'validate')</attribute>
+            </xpath>
+            <xpath expr="//header" position="inside">
+                <button name="action_approve_cancel_request" string="Approve Cancellation" type="object" class="btn-primary" groups="base.group_user" invisible="resonnocare_cancel_request_state != 'requested'"/>
+                <button name="action_reject_cancel_request" string="Reject Cancellation" type="object" class="btn-secondary" groups="base.group_user" invisible="resonnocare_cancel_request_state != 'requested'"/>
+            </xpath>
+            <xpath expr="//group[@name='col_left']" position="after">
+                <group string="Resonnocare Leave Controls">
+                    <field name="resonnocare_submitted_on" readonly="1"/>
+                    <field name="resonnocare_reminder_24_sent" readonly="1"/>
+                    <field name="resonnocare_escalation_48_sent" readonly="1"/>
+                    <field name="resonnocare_cancel_request_state" readonly="1"/>
+                    <field name="resonnocare_cancel_request_reason" readonly="1" invisible="resonnocare_cancel_request_state == 'none'"/>
+                    <field name="resonnocare_cancel_requested_by" readonly="1" invisible="resonnocare_cancel_request_state == 'none'"/>
+                    <field name="resonnocare_cancel_requested_on" readonly="1" invisible="resonnocare_cancel_request_state == 'none'"/>
+                    <field name="resonnocare_cancel_decided_by" readonly="1" invisible="resonnocare_cancel_request_state not in ('approved', 'rejected')"/>
+                    <field name="resonnocare_cancel_decided_on" readonly="1" invisible="resonnocare_cancel_request_state not in ('approved', 'rejected')"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Ensure Time Off dashboard calendar always shows holidays and leaves together
+         by removing type-driven calendar filter chips from dashboard views. -->
+    <record id="view_hr_leave_dashboard_hide_type_filters" model="ir.ui.view">
+        <field name="name">hr.leave.dashboard.hide.type.filters</field>
+        <field name="model">hr.leave</field>
+        <field name="inherit_id" ref="hr_holidays.hr_leave_view_dashboard"/>
+        <field name="groups_id" eval="[(5, 0, 0)]"/>
+        <field name="arch" type="xml">
+            <xpath expr="//calendar/field[@name='holiday_status_id']" position="attributes">
+                <attribute name="filters">0</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_hr_leave_employee_dashboard_hide_type_filters" model="ir.ui.view">
+        <field name="name">hr.leave.employee.dashboard.hide.type.filters</field>
+        <field name="model">hr.leave</field>
+        <field name="inherit_id" ref="hr_holidays.hr_leave_employee_view_dashboard"/>
+        <field name="groups_id" eval="[(5, 0, 0)]"/>
+        <field name="arch" type="xml">
+            <xpath expr="//calendar/field[@name='holiday_status_id']" position="attributes">
+                <attribute name="filters">0</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_resonnocare_hr_leave_lwp_summary" model="ir.actions.act_window">
+        <field name="name">LWP Summary</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">hr.leave</field>
+        <field name="view_mode">pivot,list,graph,calendar,form</field>
+        <field name="domain">[('holiday_status_id.name', 'ilike', 'unpaid'), ('resonnocare_is_calendar_holiday', '=', False)]</field>
+    </record>
+
+    <record id="action_resonnocare_hr_leave_balance_summary" model="ir.actions.act_window">
+        <field name="name">Leave Balance Summary</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">hr.leave.allocation</field>
+        <field name="view_mode">pivot,list,graph,form</field>
+        <field name="domain">[('state', '=', 'validate')]</field>
+    </record>
+
+    <record id="action_resonnocare_hr_leave_utilization_trends" model="ir.actions.act_window">
+        <field name="name">Leave Utilization Trends</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">hr.leave</field>
+        <field name="view_mode">pivot,graph,list,form</field>
+        <field name="domain">[('state', 'in', ['validate', 'validate1']), ('resonnocare_is_calendar_holiday', '=', False)]</field>
+    </record>
+
+    <record id="action_resonnocare_manager_pending_leave_approvals" model="ir.actions.act_window">
+        <field name="name">Pending Leave Approvals</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">hr.leave</field>
+        <field name="view_mode">list,form,calendar,pivot</field>
+        <field name="domain">[
+            ('state', '=', 'confirm'),
+            ('resonnocare_is_calendar_holiday', '=', False),
+            '|',
+            ('employee_id.parent_id.user_id', '=', uid),
+            ('employee_id.leave_manager_id.user_id', '=', uid)
+        ]</field>
+    </record>
+
+    <record id="action_resonnocare_manager_team_leave_calendar" model="ir.actions.act_window">
+        <field name="name">Team Leave Calendar</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">hr.leave</field>
+        <field name="view_mode">calendar,list,form,pivot</field>
+        <field name="domain">[
+            ('state', 'in', ['confirm', 'validate', 'validate1']),
+            '|',
+            ('resonnocare_is_calendar_holiday', '=', True),
+            '|',
+            ('employee_id.parent_id.user_id', '=', uid),
+            ('employee_id.leave_manager_id.user_id', '=', uid)
+        ]</field>
+    </record>
+
+    <record id="action_resonnocare_manager_team_leave_balance" model="ir.actions.act_window">
+        <field name="name">Team Leave Balance</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">hr.leave.allocation</field>
+        <field name="view_mode">pivot,list,graph,form</field>
+        <field name="domain">[
+            ('state', '=', 'validate'),
+            '|',
+            ('employee_id.parent_id.user_id', '=', uid),
+            ('employee_id.leave_manager_id.user_id', '=', uid)
+        ]</field>
+    </record>
+
+    <record id="action_resonnocare_manager_pending_compoff_approvals" model="ir.actions.act_window">
+        <field name="name">Pending Comp-Off Approvals</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">hr.leave.allocation</field>
+        <field name="view_mode">list,form,pivot</field>
+        <field name="domain">[
+            ('state', '=', 'confirm'),
+            ('holiday_status_id.name', 'ilike', 'Comp'),
+            '|',
+            ('employee_id.parent_id.user_id', '=', uid),
+            ('employee_id.leave_manager_id.user_id', '=', uid)
+        ]</field>
+    </record>
+
+    <record id="action_resonnocare_manager_clinic_wise_leave_report" model="ir.actions.act_window">
+        <field name="name">Clinic-wise Leave Report</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">hr.leave</field>
+        <field name="view_mode">pivot,graph,list,form</field>
+        <field name="domain">[
+            ('state', 'in', ['validate', 'validate1']),
+            ('resonnocare_is_calendar_holiday', '=', False),
+            '|',
+            ('employee_id.parent_id.user_id', '=', uid),
+            ('employee_id.leave_manager_id.user_id', '=', uid)
+        ]</field>
+        <field name="context">{'group_by': ['resonnocare_clinic_id']}</field>
+    </record>
+
+    <record id="action_resonnocare_manager_manday_region_wise" model="ir.actions.act_window">
+        <field name="name">Man-Day Calculation (Region)</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">hr.leave</field>
+        <field name="view_mode">pivot,graph,list,form</field>
+        <field name="domain">[
+            ('state', 'in', ['validate', 'validate1']),
+            ('resonnocare_is_calendar_holiday', '=', False),
+            '|',
+            ('employee_id.parent_id.user_id', '=', uid),
+            ('employee_id.leave_manager_id.user_id', '=', uid)
+        ]</field>
+        <field name="context">{'group_by': ['resonnocare_region_id']}</field>
+    </record>
+
+</odoo>

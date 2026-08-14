@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="seq_advance_approval_request" model="ir.sequence">
+        <field name="name">Min Advance Approval Request</field>
+        <field name="code">resonnocare.advance.approval.request</field>
+        <field name="prefix">MAR/%(year)s/</field>
+        <field name="padding">4</field>
+        <field name="company_id" eval="False"/>
+    </record>
+</odoo>

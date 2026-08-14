@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- =========================================================
+         APPOINTMENT LIST VIEW
+         ========================================================= -->
+    <record id="view_resonnocare_appointment_list" model="ir.ui.view">
+        <field name="name">resonnocare.appointment.list</field>
+        <field name="model">resonnocare.appointment</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="appointment_id"/>
+                <field name="appointment_date"/>
+                <field name="appointment_start_time" widget="float_time"/>
+                <field name="appointment_end_time" widget="float_time"/>
+                <field name="patient_id"/>
+                <field name="appointment_type_id"/>
+                <field name="doctor_name"/>
+                <field name="status"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- =========================================================
+         APPOINTMENT CALENDAR VIEW
+         ========================================================= -->
+    <record id="view_resonnocare_appointment_calendar" model="ir.ui.view">
+        <field name="name">resonnocare.appointment.calendar</field>
+        <field name="model">resonnocare.appointment</field>
+        <field name="arch" type="xml">
+            <calendar string="Appointments"
+                      date_start="appointment_start_datetime"
+                      date_stop="appointment_end_datetime"
+                      color="audiologist_id">
+                <field name="appointment_id"/>
+                <field name="patient_id"/>
+                <field name="doctor_name"/>
+                <field name="audiologist_id" filters="1"/>
+                <field name="technician_id" filters="1"/>
+                <field name="appointment_type_id"/>
+                <field name="status"/>
+            </calendar>
+        </field>
+    </record>
+
+    <!-- =========================================================
+         APPOINTMENT FORM VIEW (ODOO 18 SAFE)
+         ========================================================= -->
+    <record id="view_resonnocare_appointment_form" model="ir.ui.view">
+        <field name="name">resonnocare.appointment.form</field>
+        <field name="model">resonnocare.appointment</field>
+        <field name="arch" type="xml">
+            <form string="Appointment">
+
+                <!-- ================= HEADER ================= -->
+                <header>
+                    <field name="status" widget="statusbar"/>
+
+                    <!-- Front Desk -->
+                    <button name="action_confirm"
+                            type="object"
+                            string="Confirm"
+                            class="btn-primary"
+                            invisible="status != 'draft'"/>
+
+                    <button name="action_check_in"
+                            type="object"
+                            string="Check-in"
+                            class="btn-primary"
+                            invisible="status != 'scheduled'"/>
+
+                    <!-- Doctor -->
+                    <button name="action_start_consultation"
+                            type="object"
+                            string="Start Consultation"
+                            class="btn-primary"
+                            invisible="status != 'checked_in'"/>
+
+                    <button name="action_complete"
+                            type="object"
+                            string="Complete"
+                            class="btn-success"
+                            invisible="status != 'in_consultation'"/>
+
+                    <!-- Side exits -->
+                    <button name="action_no_show"
+                            type="object"
+                            string="No Show"
+                            invisible="status != 'scheduled'"/>
+
+                    <button name="action_cancel"
+                            type="object"
+                            string="Cancel"
+                            class="btn-danger"
+                            invisible="status not in ('draft','scheduled')"/>
+                        
+                    <button
+                        name="action_generate_bill"
+                        type="object"
+                        string="Generate Bill"
+                        class="btn-primary"
+                        invisible="sale_type != 'service' or sale_order_id != False or status in ('cancelled','no_show')"
+                    />
+
+                    <button
+                        name="action_generate_device_sale"
+                        type="object"
+                        string="Generate Device Sale"
+                        class="btn-primary"
+                        invisible="sale_type != 'device' or parent_appointment_id != False or sale_order_id != False or status in ('cancelled','no_show')"
+                    />
+
+                    <button
+                        name="action_view_bill"
+                        type="object"
+                        string="View Bill"
+                        class="btn-secondary"
+                        invisible="sale_order_id == False"
+                    />
+
+                    <button
+                        name="action_collect_balance"
+                        type="object"
+                        string="Collect Balance"
+                        class="btn-primary"
+                        invisible="parent_appointment_id == False or balance_due &lt;= 0"
+                    />
+
+                    <button
+                        name="action_create_fitting_appointment"
+                        type="object"
+                        string="Create Fitting Appointment"
+                        class="btn-secondary"
+                        invisible="sale_type != 'device' or parent_appointment_id != False"
+                    />
+                    <button
+                        name="action_open_patient_reports"
+                        type="object"
+                        string="Create SCM Order"
+                        class="btn-secondary"
+                        invisible="sale_type != 'device' or sale_order_id == False or parent_appointment_id != False"
+                    />
+                    <button
+                        name="action_open_min_advance_request"
+                        type="object"
+                        string="Min Advance Request"
+                        class="btn-secondary"
+                        invisible="sale_type != 'device' or parent_appointment_id != False or not can_request_min_advance"
+                    />
+                </header>
+
+                <!-- ================= BODY ================= -->
+                <sheet readonly="status != 'draft'">
+
+                    <!-- PATIENT INFO -->
+                    <group string="Patient Information">
+                        <group>
+                            <field name="can_edit_clinic" invisible="1"/>
+                            <field name="patient_id"/>
+                            <field name="clinic_id" readonly="not can_edit_clinic" force_save="1"/>
+                        </group>
+                        <group>
+                            <field name="appointment_id" readonly="1"/>
+                            <field name="source" readonly="1"/>
+                            <field name="parent_appointment_id" readonly="1"/>
+                            <field name="appointment_role" readonly="1"/>
+                            <field name="balance_due" readonly="1" invisible="parent_appointment_id == False"/>
+                            <field name="is_diagnostic_service_type" invisible="1"/>
+                            <field name="is_device_goods_type" invisible="1"/>
+                            <field name="can_request_min_advance" invisible="1"/>
+                        </group>
+                    </group>
+
+                    <!-- APPOINTMENT DETAILS -->
+                    <group string="Appointment Details">
+                        <group>
+                            <field
+                                name="appointment_type_id"
+                                readonly="parent_appointment_id != False"
+                                domain="['|', ('id', '=', appointment_type_id), ('name', 'not ilike', 'fitting')]"
+                            />
+                            <field name="appointment_date"/>
+                        </group>
+                        <group>
+                            <field name="appointment_start_time" widget="float_time"/>
+                            <field name="appointment_end_time" widget="float_time" readonly="1"/>
+                            <field name="doctor_name" readonly="1" invisible="source != 'referral'"/>
+                            <field name="audiologist_id" domain="[('clinic_id','=',clinic_id), ('clinic_role','=','doctor'), ('id','in', available_audiologist_ids)]"/>
+                            <field name="technician_id" domain="[('clinic_id','=',clinic_id), ('clinic_role','=','technician'), ('id','in', available_technician_ids)]"/>
+                            <field name="available_audiologist_ids" invisible="1"/>
+                            <field name="available_technician_ids" invisible="1"/>
+                        </group>
+                    </group>
+
+                    <group string="Sale Type" invisible="parent_appointment_id != False or is_diagnostic_service_type or is_device_goods_type">
+                        <field name="sale_type" widget="radio" options="{'horizontal': true}"/>
+                    </group>
+
+                    <!-- DIAGNOSTIC ITEMS -->
+                    <group string="Diagnostic Tests" invisible="sale_type == 'device' or parent_appointment_id != False">
+                        <field name="diagnostic_item_ids"
+                            widget="many2many_tags"
+                            readonly="status not in ('draft','scheduled')"
+                        />
+                    </group>
+
+                    <group string="Device Sale" invisible="sale_type == 'service' or parent_appointment_id != False or is_diagnostic_service_type">
+                        <div class="alert alert-info" role="alert">
+                            <strong>Front Desk Guide:</strong><br/>
+                            1) Use <b>Pre-Booking</b> only when stock/serial is not currently available.<br/>
+                            2) Set <b>Expected Delivery Date</b> for patient follow-up.<br/>
+                            3) Add required device model lines and keep serial blank for pre-booking.<br/>
+                            4) For normal stock sales, select serial before generating sale.<br/>
+                            5) When stock arrives, open delivery and assign exact serial before validation.
+                        </div>
+                        <group>
+                            <field name="pre_booking"/>
+                            <field name="expected_delivery_date" invisible="not pre_booking"/>
+                        </group>
+                        <field name="device_sale_line_ids"
+                            readonly="status not in ('draft','scheduled')"
+                        >
+                            <list editable="bottom">
+                                <field
+                                    name="product_id"
+                                    domain="[('sale_ok','=',True), ('active','=',True), ('type','!=','service'), ('product_tmpl_id.item_type','!=','diagnostic_service')]"
+                                    context="{'tree_view_ref': 'resonnocare_appointment.view_product_product_frontdesk_tree', 'search_view_ref': 'resonnocare_appointment.view_product_product_frontdesk_search'}"
+                                />
+                                <field name="product_uom_qty"/>
+                                <field name="serial_lot_id"/>
+                                <field name="is_ear_mould" readonly="1"/>
+                                <field name="ear_mould_form_id" readonly="1"/>
+                                <button
+                                    name="action_open_ear_mould_form"
+                                    type="object"
+                                    string="Ear Mould Form"
+                                    class="btn-link"
+                                    invisible="not is_ear_mould"
+                                />
+                            </list>
+                        </field>
+                    </group>
+
+                    <group string="Fitting Devices" invisible="parent_appointment_id == False">
+                        <field name="fitting_device_line_ids" readonly="1">
+                            <list>
+                                <field name="product_id"/>
+                                <field name="product_uom_qty"/>
+                                <field name="serial_lot_id"/>
+                            </list>
+                        </field>
+                    </group>
+
+                    <!-- NOTES -->
+                    <group string="Notes">
+                        <field name="notes"/>
+                    </group>
+
+                    <group string="Appointment Outcomes">
+                        <field
+                            name="appointment_outcome_ids"
+                            widget="many2many_tags"
+                            options="{'no_create': True, 'no_quick_create': True}"
+                            readonly="1"
+                        />
+                    </group>
+
+                    <group string="Fitting Appointments" invisible="parent_appointment_id != False or sale_type != 'device'">
+                        <field name="fitting_appointment_ids" readonly="1">
+                            <list>
+                                <field name="appointment_id"/>
+                                <field name="appointment_date"/>
+                                <field name="appointment_start_time" widget="float_time"/>
+                                <field name="status"/>
+                            </list>
+                        </field>
+                    </group>
+
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- =========================================================
+         APPOINTMENT SEARCH VIEW
+         ========================================================= -->
+    <record id="view_resonnocare_appointment_search" model="ir.ui.view">
+        <field name="name">resonnocare.appointment.search</field>
+        <field name="model">resonnocare.appointment</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="appointment_id"/>
+                <field name="patient_id"/>
+                <field name="audiologist_id"/>
+                <filter name="role_original" string="Original" domain="[('appointment_role','=','original')]"/>
+                <filter name="role_fitting" string="Fitting" domain="[('appointment_role','=','fitting')]"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- =========================================================
+         APPOINTMENT ACTION
+         ========================================================= -->
+    <record id="action_resonnocare_appointment" model="ir.actions.act_window">
+        <field name="name">Appointments</field>
+        <field name="res_model">resonnocare.appointment</field>
+        <field name="view_mode">calendar,list,form</field>
+        <field name="view_id" ref="view_resonnocare_appointment_list"/>
+        <field name="search_view_id" ref="view_resonnocare_appointment_search"/>
+        <field name="context">{'default_scale': 'day'}</field>
+    </record>
+
+</odoo>

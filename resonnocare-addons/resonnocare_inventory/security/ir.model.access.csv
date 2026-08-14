@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_product_price_history_super_admin,product.price.history.super.admin,model_resonnocare_product_price_history,resonnocare_base.group_resonnocare_super_admin,1,1,1,1
+access_supply_docket_upload_wizard_super_admin,resonnocare.supply.docket.upload.wizard.super.admin,model_resonnocare_supply_docket_upload_wizard,resonnocare_base.group_resonnocare_super_admin,1,1,1,1
+access_device_super_admin,resonnocare.device.super.admin,model_resonnocare_device,resonnocare_base.group_resonnocare_super_admin,1,1,1,1
+access_device_clinic_admin,resonnocare.device.clinic.admin,model_resonnocare_device,resonnocare_base.group_clinic_admin,1,1,1,0
+access_device_front_desk,resonnocare.device.front.desk,model_resonnocare_device,resonnocare_base.group_front_desk,1,0,0,0
+access_device_internal,resonnocare.device.internal,model_resonnocare_device,base.group_user,1,0,0,0

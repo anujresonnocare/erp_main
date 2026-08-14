@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- Clinic List View -->
+    <record id="view_resonnocare_clinic_list" model="ir.ui.view">
+        <field name="name">resonnocare.clinic.list</field>
+        <field name="model">resonnocare.clinic</field>
+        <field name="arch" type="xml">
+            <list string="Clinics" create="false" edit="false" delete="false">
+                <field name="clinic_code" string="Clinic Code"/>
+                <field name="name" string="Clinic Name"/>
+                <field name="clinic_type"/>
+                <field name="clinic_subtype"/>
+                <field name="clinic_category"/>
+                <field name="city"/>
+                <field name="clinic_status"/>
+                <field name="go_live_date"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Clinic Form View - Clean, Clinic-Specific with Dynamic Readonly -->
+    <record id="view_resonnocare_clinic_form" model="ir.ui.view">
+        <field name="name">resonnocare.clinic.form</field>
+        <field name="model">resonnocare.clinic</field>
+        <field name="arch" type="xml">
+            <form string="Clinic" delete="false">
+                <header>
+                    <field name="clinic_status" widget="statusbar" options="{'clickable': '1'}" groups="resonnocare_base.group_resonnocare_super_admin"/>
+                </header>
+                <sheet>
+
+
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1" placeholder="Clinic Name"/>
+                        </h1>
+                        <h3>
+                            <field name="clinic_code" readonly="1"/>
+                        </h3>
+                    </div>
+
+                    <group>
+                        <group string="Clinic Information">
+                            <!-- Critical fields: Editable only in Draft -->
+                            <field name="clinic_type" readonly="clinic_status in ('active', 'suspended')"/>
+                            <field name="clinic_subtype" invisible="clinic_type == 'coco'" required="clinic_type in ('h', 'sis')" readonly="clinic_status in ('active', 'suspended')"/>
+                            <field name="clinic_category" readonly="clinic_status in ('active', 'suspended')"/>
+                            <field name="partner_name" invisible="clinic_type == 'coco'" readonly="clinic_status in ('active', 'suspended')"/>
+                            <field name="ownership_type" readonly="1"/>
+                        </group>
+                        <group string="Operational Details">
+                            <!-- Editable in all states -->
+                            <field name="go_live_date"/>
+                            <field name="external_billing"/>
+                            <field name="warehouse_id" readonly="1"/>
+                        </group>
+                        <group string="State HQ Information">
+                            <field name="state_hq_name" placeholder="State Head Quarter Name"/>
+                            <field name="state_gst" placeholder="State GST Number"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="State HQ Address" colspan="2">
+                            <field name="state_hq_address" placeholder="Address of State HQ" nolabel="1"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <page string="Address">
+                            <group>
+                                <group string="Address">
+                                    <!-- Critical address fields: Readonly after Draft -->
+                                    <field name="street" placeholder="Address..." readonly="1"/>
+                                    <field name="street2" placeholder="Location, Landmark..." readonly="1"/>
+                                    <field name="city" readonly="clinic_status in ('active', 'suspended')"/>
+                                    <field name="state_id" readonly="clinic_status in ('active', 'suspended')"/>
+                                    <field name="zip" readonly="clinic_status in ('active', 'suspended')"/>
+                                    <field name="country_id" readonly="clinic_status in ('active', 'suspended')"/>
+                                </group>
+                            </group>
+                            <group string="Location Details ">
+                                <!-- Editable in all states -->
+                                <field name="clinic_location" placeholder="Area/Location"/>
+                                <field name="clinic_landmark" placeholder="Landmark"/>
+                            </group>
+                            <group string="Geo-Location">
+                                <!-- Editable in all states -->
+                                <field name="clinic_latitude"/>
+                                <field name="clinic_longitude"/>
+                            </group>
+                        </page>
+                        <page string="Diagnostic Pricing" groups="resonnocare_base.group_resonnocare_super_admin,resonnocare_base.group_clinic_admin">
+                            <group>
+                                <field name="diagnostic_price_line_ids" context="{'default_clinic_id': id}">
+                                    <list editable="bottom" delete="true">
+                                        <field name="diagnostic_item_id" options="{'no_create': True}"/>
+                                        <field name="mrp"/>
+                                    </list>
+                                </field>
+                            </group>
+                            <group string="Price History">
+                                <field name="diagnostic_price_history_ids" readonly="1">
+                                    <list create="false" edit="false" delete="false">
+                                        <field name="change_date"/>
+                                        <field name="diagnostic_item_id"/>
+                                        <field name="old_mrp"/>
+                                        <field name="new_mrp"/>
+                                        <field name="changed_by_id"/>
+                                        <field name="change_note"/>
+                                    </list>
+                                </field>
+                            </group>
+                        </page>
+                        <page string="Clinic Sharing Master" groups="resonnocare_base.group_resonnocare_super_admin,resonnocare_base.group_resonnocare_hr">
+                            <group>
+                                <group string="Pattern Setup">
+                                    <field name="enable_flat_sharing"/>
+                                    <field name="enable_mrp_slab_sharing"/>
+                                    <field name="enable_item_based_sharing"/>
+                                    <field name="enable_source_based_sharing"/>
+                                    <field name="sharing_applicable_from"/>
+                                    <field name="sharing_applicable_to"/>
+                                </group>
+                            </group>
+                            <div class="alert alert-info" role="alert">
+                                <strong>Rule Entry Guide</strong><br/>
+                                1. Enable only the patterns you want to use.<br/>
+                                2. Add rows in the correct tab (Source / Item / MRP / Flat).<br/>
+                                3. Matching priority is always: Source &gt; Item &gt; MRP Slab &gt; Flat.
+                            </div>
+                            <div class="text-muted o_form_label">
+                                Validation Rank: 4 = Flat, 3 = MRP Slab, 2 = Item, 1 = Source.
+                            </div>
+                            <group string="Rank 4 - Flat Sharing Grid" invisible="not enable_flat_sharing">
+                                <field name="clinic_sharing_flat_ids"
+                                    context="{'default_clinic_id': id, 'default_rule_level': 'flat', 'default_product_category': 'hearing_device', 'default_sharing_percent': 0.0}">
+                                    <list editable="bottom">
+                                        <field name="rule_level" invisible="1"/>
+                                        <field name="product_category"/>
+                                        <field name="billing_type"/>
+                                        <field name="sharing_percent"/>
+                                        <field name="billing_price"/>
+                                        <field name="applicable_from"/>
+                                        <field name="applicable_to"/>
+                                    </list>
+                                </field>
+                            </group>
+                            <group string="Rank 3 - MRP Slab Sharing Grid" invisible="not enable_mrp_slab_sharing">
+                                <field name="clinic_sharing_mrp_ids"
+                                    context="{'default_clinic_id': id, 'default_rule_level': 'mrp', 'default_product_category': 'hearing_device', 'default_sharing_percent': 0.0}">
+                                    <list editable="bottom">
+                                        <field name="rule_level" invisible="1"/>
+                                        <field name="product_category"/>
+                                        <field name="billing_type"/>
+                                        <field name="mrp_range_from"/>
+                                        <field name="mrp_range_to"/>
+                                        <field name="sharing_percent"/>
+                                        <field name="billing_price"/>
+                                        <field name="applicable_from"/>
+                                        <field name="applicable_to"/>
+                                    </list>
+                                </field>
+                            </group>
+                            <group string="Rank 2 - Item Based Sharing Grid" invisible="not enable_item_based_sharing">
+                                <field name="clinic_sharing_item_ids"
+                                    context="{'default_clinic_id': id, 'default_rule_level': 'item', 'default_product_category': 'hearing_device', 'default_sharing_percent': 0.0}">
+                                    <list editable="bottom">
+                                        <field name="rule_level" invisible="1"/>
+                                        <field name="product_category"/>
+                                        <field name="billing_type"/>
+                                        <field name="product_tmpl_id"/>
+                                        <field name="sharing_percent"/>
+                                        <field name="billing_price"/>
+                                        <field name="applicable_from"/>
+                                        <field name="applicable_to"/>
+                                    </list>
+                                </field>
+                            </group>
+                            <group string="Rank 1 - Source Based Sharing Grid" invisible="not enable_source_based_sharing">
+                                <field name="clinic_sharing_source_ids"
+                                    context="{'default_clinic_id': id, 'default_rule_level': 'source', 'default_product_category': 'hearing_device', 'default_sharing_percent': 0.0}">
+                                    <list editable="bottom">
+                                        <field name="rule_level" invisible="1"/>
+                                        <field name="product_category"/>
+                                        <field name="billing_type"/>
+                                        <field name="source_category"/>
+                                        <field name="sharing_percent"/>
+                                        <field name="billing_price"/>
+                                        <field name="applicable_from"/>
+                                        <field name="applicable_to"/>
+                                    </list>
+                                </field>
+                            </group>
+                        </page>
+
+                        <page string="Inventory Locations" groups="resonnocare_base.group_resonnocare_super_admin">
+                            <group>
+                                <group string="Clinic Warehouses">
+                                    <field name="warehouse_id" readonly="1"/>
+                                    <field name="stock_location_id" readonly="1"/>
+                                </group>
+                                <group string="Category Locations">
+                                    <field name="hearing_aid_sale_location_id" readonly="1"/>
+                                    <field name="demo_hearing_aid_location_id" readonly="1"/>
+                                    <field name="saleable_accessories_location_id" readonly="1"/>
+                                    <field name="repair_service_location_id" readonly="1"/>
+                                    <field name="equipment_location_id" readonly="1"/>
+                                    <field name="consumable_location_id" readonly="1"/>
+                                    <field name="rtv_location_id" readonly="1"/>
+                                </group>
+                            </group>
+                        </page>
+
+                        <!-- <page string="Clinic Users" groups="resonnocare_base.group_resonnocare_super_admin">
+                            <field name="user_ids" readonly="1">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="login"/>
+                                    <field name="email"/>
+                                    <field name="groups_id" widget="many2many_tags"/>
+                                </list>
+                            </field>
+                        </page> -->
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_backfill_clinic_inventory_locations" model="ir.actions.server">
+        <field name="name">Backfill Inventory Locations</field>
+        <field name="model_id" ref="resonnocare_clinic.model_resonnocare_clinic"/>
+        <field name="binding_model_id" ref="resonnocare_clinic.model_resonnocare_clinic"/>
+        <field name="binding_type">action</field>
+        <field name="groups_id" eval="[(4, ref('resonnocare_base.group_resonnocare_super_admin'))]"/>
+        <field name="state">code</field>
+        <field name="code">records.action_backfill_inventory_locations()</field>
+    </record>
+
+    <!-- Clinics List Action with Proper Views -->
+    <record id="action_resonnocare_clinics" model="ir.actions.act_window">
+        <field name="name">Clinics</field>
+        <field name="res_model">resonnocare.clinic</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_ids" eval="[
+            (5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_resonnocare_clinic_list')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('view_resonnocare_clinic_form')}),
+        ]"/>
+
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first clinic
+            </p>
+            <p>
+                <a type="action" name="%(action_clinic_create_wizard)d" class="btn btn-primary">Create Clinic</a>
+            </p>
+        </field>
+        <field name="groups_id" eval="[(4, ref('resonnocare_base.group_resonnocare_super_admin'))]"/>
+    </record>
+
+</odoo>

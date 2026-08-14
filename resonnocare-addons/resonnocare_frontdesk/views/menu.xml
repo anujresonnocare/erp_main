@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- Clinic Stock (Front Desk view) -->
+    <record id="action_frontdesk_clinic_stock_server" model="ir.actions.server">
+        <field name="name">Clinic Stock</field>
+        <field name="model_id" ref="stock.model_stock_quant"/>
+        <field name="state">code</field>
+        <field name="code">action = env["stock.quant"].action_open_clinic_stock()</field>
+    </record>
+
+    <!-- Root: Front Desk -->
+    <!-- Using a generic icon or a custom one if available. For now relying on default or text. -->
+    <menuitem id="menu_front_desk_root" name="Front Desk" sequence="-200" groups="resonnocare_base.group_front_desk,resonnocare_base.group_clinic_admin,resonnocare_base.group_resonnocare_super_admin" web_icon="resonnocare_frontdesk,static/description/icon.png"/>
+
+    <!-- Dashboard (Home) -->
+    <menuitem id="menu_front_desk_dashboard" name="Dashboard" parent="menu_front_desk_root" action="action_open_front_desk_dashboard_server" sequence="1" groups="resonnocare_base.group_front_desk"/>
+
+    <!-- Clinic Ops -->
+    <menuitem id="menu_front_desk_clinic_dashboard" name="Clinic Dashboard" parent="menu_front_desk_root" action="action_open_frontdesk_clinic_dashboard_server" sequence="2" groups="resonnocare_base.group_front_desk"/>
+    <menuitem id="menu_front_desk_clinic_profile" name="Clinic Profile" parent="menu_front_desk_root" action="action_open_frontdesk_clinic_profile_server" sequence="4" groups="resonnocare_base.group_front_desk"/>
+
+    <!-- Patients -->
+    <menuitem id="menu_front_desk_patients" name="Patients" parent="menu_front_desk_root" sequence="10" groups="resonnocare_base.group_front_desk"/>
+
+    <!-- All Patients (List) -->
+    <menuitem id="menu_front_desk_patients_list" name="All Patients" parent="menu_front_desk_patients" action="action_patient_search" sequence="1" groups="resonnocare_base.group_front_desk"/>
+
+    <!-- Search (Direct Link) -->
+    <menuitem id="menu_front_desk_patient_search" name="Register/Search" parent="menu_front_desk_patients" action="action_patient_search_wizard" sequence="2" groups="resonnocare_base.group_front_desk"/>
+
+    <menuitem id="menu_front_desk_inventory" name="Inventory" parent="menu_front_desk_root" sequence="25" groups="resonnocare_base.group_front_desk,resonnocare_base.group_clinic_admin" />
+
+    <menuitem id="menu_front_desk_clinic_stock" name="Clinic Stock" parent="menu_front_desk_inventory" action="action_frontdesk_clinic_stock_server" sequence="1" groups="resonnocare_base.group_front_desk,resonnocare_base.group_clinic_admin" />
+
+    <menuitem id="menu_front_desk_clinic_transit" name="Goods in Transit" parent="menu_front_desk_inventory" action="resonnocare_inventory.action_open_clinic_goods_in_transit_server" sequence="2" groups="resonnocare_base.group_front_desk,resonnocare_base.group_clinic_admin" />
+
+    <menuitem id="menu_front_desk_clinic_grn" name="GRN Acknowledgement" parent="menu_front_desk_inventory" action="resonnocare_inventory.action_open_clinic_incoming_receipts_server" sequence="3" groups="resonnocare_base.group_front_desk,resonnocare_base.group_clinic_admin" />
+
+    <menuitem id="menu_front_desk_clinic_deliveries" name="Customer Deliveries" parent="menu_front_desk_inventory" action="resonnocare_inventory.action_open_clinic_deliveries_server" sequence="4" groups="resonnocare_base.group_front_desk,resonnocare_base.group_clinic_admin" />
+
+    <!-- Attendance Regularization shortcuts for employee/front-desk login -->
+    <menuitem id="menu_front_desk_attendance_regularization_root" name="Attendance Regularization" parent="menu_front_desk_root" sequence="27" groups="resonnocare_base.group_front_desk,resonnocare_base.group_clinic_admin"/>
+    <menuitem id="menu_front_desk_attendance_summary_my" name="My Attendance Evaluation" parent="menu_front_desk_attendance_regularization_root" action="resonnocare_hr.action_resonnocare_my_attendance_summary" sequence="5" groups="resonnocare_base.group_front_desk,resonnocare_base.group_clinic_admin"/>
+    <menuitem id="menu_front_desk_attendance_regularization_my" name="My Regularizations" parent="menu_front_desk_attendance_regularization_root" action="resonnocare_hr.action_resonnocare_attendance_regularization_my" sequence="10" groups="resonnocare_base.group_front_desk,resonnocare_base.group_clinic_admin"/>
+    <menuitem id="menu_front_desk_attendance_regularization_team" name="Team Regularizations" parent="menu_front_desk_attendance_regularization_root" action="resonnocare_hr.action_resonnocare_attendance_regularization_team" sequence="20" groups="resonnocare_base.group_front_desk,resonnocare_base.group_clinic_admin"/>
+
+    <!-- Billing root under Resonnocare -->
+    <menuitem id="menu_resonnocare_billing" name="Billing" parent="menu_front_desk_root" sequence="30" groups="resonnocare_base.group_front_desk,resonnocare_base.group_clinic_admin,resonnocare_base.group_resonnocare_super_admin"/>
+
+    <!-- New Sale -->
+
+    <menuitem id="menu_resonnocare_sales_orders" name="Sales Orders" parent="menu_resonnocare_billing" action="sale.action_orders" sequence="1" />
+
+    <menuitem id="menu_resonnocare_customer_invoices" name="Customer Invoices" parent="menu_resonnocare_billing" sequence="2" action="account.action_move_out_invoice_type" />
+
+    <menuitem id="menu_resonnocare_discount_requests" name="Discount Requests" parent="menu_resonnocare_billing" sequence="3" action="action_discount_approval_requests" groups="resonnocare_base.group_front_desk,resonnocare_base.group_clinic_admin,resonnocare_base.group_resonnocare_super_admin,resonnocare_base.group_resonnocare_hr,hr_holidays.group_hr_holidays_user,hr_holidays.group_hr_holidays_manager"/>
+
+    <menuitem id="menu_resonnocare_min_advance_requests" name="Min Advance Requests" parent="menu_resonnocare_billing" sequence="4" action="action_advance_approval_requests" groups="resonnocare_base.group_front_desk,resonnocare_base.group_clinic_admin,resonnocare_base.group_resonnocare_super_admin,resonnocare_base.group_resonnocare_hr,hr_holidays.group_hr_holidays_user,hr_holidays.group_hr_holidays_manager"/>
+
+    <!-- HR/Manager access inside Employees app -->
+    <menuitem id="menu_resonnocare_discount_requests_hr_native"
+              name="Discount Requests"
+              parent="resonnocare_hr.menu_resonnocare_hr_controls_native"
+              action="action_discount_approval_requests"
+              sequence="85"
+              groups="resonnocare_base.group_resonnocare_hr,resonnocare_base.group_resonnocare_super_admin,hr_holidays.group_hr_holidays_user,hr_holidays.group_hr_holidays_manager"/>
+
+    <menuitem id="menu_resonnocare_min_advance_requests_hr_native"
+              name="Min Advance Requests"
+              parent="resonnocare_hr.menu_resonnocare_hr_controls_native"
+              action="action_advance_approval_requests"
+              sequence="86"
+              groups="resonnocare_base.group_resonnocare_hr,resonnocare_base.group_resonnocare_super_admin,hr_holidays.group_hr_holidays_user,hr_holidays.group_hr_holidays_manager"/>
+
+</odoo>

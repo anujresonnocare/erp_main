@@ -1,0 +1,311 @@
+Below is the **final, corrected, prod-ready refinement document** you should send.
+It **supersedes** earlier versions and is **fully aligned with client sheets, CRM flow, and Odoo 18 best practices**.
+
+---
+
+# RESONNOCARE — FINAL REFINEMENTS
+
+## APPOINTMENTS FLOW + MASTERS DATA (SEND AS-IS)
+
+---
+
+## A. MASTERS MODULE — FINAL STRUCTURE & RESPONSIBILITY
+
+### 1. WHAT BELONGS IN MASTERS (GLOBAL, SUPER ADMIN–OWNED)
+
+Masters are **configuration**, not operations.
+
+### Master Models (FINAL)
+
+1. **Call Dispositions**
+2. **Appointment Types**
+3. **Appointment Outcomes**
+4. **Diagnostic Items** ✅ (NEW, REQUIRED)
+
+All of the above:
+
+* **Editable only by Super Admin**
+* **Read-only everywhere else**
+* **Global across clinics**
+
+---
+
+## B. DIAGNOSTIC ITEMS — FINAL DEFINITION
+
+### Purpose
+
+Diagnostic Items represent **clinical services/tests**, not physical goods.
+
+They are used for:
+
+* Clinical planning
+* Appointment context
+* Billing reference (future)
+* Reports
+
+They are **NOT inventory**.
+
+---
+
+### Diagnostic Item — Master Model
+
+**Module:** `resonnocare_master`
+**Model:** `resonnocare.diagnostic.item`
+
+#### Fields (FINAL)
+
+* `name` (Char, required)
+* `code` (Char, required, unique)
+* `mrp` (Float, required)
+* `description` (Text)
+* `sequence` (Integer)
+* `active` (Boolean)
+
+#### Explicitly NOT included
+
+* Quantity
+* Stock
+* Warehouse
+* Vendor
+* Accounting links
+
+---
+
+### Menu Placement (FINAL)
+
+```
+Resonnocare (Top Bar)
+ └── Masters
+     ├── Call Dispositions
+     ├── Appointment Types
+     ├── Appointment Outcomes
+     └── Diagnostic Items
+```
+
+---
+
+## C. APPOINTMENTS MODULE — FINAL FLOW REFINEMENTS
+
+### 1. APPOINTMENT IS A CLINICAL EVENT (RECONFIRMED)
+
+Appointments are:
+
+* Time-based
+* Duration-driven (from Appointment Type)
+* Created by Front Desk
+* Consumed by Doctor
+
+Appointments are **NOT**:
+
+* Slots
+* CRM leads
+* Payments
+* Inventory
+
+---
+
+## D. APPOINTMENT MODEL — FINAL ADDITIONS
+
+### Diagnostic Items on Appointment
+
+**Model:** `resonnocare.appointment`
+
+Add field:
+
+```python
+diagnostic_item_ids = fields.Many2many(
+    "resonnocare.diagnostic.item",
+    string="Diagnostic Tests"
+)
+```
+
+---
+
+## E. APPOINTMENT FORM — FINAL UI STRUCTURE
+
+### Front Desk Form Sections (ORDER IS IMPORTANT)
+
+1. **Patient Info**
+
+   * Read-only
+   * Name, Phone, ID
+
+2. **Appointment Details**
+
+   * Appointment Type
+   * Date
+   * Start Time
+   * End Time (computed)
+   * Doctor (optional)
+
+3. **Diagnostic Tests** ✅
+
+   * Multi-select
+   * From Diagnostic Items master
+   * Optional
+
+---
+
+## F. STATUS-BASED FIELD CONTROL (MANDATORY)
+
+### Diagnostic Items Editable When:
+
+* `draft`
+* `scheduled`
+
+### Diagnostic Items Read-Only When:
+
+* `checked_in`
+* `in_consultation`
+* `completed`
+* `no_show`
+* `cancelled`
+
+**Must be enforced in XML using attrs**, not Python hacks.
+
+---
+
+## G. APPOINTMENT STATUS FLOW (STRICT, FINAL)
+
+```
+draft
+ → scheduled
+ → checked_in
+ → in_consultation
+ → completed
+
+Side exits:
+ → cancelled
+ → no_show
+```
+
+Rules:
+
+* Status **never manually editable**
+* Status changes **only via buttons**
+* No backward movement (except cancel)
+
+---
+
+## H. CONFIRMATION FLOW (FRONT DESK)
+
+### Action: “Confirm Appointment”
+
+On confirm:
+
+* Appointment ID generated
+* Status → `scheduled`
+* Diagnostic Items locked
+* Appointment visible to Doctor
+
+---
+
+## I. DOCTOR FLOW — FINAL REFINEMENT
+
+Doctor can:
+
+* View appointments
+* View appointment type
+* View diagnostic items
+* Progress status
+* Add clinical notes
+
+Doctor cannot:
+
+* Create appointment
+* Change appointment type
+* Add/remove diagnostic items
+* Change patient
+* Reschedule
+
+---
+
+## J. CRM INTEGRATION (STRICT RULE)
+
+CRM:
+
+* **Never creates appointments**
+* Provides only:
+
+  * Visit Intent
+  * Preferred Clinic
+  * Preferred Appointment Type
+
+Front Desk decides final appointment.
+
+CRM access:
+
+* Read-only reference only
+
+---
+
+## K. PAYMENT & INVENTORY — EXPLICIT EXCLUSION
+
+Do NOT add:
+
+* Payment fields
+* Product models
+* Stock logic
+* Invoice references
+
+These will come later in **Billing module**.
+
+---
+
+## L. UPDATED END-TO-END FLOW (FINAL)
+
+```
+CRM
+ └── Lead
+     └── Disposition
+         └── Visit Intent (read-only)
+
+Front Desk
+ ├── Patient exists / registered
+ ├── Create Appointment (draft)
+ │   ├── Appointment Type
+ │   ├── Diagnostic Items (optional)
+ │
+ ├── Confirm Appointment
+ │   └── Status = scheduled
+ │
+ ├── Patient arrives
+ │   └── Check-in
+
+Doctor
+ ├── In Consultation
+ ├── Complete / No-show
+
+Future
+ └── Billing / Reports / Portal
+```
+
+---
+
+## M. WHY THESE REFINEMENTS ARE NON-NEGOTIABLE
+
+* Diagnostic items are explicitly listed in client scope
+* Clinics operate on **time blocks**, not slots
+* Super Admin must control all masters
+* Doctors must stay clinical-only
+* CRM must not pollute operations
+* Inventory must not be mixed with services
+
+---
+
+## FINAL DIRECTIVE
+
+* Add **Diagnostic Items** to `resonnocare_master`
+* Reference them in `resonnocare_appointment`
+* Enforce status-based UI control
+* Keep CRM read-only
+* No inventory or billing logic
+
+---
+
+If you want next:
+
+* I can give **exact Odoo 18 models + XML** for Diagnostic Items
+* Or **doctor appointment screen spec**
+* Or **appointment calendar/list behavior**
+

@@ -1,0 +1,18 @@
+.o_kanban_view.o_resonnocare_doctor_my_profile_kanban {
+    --KanbanRecord-width: 100%;
+}
+
+.o_kanban_view.o_resonnocare_doctor_my_profile_kanban .o_kanban_renderer {
+    display: block !important;
+}
+
+.o_kanban_view.o_resonnocare_doctor_my_profile_kanban .o_kanban_record {
+    width: 100% !important;
+    max-width: none !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+}
+
+.o_kanban_view.o_resonnocare_doctor_my_profile_kanban .o_kanban_record .o_kanban_card {
+    width: 100% !important;
+}

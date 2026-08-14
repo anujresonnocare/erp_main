@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Tree View -->
+    <record id="view_device_maintenance_tree" model="ir.ui.view">
+        <field name="name">resonnocare.device.maintenance.tree</field>
+        <field name="model">resonnocare.device.maintenance</field>
+        <field name="arch" type="xml">
+            <list string="Device Maintenance Logs">
+                <field name="name" string="Log No."/>
+                <field name="device_id"/>
+                <field name="clinic_id"/>
+                <field name="request_date"/>
+                <field name="resolved_date"/>
+                <field name="state" widget="badge" decoration-info="state == 'draft'" decoration-warning="state == 'under_maintenance'" decoration-success="state == 'resolved'" decoration-danger="state == 'cancel'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_device_maintenance_form" model="ir.ui.view">
+        <field name="name">resonnocare.device.maintenance.form</field>
+        <field name="model">resonnocare.device.maintenance</field>
+        <field name="arch" type="xml">
+            <form string="Device Maintenance Log">
+                <header>
+                    <button name="action_confirm" string="Confirm / Lock Device" type="object" class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_resolve" string="Mark Resolved / Release Device" type="object" class="btn-success" invisible="state != 'under_maintenance'"/>
+                    <button name="action_cancel" string="Cancel" type="object" class="btn-secondary" invisible="state in ('resolved', 'cancel')"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,under_maintenance,resolved"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Device Details">
+                            <field name="device_id" readonly="state != 'draft'"/>
+                            <field name="clinic_id"/>
+                        </group>
+                        <group string="Dates">
+                            <field name="request_date" readonly="state != 'draft'"/>
+                            <field name="resolved_date"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="description" placeholder="Describe the problem with the diagnostic or clinic device..." readonly="state != 'draft'"/>
+                        <field name="action_taken" placeholder="Describe what rectification or repair work was performed..." readonly="state == 'resolved'"/>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Search View -->
+    <record id="view_device_maintenance_search" model="ir.ui.view">
+        <field name="name">resonnocare.device.maintenance.search</field>
+        <field name="model">resonnocare.device.maintenance</field>
+        <field name="arch" type="xml">
+            <search string="Search Device Maintenance Logs">
+                <field name="name" string="Log No."/>
+                <field name="device_id"/>
+                <field name="clinic_id"/>
+                <separator/>
+                <filter string="Draft" name="draft" domain="[('state', '=', 'draft')]"/>
+                <filter string="Under Maintenance" name="under_maintenance" domain="[('state', '=', 'under_maintenance')]"/>
+                <filter string="Resolved" name="resolved" domain="[('state', '=', 'resolved')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Device" name="group_device" context="{'group_by': 'device_id'}"/>
+                    <filter string="Clinic" name="group_clinic" context="{'group_by': 'clinic_id'}"/>
+                    <filter string="Status" name="group_status" context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_device_maintenance" model="ir.actions.act_window">
+        <field name="name">Clinic Device Maintenance</field>
+        <field name="res_model">resonnocare.device.maintenance</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_device_maintenance_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Log a new internal clinic equipment maintenance request.
+            </p>
+            <p>
+                Track repair processes for audiometers, computers, or other local devices. Locking a device puts it in 'Under Maintenance' status in the inventory.
+            </p>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_payment_receipt_document_resonnocare" inherit_id="account.report_payment_receipt_document">
+
+        <xpath expr="//div[@class='page']" position="attributes">
+            <attribute name="t-if">not o._is_resonnocare_customer_receipt()</attribute>
+        </xpath>
+
+        <xpath expr="//div[@class='page']" position="after">
+            <!-- ===== SINGLE PAGE: CUSTOMER COPY + OFFICE COPY ===== -->
+            <div class="page" t-if="o._is_resonnocare_customer_receipt()">
+                <t t-set="clinic" t-value="o._get_receipt_clinic()"/>
+
+                <!-- ============ CUSTOMER COPY ============ -->
+                <div style="font-size:15px;font-weight:bold;text-align:center;margin-bottom:8px;letter-spacing:1px;">CUSTOMER COPY</div>
+
+                <table style="width:100%;border:2px solid #000;border-collapse:collapse;font-family:Arial,Helvetica,sans-serif;font-size:12px;">
+                    <!-- Header Row -->
+                    <tr>
+                        <td style="width:50%;vertical-align:middle;border-right:1px solid #000;padding:10px 12px;">
+                            <div style="overflow:hidden;">
+                                <div t-if="o.company_id.logo" style="float:left;margin-right:12px;">
+                                    <img t-att-src="image_data_uri(o.company_id.logo)" style="max-height:70px;max-width:90px;display:block;"/>
+                                </div>
+                                <div style="overflow:hidden;padding-top:8px;">
+                                    <div style="font-size:22px;font-weight:bold;letter-spacing:0.5px;line-height:1.2;">RESONNOCARE</div>
+                                    <div style="font-size:12px;letter-spacing:0.5px;line-height:1.2;">Health-tech Private Limited</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td style="width:50%;vertical-align:middle;padding:10px 12px;text-align:center;">
+                            <div style="font-size:16px;font-weight:bold;">RECEIPT # <span style="font-size:13px;font-weight:normal;" t-out="o.name or ''"/></div>
+                            <div style="font-size:13px;margin-top:4px;"><span t-out="o._get_receipt_paid_for_label()"/></div>
+                        </td>
+                    </tr>
+                    <!-- HQ + Clinic -->
+                    <tr>
+                        <td style="border-top:1px solid #000;border-right:1px solid #000;padding:8px 12px;vertical-align:top;">
+                            <div t-if="clinic and clinic.state_hq_name" style="font-weight:bold;"><span t-out="clinic.state_hq_name or ''"/></div>
+                            <div t-if="clinic and clinic.state_hq_address"><span t-out="clinic.state_hq_address or ''"/></div>
+                            <div t-if="clinic and clinic.state_gst">GSTIN: <span t-out="clinic.state_gst or ''"/></div>
+                        </td>
+                        <td style="border-top:1px solid #000;padding:8px 12px;vertical-align:top;">
+                            <div style="font-weight:bold;">Clinic Name</div>
+                            <div t-out="clinic.name or ''"/>
+                            <div t-out="clinic.street or ''"/>
+                            <div>
+                                <span t-out="clinic.city or ''"/>
+                                <span t-if="clinic.state_id">, <span t-out="clinic.state_id.name"/></span>
+                            </div>
+                            <div>Phone: <span t-out="(clinic.company_id.phone if clinic and clinic.company_id else '') or ''"/></div>
+                        </td>
+                    </tr>
+                    <!-- Date + Mode -->
+                    <tr style="border-top:2px solid #000;border-bottom:2px solid #000;background:#f5f5f5;">
+                        <td style="padding:6px 12px;border-right:1px solid #000;"><strong>Date:</strong> <span t-field="o.date"/></td>
+                        <td style="padding:6px 12px;text-align:right;"><strong><span t-out="o._get_receipt_mode_label()"/></strong></td>
+                    </tr>
+                    <!-- Received From -->
+                    <tr>
+                        <td colspan="2" style="padding:8px 12px;">
+                            <strong>Received From:</strong>
+                            <span t-out="o.partner_id.name or ''"/>
+                            <span t-if="o.partner_id.patient_id"> and Patient ID <span t-out="o.partner_id.patient_id"/></span>
+                            <br/>
+                            <span t-out="o.partner_id.street or ''"/>
+                            <span t-if="o.partner_id.street2">, <span t-out="o.partner_id.street2"/></span>
+                            <span t-if="o.partner_id.city">, <span t-out="o.partner_id.city"/></span>
+                            <span t-if="o.partner_id.phone">, Phone <span t-out="o.partner_id.phone"/></span>
+                            <span t-if="o.partner_id.email">, Email <span t-out="o.partner_id.email"/></span>
+                        </td>
+                    </tr>
+                    <!-- Amount -->
+                    <tr>
+                        <td colspan="2" style="padding:6px 12px 10px 12px;">
+                            <strong>A Sum of Rs.</strong>
+                            <span t-field="o.amount" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
+                            <span t-out="o._get_receipt_amount_words()"/> Only.
+                            <br/>
+                            <strong>Paid For:</strong> <span t-out="o._get_receipt_paid_for_label()"/>
+                        </td>
+                    </tr>
+                    <!-- NDNC + Signature -->
+                    <tr style="border-top:1px solid #000;">
+                        <td style="padding:8px 12px;border-right:1px solid #000;vertical-align:top;">
+                            <div style="font-size:11px;line-height:1.4;color:#333;">
+                                Notwithstanding your registration as NDNC anywhere, fully/partially blocked, you agree to receive a sales or service call from the company or its group company or associates based on the information you have provided to us.
+                            </div>
+                        </td>
+                        <td style="padding:8px 12px;vertical-align:bottom;text-align:center;">
+                            <div style="margin-top:30px;border-top:1px solid #000;display:inline-block;width:80%;"></div>
+                            <div style="font-size:12px;margin-top:4px;">Authorised Signature</div>
+                        </td>
+                    </tr>
+                    <!-- Addresses -->
+                    <tr style="border-top:1px solid #000;">
+                        <td style="padding:8px 12px;border-right:1px solid #000;vertical-align:top;">
+                            <strong>Corporate Address:</strong><br/>
+                            RESONNOCARE HEALTH-TECH PVT. LTD, 403, Office Block 'C', 4th Floor – Above Retail Block R1 &amp; R5, M3M URBANA, Sector 67, Gurugram, 122101
+                            <br/>
+                            <span t-if="o.company_id.phone">Phone: <span t-out="o.company_id.phone"/></span>
+                        </td>
+                        <td style="padding:8px 12px;vertical-align:top;">
+                            <strong>Registered Address:</strong><br/>
+                            <span t-out="o.company_id.partner_id.contact_address or ''"/>
+                            <br/>
+                            <span t-if="o.company_id.company_registry">CIN: <span t-out="o.company_id.company_registry"/></span>
+                        </td>
+                    </tr>
+                </table>
+
+                <!-- ============ DASHED DIVIDER ============ -->
+                <div style="border-top:2px dashed #555;margin:18px 0 10px 0;"></div>
+
+                <!-- ============ OFFICE COPY ============ -->
+                <div style="font-size:15px;font-weight:bold;text-align:center;margin-bottom:8px;letter-spacing:1px;">OFFICE COPY</div>
+
+                <table style="width:100%;border:2px solid #000;border-collapse:collapse;font-family:Arial,Helvetica,sans-serif;font-size:12px;">
+                    <!-- Header Row -->
+                    <tr>
+                        <td style="width:50%;vertical-align:middle;border-right:1px solid #000;padding:10px 12px;">
+                            <div style="overflow:hidden;">
+                                <div t-if="o.company_id.logo" style="float:left;margin-right:12px;">
+                                    <img t-att-src="image_data_uri(o.company_id.logo)" style="max-height:70px;max-width:90px;display:block;"/>
+                                </div>
+                                <div style="overflow:hidden;padding-top:8px;">
+                                    <div style="font-size:22px;font-weight:bold;letter-spacing:0.5px;line-height:1.2;">RESONNOCARE</div>
+                                    <div style="font-size:12px;letter-spacing:0.5px;line-height:1.2;">Health-tech Private Limited</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td style="width:50%;vertical-align:middle;padding:10px 12px;text-align:center;">
+                            <div style="font-size:16px;font-weight:bold;">RECEIPT # <span style="font-size:13px;font-weight:normal;" t-out="o.name or ''"/></div>
+                            <div style="font-size:13px;margin-top:4px;"><span t-out="o._get_receipt_paid_for_label()"/></div>
+                        </td>
+                    </tr>
+                    <!-- HQ + Clinic -->
+                    <tr>
+                        <td style="border-top:1px solid #000;border-right:1px solid #000;padding:8px 12px;vertical-align:top;">
+                            <div t-if="clinic and clinic.state_hq_name" style="font-weight:bold;"><span t-out="clinic.state_hq_name or ''"/></div>
+                            <div t-if="clinic and clinic.state_hq_address"><span t-out="clinic.state_hq_address or ''"/></div>
+                            <div t-if="clinic and clinic.state_gst">GSTIN: <span t-out="clinic.state_gst or ''"/></div>
+                        </td>
+                        <td style="border-top:1px solid #000;padding:8px 12px;vertical-align:top;">
+                            <div style="font-weight:bold;">Clinic Name</div>
+                            <div t-out="clinic.name or ''"/>
+                            <div t-out="clinic.street or ''"/>
+                            <div>
+                                <span t-out="clinic.city or ''"/>
+                                <span t-if="clinic.state_id">, <span t-out="clinic.state_id.name"/></span>
+                            </div>
+                            <div>Phone: <span t-out="(clinic.company_id.phone if clinic and clinic.company_id else '') or ''"/></div>
+                        </td>
+                    </tr>
+                    <!-- Date + Mode -->
+                    <tr style="border-top:2px solid #000;border-bottom:2px solid #000;background:#f5f5f5;">
+                        <td style="padding:6px 12px;border-right:1px solid #000;"><strong>Date:</strong> <span t-field="o.date"/></td>
+                        <td style="padding:6px 12px;text-align:right;"><strong><span t-out="o._get_receipt_mode_label()"/></strong></td>
+                    </tr>
+                    <!-- Received From -->
+                    <tr>
+                        <td colspan="2" style="padding:8px 12px;">
+                            <strong>Received From:</strong>
+                            <span t-out="o.partner_id.name or ''"/>
+                            <span t-if="o.partner_id.patient_id"> and Patient ID <span t-out="o.partner_id.patient_id"/></span>
+                            <br/>
+                            <span t-out="o.partner_id.street or ''"/>
+                            <span t-if="o.partner_id.street2">, <span t-out="o.partner_id.street2"/></span>
+                            <span t-if="o.partner_id.city">, <span t-out="o.partner_id.city"/></span>
+                            <span t-if="o.partner_id.phone">, Phone <span t-out="o.partner_id.phone"/></span>
+                            <span t-if="o.partner_id.email">, Email <span t-out="o.partner_id.email"/></span>
+                        </td>
+                    </tr>
+                    <!-- Amount -->
+                    <tr>
+                        <td colspan="2" style="padding:6px 12px 10px 12px;">
+                            <strong>A Sum of Rs.</strong>
+                            <span t-field="o.amount" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
+                            <span t-out="o._get_receipt_amount_words()"/> Only.
+                            <br/>
+                            <strong>Paid For:</strong> <span t-out="o._get_receipt_paid_for_label()"/>
+                        </td>
+                    </tr>
+                    <!-- NDNC + Signature -->
+                    <tr style="border-top:1px solid #000;">
+                        <td style="padding:8px 12px;border-right:1px solid #000;vertical-align:top;">
+                            <div style="font-size:11px;line-height:1.4;color:#333;">
+                                Notwithstanding your registration as NDNC anywhere, fully/partially blocked, you agree to receive a sales or service call from the company or its group company or associates based on the information you have provided to us.
+                            </div>
+                        </td>
+                        <td style="padding:8px 12px;vertical-align:bottom;text-align:center;">
+                            <div style="margin-top:30px;border-top:1px solid #000;display:inline-block;width:80%;"></div>
+                            <div style="font-size:12px;margin-top:4px;">Authorised Signature</div>
+                        </td>
+                    </tr>
+                    <!-- Addresses -->
+                    <tr style="border-top:1px solid #000;">
+                        <td style="padding:8px 12px;border-right:1px solid #000;vertical-align:top;">
+                            <strong>Corporate Address:</strong><br/>
+                            RESONNOCARE HEALTH-TECH PVT. LTD, 403, Office Block 'C', 4th Floor – Above Retail Block R1 &amp; R5, M3M URBANA, Sector 67, Gurugram, 122101
+                            <br/>
+                            <span t-if="o.company_id.phone">Phone: <span t-out="o.company_id.phone"/></span>
+                        </td>
+                        <td style="padding:8px 12px;vertical-align:top;">
+                            <strong>Registered Address:</strong><br/>
+                            <span t-out="o.company_id.partner_id.contact_address or ''"/>
+                            <br/>
+                            <span t-if="o.company_id.company_registry">CIN: <span t-out="o.company_id.company_registry"/></span>
+                        </td>
+                    </tr>
+                </table>
+
+            </div>
+        </xpath>
+
+    </template>
+</odoo>

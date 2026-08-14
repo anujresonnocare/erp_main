@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="action_resonnocare_supply_planning" model="ir.actions.act_window">
+        <field name="name">Supply Planning</field>
+        <field name="res_model">stock.move</field>
+        <field name="view_mode">list,pivot,graph</field>
+        <field name="view_id" ref="resonnocare_inventory.view_resonnocare_stock_move_supply_planning_tree"/>
+        <field name="search_view_id" ref="resonnocare_inventory.view_resonnocare_stock_move_supply_planning_search"/>
+        <field name="domain">[
+            ('picking_id.picking_type_code', '=', 'internal'),
+            ('picking_id.is_clinic_supply', '=', True),
+            ('state', 'not in', ('done', 'cancel'))
+        ]</field>
+        <field name="context">{'create': False, 'edit': False, 'delete': False, 'pivot_measures': ['product_uom_qty'], 'search_default_group_by_product': 1}</field>
+    </record>
+
+    <menuitem
+        id="menu_resonnocare_inventory_root"
+        name="Inventory"
+        parent="resonnocare_base.menu_resonnocare_root"
+        sequence="50"/>
+
+    <menuitem
+        id="menu_resonnocare_inventory_price_history"
+        name="Price History"
+        parent="menu_resonnocare_inventory_root"
+        action="action_resonnocare_product_price_history"
+        groups="resonnocare_base.group_resonnocare_super_admin"
+        sequence="10"/>
+
+    <menuitem
+        id="menu_resonnocare_inventory_scm_sales_root"
+        name="SCM Sales"
+        parent="resonnocare_base.menu_resonnocare_root"
+        groups="resonnocare_base.group_resonnocare_super_admin"
+        sequence="12"/>
+
+    <menuitem
+        id="menu_resonnocare_inventory_supply_planning"
+        name="Supply Planning"
+        parent="menu_resonnocare_inventory_scm_sales_root"
+        action="action_resonnocare_supply_planning"
+        groups="resonnocare_base.group_resonnocare_super_admin"
+        sequence="5"/>
+
+    <menuitem
+        id="menu_resonnocare_inventory_order_for_supply"
+        name="Order for Supply"
+        parent="menu_resonnocare_inventory_scm_sales_root"
+        action="action_resonnocare_order_for_supply"
+        groups="resonnocare_base.group_resonnocare_super_admin"
+        sequence="10"/>
+
+    <menuitem
+        id="menu_resonnocare_inventory_dispatch_planning"
+        name="Dispatch Planning"
+        parent="menu_resonnocare_inventory_scm_sales_root"
+        action="action_resonnocare_dispatch_planning"
+        groups="resonnocare_base.group_resonnocare_super_admin"
+        sequence="20"/>
+
+    <menuitem
+        id="menu_resonnocare_inventory_goods_in_transit"
+        name="Goods in Transit"
+        parent="menu_resonnocare_inventory_scm_sales_root"
+        action="action_resonnocare_goods_in_transit"
+        groups="resonnocare_base.group_resonnocare_super_admin"
+        sequence="30"/>
+
+    <menuitem
+        id="menu_resonnocare_inventory_served_orders"
+        name="Served Orders"
+        parent="menu_resonnocare_inventory_scm_sales_root"
+        action="action_resonnocare_served_orders"
+        groups="resonnocare_base.group_resonnocare_super_admin"
+        sequence="40"/>
+
+</odoo>

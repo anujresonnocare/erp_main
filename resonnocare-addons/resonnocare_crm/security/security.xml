@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <record id="rule_crm_lead_super_admin_all" model="ir.rule">
+            <field name="name">CRM Leads: Super Admin - All</field>
+            <field name="model_id" ref="crm.model_crm_lead"/>
+            <field name="groups" eval="[(4, ref('resonnocare_base.group_resonnocare_super_admin'))]"/>
+            <field name="domain_force">[(1, '=', 1)] if not user.has_group('resonnocare_base.group_front_desk') else [('id', '=', 0)]</field>
+        </record>
+
+        <record id="rule_crm_lead_crm_own" model="ir.rule">
+            <field name="name">CRM Leads: CRM - Own or Created Unassigned</field>
+            <field name="model_id" ref="crm.model_crm_lead"/>
+            <field name="groups" eval="[(4, ref('resonnocare_base.group_crm'))]"/>
+            <field name="domain_force">[
+                '|',
+                ('user_id', '=', user.id),
+                '&amp;',
+                ('user_id', '=', False),
+                ('create_uid', '=', user.id)
+            ] if not user.has_group('resonnocare_base.group_front_desk') else [('id', '=', 0)]</field>
+        </record>
+
+        <record id="rule_crm_lead_internal_read_all" model="ir.rule">
+            <field name="name">CRM Leads: Internal - Read All</field>
+            <field name="model_id" ref="crm.model_crm_lead"/>
+            <field name="groups" eval="[(4, ref('resonnocare_base.group_resonnocare_internal'))]"/>
+            <field name="domain_force">[(1, '=', 1)] if not user.has_group('resonnocare_base.group_front_desk') else [('id', '=', 0)]</field>
+        </record>
+
+        <record id="rule_crm_lead_clinic_admin_read_clinic" model="ir.rule">
+            <field name="name">CRM Leads: Clinic Admin - Own Clinic</field>
+            <field name="model_id" ref="crm.model_crm_lead"/>
+            <field name="groups" eval="[(4, ref('resonnocare_base.group_clinic_admin'))]"/>
+            <field name="domain_force">[
+                '|',
+                ('x_interested_clinic_id', '=', user.clinic_id.id or user.employee_id.clinic_id.id),
+                ('x_preferred_clinic_id', '=', user.clinic_id.id or user.employee_id.clinic_id.id)
+            ] if not user.has_group('resonnocare_base.group_front_desk') else [('id', '=', 0)]</field>
+        </record>
+
+        <record id="rule_crm_lead_front_desk_expected_walkin" model="ir.rule">
+            <field name="name">CRM Leads: Front Desk - Expected Walk-ins</field>
+            <field name="model_id" ref="crm.model_crm_lead"/>
+            <field name="groups" eval="[(4, ref('resonnocare_base.group_front_desk'))]"/>
+            <field name="domain_force">[
+                ('x_visit_intent', '=', True),
+                ('x_preferred_clinic_id', '=', user.clinic_id.id or user.employee_id.clinic_id.id)
+            ]</field>
+        </record>
+
+        <record id="rule_crm_call_log_super_admin_all" model="ir.rule">
+            <field name="name">CRM Call Logs: Super Admin - All</field>
+            <field name="model_id" ref="resonnocare_crm.model_resonnocare_crm_call_log"/>
+            <field name="groups" eval="[(4, ref('resonnocare_base.group_resonnocare_super_admin'))]"/>
+            <field name="domain_force">[(1, '=', 1)] if not user.has_group('resonnocare_base.group_front_desk') else [('id', '=', 0)]</field>
+        </record>
+
+        <record id="rule_crm_call_log_crm_own" model="ir.rule">
+            <field name="name">CRM Call Logs: CRM - Own Leads</field>
+            <field name="model_id" ref="resonnocare_crm.model_resonnocare_crm_call_log"/>
+            <field name="groups" eval="[(4, ref('resonnocare_base.group_crm'))]"/>
+            <field name="domain_force">[
+                '|',
+                ('lead_id.user_id', '=', user.id),
+                '&amp;',
+                ('lead_id.user_id', '=', False),
+                ('lead_id.create_uid', '=', user.id)
+            ] if not user.has_group('resonnocare_base.group_front_desk') else [('id', '=', 0)]</field>
+        </record>
+
+        <record id="rule_crm_call_log_internal_read_all" model="ir.rule">
+            <field name="name">CRM Call Logs: Internal - Read All</field>
+            <field name="model_id" ref="resonnocare_crm.model_resonnocare_crm_call_log"/>
+            <field name="groups" eval="[(4, ref('resonnocare_base.group_resonnocare_internal'))]"/>
+            <field name="domain_force">[(1, '=', 1)] if not user.has_group('resonnocare_base.group_front_desk') else [('id', '=', 0)]</field>
+        </record>
+
+        <record id="rule_crm_call_log_clinic_admin_read_clinic" model="ir.rule">
+            <field name="name">CRM Call Logs: Clinic Admin - Own Clinic</field>
+            <field name="model_id" ref="resonnocare_crm.model_resonnocare_crm_call_log"/>
+            <field name="groups" eval="[(4, ref('resonnocare_base.group_clinic_admin'))]"/>
+            <field name="domain_force">[
+                '|',
+                ('lead_id.x_interested_clinic_id', '=', user.clinic_id.id or user.employee_id.clinic_id.id),
+                ('lead_id.x_preferred_clinic_id', '=', user.clinic_id.id or user.employee_id.clinic_id.id)
+            ] if not user.has_group('resonnocare_base.group_front_desk') else [('id', '=', 0)]</field>
+        </record>
+
+        <record id="rule_crm_call_log_front_desk_expected_walkin" model="ir.rule">
+            <field name="name">CRM Call Logs: Front Desk - Expected Walk-ins</field>
+            <field name="model_id" ref="resonnocare_crm.model_resonnocare_crm_call_log"/>
+            <field name="groups" eval="[(4, ref('resonnocare_base.group_front_desk'))]"/>
+            <field name="domain_force">[
+                ('lead_id.x_visit_intent', '=', True),
+                ('lead_id.x_preferred_clinic_id', '=', user.clinic_id.id or user.employee_id.clinic_id.id)
+            ]</field>
+        </record>
+
+        <record id="rule_crm_churn_campaign_super_admin_all" model="ir.rule">
+            <field name="name">CRM Churn Campaigns: Super Admin - All</field>
+            <field name="model_id" ref="resonnocare_crm.model_resonnocare_crm_churn_campaign"/>
+            <field name="groups" eval="[(4, ref('resonnocare_base.group_resonnocare_super_admin'))]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+        </record>
+
+        <record id="rule_crm_churn_campaign_internal_all" model="ir.rule">
+            <field name="name">CRM Churn Campaigns: Internal - All</field>
+            <field name="model_id" ref="resonnocare_crm.model_resonnocare_crm_churn_campaign"/>
+            <field name="groups" eval="[(4, ref('resonnocare_base.group_resonnocare_internal'))]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+        </record>
+
+        <record id="rule_crm_churn_campaign_crm_own" model="ir.rule">
+            <field name="name">CRM Churn Campaigns: CRM - Own Leads</field>
+            <field name="model_id" ref="resonnocare_crm.model_resonnocare_crm_churn_campaign"/>
+            <field name="groups" eval="[(4, ref('resonnocare_base.group_crm'))]"/>
+            <field name="domain_force">[('lead_id.user_id', '=', user.id)]</field>
+        </record>
+
+    </data>
+</odoo>

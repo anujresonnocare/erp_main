@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="doctor_profile_rule_external_doctor" model="ir.rule">
+            <field name="name">Doctor Profile: Own Only</field>
+            <field name="model_id" ref="model_resonnocare_doctor_profile"/>
+            <field name="groups" eval="[(4, ref('resonnocare_base.group_external_doctor'))]"/>
+            <field name="domain_force">[
+                '|', '|',
+                ('user_id', '=', user.id),
+                ('email', '=', user.login),
+                ('email', '=', user.email)
+            ]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+
+        <record id="doctor_profile_rule_front_desk_read_all" model="ir.rule">
+            <field name="name">Doctor Profile: Front Desk Read All</field>
+            <field name="model_id" ref="model_resonnocare_doctor_profile"/>
+            <field name="groups" eval="[(4, ref('resonnocare_base.group_front_desk'))]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+
+        <record id="patient_rule_external_doctor" model="ir.rule">
+            <field name="name">Patients: External Doctor Own Referrals</field>
+            <field name="model_id" ref="base.model_res_partner"/>
+            <field name="groups" eval="[(4, ref('resonnocare_base.group_external_doctor'))]"/>
+            <field name="domain_force">[
+                '|',
+                ('id', '=', user.partner_id.id),
+                '&amp;',
+                ('is_patient', '=', True),
+                ('referring_doctor_id', '=', user.external_doctor_profile_id.id)
+            ]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+
+        <record id="sale_order_rule_external_doctor" model="ir.rule">
+            <field name="name">Sales: External Doctor Own Sales</field>
+            <field name="model_id" ref="sale.model_sale_order"/>
+            <field name="groups" eval="[(4, ref('resonnocare_base.group_external_doctor'))]"/>
+            <field name="domain_force">[
+                '|',
+                ('referring_doctor_id', '=', user.external_doctor_profile_id.id),
+                '|',
+                '&amp;', ('patient_id', '!=', False), ('patient_id.referring_doctor_id', '=', user.external_doctor_profile_id.id),
+                '&amp;', ('partner_id.is_patient', '=', True), ('partner_id.referring_doctor_id', '=', user.external_doctor_profile_id.id)
+            ]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+
+        <record id="sale_order_line_rule_external_doctor" model="ir.rule">
+            <field name="name">Sales Lines: External Doctor Own Sales</field>
+            <field name="model_id" ref="sale.model_sale_order_line"/>
+            <field name="groups" eval="[(4, ref('resonnocare_base.group_external_doctor'))]"/>
+            <field name="domain_force">[
+                '|',
+                ('order_id.referring_doctor_id', '=', user.external_doctor_profile_id.id),
+                '|',
+                '&amp;', ('order_id.patient_id', '!=', False), ('order_id.patient_id.referring_doctor_id', '=', user.external_doctor_profile_id.id),
+                '&amp;', ('order_id.partner_id.is_patient', '=', True), ('order_id.partner_id.referring_doctor_id', '=', user.external_doctor_profile_id.id)
+            ]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,25 @@
+[4.0K]  .
+├── [4.0K]  data
+│   └── [ 140]  dashboard_data.xml
+├── [4.0K]  models
+│   ├── [4.0K]  __pycache__
+│   │   ├── [2.8K]  hq_dashboard.cpython-312.pyc
+│   │   └── [ 225]  __init__.cpython-312.pyc
+│   ├── [1.9K]  hq_dashboard.py
+│   └── [  27]  __init__.py
+├── [4.0K]  __pycache__
+│   └── [ 212]  __init__.cpython-312.pyc
+├── [4.0K]  security
+│   ├── [ 194]  ir.model.access.csv
+│   └── [ 173]  security.xml
+├── [4.0K]  views
+│   ├── [ 489]  admin_placeholder_action.xml
+│   ├── [  94]  admin_placeholder_view.xml
+│   ├── [ 844]  hq_dashboard_action.xml
+│   ├── [4.6K]  hq_dashboard_view.xml
+│   └── [ 502]  menu.xml
+├── [  21]  __init__.py
+├── [ 576]  __manifest__.py
+└── [   0]  tree.txt
+
+7 directories, 16 files

@@ -1,0 +1,639 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- ===================================================== -->
+    <!-- CRM LEAD FORM – RESONNOCARE CUSTOM FLOW -->
+    <!-- ===================================================== -->
+    <record id="view_crm_lead_form_inherit_resonnocare" model="ir.ui.view">
+        <field name="name">crm.lead.form.inherit.resonnocare</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_lead_view_form"/>
+        <field name="groups_id" eval="[(5, 0, 0)]"/>
+        <field name="arch" type="xml">
+
+            <!-- ================================================= -->
+            <!-- HIDE HEADER BUTTONS FOR CRM AGENTS (TASK 4) -->
+            <!-- ================================================= -->
+            <xpath expr="//header/button[@name='action_set_won_rainbowman']" position="replace"/>
+            <xpath expr="//header/button[@name='%(crm.crm_lead_lost_action)d']" position="replace"/>
+            <xpath expr="//header/button[@name='%(crm.action_crm_lead2opportunity_partner)d']" position="replace"/>
+            <xpath expr="//header/field[@name='stage_id']" position="replace"/>
+            <xpath expr="//div[@class='oe_title']/h2" position="replace"/>
+            <xpath expr="//group[field[@name='user_id'] and field[@name='team_id']]" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//header" position="inside">
+                <button
+                    name="action_open_patient_registration_from_lead"
+                    string="Register Patient"
+                    type="object"
+                    class="btn-primary"
+                    groups="resonnocare_base.group_front_desk,resonnocare_base.group_clinic_admin"
+                    invisible="not x_visit_intent or x_converted_to_patient"
+                />
+                <button
+                    name="action_open_converted_patient"
+                    string="Open Patient"
+                    type="object"
+                    class="btn-secondary"
+                    groups="resonnocare_base.group_front_desk,resonnocare_base.group_clinic_admin,resonnocare_base.group_crm,resonnocare_base.group_resonnocare_super_admin"
+                    invisible="not x_patient_id"
+                />
+            </xpath>
+            <!-- ================================================= -->
+            <!-- HIDE IRRELEVANT ODOO NATIVE FIELDS (TASK 1 & 4) -->
+            <!-- ================================================= -->
+            <xpath expr="//field[@name='name']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='partner_id']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='email_from']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='phone']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='contact_name']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='tag_ids']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='priority']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='campaign_id']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='medium_id']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='source_id']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='company_id']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='date_deadline']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='lost_reason_id']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='referred']" position="attributes">
+                 <attribute name="invisible">1</attribute>
+            </xpath>
+            <!-- ================================================= -->
+            <!-- RESTRUCTURE FORM FOR CALL-CENTER FLOW (TASK 2) -->
+            <!-- ================================================= -->
+            <xpath expr="//group[@name='opportunity_partner']" position="replace">
+                <group name="resonnocare_main">
+                    <field name="name" invisible="1"/>
+                    <group name="lead_identity" string="Lead Identity">
+                        <field name="x_phone" widget="phone" required="1"/>
+                        <field name="x_lead_source"/>
+                        <field name="x_interested_clinic_id" options="{'no_create': True}"/>
+                    </group>
+                    
+                    <group name="call_handling" string="Call Handling">
+                        <field
+                            name="user_id"
+                            string="Assigned Agent"
+                            options="{'no_create': True}"
+                            readonly="1"
+                            groups="resonnocare_base.group_crm"
+                        />
+                        <field
+                            name="user_id"
+                            string="Assigned Agent"
+                            options="{'no_create': True}"
+                            groups="resonnocare_base.group_resonnocare_super_admin"
+                        />
+                        <field name="x_disposition_id" options="{'no_create': True}"/>
+                        <field name="x_attempt_count" readonly="1"/>
+                        <field name="x_next_followup_date" readonly="1"/>
+                        <field name="x_lead_relevant" invisible="1"/>
+                        <field name="x_can_capture_visit_intent" invisible="1"/>
+                    </group>
+                </group>
+            </xpath>
+
+            <xpath expr="//group[@name='lead_partner']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//group[@name='lead_info']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//group[@name='lead_priority']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//page[@name='extra']" position="replace">
+                <page name="extra" string="Extra Information" invisible="type == 'opportunity'">
+                    <group>
+                        <group string="Contact Details">
+                            <field name="contact_name"/>
+                            <field name="mobile" widget="phone"/>
+                            <field name="email_from" widget="email"/>
+                            <label for="street_extra" string="Address"/>
+                            <div class="o_address_format">
+                                <field name="street" id="street_extra" placeholder="Street..." class="o_address_street"/>
+                                <field name="street2" placeholder="Street 2..." class="o_address_street"/>
+                                <field name="city" placeholder="City" class="o_address_city"/>
+                                <field name="state_id" class="o_address_state" placeholder="State" options="{'no_open': True}"/>
+                                <field name="zip" placeholder="ZIP" class="o_address_zip"/>
+                                <field name="country_id" placeholder="Country" class="o_address_country" options="{'no_open': True, 'no_create': True}"/>
+                            </div>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+
+            <!-- SECTION 3: Visit Intent (Conditional Tab) -->
+            <xpath expr="//notebook" position="inside">
+                <page string="Call Logs" name="call_logs" groups="resonnocare_base.group_crm,resonnocare_base.group_resonnocare_super_admin">
+                    <field name="x_call_log_ids" nolabel="1" readonly="1">
+                        <list create="0" delete="0" edit="0">
+                            <field name="name"/>
+                            <field name="call_datetime"/>
+                            <field name="user_id"/>
+                            <field name="disposition_id"/>
+                            <field name="attempt_number"/>
+                            <field name="lead_relevant"/>
+                            <field name="next_followup_date"/>
+                        </list>
+                        <form create="0" delete="0" edit="0">
+                            <group>
+                                <group>
+                                    <field name="name"/>
+                                    <field name="call_datetime"/>
+                                    <field name="user_id"/>
+                                    <field name="lead_id"/>
+                                </group>
+                                <group>
+                                    <field name="disposition_id"/>
+                                    <field name="attempt_number"/>
+                                    <field name="lead_relevant"/>
+                                    <field name="next_followup_date"/>
+                                </group>
+                            </group>
+                            <group>
+                                <field name="notes"/>
+                            </group>
+                        </form>
+                    </field>
+                </page>
+
+                <page string="Visit Intent" name="visit_intent" invisible="not x_can_capture_visit_intent" groups="resonnocare_base.group_crm,resonnocare_base.group_resonnocare_super_admin,resonnocare_base.group_front_desk,resonnocare_base.group_clinic_admin">
+                    <group>
+                        <group string="Patient Agreement">
+                            <field name="x_visit_intent" widget="boolean_toggle"/>
+                            <field name="x_preferred_appointment_type_id" options="{'no_create': True}" invisible="not x_visit_intent" required="x_visit_intent"/>
+                        </group>
+
+                        <group string="Preferred Visit Details" invisible="not x_visit_intent">
+                            <field name="x_preferred_clinic_id" options="{'no_create': True}" required="x_visit_intent"/>
+                            <field name="x_preferred_visit_date" required="x_visit_intent"/>
+                        </group>
+                    </group>
+
+                    <div class="alert alert-info mt16" invisible="not x_visit_intent">
+                        <strong>Note:</strong>
+                        Visit Intent is tentative. Appointment booking and
+                        patient registration happen at the Front Desk.
+                    </div>
+                    <group string="Conversion Tracking" invisible="not x_visit_intent">
+                        <group>
+                            <field name="x_converted_to_patient" readonly="1"/>
+                            <field name="x_conversion_datetime" readonly="1" invisible="not x_converted_to_patient"/>
+                            <field name="x_appointment_booking_datetime" readonly="1" invisible="not x_appointment_id"/>
+                        </group>
+                        <group>
+                            <field name="x_patient_id" readonly="1" invisible="not x_patient_id"/>
+                            <field name="x_appointment_id" readonly="1" invisible="not x_appointment_id"/>
+                        </group>
+                        <div class="mt16" invisible="not x_patient_id or x_appointment_id">
+                            <button
+                                name="action_create_appointment_from_lead"
+                                string="Create Appointment"
+                                type="object"
+                                class="btn-primary"
+                                groups="resonnocare_base.group_front_desk,resonnocare_base.group_clinic_admin"
+                            />
+                        </div>
+                        <div class="mt16" invisible="not x_appointment_id">
+                            <button
+                                name="action_open_booked_appointment"
+                                string="Open Appointment"
+                                type="object"
+                                class="btn-secondary"
+                                groups="resonnocare_base.group_front_desk,resonnocare_base.group_clinic_admin,resonnocare_base.group_crm,resonnocare_base.group_resonnocare_super_admin"
+                            />
+                        </div>
+                    </group>
+                </page>
+            </xpath>
+
+        </field>
+    </record>
+
+    <!-- ===================================================== -->
+    <!-- CRM KANBAN – HIDE IRRELEVANT FIELDS (TASK 1) -->
+    <!-- ===================================================== -->
+    <record id="view_resonnocare_crm_lead_kanban_clean" model="ir.ui.view">
+        <field name="name">resonnocare.crm.lead.kanban.clean</field>
+        <field name="model">crm.lead</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="stage_id" class="o_kanban_small_column" archivable="false">
+                <field name="stage_id"/>
+                <field name="x_phone"/>
+                <field name="x_lead_source"/>
+                <field name="x_interested_clinic_id"/>
+                <field name="x_disposition_id"/>
+                <field name="x_next_followup_date"/>
+                <field name="x_visit_intent"/>
+                <field name="x_converted_to_patient"/>
+                <field name="user_id"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="o_kanban_record">
+                            <div class="fw-bold fs-6">
+                                <field name="x_phone"/>
+                            </div>
+                            <div class="text-muted">
+                                <field name="x_lead_source"/>
+                            </div>
+                            <div t-if="record.x_interested_clinic_id.raw_value">
+                                <span>Clinic: </span>
+                                <field name="x_interested_clinic_id"/>
+                            </div>
+                            <div t-if="record.x_disposition_id.raw_value">
+                                <span>Disposition: </span>
+                                <field name="x_disposition_id"/>
+                            </div>
+                            <div t-if="record.x_next_followup_date.raw_value">
+                                <span>Follow-up: </span>
+                                <field name="x_next_followup_date"/>
+                            </div>
+                            <div class="mt-2 d-flex justify-content-between align-items-center">
+                                <field name="user_id" widget="many2one_avatar_user"/>
+                                <span t-if="record.x_converted_to_patient.raw_value" class="badge text-bg-success">Converted</span>
+                                <span t-elif="record.x_visit_intent.raw_value" class="badge text-bg-info">Visit Intent</span>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="view_crm_lead_kanban_inherit_resonnocare" model="ir.ui.view">
+        <field name="name">crm.lead.kanban.inherit.resonnocare</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_case_kanban_view_leads"/>
+        <field name="groups_id" eval="[(5, 0, 0)]"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='expected_revenue']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='probability']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='priority']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='tag_ids']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='activity_ids']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- ===================================================== -->
+    <!-- CRM TREE (LEADS) – HIDE IRRELEVANT FIELDS (TASK 1) -->
+    <!-- ===================================================== -->
+    <record id="view_resonnocare_crm_lead_list_clean" model="ir.ui.view">
+        <field name="name">resonnocare.crm.lead.list.clean</field>
+        <field name="model">crm.lead</field>
+        <field name="arch" type="xml">
+            <list string="My Leads" multi_edit="1">
+                <field name="create_date" string="Created On"/>
+                <field name="x_phone" string="Lead Phone"/>
+                <field name="x_lead_source" string="Lead Source"/>
+                <field name="x_interested_clinic_id" string="Interested Clinic"/>
+                <field name="user_id" string="Assigned Agent" widget="many2one_avatar_user"/>
+                <field name="x_disposition_id" string="Call Disposition"/>
+                <field name="x_next_followup_date" string="Next Follow-up"/>
+                <field name="x_visit_intent" string="Visit Intent"/>
+                <field name="x_converted_to_patient" string="Converted"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_crm_lead_tree_inherit_resonnocare" model="ir.ui.view">
+        <field name="name">crm.lead.tree.inherit.resonnocare</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_case_tree_view_leads"/>
+        <field name="groups_id" eval="[(5, 0, 0)]"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='name']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='contact_name']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='email_from']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='probability']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='tag_ids']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='priority']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- ===================================================== -->
+    <!-- CRM TREE (OPPORTUNITIES) – HIDE IRRELEVANT FIELDS (TASK 1) -->
+    <!-- ===================================================== -->
+    <!-- ===================================================== -->
+    <!-- CRM LEAD SEARCH – OPERATIONAL FILTERS -->
+    <!-- ===================================================== -->
+    <record id="view_crm_lead_search_inherit_resonnocare" model="ir.ui.view">
+        <field name="name">crm.lead.search.inherit.resonnocare</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.view_crm_case_leads_filter"/>
+        <field name="groups_id" eval="[(5, 0, 0)]"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//filter[@name='assigned_to_me']" position="after">
+                <separator/>
+
+                <filter
+                    name="needs_first_call"
+                    string="Needs First Call"
+                    domain="[('x_attempt_count', '=', 0)]"
+                />
+
+                <filter
+                    name="followup_overdue"
+                    string="Follow-up Overdue"
+                    domain="[('x_next_followup_date', '&lt;', context_today())]"
+                />
+
+                <filter
+                    name="followup_due_today"
+                    string="Follow-up Today"
+                    domain="[('x_next_followup_date', '=', context_today())]"
+                />
+
+                <filter
+                    name="followup_upcoming"
+                    string="Upcoming Follow-up"
+                    domain="[('x_next_followup_date', '&gt;', context_today())]"
+                />
+
+                <filter name="expected_walkins_today" string="Expected Walk-ins (Today)" domain="[('x_visit_intent', '=', True),
+                                 ('x_preferred_visit_date', '=', context_today())]"/>
+
+                <filter
+                    name="expected_walkins_upcoming"
+                    string="Expected Walk-ins (Upcoming)"
+                    domain="[('x_visit_intent', '=', True), ('x_preferred_visit_date', '&gt;=', context_today())]"
+                />
+
+                <filter name="visit_intent_set" string="Visit Intent Given" domain="[('x_visit_intent', '=', True)]"/>
+
+                <filter
+                    name="converted_to_patient"
+                    string="Converted"
+                    domain="[('x_converted_to_patient', '=', True)]"
+                />
+
+                <filter
+                    name="awaiting_conversion"
+                    string="Awaiting Conversion"
+                    domain="[('x_visit_intent', '=', True), ('x_converted_to_patient', '=', False)]"
+                />
+
+                <filter
+                    name="churned_leads"
+                    string="Churned"
+                    domain="[('stage_id.name', '=', 'Churned')]"
+                />
+
+                <filter name="non_relevant_leads" string="Non-Relevant Leads" domain="[('x_lead_relevant', '=', False)]"/>
+
+                <separator/>
+
+                <field name="x_phone"/>
+                <field name="x_lead_source"/>
+                <field name="x_disposition_id"/>
+                <field name="x_interested_clinic_id"/>
+                <field name="x_preferred_clinic_id"/>
+
+                <group expand="0" string="Group By">
+                    <filter name="group_by_agent" string="Assigned Agent" context="{'group_by': 'user_id'}"/>
+                    <filter name="group_by_source" string="Lead Source" context="{'group_by': 'x_lead_source'}"/>
+                    <filter name="group_by_disposition" string="Disposition" context="{'group_by': 'x_disposition_id'}"/>
+                    <filter name="group_by_interested_clinic" string="Interested Clinic" context="{'group_by': 'x_interested_clinic_id'}"/>
+                    <filter name="group_by_preferred_clinic" string="Preferred Clinic" context="{'group_by': 'x_preferred_clinic_id'}"/>
+                    <filter name="group_by_followup_date" string="Follow-up Date" context="{'group_by': 'x_next_followup_date'}"/>
+                    <filter name="group_by_visit_date" string="Preferred Visit Date" context="{'group_by': 'x_preferred_visit_date'}"/>
+                    <filter name="group_by_create_month" string="Created Month" context="{'group_by': 'create_date:month'}"/>
+                </group>
+            </xpath>
+
+        </field>
+    </record>
+
+    <record id="view_crm_lead_form_inherit_resonnocare_sale_crm_buttons" model="ir.ui.view">
+        <field name="name">crm.lead.form.inherit.resonnocare.sale.crm.buttons</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="sale_crm.crm_case_form_view_oppor"/>
+        <field name="groups_id" eval="[(5, 0, 0)]"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_sale_quotations_new']" position="replace"/>
+            <xpath expr="//button[@name='action_view_sale_quotation']" position="replace"/>
+            <xpath expr="//button[@name='action_view_sale_order']" position="replace"/>
+            <xpath expr="//button[@name='%(crm.crm_lead_lost_action)d']" position="replace"/>
+        </field>
+    </record>
+
+    <record id="view_crm_lead_form_inherit_resonnocare_iap_enrich" model="ir.ui.view">
+        <field name="name">crm.lead.form.inherit.resonnocare.iap.enrich</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm_iap_enrich.crm_lead_view_form"/>
+        <field name="groups_id" eval="[(5, 0, 0)]"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='iap_enrich']" position="replace"/>
+            <xpath expr="//field[@name='show_enrich_button']" position="replace"/>
+        </field>
+    </record>
+
+    <!-- ===================================================== -->
+    <!-- CRM MENU STRUCTURE (TASK 5) -->
+    <!-- ===================================================== -->
+    <record id="action_resonnocare_crm_my_followups" model="ir.actions.act_window">
+        <field name="name">My Follow-up Queue</field>
+        <field name="res_model">crm.lead</field>
+        <field name="view_mode">list,form,activity</field>
+        <field name="domain">[('user_id', '=', uid), ('x_lead_relevant', '=', True), ('x_next_followup_date', '!=', False)]</field>
+        <field name="context">{'search_default_followup_due_today': 1, 'search_default_assigned_to_me': 1, 'create': False}</field>
+        <field name="search_view_id" ref="crm.view_crm_case_leads_filter"/>
+    </record>
+
+    <record id="action_resonnocare_crm_expected_walkins" model="ir.actions.act_window">
+        <field name="name">Expected Walk-ins</field>
+        <field name="res_model">crm.lead</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('x_visit_intent', '=', True)]</field>
+        <field name="context">{'search_default_expected_walkins_upcoming': 1, 'create': False}</field>
+        <field name="search_view_id" ref="crm.view_crm_case_leads_filter"/>
+    </record>
+
+    <record id="action_resonnocare_crm_converted" model="ir.actions.act_window">
+        <field name="name">Converted Leads</field>
+        <field name="res_model">crm.lead</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('x_converted_to_patient', '=', True)]</field>
+        <field name="context">{'search_default_converted_to_patient': 1, 'create': False}</field>
+        <field name="search_view_id" ref="crm.view_crm_case_leads_filter"/>
+    </record>
+
+    <record id="action_resonnocare_crm_churned" model="ir.actions.act_window">
+        <field name="name">Churned Leads</field>
+        <field name="res_model">crm.lead</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('stage_id.name', '=', 'Churned')]</field>
+        <field name="context">{'search_default_churned_leads': 1, 'create': False}</field>
+        <field name="search_view_id" ref="crm.view_crm_case_leads_filter"/>
+    </record>
+
+    <record id="action_resonnocare_crm_my_leads" model="ir.actions.act_window">
+        <field name="name">My Leads</field>
+        <field name="res_model">crm.lead</field>
+        <field name="view_mode">list,form,activity</field>
+        <field name="domain">[('user_id', '=', uid)]</field>
+        <field name="context">{'default_type': 'lead', 'search_default_assigned_to_me': 1}</field>
+        <field name="search_view_id" ref="crm.view_crm_case_leads_filter"/>
+    </record>
+
+    <record id="action_resonnocare_crm_my_leads_list_view" model="ir.actions.act_window.view">
+        <field name="sequence" eval="1"/>
+        <field name="view_mode">list</field>
+        <field name="view_id" ref="view_resonnocare_crm_lead_list_clean"/>
+        <field name="act_window_id" ref="action_resonnocare_crm_my_leads"/>
+    </record>
+
+    <record id="action_resonnocare_crm_my_followups_list_view" model="ir.actions.act_window.view">
+        <field name="sequence" eval="1"/>
+        <field name="view_mode">list</field>
+        <field name="view_id" ref="view_resonnocare_crm_lead_list_clean"/>
+        <field name="act_window_id" ref="action_resonnocare_crm_my_followups"/>
+    </record>
+
+    <record id="action_resonnocare_crm_expected_walkins_list_view" model="ir.actions.act_window.view">
+        <field name="sequence" eval="1"/>
+        <field name="view_mode">list</field>
+        <field name="view_id" ref="view_resonnocare_crm_lead_list_clean"/>
+        <field name="act_window_id" ref="action_resonnocare_crm_expected_walkins"/>
+    </record>
+
+    <record id="action_resonnocare_crm_converted_list_view" model="ir.actions.act_window.view">
+        <field name="sequence" eval="1"/>
+        <field name="view_mode">list</field>
+        <field name="view_id" ref="view_resonnocare_crm_lead_list_clean"/>
+        <field name="act_window_id" ref="action_resonnocare_crm_converted"/>
+    </record>
+
+    <record id="action_resonnocare_crm_churned_list_view" model="ir.actions.act_window.view">
+        <field name="sequence" eval="1"/>
+        <field name="view_mode">list</field>
+        <field name="view_id" ref="view_resonnocare_crm_lead_list_clean"/>
+        <field name="act_window_id" ref="action_resonnocare_crm_churned"/>
+    </record>
+
+    <menuitem
+        id="menu_native_crm_followups"
+        name="My Follow-up Queue"
+        parent="crm.crm_menu_sales"
+        action="action_resonnocare_crm_my_followups"
+        sequence="20"
+        groups="resonnocare_base.group_resonnocare_super_admin,resonnocare_base.group_crm"
+    />
+
+    <menuitem
+        id="menu_native_crm_expected_walkins"
+        name="Expected Walk-ins"
+        parent="crm.crm_menu_sales"
+        action="action_resonnocare_crm_expected_walkins"
+        sequence="30"
+        groups="resonnocare_base.group_resonnocare_super_admin,resonnocare_base.group_crm,resonnocare_base.group_resonnocare_internal"
+    />
+
+    <menuitem
+        id="menu_native_crm_converted"
+        name="Converted Leads"
+        parent="crm.crm_menu_sales"
+        action="action_resonnocare_crm_converted"
+        sequence="40"
+        groups="resonnocare_base.group_resonnocare_super_admin,resonnocare_base.group_crm,resonnocare_base.group_resonnocare_internal"
+    />
+
+    <menuitem
+        id="menu_native_crm_churned"
+        name="Churned Leads"
+        parent="crm.crm_menu_sales"
+        action="action_resonnocare_crm_churned"
+        sequence="50"
+        groups="resonnocare_base.group_resonnocare_super_admin,resonnocare_base.group_crm,resonnocare_base.group_resonnocare_internal"
+    />
+
+    <record id="crm.crm_menu_sales" model="ir.ui.menu">
+        <field name="name">Leads</field>
+        <field name="groups_id" eval="[(6, 0, [ref('resonnocare_base.group_crm'), ref('resonnocare_base.group_resonnocare_super_admin')])]"/>
+    </record>
+
+    <record id="crm.menu_crm_opportunities" model="ir.ui.menu">
+        <field name="name">My Leads</field>
+        <field name="action" ref="action_resonnocare_crm_my_leads"/>
+        <field name="groups_id" eval="[(6, 0, [ref('resonnocare_base.group_crm'), ref('resonnocare_base.group_resonnocare_super_admin')])]"/>
+    </record>
+
+    <record id="crm.crm_lead_menu_my_activities" model="ir.ui.menu">
+        <field name="groups_id" eval="[(6, 0, [ref('resonnocare_base.group_resonnocare_super_admin')])]"/>
+    </record>
+
+    <record id="sale_crm.sale_order_menu_quotations_crm" model="ir.ui.menu">
+        <field name="groups_id" eval="[(6, 0, [ref('resonnocare_base.group_resonnocare_super_admin')])]"/>
+    </record>
+
+    <record id="crm.sales_team_menu_team_pipeline" model="ir.ui.menu">
+        <field name="groups_id" eval="[(6, 0, [ref('resonnocare_base.group_resonnocare_super_admin')])]"/>
+    </record>
+
+    <record id="crm.res_partner_menu_customer" model="ir.ui.menu">
+        <field name="groups_id" eval="[(6, 0, [ref('resonnocare_base.group_resonnocare_super_admin')])]"/>
+    </record>
+
+    <record id="crm.crm_menu_report" model="ir.ui.menu">
+        <field name="groups_id" eval="[(6, 0, [ref('resonnocare_base.group_resonnocare_super_admin'), ref('resonnocare_base.group_resonnocare_internal')])]"/>
+    </record>
+
+    <record id="crm.crm_menu_config" model="ir.ui.menu">
+        <field name="groups_id" eval="[(6, 0, [ref('resonnocare_base.group_resonnocare_super_admin')])]"/>
+    </record>
+
+    <record id="crm.menu_import_crm" model="ir.ui.menu">
+        <field name="groups_id" eval="[(6, 0, [ref('resonnocare_base.group_resonnocare_super_admin')])]"/>
+    </record>
+
+</odoo>

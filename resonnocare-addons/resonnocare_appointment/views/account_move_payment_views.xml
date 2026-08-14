@@ -1,0 +1,134 @@
+<odoo>
+    <record id="view_account_payment_register_resonnocare" model="ir.ui.view">
+        <field name="name">account.payment.register.resonnocare</field>
+        <field name="model">account.payment.register</field>
+        <field name="inherit_id" ref="account.view_account_payment_register_form"/>
+        <field name="groups_id" eval="[(5, 0, 0)]"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@name='amount']" position="attributes">
+                <attribute name="readonly">1</attribute>
+            </xpath>
+
+            <xpath expr="//group" position="before">
+                <field name="payment_already_exists" invisible="1"/>
+                <div class="alert alert-warning text-center" role="alert" invisible="not payment_already_exists" style="margin-bottom: 15px; font-weight: bold;">
+                    ⚠️ A payment has already been processed for this appointment/invoice. Please verify before proceeding.
+                </div>
+            </xpath>
+
+            <xpath expr="//group" position="inside">
+                <!-- <field name="confirm_subsequent_payment" invisible="not payment_already_exists"/> -->
+
+                <!-- UPI -->
+                <label for="upi_transaction_id"
+                       invisible="not is_upi_journal"/>
+
+                <field name="upi_transaction_id"
+                       placeholder="Enter UPI Transaction ID"
+                       invisible="not is_upi_journal"/>
+
+                <!-- Paytm -->
+                <label for="paytm_txn_id"
+                       invisible="not is_paytm_journal"/>
+
+                <field name="paytm_txn_id"
+                       placeholder="Enter Paytm Transaction ID"
+                       invisible="not is_paytm_journal"/>
+
+                <!-- Cheque -->
+                <label for="cheque_number"
+                       invisible="not is_cheque_journal"/>
+
+                <field name="cheque_number"
+                       placeholder="Cheque Number"
+                       invisible="not is_cheque_journal"/>
+
+                <label for="cheque_date"
+                       invisible="not is_cheque_journal"/>
+
+                <field name="cheque_date"
+                       invisible="not is_cheque_journal"/>
+
+                <label for="cheque_bank_name"
+                       invisible="not is_cheque_journal"/>
+
+                <field name="cheque_bank_name"
+                       placeholder="Bank Name"
+                       invisible="not is_cheque_journal"/>
+
+            </xpath>
+
+        </field>
+    </record>
+
+    <!-- Payment Form View -->
+    <record id="view_account_payment_resonnocare" model="ir.ui.view">
+        <field name="name">account.payment.resonnocare</field>
+        <field name="model">account.payment</field>
+        <field name="inherit_id" ref="account.view_account_payment_form"/>
+        <field name="groups_id" eval="[(5, 0, 0)]"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form/header" position="inside">
+                <button
+                    name="action_print_resonnocare_receipt"
+                    type="object"
+                    string="Print Receipt"
+                    class="btn-secondary"
+                    invisible="state not in ('in_process', 'paid', 'posted')"
+                />
+            </xpath>
+
+            <xpath expr="//field[@name='amount']" position="attributes">
+                <attribute name="readonly">1</attribute>
+            </xpath>
+
+            <xpath expr="//group" position="inside">
+
+                <!-- UPI -->
+                <label for="upi_transaction_id"
+                       invisible="not is_upi_journal"/>
+
+                <field name="upi_transaction_id"
+                       placeholder="Enter UPI Transaction ID"
+                       invisible="not is_upi_journal"
+                       readonly="1"/>
+
+                <!-- Paytm -->
+                <label for="paytm_txn_id"
+                       invisible="not is_paytm_journal"/>
+
+                <field name="paytm_txn_id"
+                       placeholder="Enter Paytm Transaction ID"
+                       invisible="not is_paytm_journal"
+                       readonly="1"/>
+
+                <!-- Cheque -->
+                <label for="cheque_number"
+                       invisible="not is_cheque_journal"/>
+
+                <field name="cheque_number"
+                       placeholder="Cheque Number"
+                       invisible="not is_cheque_journal"
+                       readonly="1"/>
+
+                <label for="cheque_date"
+                       invisible="not is_cheque_journal"/>
+
+                <field name="cheque_date"
+                       invisible="not is_cheque_journal"
+                       readonly="1"/>
+
+                <label for="cheque_bank_name"
+                       invisible="not is_cheque_journal"/>
+
+                <field name="cheque_bank_name"
+                       placeholder="Bank Name"
+                       invisible="not is_cheque_journal"
+                       readonly="1"/>
+
+            </xpath>
+
+        </field>
+    </record>
+</odoo>

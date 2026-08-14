@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="view_patient_search_tree" model="ir.ui.view">
+        <field name="name">res.partner.patient.tree</field>
+        <field name="model">res.partner</field>
+        <field name="arch" type="xml">
+            <list string="Search Results" create="false" edit="false" delete="false">
+                <field name="patient_id" string="ID"/>
+                <field name="name"/>
+                <field name="phone"/>
+                <field name="gender"/>
+                <field name="birthdate_date"/>
+            </list>
+        </field>
+    </record>
+
+</odoo>

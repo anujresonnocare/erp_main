@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- ========================= -->
+    <!-- Clinic Admin Dashboard View -->
+    <!-- ========================= -->
+    <record id="view_clinic_dashboard" model="ir.ui.view">
+        <field name="name">clinic.admin.dashboard</field>
+        <field name="model">resonnocare.clinic</field>
+        <field name="arch" type="xml">
+            <form string="Clinic Dashboard" create="false" edit="false" delete="false">
+                <sheet>
+
+                    <!-- ========================= -->
+                    <!-- HEADER -->
+                    <!-- ========================= -->
+                    <div class="oe_title mb-4">
+                        <h1 class="mb-1">
+                            <field name="name" readonly="1" class="text-break"/>
+                        </h1>
+
+                        <div class="text-muted d-flex align-items-center gap-2">
+                            <field name="clinic_code" readonly="1"/>
+                            <span>•</span>
+                            <span>Clinic Dashboard</span>
+                        </div>
+
+                        <p class="text-muted mt-2">
+                            Real-time operational snapshot of your clinic
+                        </p>
+                    </div>
+
+                    <!-- ========================= -->
+                    <!-- DASHBOARD CONTENT -->
+                    <!-- ========================= -->
+                    <group col="2">
+
+                        <!-- OPERATIONS -->
+                        <group string="Operations Today">
+                            <div class="mb-2">
+                                <div class="o_form_label">Appointments</div>
+                                <div class="d-flex align-items-center gap-2">
+                                    <field name="appointments_today" readonly="1" class="oe_inline fw-bold"/>
+                                    <span class="text-muted">(Mock)</span>
+                                </div>
+                            </div>
+
+                            <div class="mb-2">
+                                <div class="o_form_label">Walk-ins</div>
+                                <div class="d-flex align-items-center gap-2">
+                                    <field name="walkins_today" readonly="1" class="oe_inline fw-bold"/>
+                                    <span class="text-muted">(Coming soon)</span>
+                                </div>
+                            </div>
+
+                            <div>
+                                <div class="o_form_label">Patients Waiting</div>
+                                <div class="d-flex align-items-center gap-2">
+                                    <field name="patients_waiting" readonly="1" class="oe_inline fw-bold"/>
+                                    <span class="text-muted">(Coming soon)</span>
+                                </div>
+                            </div>
+                        </group>
+
+                        <!-- CLINICAL -->
+                        <group string="Clinical Status">
+                            <div class="mb-2">
+                                <div class="o_form_label">Doctors On Duty</div>
+                                <div>
+                                    <field name="doctors_on_duty" readonly="1" class="oe_inline fw-bold"/>
+                                </div>
+                            </div>
+
+                            <div class="mb-2">
+                                <div class="o_form_label">Pending Consultations</div>
+                                <div class="d-flex align-items-center gap-2">
+                                    <field name="pending_consultations" readonly="1" class="oe_inline fw-bold"/>
+                                    <span class="text-muted">(Coming soon)</span>
+                                </div>
+                            </div>
+
+                            <div>
+                                <div class="o_form_label">Follow-ups Due Today</div>
+                                <div class="d-flex align-items-center gap-2">
+                                    <field name="followups_due_today" readonly="1" class="oe_inline fw-bold"/>
+                                    <span class="text-muted">(Coming soon)</span>
+                                </div>
+                            </div>
+                        </group>
+
+                    </group>
+
+                    <!-- ========================= -->
+                    <!-- CLINIC OVERVIEW -->
+                    <!-- ========================= -->
+                    <separator string="Clinic Overview"/>
+
+                    <group col="2">
+                        <group>
+                            <!-- <div class="o_form_label">Clinic Status</div> -->
+                            <field name="clinic_status" widget="badge" decoration-success="clinic_status == 'active'" decoration-warning="clinic_status == 'draft'" decoration-danger="clinic_status == 'suspended'"/>
+
+                            <!-- <div class="o_form_label mt-2">Clinic Type</div> -->
+                            <field name="clinic_type" readonly="1"/>
+                        </group>
+
+                        <group>
+                            <!-- <div class="o_form_label">Go-Live Date</div> -->
+                            <field name="go_live_date" readonly="1"/>
+
+                            <!-- <div class="o_form_label mt-2">City</div> -->
+                            <field name="city" readonly="1"/>
+                        </group>
+                    </group>
+
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ========================= -->
+    <!-- Dashboard Action -->
+    <!-- ========================= -->
+    <record id="action_clinic_dashboard" model="ir.actions.act_window">
+        <field name="name">Dashboard</field>
+        <field name="res_model">resonnocare.clinic</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_clinic_dashboard"/>
+        <field name="target">current</field>
+        <field name="context">
+            {
+                'form_view_initial_mode': 'readonly',
+                'create': False,
+                'edit': False,
+                'delete': False
+            }
+        </field>
+        <field name="groups_id" eval="[(4, ref('resonnocare_base.group_resonnocare_super_admin'))]"/>
+    </record>
+
+</odoo>

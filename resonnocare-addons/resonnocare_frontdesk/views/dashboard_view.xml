@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- ========================= -->
+    <!-- Front Desk Dashboard View -->
+    <!-- ========================= -->
+    <record id="view_front_desk_dashboard" model="ir.ui.view">
+        <field name="name">front.desk.dashboard</field>
+        <field name="model">res.company</field>
+        <field name="priority">999</field>
+        <field name="groups_id" eval="[(4, ref('resonnocare_base.group_front_desk'))]"/>
+        <field name="arch" type="xml">
+            <form string="Front Desk Console" create="false" edit="false" delete="false">
+                <sheet>
+                    <div class="oe_title mb-4 text-center">
+                        <h1 class="mb-1">
+                            <span class="text-primary">Front Desk Console</span>
+                        </h1>
+                        <div class="text-muted">
+                            <field name="name" readonly="1" options="{'no_open': True}"/>
+                        </div>
+                    </div>
+
+                    <!-- PRIMARY ACTIONS -->
+                    <div class="container-fluid mt-4">
+                        <div class="row">
+                            <!-- SEARCH PATIENT (Main Action) -->
+                            <div class="col-md-12 mb-4">
+                                <div class="p-5 bg-view border rounded shadow-sm text-center">
+                                    <h2 class="mb-3">Find Patient</h2>
+                                    <p class="text-muted mb-4">Search by Phone, ID, or Name to check-in or view details.</p>
+                                    <button string="Search Patient" 
+                                        type="action" 
+                                        name="%(resonnocare_frontdesk.action_patient_search_wizard)d" 
+                                        class="btn btn-primary btn-lg w-50 py-3"
+                                        icon="fa-search"/>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <!-- NEW REGISTRATION (Secondary but Prominent) -->
+                            <div class="col-md-6 mb-4">
+                                <div class="p-4 bg-muted border rounded h-100 text-center">
+                                    <h3 class="mb-3">New Patient?</h3>
+                                    <p class="text-muted">Register a new patient with OTP verification.</p>
+                                    <button string="New Registration" 
+                                        type="action" 
+                                        name="%(resonnocare_frontdesk.action_open_patient_registration)d" 
+                                        class="btn btn-secondary btn-lg w-75"
+                                        icon="fa-user-plus"/>
+                                </div>
+                            </div>
+                            
+                            <!-- APPOINTMENTS & BILLING (Placeholders) -->
+                            <div class="col-md-6 mb-4">
+                                <div class="p-4 bg-muted border rounded h-100 text-center">
+                                    <h3 class="mb-3">Quick Links</h3>
+                                    <div class="d-grid gap-3">
+                                        <button string="Appointments Today" 
+                                            class="btn btn-outline-primary"
+                                            icon="fa-calendar"
+                                            title="Module Coming Soon"
+                                            disabled="1"/>
+                                        
+                                        <button string="Billing Reference" 
+                                            class="btn btn-outline-info"
+                                            icon="fa-file-text-o"
+                                            title="Module Coming Soon"
+                                            disabled="1"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ========================= -->
+    <!-- Dashboard Window Action -->
+    <!-- ========================= -->
+    <record id="action_front_desk_dashboard" model="ir.actions.act_window">
+        <field name="name">Front Desk Dashboard</field>
+        <field name="res_model">res.company</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_front_desk_dashboard"/>
+        <field name="target">current</field>
+        <field name="context">
+            {
+                'form_view_initial_mode': 'readonly',
+                'create': False,
+                'edit': False,
+                'delete': False
+            }
+        </field>
+        <field name="groups_id" eval="[(4, ref('resonnocare_base.group_front_desk'))]"/>
+    </record>
+
+</odoo>

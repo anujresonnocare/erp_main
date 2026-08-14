@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Tree View -->
+    <record id="view_repair_contract_tree" model="ir.ui.view">
+        <field name="name">resonnocare.repair.contract.tree</field>
+        <field name="model">resonnocare.repair.contract</field>
+        <field name="arch" type="xml">
+            <list string="Repair Contracts">
+                <field name="name" string="Contract No."/>
+                <field name="patient_id"/>
+                <field name="clinic_id"/>
+                <field name="left_lot_id" string="Left Serial"/>
+                <field name="right_lot_id" string="Right Serial"/>
+                <field name="is_under_warranty" widget="boolean"/>
+                <field name="billing_mode"/>
+                <field name="total_charges" sum="Total Charges"/>
+                <field name="state" widget="badge" decoration-info="state == 'draft'" decoration-warning="state in ('estimate_communicated', 'estimate_approved')" decoration-success="state in ('paid', 'delivered')" decoration-danger="state == 'declined'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_repair_contract_form" model="ir.ui.view">
+        <field name="name">resonnocare.repair.contract.form</field>
+        <field name="model">resonnocare.repair.contract</field>
+        <field name="arch" type="xml">
+            <form string="Repair Contract">
+                <header>
+                    <button name="action_communicate_charges" string="Communicate Charges" type="object" class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_patient_decline" string="Patient Declined" type="object" class="btn-secondary" invisible="state not in ('draft', 'estimate_communicated')"/>
+                    <button name="action_confirm" string="Confirm Contract" type="object" class="btn-primary" invisible="state not in ('draft', 'estimate_communicated')"/>
+                    
+                    <button name="action_pay" string="Record Payment / Attach Receipt" type="object" class="btn-primary" invisible="state != 'estimate_approved'"/>
+                    <button name="action_finance_approve" string="Finance Approve Cheque" type="object" class="btn-success" invisible="finance_approval_status != 'pending'" groups="resonnocare_repair.group_resonnocare_repair_finance"/>
+                    
+                    <button name="action_dispatch" string="Dispatch to Lab" type="object" class="btn-primary" invisible="state != 'paid'"/>
+                    <button name="action_receive_at_clinic" string="Receive at Clinic (GRN)" type="object" class="btn-primary" invisible="state != 'dispatched'"/>
+                    <button name="action_deliver" string="Deliver to Patient" type="object" class="btn-primary" invisible="state != 'received'"/>
+                    <button name="action_cancel" string="Cancel" type="object" class="btn-secondary" invisible="state in ('delivered', 'cancel')"/>
+                    
+                    <!-- Print Button -->
+                    <button name="%(action_report_repair_contract)d" string="Print Contract" type="action" class="btn-secondary"/>
+                    
+                    <field name="state" widget="statusbar" statusbar_visible="draft,estimate_approved,paid,dispatched,received,delivered"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_repair_appointment" type="object"
+                                class="oe_stat_button" icon="fa-calendar"
+                                invisible="repair_appointment_count == 0">
+                            <field name="repair_appointment_count" widget="statinfo" string="Appointment"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+                    <field name="patient_lot_ids" invisible="1"/>
+                    <group>
+                        <group string="Basic Information">
+                            <field name="patient_id" readonly="state not in ('draft', 'estimate_communicated')"/>
+                            <field name="clinic_id" readonly="state not in ('draft', 'estimate_communicated')"/>
+                            <field name="billing_mode" readonly="state not in ('draft', 'estimate_communicated')"/>
+                        </group>
+                        <group string="Overall Contract Warranty &amp; Dates">
+                            <field name="warranty_end_date" readonly="1"/>
+                            <field name="is_under_warranty" widget="boolean" readonly="1"/>
+                            <field name="date_required" readonly="state not in ('draft', 'estimate_communicated')"/>
+                            <field name="repair_appointment_id" readonly="1"/>
+                        </group>
+                    </group>
+
+                    <group>
+                        <group string="Left Ear Device Details">
+                            <field name="left_lot_id" readonly="state not in ('draft', 'estimate_communicated')"/>
+                            <field name="left_product_id"/>
+                            <field name="left_manufacturer_id"/>
+                            <field name="left_device_code" readonly="state not in ('draft', 'estimate_communicated')"/>
+                            <field name="left_warranty_end_date" readonly="1"/>
+                            <field name="left_is_under_warranty" widget="boolean" readonly="1"/>
+                        </group>
+                        <group string="Right Ear Device Details">
+                            <field name="right_lot_id" readonly="state not in ('draft', 'estimate_communicated')"/>
+                            <field name="right_product_id"/>
+                            <field name="right_manufacturer_id"/>
+                            <field name="right_device_code" readonly="state not in ('draft', 'estimate_communicated')"/>
+                            <field name="right_warranty_end_date" readonly="1"/>
+                            <field name="right_is_under_warranty" widget="boolean" readonly="1"/>
+                        </group>
+                    </group>
+                    
+                    <notebook>
+                        <page string="Repair Checklist">
+                            <group>
+                                <group string="Left Ear Issues">
+                                    <field name="dead_left" readonly="state not in ('draft', 'estimate_communicated')"/>
+                                    <field name="intermittent_left" readonly="state not in ('draft', 'estimate_communicated')"/>
+                                    <field name="distorted_left" readonly="state not in ('draft', 'estimate_communicated')"/>
+                                    <field name="recircuit_left" readonly="state not in ('draft', 'estimate_communicated')"/>
+                                    <field name="programming_left" readonly="state not in ('draft', 'estimate_communicated')"/>
+                                    <field name="battery_door_left" readonly="state not in ('draft', 'estimate_communicated')"/>
+                                    <field name="shell_left" readonly="state not in ('draft', 'estimate_communicated')"/>
+                                    <field name="retube_left" readonly="state not in ('draft', 'estimate_communicated')"/>
+                                    <field name="volume_control_left" readonly="state not in ('draft', 'estimate_communicated')"/>
+                                    <field name="wax_management_left" readonly="state not in ('draft', 'estimate_communicated')"/>
+                                    <field name="general_service_left" readonly="state not in ('draft', 'estimate_communicated')"/>
+                                    <field name="left_repair_notes" placeholder="Left Ear specific symptoms..." readonly="state not in ('draft', 'estimate_communicated')"/>
+                                </group>
+                                <group string="Right Ear Issues">
+                                    <field name="dead_right" readonly="state not in ('draft', 'estimate_communicated')"/>
+                                    <field name="intermittent_right" readonly="state not in ('draft', 'estimate_communicated')"/>
+                                    <field name="distorted_right" readonly="state not in ('draft', 'estimate_communicated')"/>
+                                    <field name="recircuit_right" readonly="state not in ('draft', 'estimate_communicated')"/>
+                                    <field name="programming_right" readonly="state not in ('draft', 'estimate_communicated')"/>
+                                    <field name="battery_door_right" readonly="state not in ('draft', 'estimate_communicated')"/>
+                                    <field name="shell_right" readonly="state not in ('draft', 'estimate_communicated')"/>
+                                    <field name="right_retube" readonly="state not in ('draft', 'estimate_communicated')"/>
+                                    <field name="volume_control_right" readonly="state not in ('draft', 'estimate_communicated')"/>
+                                    <field name="wax_management_right" readonly="state not in ('draft', 'estimate_communicated')"/>
+                                    <field name="general_service_right" readonly="state not in ('draft', 'estimate_communicated')"/>
+                                    <field name="right_repair_notes" placeholder="Right Ear specific symptoms..." readonly="state not in ('draft', 'estimate_communicated')"/>
+                                </group>
+                            </group>
+                            <group>
+                                <field name="quotation_required" readonly="state not in ('draft', 'estimate_communicated')"/>
+                                <field name="notes" placeholder="e.g. General Remarks..." readonly="state not in ('draft', 'estimate_communicated')"/>
+                            </group>
+                        </page>
+                        <page string="Charges &amp; Payment">
+                            <group>
+                                <group string="Charges Breakup">
+                                    <field name="handling_charges" readonly="state not in ('draft', 'estimate_communicated')"/>
+                                    <field name="estimated_repair_charges" readonly="state not in ('draft', 'estimate_communicated')" string="Estimated Repair Charges"/>
+                                    <field name="repair_charges" readonly="state not in ('draft', 'estimate_communicated', 'estimate_approved', 'paid', 'dispatched')" string="Actual Repair Charges"/>
+                                    <field name="charges_communicated_date" readonly="1"/>
+                                    <separator/>
+                                    <field name="gst_rate" readonly="state not in ('draft', 'estimate_communicated')"/>
+                                    <field name="cgst_rate" readonly="1"/>
+                                    <field name="cgst_amount" readonly="1"/>
+                                    <field name="sgst_rate" readonly="1"/>
+                                    <field name="sgst_amount" readonly="1"/>
+                                    <field name="igst_rate" readonly="1"/>
+                                    <field name="igst_amount" readonly="1"/>
+                                    <field name="tax_amount" readonly="1"/>
+                                    <field name="total_charges" readonly="1"/>
+                                    <field name="total_charges_in_words" readonly="1"/>
+                                </group>
+                                <group string="Corporate Payment details" invisible="billing_mode != 'corporate'">
+                                    <field name="payment_method" readonly="state not in ('draft', 'estimate_communicated', 'estimate_approved')"/>
+                                    <field name="cheque_number" invisible="payment_method != 'cheque'" readonly="state not in ('draft', 'estimate_communicated', 'estimate_approved')"/>
+                                    <field name="cheque_date" invisible="payment_method != 'cheque'" readonly="state not in ('draft', 'estimate_communicated', 'estimate_approved')"/>
+                                    <field name="cheque_bank_name" invisible="payment_method != 'cheque'" readonly="state not in ('draft', 'estimate_communicated', 'estimate_approved')"/>
+                                    <field name="payment_status" readonly="1"/>
+                                    <field name="finance_approval_status" readonly="1"/>
+                                </group>
+                                <group string="Revenue Sharing Payment details" invisible="billing_mode != 'revenue_sharing'">
+                                    <field name="hospital_receipt_number" readonly="state not in ('draft', 'estimate_communicated', 'estimate_approved')"/>
+                                    <field name="hospital_receipt_file" filename="hospital_receipt_filename" readonly="state not in ('draft', 'estimate_communicated', 'estimate_approved')"/>
+                                    <field name="hospital_receipt_filename" invisible="1"/>
+                                    <field name="payment_status" readonly="1"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Lab Dispatch &amp; GRN">
+                            <group>
+                                <group string="Dispatch Info">
+                                    <field name="vendor_id" readonly="state not in ('draft', 'estimate_communicated', 'estimate_approved', 'paid')"/>
+                                    <field name="dispatch_tracking_number" readonly="state not in ('draft', 'estimate_communicated', 'estimate_approved', 'paid')"/>
+                                    <field name="dispatch_vendor_id" readonly="state not in ('draft', 'estimate_communicated', 'estimate_approved', 'paid', 'dispatched')"/>
+                                    <field name="dispatch_courier_name" readonly="state not in ('draft', 'estimate_communicated', 'estimate_approved', 'paid', 'dispatched')"/>
+                                    <field name="dispatch_awb_number" readonly="state not in ('draft', 'estimate_communicated', 'estimate_approved', 'paid', 'dispatched')"/>
+                                    <field name="expected_return_date" readonly="state not in ('draft', 'estimate_communicated', 'estimate_approved', 'paid', 'dispatched')"/>
+                                    <field name="dispatch_date" readonly="1"/>
+                                    <field name="scm_notes" placeholder="SCM communication &amp; tracking updates..."/>
+                                </group>
+                                <group string="Vendor Invoice Details" groups="resonnocare_repair.group_resonnocare_repair_scm,resonnocare_base.group_resonnocare_super_admin">
+                                    <field name="vendor_invoice_number"/>
+                                    <field name="vendor_invoice_date"/>
+                                    <field name="vendor_invoice_amount"/>
+                                    <field name="vendor_invoice_file"/>
+                                </group>
+                            </group>
+                            <group string="GRN Details">
+                                <field name="received_date" readonly="1"/>
+                                <field name="stock_picking_id" readonly="1"/>
+                            </group>
+                        </page>
+                        <page string="Handover &amp; Customer Invoicing">
+                            <group>
+                                <group string="Delivery Info">
+                                    <field name="is_non_repairable" readonly="state not in ('draft', 'estimate_communicated', 'estimate_approved', 'paid', 'dispatched', 'received')"/>
+                                    <field name="handover_date" readonly="1"/>
+                                    <field name="patient_acknowledgement" filename="patient_acknowledgement_filename"/>
+                                    <field name="patient_acknowledgement_filename" invisible="1"/>
+                                </group>
+                                <group string="Customer Billing Details">
+                                    <field name="invoice_id" readonly="1"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Search View -->
+    <record id="view_repair_contract_search" model="ir.ui.view">
+        <field name="name">resonnocare.repair.contract.search</field>
+        <field name="model">resonnocare.repair.contract</field>
+        <field name="arch" type="xml">
+            <search string="Search Repair Contracts">
+                <field name="name" string="Contract No."/>
+                <field name="patient_id"/>
+                <field name="clinic_id"/>
+                <field name="left_lot_id" string="Left Serial"/>
+                <field name="right_lot_id" string="Right Serial"/>
+                <filter string="Under Warranty" name="under_warranty" domain="[('is_under_warranty', '=', True)]"/>
+                <filter string="Out of Warranty" name="out_of_warranty" domain="[('is_under_warranty', '=', False)]"/>
+                <separator/>
+                <filter string="Draft" name="draft" domain="[('state', '=', 'draft')]"/>
+                <filter string="Confirmed" name="confirmed" domain="[('state', '=', 'estimate_approved')]"/>
+                <filter string="Paid" name="paid" domain="[('state', '=', 'paid')]"/>
+                <filter string="Dispatched" name="dispatched" domain="[('state', '=', 'dispatched')]"/>
+                <filter string="Received" name="received" domain="[('state', '=', 'received')]"/>
+                <filter string="Delivered" name="delivered" domain="[('state', '=', 'delivered')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Patient" name="group_patient" context="{'group_by': 'patient_id'}"/>
+                    <filter string="Clinic" name="group_clinic" context="{'group_by': 'clinic_id'}"/>
+                    <filter string="Billing Mode" name="group_billing_mode" context="{'group_by': 'billing_mode'}"/>
+                    <filter string="Status" name="group_status" context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Window Action -->
+    <record id="action_repair_contract" model="ir.actions.act_window">
+        <field name="name">Repair Contracts</field>
+        <field name="res_model">resonnocare.repair.contract</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_repair_contract_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create a new Repair Service Contract.
+            </p>
+            <p>
+                Manage corporate and revenue sharing repair processes, track lab dispatch, and patient delivery.
+            </p>
+        </field>
+    </record>
+</odoo>

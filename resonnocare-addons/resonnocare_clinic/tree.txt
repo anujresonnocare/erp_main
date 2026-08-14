@@ -1,0 +1,32 @@
+[4.0K]  .
+├── [4.0K]  data
+│   ├── [ 666]  clinic_cron.xml
+│   └── [ 451]  clinic_sequence.xml
+├── [4.0K]  models
+│   ├── [4.0K]  __pycache__
+│   │   ├── [ 225]  __init__.cpython-312.pyc
+│   │   ├── [ 11K]  res_company.cpython-312.pyc
+│   │   └── [1.6K]  res_users.cpython-312.pyc
+│   ├── [  26]  __init__.py
+│   └── [ 11K]  res_company.py
+├── [4.0K]  __pycache__
+│   └── [ 243]  __init__.cpython-312.pyc
+├── [4.0K]  security
+│   ├── [ 630]  ir.model.access.csv
+│   └── [ 983]  security.xml
+├── [4.0K]  views
+│   ├── [2.8K]  clinic_create_wizard_view.xml
+│   ├── [6.4K]  clinic_views.xml
+│   ├── [ 600]  menu.xml
+│   └── [2.8K]  res_company_views.xml
+├── [4.0K]  wizard
+│   ├── [4.0K]  __pycache__
+│   │   ├── [9.3K]  clinic_create_wizard.cpython-312.pyc
+│   │   └── [ 234]  __init__.cpython-312.pyc
+│   ├── [9.7K]  clinic_create_wizard.py
+│   └── [  35]  __init__.py
+├── [  42]  __init__.py
+├── [ 660]  __manifest__.py
+└── [   0]  tree.txt
+
+9 directories, 21 files

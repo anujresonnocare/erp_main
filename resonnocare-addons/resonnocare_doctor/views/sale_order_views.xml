@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="view_sale_order_list_doctor_my_commissions" model="ir.ui.view">
+        <field name="name">sale.order.list.doctor.my.commissions</field>
+        <field name="model">sale.order</field>
+        <field name="arch" type="xml">
+            <list create="0" edit="0" delete="0" default_order="date_order desc">
+                <field name="currency_id" column_invisible="True"/>
+                <field name="date_order" string="Date"/>
+                <field name="name" string="Sale Order"/>
+                <field name="patient_id" string="Patient"/>
+                <field name="amount_total" string="Sale Total" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                <field name="net_ha_sale_value" string="HA Base" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                <field name="net_diagnostic_revenue" string="Diagnostic Base" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                <field name="doctor_commission_amount" string="Commission Amount" widget="monetary" options="{'currency_field': 'currency_id'}" sum="Total Commission"/>
+                <field name="state" string="Status"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_sale_order_form_doctor_commission_detail" model="ir.ui.view">
+        <field name="name">sale.order.form.doctor.commission.detail</field>
+        <field name="model">sale.order</field>
+        <field name="arch" type="xml">
+            <form create="0" edit="0" delete="0">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group string="Commission Details">
+                        <group>
+                            <field name="date_order" readonly="1"/>
+                            <field name="patient_id" readonly="1"/>
+                            <field name="partner_id" readonly="1"/>
+                            <field name="state" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="amount_total" readonly="1"/>
+                            <field name="net_ha_sale_value" readonly="1"/>
+                            <field name="net_diagnostic_revenue" readonly="1"/>
+                            <field name="doctor_commission_amount" readonly="1"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="sale_order_form_inherit_doctor" model="ir.ui.view">
+        <field name="name">sale.order.form.inherit.doctor</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="resonnocare_frontdesk.sale_order_form_patient"/>
+        <field name="groups_id" eval="[(5, 0, 0)]"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='clinic_id']" position="after">
+                <field name="referring_doctor_id" readonly="1" invisible="not referring_doctor_id"/>
+                <field name="show_net_ha_sale_value" invisible="1"/>
+                <field name="show_net_diagnostic_revenue" invisible="1"/>
+                <field name="net_ha_sale_value" readonly="1" invisible="not show_net_ha_sale_value"/>
+                <field name="net_diagnostic_revenue" readonly="1" invisible="not show_net_diagnostic_revenue"/>
+                <field name="doctor_commission_amount" readonly="1" invisible="1"/>
+            </xpath>
+            <xpath expr="//field[@name='order_line']/list/field[@name='discount_slab']" position="after">
+                <field name="clinic_sharing_pct" readonly="1" optional="show"/>
+                <field name="clinic_sharing_amount" readonly="1" optional="show"/>
+                <field name="doctor_sharing_pct" readonly="1" optional="hide"/>
+                <field name="doctor_sharing_amount" readonly="1" optional="hide"/>
+            </xpath>
+            <xpath expr="//field[@name='order_line']/form//field[@name='discount_slab']" position="after">
+                <field name="clinic_sharing_pct" readonly="1"/>
+                <field name="clinic_sharing_amount" readonly="1"/>
+                <field name="doctor_sharing_pct" readonly="1"/>
+                <field name="doctor_sharing_amount" readonly="1"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

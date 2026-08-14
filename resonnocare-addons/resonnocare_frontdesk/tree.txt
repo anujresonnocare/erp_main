@@ -1,0 +1,40 @@
+[4.0K]  .
+├── [4.0K]  data
+│   ├── [ 599]  home_action.xml
+│   ├── [ 481]  patient_registration_action.xml
+│   └── [ 552]  patient_sequence.xml
+├── [4.0K]  models
+│   ├── [4.0K]  __pycache__
+│   │   ├── [ 228]  __init__.cpython-312.pyc
+│   │   ├── [3.4K]  patient_registration_wizard.cpython-312.pyc
+│   │   └── [1.8K]  res_partner.cpython-312.pyc
+│   ├── [  70]  __init__.py
+│   └── [1.2K]  res_partner.py
+├── [4.0K]  __pycache__
+│   └── [ 246]  __init__.cpython-312.pyc
+├── [4.0K]  security
+│   ├── [ 478]  ir.model.access.csv
+│   └── [ 540]  security.xml
+├── [4.0K]  views
+│   ├── [5.0K]  dashboard_view.xml
+│   ├── [1.6K]  menu.xml
+│   ├── [5.1K]  patient_registration_wizard.xml
+│   ├── [1.2K]  patient_search_action.xml
+│   ├── [ 618]  patient_search_tree.xml
+│   ├── [2.6K]  patient_search_view.xml
+│   ├── [4.0K]  res_partner_patient_form.xml
+│   └── [1.1K]  server_actions.xml
+├── [4.0K]  wizard
+│   ├── [4.0K]  __pycache__
+│   │   ├── [ 289]  __init__.cpython-312.pyc
+│   │   ├── [6.9K]  patient_registration_wizard.cpython-312.pyc
+│   │   └── [3.2K]  patient_search_wizard.cpython-312.pyc
+│   ├── [  78]  __init__.py
+│   ├── [5.6K]  patient_registration_wizard.py
+│   ├── [2.7K]  patient_search_wizard.py
+│   └── [1.4K]  patient_search_wizard.xml
+├── [  42]  __init__.py
+├── [ 910]  __manifest__.py
+└── [   0]  tree.txt
+
+9 directories, 29 files

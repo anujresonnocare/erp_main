@@ -1,0 +1,26 @@
+[4.0K]  .
+├── [4.0K]  data
+│   └── [1.8K]  dispositions.xml
+├── [4.0K]  models
+│   ├── [4.0K]  __pycache__
+│   │   ├── [1.4K]  crm_disposition.cpython-312.pyc
+│   │   ├── [6.5K]  crm_lead.cpython-312.pyc
+│   │   └── [ 258]  __init__.cpython-312.pyc
+│   ├── [ 836]  crm_disposition.py
+│   ├── [4.8K]  crm_lead.py
+│   └── [  77]  __init__.py
+├── [4.0K]  __pycache__
+│   └── [ 210]  __init__.cpython-312.pyc
+├── [4.0K]  security
+│   ├── [ 473]  ir.model.access.csv
+│   └── [   0]  security.xml
+├── [4.0K]  views
+│   ├── [3.5K]  crm_disposition_views.xml
+│   └── [3.4K]  crm_lead_views.xml
+├── [8.4K]  crm-flow-role-aware.txt
+├── [7.2K]  crm-flow.txt
+├── [  45]  __init__.py
+├── [ 705]  __manifest__.py
+└── [   0]  tree.txt
+
+7 directories, 17 files

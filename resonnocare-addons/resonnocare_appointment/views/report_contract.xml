@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_device_contract_document">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <t t-set="clinic" t-value="o.clinic_id"/>
+                    <t t-set="contract_lines" t-value="o._get_contract_lines()"/>
+                    <t t-set="age" t-value="o._get_partner_age()"/>
+                    <div class="page" style="font-family:Arial, Helvetica, sans-serif; font-size:13px;">
+                        <table class="table table-sm mb-0" style="border:2px solid #000;border-collapse:collapse; table-layout:fixed;">
+                            <tr>
+                                <td style="width:68%;vertical-align:top;border-right:1px solid #000;padding:8px 10px;">
+                                    <div style="display:flex;align-items:center;gap:10px;">
+                                        <div t-if="o.company_id.logo">
+                                            <img t-att-src="image_data_uri(o.company_id.logo)" style="max-height:95px;max-width:180px;"/>
+                                        </div>
+
+                                        <div>
+                                            <div style="font-size:30px;font-weight:700;letter-spacing:0.4px;line-height:1;">RESONNOCARE</div>
+                                            <div style="font-size:17px;letter-spacing:0.6px;">Health-tech Private limited</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td style="width:32%;vertical-align:top;padding:8px 10px;">
+                                    <div class="text-end" style="font-size:13px;">CIN: <span t-out="o.company_id.company_registry or ''"/></div>
+                                    <div class="text-end" style="font-size:32px;font-weight:700;line-height:1.05;">CONTRACT</div>
+                                    <div class="text-end" style="font-size:15px;">Date: <span t-field="o.invoice_date"/></div>
+                                    <div class="text-end" style="font-size:14px;">Contract ID: <span t-out="o.contract_id or ''"/></div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="border-top:1px solid #000;border-right:1px solid #000;padding:8px 10px;line-height:1.35;">
+                                    <div t-if="clinic and clinic.state_hq_name">
+                                            <span t-out="clinic.state_hq_name or 'N/A'"/>
+                                    </div>
+                                    <div t-if="clinic and clinic.state_hq_address">
+                                        <span t-out="clinic.state_hq_address or 'N/A'"/>
+                                    </div>
+                                    <div t-if="clinic and clinic.state_gst">
+                                        GSTIN: <span t-out="clinic.state_gst or 'N/A'"/>
+                                    </div>
+                                </td>
+                                <td style="border-top:1px solid #000;padding:8px 10px;line-height:1.35;">
+                                    <div><strong>Clinic Name</strong></div>
+                                    <div t-out="clinic.name or ''"/>
+                                    <div t-out="clinic.street or ''"/>
+                                    <div>
+                                        <span t-out="clinic.city or ''"/>
+                                        <span t-if="clinic.state_id">, <span t-out="clinic.state_id.name"/></span>
+                                    </div>
+                                    <div>Phone: <span t-out="(clinic.company_id.phone if clinic and clinic.company_id else '') or ''"/></div>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <div class="text-center" style="border-top:2px solid #000;border-bottom:2px solid #000;padding:7px 0;font-size:20px;font-weight:700;letter-spacing:0.3px;">
+                            HEARING INSTRUMENTS &amp; ACCESSORIES CONTRACT
+                        </div>
+
+                        <table class="table table-sm mb-2" style="margin-top:8px;font-size:14px; table-layout:fixed;">
+                            <tr>
+                                <td style="width:50%;vertical-align:top;line-height:1.45;padding:6px 8px;">
+                                    <div><strong>Customer Name:</strong> <span t-out="o.partner_id.name or ''"/></div>
+                                    <div><strong>Address:</strong> <span t-out="o.partner_id.contact_address or ''"/></div>
+                                    <div><strong>Mobile:</strong> <span t-out="o.partner_id.mobile or o.partner_id.phone or ''"/></div>
+                                    <div><strong>Email:</strong> <span t-out="o.partner_id.email or ''"/></div>
+                                    <div><strong>GSTN:</strong> <span t-out="o.partner_id.vat or ''"/></div>
+                                </td>
+                                <td style="width:50%;vertical-align:top;line-height:1.45;font-size:17px;padding:6px 8px;">
+                                    <div><strong>Age:</strong> <span t-out="age or ''"/> Years</div>
+                                    <div><strong>Gender:</strong> <span t-field="o.partner_id.gender"/></div>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <div style="font-size:24px;font-weight:700;text-decoration:underline;margin-bottom:6px;">Hearing Instruments &amp; Accessories Details</div>
+                        <table class="table table-sm table-bordered mb-0" 
+                            style="border-collapse:collapse; table-layout: auto; font-size:10px; width:100%;">
+                            <thead>
+                                <tr style="background:#dceaf8;vertical-align:middle;">
+                                    <th rowspan="2" class="text-center" style="padding:4px 2px;;">S. No</th>
+                                    <th rowspan="2" class="text-center" style="padding:4px 2px;">Description</th>
+                                    <th rowspan="2" class="text-center" style="padding:4px 2px;">HSN/SAC</th>
+                                    <th rowspan="2" class="text-center" style="padding:4px 2px;">Item</th>
+                                    <th rowspan="2" class="text-center" style="padding:4px 2px;">Brand</th>
+                                    <th rowspan="2" class="text-center" style="padding:4px 2px;">QTY</th>
+                                    <th rowspan="2" class="text-center" style="padding:4px 2px;">MRP</th>
+                                    <th rowspan="2" class="text-center" style="padding:4px 2px;">Total</th>
+                                    <th rowspan="2" class="text-center" style="padding:4px 2px;">Discount</th>
+                                    <th rowspan="2" class="text-center" style="padding:4px 2px;">Value</th>
+                                    <th colspan="2" class="text-center" style="padding:4px 2px;">CGST</th>
+                                    <th colspan="2" class="text-center" style="padding:4px 2px;">SGST</th>
+                                    <th colspan="2" class="text-center" style="padding:4px 2px;">IGST</th>
+                                </tr>
+                                <tr style="background:#dceaf8;">
+                                    <th class="text-center" style="padding:4px 2px;">Rate</th>
+                                    <th class="text-center" style="padding:4px 2px;">Amt</th>
+                                    <th class="text-center" style="padding:4px 2px;">Rate</th>
+                                    <th class="text-center" style="padding:4px 2px;">Amt</th>
+                                    <th class="text-center" style="padding:4px 2px;">Rate</th>
+                                    <th class="text-center" style="padding:4px 2px;">Amt</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="contract_lines" t-as="line">
+                                    <td class="text-center" style="padding:4px 2px;">
+                                        <span t-out="line_index + 1"/>
+                                    </td>
+                                    <td style="padding:4px 2px; word-wrap:break-word; overflow-wrap:break-word;">
+                                        <span t-out="line.get('model', '') or line.get('description', '')"/>
+                                        <t t-if="line.get('serial_numbers')">
+                                            <br/><small>S/N: <span t-out="line.get('serial_numbers', '')"/></small>
+                                        </t>
+                                    </td>
+                                    <td style="padding:4px 2px; word-wrap:break-word;">
+                                        <span t-out="line.get('hsn_code', '')"/>
+                                    </td>
+                                    <td style="padding:4px 2px; word-wrap:break-word;">
+                                        <span t-out="line.get('item_code', '') or line.get('device_code', '')"/>
+                                    </td>
+                                    <td style="padding:4px 2px; word-wrap:break-word;">
+                                        <span t-out="line.get('brand', '') or line.get('manufacturer', '')"/>
+                                    </td>
+                                    <td class="text-center" style="padding:4px 2px;">
+                                        <span t-out="int(line.get('qty', 0))"/>
+                                    </td>
+                                    <td class="text-center" style="padding:4px 2px; word-wrap:break-word;">
+                                        <span t-out="line.get('mrp', line.get('rate', 0.0))" 
+                                            t-options='{"widget":"monetary","display_currency":o.currency_id}'/>
+                                    </td>
+                                    <td class="text-center" style="padding:4px 2px; word-wrap:break-word;">
+                                        <span t-out="line.get('total', 0.0)" 
+                                            t-options='{"widget":"monetary","display_currency":o.currency_id}'/>
+                                    </td>
+                                    <td class="text-center" style="padding:4px 2px; word-wrap:break-word;">
+                                        <span t-out="line.get('discount', 0.0)" 
+                                            t-options='{"widget":"monetary","display_currency":o.currency_id}'/>
+                                    </td>
+                                    <td class="text-center" style="padding:4px 2px; word-wrap:break-word;">
+                                        <span t-out="line.get('taxable_value', line.get('amount', 0.0))" 
+                                            t-options='{"widget":"monetary","display_currency":o.currency_id}'/>
+                                    </td>
+                                    <td class="text-center" style="padding:4px 2px;">
+                                        <span t-out="int(line.get('cgst_rate', 0))"/>%
+                                    </td>
+                                    <td class="text-center" style="padding:4px 2px; word-wrap:break-word;">
+                                        <span t-out="line.get('cgst_amount', 0.0)" 
+                                            t-options='{"widget":"monetary","display_currency":o.currency_id}'/>
+                                    </td>
+                                    <td class="text-center" style="padding:4px 2px;">
+                                        <span t-out="int(line.get('sgst_rate', 0))"/>%
+                                    </td>
+                                    <td class="text-center" style="padding:4px 2px; word-wrap:break-word;">
+                                        <span t-out="line.get('sgst_amount', 0.0)" 
+                                            t-options='{"widget":"monetary","display_currency":o.currency_id}'/>
+                                    </td>
+                                    <td class="text-center" style="padding:4px 2px;">
+                                        <span t-out="int(line.get('igst_rate', 0))"/>%
+                                    </td>
+                                    <td class="text-center" style="padding:4px 2px; word-wrap:break-word;">
+                                        <span t-out="line.get('igst_amount', 0.0)" 
+                                            t-options='{"widget":"monetary","display_currency":o.currency_id}'/>
+                                    </td>
+                                </tr>
+                                <tr class="fw-bold">
+                                    <td colspan="14" style="padding:6px 4px;">
+                                        Total Contract Value (in Figure)
+                                    </td>
+                                    <td colspan="2" class="text-end" style="padding:6px 4px; white-space:nowrap; border-left:1px solid #dee2e6;">
+                                        <span t-out="o._get_contract_total_payable()" 
+                                            t-options='{"widget":"monetary","display_currency":o.currency_id}'/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="16" style="padding:6px 4px;">
+                                        <strong>Total Contract Value (in Words):</strong>
+                                        <span t-out="(o.currency_id.amount_to_text(o._get_contract_total_payable() or 0.0) if o.currency_id else '')"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="15" style="padding:6px 4px;">Amount of Tax Subject to Reverse Charges</td>
+                                    <td style="padding:6px 4px;">-</td>
+                                </tr>
+                                <tr style="background:#6fa8dc;color:#fff;" class="fw-bold">
+                                    <td colspan="15" style="padding:6px 4px;"></td>
+                                    <td class="text-center" style="padding:6px 4px;">Total</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <div style="font-size:20px;font-weight:700;margin-top:10px;">Payment Details:</div>
+                        <table class="table table-sm mb-1" style="font-size:15px;line-height:1.35; border-top:1px solid #000; border-bottom:1px solid #000;table-layout: fixed;">
+                            <tr>
+                                <td style="width:70%;padding:8px 6px;"></td>
+                                <td class="text-end" style="padding:8px 6px;">(Amount in INR)</td>
+                            </tr>
+                            <tr>
+                                <td style="padding:8px 6px;">Advance Paid</td>
+                                <td class="text-end" style="padding:8px 6px;"><span t-out="o._get_contract_total_paid()" t-options='{"widget":"monetary","display_currency":o.currency_id}'/></td>
+                            </tr>
+                            <tr>
+                                <td style="padding:8px 6px;">Balance Due before First Fitting</td>
+                                <td class="text-end" style="padding:8px 6px;"><span t-out="o._get_contract_balance_due()" t-options='{"widget":"monetary","display_currency":o.currency_id}'/></td>
+                            </tr>
+                        </table>
+
+
+
+                        <div style="font-size:26px;font-weight:700;border-top:1px solid #000;padding-top:4px;">
+                            Date of Fitting - On or Before: <span t-out="o._get_contract_fitting_date() or ''"/>
+                        </div>
+
+                        <div class="mt-2">
+                            <div style="font-size:22px;font-weight:700;">Terms &amp; Conditions</div>
+                            <p style="font-size:13px;margin-bottom:4px;line-height:1.4;">
+                                I, &lt;Name&gt; hereby agree to purchase the above mentioned Hearing Instrument(s) &amp; fitment and agree to pay the above written purchase price and honor the following terms &amp; conditions:
+                            </p>
+                            <ol style="font-size:12px;line-height:1.4;padding-left:16px;">
+                                <li>The Hearing Instrument(s) will be booked only on receipt of advance through cash or credit card. In case the booking is done through cheque/NEFT, booking will get confirmed only after the realisation of cheque or transfer of money into the Company account.</li>
+                                <li>The first fitting of booked Hearing-Instrument(s) and delivery will be within 10 days from the date of booking subject to full payment by the Client. In case payment is made through Cheque/NEFT, fitting/delivery of instrument(s) will be done only after the cheque/NEFT has been encashed/realised.</li>
+                                <li>If Client fails to make full payment within 10 days from the date of booking, Company reserves the right to cancel the booking without any refund.</li>
+                                <li>Once purchase order is booked, there will be no cancellation of the same. If client requests for cancellation, no refund of booking amount will be paid by the Company to the Client.</li>
+                                <li>After booking of Hearing-Instrument(s) but before the first fitting/delivery, the Client can request for modification of the order with higher version of Hearing-Instrument(s) subject to payment of difference in purchase price.</li>
+                                <li>Client can request for exchange of newly purchased Hearing-Instrument(s) with higher version Hearing-Instrument(s) only, subject to payment of difference in purchase price.</li>
+                                <li>No request for exchange of Hearing-Instrument(s) will be entertained after expiry of seven days from the date of first fitting.</li>
+                                <li>Any decision regarding cancellation, modification of order or exchange of Hearing-Instrument(s) &amp; Fitment will be at sole discretion of the Company only.</li>
+                                <li>The Company has explained to the Client about usage, functions, care, maintenance etc. of Hearing-Instrument(s).</li>
+                                <li>The Client has understood that Hearing-Instrument(s) are meant to compensate hearing loss but not restore completely normal hearing.</li>
+                                <li>Warranty of Hearing-Instrument(s) is as per manufacturer terms; it will be void in case of non-payment or balance payment due.</li>
+                                <li>Jurisdiction territory is courts of the registered office only.</li>
+                                <li>In case the fitting/delivery date falls on holiday, next working day will be treated as the day for fitting/delivery.</li>
+                                <li>Not with standing NDNC registration, you agree to receive sales/service calls from company/group/associates based on provided information.</li>
+                            </ol>
+                        </div>
+
+                        <div class="mt-2">
+                            <div style="font-size:22px;font-weight:700;text-decoration:underline;">Acknowledgement</div>
+                            <div style="font-size:20px;font-weight:700;line-height:1.25;">
+                                BY SIGNING BELOW, I VERIFY &amp; ACCEPT ALL TERMS AND CONDITIONS MENTIONED IN THIS CONTRACT
+                                AND AGREE TO PAY THE BALANCE AMOUNT AS PER THE TIMELINE OF THE CONTRACT.
+                            </div>
+                            <div class="row mt-2" style="font-size:15px;">
+                                <div class="col-7">
+                                    <div>Client's Signature :</div>
+                                    <div style="height:26px;"></div>
+                                    <div>____________________________</div>
+                                </div>
+                                <div class="col-5">
+                                    <div>Date:</div>
+                                    <div style="height:26px;"></div>
+                                    <div>____________</div>
+                                </div>
+                            </div>
+                            <div class="row mt-2" style="font-size:15px;">
+                                <div class="col-7">
+                                    <div>Clinician's Signature :</div>
+                                    <div style="height:26px;"></div>
+                                    <div>____________________________</div>
+                                </div>
+                                <div class="col-5">
+                                    <div>Date:</div>
+                                    <div style="height:26px;"></div>
+                                    <div>____________</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <table class="table table-sm mb-0 mt-2" style="border-top:2px solid #000;font-size:12px;border-collapse:collapse;table-layout: fixed;">
+                            <tr>
+                                <td style="width:50%;padding:8px;">
+                                    <strong>Corporate Address:</strong>
+                                    <br/>
+                                    <span>RESONNOCARE HEALTH-TECH PVT. LTD  403, Office Block 'C'  4th Floor – Above Retail Block R1 &amp; R5, M3M URBANA, Sector 67, Gurugram, 122101</span>
+                                    <br/>
+                                    <span t-if="o.company_id.phone">Phone: <span t-out="o.company_id.phone"/></span>
+                                </td>
+                                <td style="width:50%;padding:8px;">
+                                    <strong>Registered Address:</strong>
+                                    <br/>
+                                    <span t-out="o.company_id.partner_id.contact_address or ''"/>
+                                    <br/>
+                                    <span t-if="o.company_id.company_registry">CIN: <span t-out="o.company_id.company_registry"/></span>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <record id="action_report_device_contract" model="ir.actions.report">
+        <field name="name">Device Contract</field>
+        <field name="model">account.move</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">resonnocare_appointment.report_device_contract_document</field>
+        <field name="report_file">resonnocare_appointment.report_device_contract_document</field>
+        <field name="print_report_name">'Contract - %s' % (object.name or '')</field>
+    </record>
+</odoo>
+

@@ -1,0 +1,306 @@
+RESONNOCARE INVENTORY MODULE
+(Device Management – Phase 1, Sheet-Aligned)
+===========================================
+
+1. PURPOSE
+----------
+The Inventory module manages physical devices owned by clinics.
+It supports operational workflows only and represents the
+“Inventory Management” layer shown in the client flowchart.
+
+This module is NOT a commercial, procurement, or billing system.
+
+
+2. CLIENT SCOPE CONFIRMATION
+----------------------------
+Based on:
+- Client Excel sheets
+- Client flowchart
+- Initial journey definition
+
+Phase-1 includes ONLY:
+Supply Chain → Inventory Mgmt (Device Listing)
+
+Phase-1 explicitly excludes:
+- Order Management
+- PO / GRN / Procurement
+- Vendor onboarding
+- Pricing & billing
+- ROI and conversion cost analysis
+
+
+3. MODULE DETAILS
+-----------------
+Module Name:
+resonnocare_inventory
+
+Depends On:
+- resonnocare_base
+- resonnocare_clinic
+
+Does NOT depend on:
+- stock
+- purchase
+- sale
+- account
+
+
+4. FIELD ALIGNMENT PRINCIPLE
+----------------------------
+Excel sheets contain a MIX of:
+- Device data (operational)
+- Product data (reference)
+- Commercial data (finance)
+
+Only fields that belong to
+“Inventory Mgmt (Device Listing)”
+are implemented in Phase-1.
+
+All other fields are deferred and documented.
+
+
+5. CORE MODELS (PHASE-1)
+------------------------
+
+5.1 Device (Inventory Record)
+-----------------------------
+Model:
+resonnocare.device
+
+Definition:
+Represents ONE physical device/unit available in a clinic.
+
+Fields (taken from sheets – operational only):
+- device_name
+  (Name/label of the device)
+
+- device_code / serial_number
+  (Unique identifier mentioned in sheets)
+
+- device_type_id
+  (Category such as Hearing Aid, Diagnostic Device)
+
+- clinic_id
+  (Clinic/location where device exists)
+
+- status
+  Values:
+    - available
+    - assigned / in_use
+    - maintenance / repair
+
+- condition_notes
+  (Remarks, condition, comments from sheets)
+
+- active
+  (Archive flag)
+
+Rules:
+- One record = one physical device
+- Device belongs to exactly one clinic
+- Device under maintenance cannot be assigned
+
+
+5.2 Device Type (Master)
+------------------------
+Model:
+resonnocare.device.type
+
+Fields:
+- name
+- active
+
+Examples (from sheets / flowchart):
+- Hearing Aid
+- Diagnostic Device
+- Trial Device
+- Therapy Device
+
+Editable only by Super Admin.
+
+
+6. EXPLICITLY DEFERRED FIELDS (FROM SHEETS)
+-------------------------------------------
+The following columns exist in sheets but are
+OUT OF PHASE-1 and NOT implemented now:
+
+Deferred to Phase-2 (Product / Supply Chain / Finance):
+- Vendor name / vendor registration
+- Manufacturer details
+- Product catalog
+- Brand master
+- Model master (as sellable product)
+- Purchase price
+- Selling price / MRP
+- Discounts / margins
+- ROI
+- Conversion cost
+- PO / GRN references
+- Order management
+- Billing linkage
+
+These will be handled in:
+- Product Master
+- Supply Chain (Procurement)
+- Finance / Billing modules
+
+
+7. UI SCREENS (PHASE-1)
+----------------------
+
+7.1 Inventory Dashboard
+-----------------------
+Menu:
+Inventory → Dashboard
+
+Purpose:
+Operational overview of devices.
+
+Shows:
+- Total devices
+- Available devices
+- Assigned devices
+- Devices under maintenance
+
+Filter:
+- Clinic
+
+
+7.2 Device List
+---------------
+Menu:
+Inventory → Devices
+
+Columns:
+- Device Code / Serial
+- Device Name
+- Device Type
+- Clinic
+- Status
+- Active
+
+Filters:
+- Clinic
+- Device Type
+- Status
+
+Actions:
+- Create (Admin only)
+- View
+- Archive
+
+
+7.3 Device Form
+---------------
+Sections:
+- Device Information
+- Clinic Ownership
+- Status
+- Condition / Notes
+
+Restrictions:
+- No pricing fields
+- No vendor fields
+- No purchase fields
+- No billing fields
+
+
+7.4 Device Type Configuration
+-----------------------------
+Menu:
+Inventory → Configuration → Device Types
+
+Access:
+- Super Admin only
+
+
+7.5 Appointment Integration
+----------------------------
+Context:
+Appointment Form
+
+Field:
+- device_id (Many2one → resonnocare.device)
+
+Domain:
+- Same clinic as appointment
+- Status = available
+
+Behaviour:
+- On assign → device status becomes assigned
+- On release/cancel → status returns to available
+
+
+7.6 Front Desk View (Read-Only)
+-------------------------------
+Menu (optional):
+Front Desk → Devices
+
+Shows:
+- Device Name
+- Device Type
+- Status
+- Clinic
+
+Restrictions:
+- No create
+- No edit
+- No delete
+
+
+8. DEVICE STATUS FLOW
+--------------------
+available → assigned → available
+           → maintenance → available
+
+
+9. SECURITY & ROLES
+------------------
+Super Admin:
+- Full access
+
+Clinic Admin:
+- View devices of own clinic
+- Update status
+
+Front Desk:
+- Read-only access
+
+CRM Users:
+- No access
+
+
+10. INTEGRATION BOUNDARIES
+-------------------------
+CRM:
+- No dependency
+
+Front Desk:
+- Read-only consumption
+
+Appointments:
+- Device selection only
+
+Finance / Billing:
+- No integration in Phase-1
+
+
+11. IMPLEMENTATION ORDER
+-----------------------
+1. Create resonnocare_inventory module
+2. Device Type master
+3. Device model
+4. Device list & form views
+5. Security rules
+6. Appointment integration
+7. Front Desk read-only view
+
+
+12. CLIENT-SAFE SUMMARY
+-----------------------
+“Inventory in Phase-1 is limited to device listing and availability
+tracking at clinic level. Vendor, product, pricing, and billing data
+are part of later phases.”
+
+END OF SPEC
+===========================================

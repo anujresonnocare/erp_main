@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="view_resonnocare_hq_dashboard_form" model="ir.ui.view">
+        <field name="name">resonnocare.hq.dashboard.form</field>
+        <field name="model">resonnocare.hq.dashboard</field>
+        <field name="arch" type="xml">
+            <form string="Resonnocare HQ Dashboard" create="false" edit="false" delete="false" duplicate="false">
+
+                <sheet>
+
+                    <!-- TITLE -->
+                    <div class="oe_title">
+                        <h1 class="mb-0">Resonnocare HQ</h1>
+                        <p class="text-muted mt-1">
+                            Central business overview &amp; governance
+                        </p>
+                    </div>
+
+                    <separator/>
+
+                    <!-- KPI SECTION -->
+                    <!-- KPI SECTION -->
+                    <div class="o_form_sheet_bg">
+                        <div class="o_form_sheet">
+                            <group col="4" class="mt16">
+
+                                <group>
+                                    <div class="oe_stat_button text-center">
+                                        <div class="o_stat_value">
+                                            <field name="total_clinics"/>
+                                        </div>
+                                        <div class="o_stat_text text-muted">
+                        Total Clinics
+                                        </div>
+                                    </div>
+                                </group>
+
+                                <group>
+                                    <div class="oe_stat_button text-center">
+                                        <div class="o_stat_value text-success">
+                                            <field name="active_clinics"/>
+                                        </div>
+                                        <div class="o_stat_text text-muted">
+                        Active Clinics
+                                        </div>
+                                    </div>
+                                </group>
+
+                                <group>
+                                    <div class="oe_stat_button text-center">
+                                        <div class="o_stat_value text-primary">
+                                            <field name="appointments_today"/>
+                                        </div>
+                                        <div class="o_stat_text text-muted">
+                        Appointments Today
+                                        </div>
+                                    </div>
+                                </group>
+
+                                <group>
+                                    <div class="oe_stat_button text-center">
+                                        <div class="o_stat_value text-info">
+                                            <field name="registrations_today"/>
+                                        </div>
+                                        <div class="o_stat_text text-muted">
+                        Registrations Today
+                                        </div>
+                                    </div>
+                                </group>
+
+                            </group>
+                        </div>
+                    </div>
+
+
+                    <separator string="Administration"/>
+
+                    <!-- ADMIN / INFO SECTION -->
+                    <group col="2" class="mt16">
+
+                        <group>
+                            <div class="o_form_label">
+                                System Overview
+                            </div>
+                            <p class="text-muted mt4">
+                                Core operational statistics, platform health,
+                                and governance indicators across all clinics.
+                            </p>
+                        </group>
+
+                        <group>
+                            <div class="o_form_label">
+                                Reports &amp; Analytics
+                            </div>
+                            <p class="text-muted mt4">
+                                Business performance metrics, growth trends,
+                                and executive KPIs.
+                            </p>
+                            <span class="badge bg-warning text-dark mt4">
+                                Coming soon
+                            </span>
+                        </group>
+
+                    </group>
+
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+</odoo>

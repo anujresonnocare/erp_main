@@ -1,0 +1,12 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_doctor_profile_hr,resonnocare.doctor.profile.hr,model_resonnocare_doctor_profile,resonnocare_base.group_resonnocare_hr,1,1,1,0
+access_doctor_profile_crm,resonnocare.doctor.profile.crm,model_resonnocare_doctor_profile,resonnocare_base.group_crm,1,1,1,0
+access_doctor_profile_super_admin,resonnocare.doctor.profile.super.admin,model_resonnocare_doctor_profile,resonnocare_base.group_resonnocare_super_admin,1,1,1,1
+access_doctor_profile_external_doctor,resonnocare.doctor.profile.external.doctor,model_resonnocare_doctor_profile,resonnocare_base.group_external_doctor,1,0,0,0
+access_doctor_profile_front_desk,resonnocare.doctor.profile.front.desk,model_resonnocare_doctor_profile,resonnocare_base.group_front_desk,1,0,0,0
+access_res_partner_external_doctor,res.partner.external.doctor,base.model_res_partner,resonnocare_base.group_external_doctor,1,0,0,0
+access_sale_order_external_doctor,sale.order.external.doctor,sale.model_sale_order,resonnocare_base.group_external_doctor,1,0,0,0
+access_sale_order_line_external_doctor,sale.order.line.external.doctor,sale.model_sale_order_line,resonnocare_base.group_external_doctor,1,0,0,0
+access_doctor_sharing_rule_hr,resonnocare.doctor.sharing.rule.hr,model_resonnocare_doctor_sharing_rule,resonnocare_base.group_resonnocare_hr,1,1,1,0
+access_doctor_sharing_rule_crm,resonnocare.doctor.sharing.rule.crm,model_resonnocare_doctor_sharing_rule,resonnocare_base.group_crm,1,1,1,0
+access_doctor_sharing_rule_super_admin,resonnocare.doctor.sharing.rule.super.admin,model_resonnocare_doctor_sharing_rule,resonnocare_base.group_resonnocare_super_admin,1,1,1,1

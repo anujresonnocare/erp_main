@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_ear_mould_form_document">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.basic_layout">
+                    <div class="page" style="font-family:Arial, Helvetica, sans-serif; font-size:10px; margin:0; padding:0;">
+                        <style>
+                            .em-table { width:100%; border-collapse:collapse; border:1px solid #000; margin-bottom:4px; table-layout:fixed; }
+                            .em-table td, .em-table th { border:1px solid #000; padding:3px; vertical-align:top; line-height:1.2; word-wrap:break-word; }
+                            .em-head { background:#f3f6fb; font-weight:700; text-align:center; }
+                            .em-center { text-align:center; }
+                            .em-cb { display:inline-block; width:9px; height:9px; border:1px solid #000; margin-right:3px; vertical-align:middle; text-align:center; line-height:8px; font-size:8px; font-weight:700; }
+                            .em-title { font-size:18px; font-weight:700; text-align:right; letter-spacing:0.2px; line-height:1.1; }
+                            .em-brand { font-size:30px; font-weight:700; line-height:1; }
+                        </style>
+
+                        <t t-set="company" t-value="o.clinic_id.company_id if o.clinic_id else False"/>
+
+                        <table style="width:100%; border-collapse:collapse; margin-bottom:4px; table-layout:fixed;">
+                            <tr>
+                                <td style="width:38%; padding:0; vertical-align:middle;">
+                                    <img t-if="company and company.logo" t-att-src="image_data_uri(company.logo)" style="height:120px; max-width:330px; width:auto;"/>
+                                    <div t-if="not company or not company.logo" class="em-brand">RESONNOCARE</div>
+                                </td>
+                                <td style="width:62%; padding:0; vertical-align:middle;">
+                                    <div class="em-title">Hearing Aid / Ear Mould Order Form</div>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <table class="em-table">
+                            <tr>
+                                <td style="width:35%;"><strong>Order ID</strong>: <span t-out="o.name or ''"/></td>
+                                <td style="width:25%;"><strong>Date</strong>: <span t-field="o.order_date"/></td>
+                                <td style="width:40%;"><strong>Appointment</strong>: <span t-out="o.appointment_id.display_name or ''"/></td>
+                            </tr>
+                        </table>
+
+                        <table class="em-table">
+                            <tr>
+                                <td>
+                                    <strong>Order Type</strong>:
+                                    <span style="margin-left:8px;"><span class="em-cb"><span t-out="'X' if o.order_type == 'new_mould' else ''"/></span>New Mould</span>
+                                    <span style="margin-left:8px;"><span class="em-cb"><span t-out="'X' if o.order_type == 'new_custom_model' else ''"/></span>New Custom Model</span>
+                                    <span style="margin-left:8px;"><span class="em-cb"><span t-out="'X' if o.order_type == 'reshell_remake' else ''"/></span>Re-shell / Remake</span>
+                                    <span style="margin-left:8px;"><span class="em-cb"><span t-out="'X' if o.order_type == 'repair' else ''"/></span>Repair</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Vendor Name and Address</strong><br/><span t-out="o.vendor_name_address or ''"/></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Resonnocare Clinic Name and Address</strong><br/><span t-out="o.clinic_name_address or ''"/></td>
+                            </tr>
+                        </table>
+
+                        <table class="em-table">
+                            <tr><td colspan="4"><strong>Patient Information</strong></td></tr>
+                            <tr>
+                                <td style="width:35%;"><strong>Patient Name</strong>: <span t-out="o.patient_id.display_name or ''"/></td>
+                                <td style="width:20%;"><strong>Patient ID</strong>: <span t-out="o.patient_code or ''"/></td>
+                                <td style="width:20%;"><strong>CAN Number</strong>: <span t-out="o.can_number or ''"/></td>
+                                <td style="width:25%;"><strong>Audiologist</strong>: <span t-out="o.audiologist_id.name or ''"/></td>
+                            </tr>
+                            <tr>
+                                <td colspan="2"><strong>Age / Sex</strong>: <span t-out="o.patient_age_sex or ''"/></td>
+                                <td colspan="2"></td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">
+                                    <strong>First time user</strong>:
+                                    <span style="margin-left:8px;"><span class="em-cb"><span t-out="'X' if o.first_time_user == 'yes' else ''"/></span>Yes</span>
+                                    <span style="margin-left:8px;"><span class="em-cb"><span t-out="'X' if o.first_time_user == 'no' else ''"/></span>No</span>
+                                </td>
+                                <td colspan="2">
+                                    <strong>Most Important</strong>:
+                                    <span style="margin-left:8px;"><span class="em-cb"><span t-out="'X' if o.most_important == 'cosmetic' else ''"/></span>Cosmetic</span>
+                                    <span style="margin-left:8px;"><span class="em-cb"><span t-out="'X' if o.most_important == 'comfort' else ''"/></span>Comfort</span>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <table class="em-table">
+                            <tr><td colspan="8"><strong>Hearing Threshold Level</strong></td></tr>
+                            <tr class="em-head">
+                                <td>Ear</td><td>250Hz</td><td>500Hz</td><td>1000Hz</td><td>2000Hz</td><td>3000Hz</td><td>4000Hz</td><td>8000Hz</td>
+                            </tr>
+                            <tr class="em-center">
+                                <td><strong>Right</strong></td><td><span t-out="o.right_250 or ''"/></td><td><span t-out="o.right_500 or ''"/></td><td><span t-out="o.right_1000 or ''"/></td><td><span t-out="o.right_2000 or ''"/></td><td><span t-out="o.right_3000 or ''"/></td><td><span t-out="o.right_4000 or ''"/></td><td><span t-out="o.right_8000 or ''"/></td>
+                            </tr>
+                            <tr class="em-center">
+                                <td><strong>Left</strong></td><td><span t-out="o.left_250 or ''"/></td><td><span t-out="o.left_500 or ''"/></td><td><span t-out="o.left_1000 or ''"/></td><td><span t-out="o.left_2000 or ''"/></td><td><span t-out="o.left_3000 or ''"/></td><td><span t-out="o.left_4000 or ''"/></td><td><span t-out="o.left_8000 or ''"/></td>
+                            </tr>
+                        </table>
+
+                        <table class="em-table">
+                            <tr><td colspan="3"><strong>Mould Section</strong></td></tr>
+                            <tr class="em-head"><td style="width:30%;">Ear Canal Length</td><td style="width:35%;">Ear Mould Vent</td><td style="width:35%;">Vent Size</td></tr>
+                            <tr>
+                                <td><div><strong>Right</strong>: <span t-field="o.right_ear_canal_length"/></div><div><strong>Left</strong>: <span t-field="o.left_ear_canal_length"/></div></td>
+                                <td><div><strong>Right</strong>: <span t-field="o.right_mould_vent"/></div><div><strong>Left</strong>: <span t-field="o.left_mould_vent"/></div></td>
+                                <td><div><strong>Right</strong>: <span t-field="o.right_vent_size"/></div><div><strong>Left</strong>: <span t-field="o.left_vent_size"/></div></td>
+                            </tr>
+                            <tr>
+                                <td colspan="3">
+                                    <strong>Mould Type</strong>:
+                                    <div style="margin-top:2px;">
+                                        <span><span class="em-cb"><span t-out="'X' if o.mould_type == 'full_concha' else ''"/></span>Full Concha</span>
+                                        <span style="margin-left:8px;"><span class="em-cb"><span t-out="'X' if o.mould_type == 'half_concha' else ''"/></span>Half Concha</span>
+                                        <span style="margin-left:8px;"><span class="em-cb"><span t-out="'X' if o.mould_type == 'tip_mould' else ''"/></span>Tip Mould</span>
+                                        <span style="margin-left:8px;"><span class="em-cb"><span t-out="'X' if o.mould_type == 'hp_micro_mould' else ''"/></span>HP Micro Mould</span>
+                                        <span style="margin-left:8px;"><span class="em-cb"><span t-out="'X' if o.mould_type == 'rie_micro_mould' else ''"/></span>RIE Micro Mould</span>
+                                        <span style="margin-left:8px;"><span class="em-cb"><span t-out="'X' if o.mould_type == 'flex_vent_mould' else ''"/></span>Flex Vent Mould</span>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <table class="em-table">
+                            <tr><td colspan="3"><strong>Custom Product Section</strong></td></tr>
+                            <tr class="em-head"><td style="width:20%;">Ear</td><td style="width:40%;">HA Model Name / Type / Shape / Shell</td><td style="width:40%;">User Controls</td></tr>
+                            <tr>
+                                <td><strong>Right</strong></td>
+                                <td>Model: <span t-out="o.ha_model_name_right or ''"/><br/>Type: <span t-field="o.right_type"/> | Vent Shape: <span t-field="o.right_vent_shape"/> | Shell: <span t-field="o.right_shell"/></td>
+                                <td><div><span class="em-cb"><span t-out="'X' if o.right_volume_control else ''"/></span>Volume Control</div><div><span class="em-cb"><span t-out="'X' if o.right_switch else ''"/></span>Switch</div><div><span class="em-cb"><span t-out="'X' if o.right_telecoil else ''"/></span>Telecoil</div></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Left</strong></td>
+                                <td>Model: <span t-out="o.ha_model_name_left or ''"/><br/>Type: <span t-field="o.left_type"/> | Vent Shape: <span t-field="o.left_vent_shape"/> | Shell: <span t-field="o.left_shell"/></td>
+                                <td><div><span class="em-cb"><span t-out="'X' if o.left_volume_control else ''"/></span>Volume Control</div><div><span class="em-cb"><span t-out="'X' if o.left_switch else ''"/></span>Switch</div><div><span class="em-cb"><span t-out="'X' if o.left_telecoil else ''"/></span>Telecoil</div></td>
+                            </tr>
+                        </table>
+
+                        <table class="em-table">
+                            <tr><td colspan="2"><strong>Remake Shell and Shell Modification</strong></td></tr>
+                            <tr>
+                                <td style="width:70%;">
+                                    <div><span class="em-cb"><span t-out="'X' if o.remake_shell else ''"/></span>Remake Shell</div>
+                                    <div><span class="em-cb"><span t-out="'X' if o.too_tight else ''"/></span>Too Tight</div>
+                                    <div><span class="em-cb"><span t-out="'X' if o.too_loose else ''"/></span>Loose</div>
+                                    <div><span class="em-cb"><span t-out="'X' if o.add_vent else ''"/></span>Add Vent</div>
+                                    <div><span class="em-cb"><span t-out="'X' if o.seal_vent else ''"/></span>Seal Vent</div>
+                                </td>
+                                <td style="width:30%;">
+                                    <div><span class="em-cb"><span t-out="'X' if o.make_small_as_possible else ''"/></span>Make as small as possible</div>
+                                    <div style="margin-top:4px;">Vent Size Required: <span t-out="o.vent_size_required or ''"/></div>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <table class="em-table">
+                            <tr>
+                                <td style="height:55px; vertical-align:top;">
+                                    <strong>NOTES WITH ANY SPECIFIC REMARK / REQUEST</strong><br/>
+                                    <span t-out="o.notes or ''"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Audiologist Name and Signature</strong>: <span t-out="o.audiologist_signature_name or ''"/></td>
+                            </tr>
+                        </table>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <record id="action_report_ear_mould_form" model="ir.actions.report">
+        <field name="name">Ear Mould Form</field>
+        <field name="model">resonnocare.ear.mould.form</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">resonnocare_appointment.report_ear_mould_form_document</field>
+        <field name="report_file">resonnocare_appointment.report_ear_mould_form_document</field>
+        <field name="print_report_name">'Ear Mould Form - %s' % (object.name or '')</field>
+    </record>
+</odoo>

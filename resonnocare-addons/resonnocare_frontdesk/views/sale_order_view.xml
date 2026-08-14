@@ -1,0 +1,79 @@
+<odoo>
+    <record id="sale_order_form_patient" model="ir.ui.view">
+        <field name="name">sale.order.form.patient</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="groups_id" eval="[(5, 0, 0)]"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet//div[@name='button_box']" position="inside">
+                <button name="action_open_discount_requests" type="object" class="oe_stat_button" icon="fa-percent">
+                    <field name="discount_approval_request_count" widget="statinfo" string="Discount Requests"/>
+                </button>
+                <button name="action_open_advance_requests" type="object" class="oe_stat_button" icon="fa-inr">
+                    <field name="advance_approval_request_count" widget="statinfo" string="Min Advance Requests"/>
+                </button>
+            </xpath>
+            <xpath expr="//button[@id='create_invoice']" position="attributes">
+                <attribute name="type">object</attribute>
+                <attribute name="name">action_create_invoice</attribute>
+                <attribute name="invisible">show_create_contract_button or state not in ('sale','done') or invoice_status != 'to invoice'</attribute>
+            </xpath>
+            <xpath expr="//button[@id='create_invoice_percentage']" position="attributes">
+                <attribute name="type">object</attribute>
+                <attribute name="name">action_create_invoice</attribute>
+                <attribute name="invisible">show_create_contract_button or state not in ('sale','done') or invoice_status != 'to invoice'</attribute>
+            </xpath>
+            <xpath expr="//form/header" position="inside">
+                <field name="show_create_contract_button" invisible="1"/>
+                <button
+                    name="action_create_invoice"
+                    type="object"
+                    string="Create Contract"
+                    class="btn-primary"
+                    invisible="not show_create_contract_button or state not in ('sale','done') or invoice_status != 'to invoice'"
+                />
+                <button
+                    name="action_view_contract"
+                    type="object"
+                    string="Preview Contract"
+                    class="btn-secondary"
+                    invisible="state not in ('sale','done')"
+                />
+                <button
+                    name="action_print_final_invoice"
+                    type="object"
+                    string="Print Final Invoice"
+                    class="btn-secondary"
+                    invisible="state not in ('sale','done')"
+                />
+            </xpath>
+            <xpath expr="//field[@name='partner_id']" position="after">
+                <field name="patient_id"/>
+                <field name="clinic_id" readonly="1"/>
+            </xpath>
+            <xpath expr="//field[@name='order_line']/list/field[@name='discount']" position="replace">
+                <field name="discount" string="Disc.%" optional="show"/>
+            </xpath>
+            <xpath expr="//field[@name='order_line']/list/field[@name='discount']" position="after">
+                <field name="discount_base_mrp" readonly="1" optional="show"/>
+                <field name="discount_channel" readonly="1" optional="show"/>
+                <field name="discount_slab" readonly="1" optional="show"/>
+            </xpath>
+            <xpath expr="//field[@name='order_line']/list/field[@name='tax_id']" position="attributes">
+                <attribute name="readonly">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='order_line']/form//field[@name='discount']" position="replace">
+                <field name="discount" string="Disc.%"/>
+            </xpath>
+            <xpath expr="//field[@name='order_line']/form//field[@name='discount']" position="after">
+                <field name="discount_base_mrp" readonly="1"/>
+                <field name="discount_channel" readonly="1"/>
+                <field name="discount_grid_id" readonly="1"/>
+                <field name="discount_slab" readonly="1"/>
+            </xpath>
+            <xpath expr="//field[@name='order_line']/form//field[@name='tax_id']" position="attributes">
+                <attribute name="readonly">1</attribute>
+            </xpath>
+        </field>
+    </record>
+</odoo>

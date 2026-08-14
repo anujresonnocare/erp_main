@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- Root: Clinic (Top level for Clinic Admin) -->
+    <menuitem id="menu_clinic_admin_root" name="Clinic" sequence="1" groups="resonnocare_base.group_resonnocare_super_admin" web_icon="resonnocare_clinic_admin,static/description/icon.png"/>
+
+    <!-- Dashboard (Home Screen) -->
+    <!-- Points to Server Action to resolve ID dynamically -->
+    <menuitem id="menu_clinic_dashboard" name="Dashboard" parent="menu_clinic_admin_root" action="action_open_clinic_dashboard_server" sequence="1" groups="resonnocare_base.group_resonnocare_super_admin"/>
+
+    <!-- Staff Management -->
+    <menuitem id="menu_clinic_staff" name="Staff" parent="menu_clinic_admin_root" action="action_clinic_staff" sequence="10" groups="resonnocare_base.group_resonnocare_super_admin"/>
+
+    <!-- Appointments -->
+    <menuitem id="menu_clinic_appointments" name="Appointments" parent="menu_clinic_admin_root" action="resonnocare_appointment.action_resonnocare_appointment" sequence="20" groups="resonnocare_base.group_resonnocare_super_admin"/>
+
+
+    <!-- Patients (Placeholder) -->
+    <menuitem id="menu_clinic_patients" name="Patients" parent="menu_clinic_admin_root" action="resonnocare_frontdesk.action_patient_search" sequence="30" groups="resonnocare_base.group_resonnocare_super_admin"/>
+
+    <!-- Clinic Profile (Read-Only) -->
+    <!-- Points to Server Action to resolve ID dynamically -->
+    <menuitem id="menu_clinic_profile" name="Clinic Profile" parent="menu_clinic_admin_root" action="action_open_clinic_profile_server" sequence="99" groups="resonnocare_base.group_resonnocare_super_admin"/>
+
+</odoo>

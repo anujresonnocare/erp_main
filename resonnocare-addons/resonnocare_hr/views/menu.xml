@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- NOTE: Keep only native Employees-app menus to avoid duplicates.
+         If client asks, re-add HQ-root HR block from git history. -->
+
+    <!-- HR-side access under native Employees app -->
+    <menuitem id="menu_resonnocare_hr_controls_native" name="Resonnocare Controls" parent="hr.menu_hr_root" sequence="95" groups="resonnocare_base.group_resonnocare_super_admin,resonnocare_base.group_resonnocare_hr"/>
+    <menuitem id="menu_resonnocare_attendance_summary_native" name="Attendance Evaluation" parent="menu_resonnocare_hr_controls_native" action="action_resonnocare_attendance_summary" sequence="10" groups="resonnocare_base.group_resonnocare_super_admin,resonnocare_base.group_resonnocare_hr"/>
+    <menuitem id="menu_resonnocare_attendance_policy_native" name="Attendance Policies" parent="menu_resonnocare_hr_controls_native" action="action_resonnocare_attendance_policy" sequence="20" groups="resonnocare_base.group_resonnocare_super_admin,resonnocare_base.group_resonnocare_hr"/>
+    <menuitem id="menu_resonnocare_holiday_calendar_native" name="Holiday Calendar" parent="menu_resonnocare_hr_controls_native" action="action_resonnocare_holiday_calendar" sequence="30" groups="resonnocare_base.group_resonnocare_super_admin,resonnocare_base.group_resonnocare_hr"/>
+    <menuitem id="menu_resonnocare_attendance_regularization_hr_native" name="Regularization (HR Queue)" parent="menu_resonnocare_hr_controls_native" action="action_resonnocare_attendance_regularization_hr" sequence="40" groups="resonnocare_base.group_resonnocare_super_admin,resonnocare_base.group_resonnocare_hr"/>
+    <menuitem id="menu_resonnocare_attendance_regularization_all_native" name="All Regularizations" parent="menu_resonnocare_hr_controls_native" action="action_resonnocare_attendance_regularization_all" sequence="50" groups="resonnocare_base.group_resonnocare_super_admin,resonnocare_base.group_resonnocare_hr"/>
+    <menuitem id="menu_resonnocare_hr_lwp_summary_native" name="LWP Summary" parent="menu_resonnocare_hr_controls_native" action="action_resonnocare_hr_leave_lwp_summary" sequence="60" groups="resonnocare_base.group_resonnocare_super_admin,resonnocare_base.group_resonnocare_hr" active="False"/>
+    <menuitem id="menu_resonnocare_hr_payroll_attendance_impact_native" name="Payroll Impact (Attendance)" parent="menu_resonnocare_hr_controls_native" action="action_resonnocare_payroll_attendance_impact" sequence="65" groups="resonnocare_base.group_resonnocare_super_admin,resonnocare_base.group_resonnocare_hr"/>
+    <menuitem id="menu_resonnocare_hr_payroll_variance_native" name="Payroll Variance Report" parent="menu_resonnocare_hr_controls_native" action="action_resonnocare_payroll_variance_wizard" sequence="66" groups="resonnocare_base.group_resonnocare_super_admin,resonnocare_base.group_resonnocare_hr"/>
+    <menuitem id="menu_resonnocare_hr_payroll_disbursement_native" name="Payroll Disbursement" parent="menu_resonnocare_hr_controls_native" action="action_resonnocare_payroll_disbursement" sequence="67" groups="resonnocare_base.group_resonnocare_super_admin,resonnocare_base.group_resonnocare_hr"/>
+    <menuitem id="menu_resonnocare_hr_leave_balance_summary_native" name="Leave Balance Summary" parent="menu_resonnocare_hr_controls_native" action="action_resonnocare_hr_leave_balance_summary" sequence="70" groups="resonnocare_base.group_resonnocare_super_admin,resonnocare_base.group_resonnocare_hr" active="False"/>
+    <menuitem id="menu_resonnocare_hr_leave_utilization_trends_native" name="Leave Utilization Trends" parent="menu_resonnocare_hr_controls_native" action="action_resonnocare_hr_leave_utilization_trends" sequence="80" groups="resonnocare_base.group_resonnocare_super_admin,resonnocare_base.group_resonnocare_hr" active="False"/>
+
+    <!-- Manager dashboard -->
+    <menuitem id="menu_resonnocare_manager_dashboard_native"
+              name="Manager Dashboard"
+              parent="hr.menu_hr_root"
+              sequence="97"
+              groups="hr_holidays.group_hr_holidays_user,resonnocare_base.group_resonnocare_hr,resonnocare_base.group_resonnocare_super_admin"/>
+    <menuitem id="menu_resonnocare_manager_team_attendance_native"
+              name="Team Attendance"
+              parent="menu_resonnocare_manager_dashboard_native"
+              action="action_resonnocare_manager_team_attendance"
+              sequence="10"
+              groups="hr_holidays.group_hr_holidays_user,resonnocare_base.group_resonnocare_hr,resonnocare_base.group_resonnocare_super_admin"/>
+    <menuitem id="menu_resonnocare_manager_pending_leave_native"
+              name="Pending Leave Approvals"
+              parent="menu_resonnocare_manager_dashboard_native"
+              action="action_resonnocare_manager_pending_leave_approvals"
+              sequence="20"
+              groups="hr_holidays.group_hr_holidays_user,resonnocare_base.group_resonnocare_hr,resonnocare_base.group_resonnocare_super_admin"/>
+    <menuitem id="menu_resonnocare_manager_team_leave_calendar_native"
+              name="Team Leave Calendar"
+              parent="menu_resonnocare_manager_dashboard_native"
+              action="action_resonnocare_manager_team_leave_calendar"
+              sequence="30"
+              groups="hr_holidays.group_hr_holidays_user,resonnocare_base.group_resonnocare_hr,resonnocare_base.group_resonnocare_super_admin"/>
+    <menuitem id="menu_resonnocare_manager_team_leave_balance_native"
+              name="Team Leave Balance"
+              parent="menu_resonnocare_manager_dashboard_native"
+              action="action_resonnocare_manager_team_leave_balance"
+              sequence="40"
+              groups="hr_holidays.group_hr_holidays_user,resonnocare_base.group_resonnocare_hr,resonnocare_base.group_resonnocare_super_admin"/>
+    <menuitem id="menu_resonnocare_manager_pending_compoff_native"
+              name="Pending Comp-Off Approvals"
+              parent="menu_resonnocare_manager_dashboard_native"
+              action="action_resonnocare_manager_pending_compoff_approvals"
+              sequence="45"
+              groups="hr_holidays.group_hr_holidays_user,resonnocare_base.group_resonnocare_hr,resonnocare_base.group_resonnocare_super_admin"/>
+    <menuitem id="menu_resonnocare_manager_clinic_leave_report_native"
+              name="Clinic-wise Leave Report"
+              parent="menu_resonnocare_manager_dashboard_native"
+              action="action_resonnocare_manager_clinic_wise_leave_report"
+              sequence="50"
+              groups="hr_holidays.group_hr_holidays_user,resonnocare_base.group_resonnocare_hr,resonnocare_base.group_resonnocare_super_admin"/>
+    <menuitem id="menu_resonnocare_manager_manday_region_native"
+              name="Man-Day Calculation (Region)"
+              parent="menu_resonnocare_manager_dashboard_native"
+              action="action_resonnocare_manager_manday_region_wise"
+              sequence="60"
+              groups="hr_holidays.group_hr_holidays_user,resonnocare_base.group_resonnocare_hr,resonnocare_base.group_resonnocare_super_admin"/>
+
+    <!-- Employee/Manager regularization access -->
+    <menuitem id="menu_resonnocare_regularization_native_root" name="Attendance Regularization" parent="hr_attendance.menu_hr_attendance_root" sequence="20" groups="base.group_user"/>
+    <menuitem id="menu_resonnocare_attendance_summary_my_native" name="My Attendance Evaluation" parent="menu_resonnocare_regularization_native_root" action="action_resonnocare_my_attendance_summary" sequence="5" groups="base.group_user"/>
+    <menuitem id="menu_resonnocare_attendance_regularization_my_native" name="My Regularizations" parent="menu_resonnocare_regularization_native_root" action="action_resonnocare_attendance_regularization_my" sequence="10" groups="base.group_user"/>
+    <menuitem id="menu_resonnocare_attendance_regularization_team_native" name="Team Regularizations" parent="menu_resonnocare_regularization_native_root" action="action_resonnocare_attendance_regularization_team" sequence="20" groups="base.group_user" active="False"/>
+
+    <!-- Override Standard Employees menu to use Full View Action -->
+    <record id="hr.menu_hr_employee_payroll" model="ir.ui.menu">
+        <field name="action" ref="action_resonnocare_employees_full"/>
+    </record>
+    <record id="hr.menu_hr_root" model="ir.ui.menu">
+        <field name="groups_id" eval="[(6, 0, [ref('resonnocare_base.group_resonnocare_hr'), ref('resonnocare_base.group_resonnocare_super_admin'), ref('hr_holidays.group_hr_holidays_user'), ref('hr_holidays.group_hr_holidays_manager')])]"/>
+    </record>
+
+    <!-- Harden native Time Off tabs: keep management/reporting/config HR-only -->
+    <record id="hr_holidays.menu_hr_holidays_management" model="ir.ui.menu">
+        <field name="groups_id" eval="[(6, 0, [ref('resonnocare_base.group_resonnocare_hr'), ref('resonnocare_base.group_resonnocare_super_admin')])]"/>
+    </record>
+    <record id="hr_holidays.menu_hr_holidays_report" model="ir.ui.menu">
+        <field name="groups_id" eval="[(6, 0, [ref('resonnocare_base.group_resonnocare_hr'), ref('resonnocare_base.group_resonnocare_super_admin')])]"/>
+    </record>
+    <record id="hr_holidays.menu_open_department_leave_approve" model="ir.ui.menu">
+        <field name="groups_id" eval="[(6, 0, [ref('resonnocare_base.group_resonnocare_hr'), ref('resonnocare_base.group_resonnocare_super_admin')])]"/>
+    </record>
+    <record id="hr_holidays.menu_hr_holidays_configuration" model="ir.ui.menu">
+        <field name="groups_id" eval="[(6, 0, [ref('resonnocare_base.group_resonnocare_hr'), ref('resonnocare_base.group_resonnocare_super_admin')])]"/>
+    </record>
+
+    <!-- Harden native Attendance app for employee self-service -->
+    <record id="hr_attendance.menu_hr_attendance_root" model="ir.ui.menu">
+        <field name="groups_id" eval="[(6, 0, [ref('base.group_user')])]"/>
+    </record>
+    <record id="hr_attendance.menu_hr_attendance_view_attendances" model="ir.ui.menu">
+        <field name="action" ref="resonnocare_hr.action_resonnocare_my_attendance"/>
+        <field name="groups_id" eval="[(6, 0, [ref('base.group_user')])]"/>
+    </record>
+    <record id="hr_attendance.hr_attendance_management_action" model="ir.actions.act_window">
+        <field name="groups_id" eval="[(6, 0, [ref('resonnocare_base.group_resonnocare_hr'), ref('resonnocare_base.group_resonnocare_super_admin')])]"/>
+    </record>
+    <record id="hr_attendance.hr_attendance_reporting" model="ir.actions.act_window">
+        <field name="groups_id" eval="[(6, 0, [ref('resonnocare_base.group_resonnocare_hr'), ref('resonnocare_base.group_resonnocare_super_admin')])]"/>
+    </record>
+    <record id="hr_attendance.menu_hr_attendance_view_attendances_management" model="ir.ui.menu">
+        <field name="groups_id" eval="[(6, 0, [ref('resonnocare_base.group_resonnocare_hr'), ref('resonnocare_base.group_resonnocare_super_admin')])]"/>
+    </record>
+    <record id="hr_attendance.menu_hr_attendance_reporting" model="ir.ui.menu">
+        <field name="groups_id" eval="[(6, 0, [ref('resonnocare_base.group_resonnocare_hr'), ref('resonnocare_base.group_resonnocare_super_admin')])]"/>
+    </record>
+    <record id="hr_attendance.menu_action_open_form" model="ir.ui.menu">
+        <field name="groups_id" eval="[(6, 0, [ref('resonnocare_base.group_resonnocare_hr'), ref('resonnocare_base.group_resonnocare_super_admin')])]"/>
+    </record>
+    <record id="hr_attendance.menu_hr_attendance_settings" model="ir.ui.menu">
+        <field name="groups_id" eval="[(6, 0, [ref('resonnocare_base.group_resonnocare_hr'), ref('resonnocare_base.group_resonnocare_super_admin')])]"/>
+    </record>
+
+    <!-- Payroll self-service hardening -->
+    <record id="action_resonnocare_my_payslips" model="ir.actions.act_window">
+        <field name="name">My Payslips</field>
+        <field name="res_model">hr.payslip</field>
+        <field name="view_mode">list</field>
+        <field name="domain">[('employee_id.user_id', '=', uid)]</field>
+        <field name="context">{'create': False, 'edit': False, 'delete': False}</field>
+    </record>
+    <record id="payroll.payroll_menu_root" model="ir.ui.menu">
+        <field name="groups_id" eval="[(6, 0, [ref('base.group_user')])]"/>
+    </record>
+    <record id="payroll.hr_payslip_menu" model="ir.ui.menu">
+        <field name="action" ref="resonnocare_hr.action_resonnocare_my_payslips"/>
+        <field name="groups_id" eval="[(6, 0, [ref('base.group_user')])]"/>
+    </record>
+    <menuitem id="menu_resonnocare_hr_payslips_all"
+              name="All Payslips"
+              parent="payroll.payroll_menu_root"
+              action="payroll.hr_payslip_action"
+              sequence="20"
+              groups="resonnocare_base.group_resonnocare_hr,resonnocare_base.group_resonnocare_super_admin"/>
+    <menuitem id="menu_resonnocare_payroll_claim_my"
+              name="My Reimbursement Claims"
+              parent="payroll.payroll_menu_root"
+              action="action_resonnocare_payroll_claim_my"
+              sequence="25"
+              groups="base.group_user"/>
+    <record id="payroll.hr_payslip_action" model="ir.actions.act_window">
+        <field name="groups_id" eval="[(6, 0, [ref('resonnocare_base.group_resonnocare_hr'), ref('resonnocare_base.group_resonnocare_super_admin')])]"/>
+    </record>
+    <record id="payroll.hr_payslip_run_action" model="ir.actions.act_window">
+        <field name="groups_id" eval="[(6, 0, [ref('resonnocare_base.group_resonnocare_hr'), ref('resonnocare_base.group_resonnocare_super_admin')])]"/>
+    </record>
+    <record id="payroll.hr_payslip_run_menu" model="ir.ui.menu">
+        <field name="groups_id" eval="[(6, 0, [ref('resonnocare_base.group_resonnocare_hr'), ref('resonnocare_base.group_resonnocare_super_admin')])]"/>
+    </record>
+    <record id="payroll.payroll_menu_configuration" model="ir.ui.menu">
+        <field name="groups_id" eval="[(6, 0, [ref('resonnocare_base.group_resonnocare_hr'), ref('resonnocare_base.group_resonnocare_super_admin')])]"/>
+    </record>
+    <record id="payroll.hr_payroll_structure_menu" model="ir.ui.menu">
+        <field name="groups_id" eval="[(6, 0, [ref('resonnocare_base.group_resonnocare_hr'), ref('resonnocare_base.group_resonnocare_super_admin')])]"/>
+    </record>
+    <record id="payroll.menu_action_hr_salary_rule_form" model="ir.ui.menu">
+        <field name="groups_id" eval="[(6, 0, [ref('resonnocare_base.group_resonnocare_hr'), ref('resonnocare_base.group_resonnocare_super_admin')])]"/>
+    </record>
+    <record id="payroll.menu_hr_salary_rule_category" model="ir.ui.menu">
+        <field name="groups_id" eval="[(6, 0, [ref('resonnocare_base.group_resonnocare_hr'), ref('resonnocare_base.group_resonnocare_super_admin')])]"/>
+    </record>
+    <record id="payroll.hr_contribution_register_menu" model="ir.ui.menu">
+        <field name="groups_id" eval="[(6, 0, [ref('resonnocare_base.group_resonnocare_hr'), ref('resonnocare_base.group_resonnocare_super_admin')])]"/>
+    </record>
+    <record id="payroll.menu_payroll_global_settings" model="ir.ui.menu">
+        <field name="groups_id" eval="[(6, 0, [ref('resonnocare_base.group_resonnocare_hr'), ref('resonnocare_base.group_resonnocare_super_admin')])]"/>
+    </record>
+    <menuitem id="menu_resonnocare_payroll_claim_hr"
+              name="Payroll Claims"
+              parent="menu_resonnocare_hr_controls_native"
+              action="action_resonnocare_payroll_claim_hr"
+              sequence="68"
+              groups="resonnocare_base.group_resonnocare_hr,resonnocare_base.group_resonnocare_super_admin"/>
+
+</odoo>

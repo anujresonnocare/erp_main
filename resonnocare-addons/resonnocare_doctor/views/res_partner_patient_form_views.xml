@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="view_res_partner_patient_tree_doctor_readonly" model="ir.ui.view">
+        <field name="name">res.partner.patient.tree.doctor.readonly</field>
+        <field name="model">res.partner</field>
+        <field name="arch" type="xml">
+            <list create="0" edit="0" delete="0" default_order="create_date desc">
+                <field name="name"/>
+                <field name="mobile"/>
+                <field name="email"/>
+                <field name="referral_source"/>
+                <field name="referring_doctor_id"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_res_partner_patient_form_inherit_doctor" model="ir.ui.view">
+        <field name="name">res.partner.patient.form.inherit.doctor</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="resonnocare_frontdesk.view_res_partner_patient_form"/>
+        <field name="groups_id" eval="[(5, 0, 0)]"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='referral_source']" position="after">
+                <field name="referring_doctor_id" string="Referal Doctor" readonly="1" invisible="referral_source != 'doctor'"/>
+            </xpath>
+            <xpath expr="//field[@name='referring_doctor']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
