@@ -336,28 +336,52 @@ class CdtFittingReport(models.Model):
         # ========================================
         # GET SERIAL NUMBERS FROM DELIVERY
         # ========================================
-        serial_numbers = self._get_serial_numbers(appointment.sale_order_id)
+        serial_numbers = self._get_serial_numbers(sale_line)
         vals['serial_numbers'] = serial_numbers
         
         return vals
     
-    def _get_serial_numbers(self, sale_order):
-        """Get serial numbers from the delivery (stock picking)"""
-        serial_numbers = []
+    # def _get_serial_numbers(self, sale_order):
+    #     """Get serial numbers from the delivery (stock picking)"""
+    #     serial_numbers = []
         
-        if sale_order:
-            # Find the delivery/picking for this sale order
-            pickings = self.env['stock.picking'].search([
-                ('origin', '=', sale_order.name),
-                ('state', 'in', ['assigned', 'done'])
-            ], limit=1)
+    #     if sale_order:
+    #         # Find the delivery/picking for this sale order
+    #         pickings = self.env['stock.picking'].search([
+    #             ('origin', '=', sale_order.name),
+    #             ('state', 'in', ['assigned', 'done'])
+    #         ], limit=1)
             
-            if pickings:
-                # Get all move lines with serial numbers
-                for move_line in pickings.move_line_ids:
-                    if move_line.lot_id and move_line.lot_id.name:
-                        serial_numbers.append(move_line.lot_id.name)
+    #         if pickings:
+    #             # Get all move lines with serial numbers
+    #             for move_line in pickings.move_line_ids:
+    #                 if move_line.lot_id and move_line.lot_id.name:
+    #                     serial_numbers.append(move_line.lot_id.name)
         
+    #     return ', '.join(serial_numbers) if serial_numbers else ''
+
+    def _get_serial_numbers(self, sale_line):
+        """Get serial numbers from stock moves linked to this sale order line."""
+
+        serial_numbers = []
+
+        if not sale_line:
+            return ''
+
+        # Find stock moves created from this specific sale order line
+        moves = self.env['stock.move'].search([
+            ('sale_line_id', '=', sale_line.id),
+            ('state', '!=', 'cancel'),
+        ])
+
+        for move in moves:
+            for move_line in move.move_line_ids:
+                if move_line.lot_id and move_line.lot_id.name:
+                    serial_numbers.append(move_line.lot_id.name)
+
+        # Remove duplicates while preserving order
+        serial_numbers = list(dict.fromkeys(serial_numbers))
+
         return ', '.join(serial_numbers) if serial_numbers else ''
     
     def _get_client_type(self, appointment):
