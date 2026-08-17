@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_cdt_fitting_report_wizard_form" model="ir.ui.view">
+        <field name="name">cdt.fitting.report.wizard.form</field>
+        <field name="model">cdt.fitting.report.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Fitting Report">
+                <div class="oe_title">
+                    <h1>Generate Fitting Report</h1>
+                </div>
+                <group>
+                    <group>
+                        <field name="report_type" />
+                        <field name="date_from" />
+                        <field name="date_to" />
+                    </group>
+                    <group>
+                        <field name="area_manager_id" />
+                        <field name="region" />
+                        <field name="clinic_ids" widget="many2many_tags" />
+                        <field name="report_format" />
+                    </group>
+                </group>
+                <footer>
+                    <button name="generate_report" string="Generate Report" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- list View for Fitting Report Records -->
+    <record id="view_cdt_fitting_report_list" model="ir.ui.view">
+        <field name="name">cdt.fitting.report.list</field>
+        <field name="model">cdt.fitting.report</field>
+        <field name="arch" type="xml">
+            <list string="Fitting Report">
+                <field name="fitting_date"/>
+                <field name="client_name"/>
+                <field name="equipment_type"/>
+                <field name="quantity"/>
+                <field name="unit_price" sum="Total"/>
+                <field name="gross" sum="Total"/>
+                <field name="discount"/>
+                <field name="discount_amount" sum="Total"/>
+                <field name="total_amt_receivable" sum="Total"/>
+                <field name="clinic_name"/>
+                <field name="region"/>
+                <field name="area_manager_name"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View for Fitting Report Records -->
+    <record id="view_cdt_fitting_report_form" model="ir.ui.view">
+        <field name="name">cdt.fitting.report.form</field>
+        <field name="model">cdt.fitting.report</field>
+        <field name="arch" type="xml">
+            <form string="Fitting Report">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="fitting_date"/>
+                            <field name="client_name"/>
+                            <field name="client_code"/>
+                            <field name="client_type"/>
+                        </group>
+                        <group>
+                            <field name="audiologist_name"/>
+                            <field name="equipment_type"/>
+                            <field name="quantity"/>
+                            <field name="unit_price"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group>
+                            <field name="gross"/>
+                            <field name="discount"/>
+                            <field name="discount_amount"/>
+                            <field name="total_amt_receivable"/>
+                        </group>
+                        <group>
+                            <field name="clinic_name"/>
+                            <field name="cost_centre"/>
+                            <field name="region"/>
+                            <field name="area_manager_name"/>
+                            <field name="clinic_type"/>
+                            <field name="weekly_target"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="appointment_id"/>
+                        <field name="sale_order_id"/>
+                        <field name="sale_order_line_id"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action for Fitting Report -->
+    <record id="action_cdt_fitting_report_wizard" model="ir.actions.act_window">
+        <field name="name">Fitting Report</field>
+        <field name="res_model">cdt.fitting.report.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="help">Generate fitting report based on appointments with fitting type.</field>
+    </record>
+
+    <!-- Action to view generated reports -->
+    <record id="action_cdt_fitting_report" model="ir.actions.act_window">
+        <field name="name">Fitting Report Data</field>
+        <field name="res_model">cdt.fitting.report</field>
+        <field name="view_mode">list,form</field>
+        <field name="help">View generated fitting report data.</field>
+    </record>
+</odoo>

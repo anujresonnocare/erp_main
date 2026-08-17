@@ -1,0 +1,381 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Tree View with proper column widths -->
+    <record id="view_cdt_journey_report_tree" model="ir.ui.view">
+        <field name="name">cdt.journey.report.tree</field>
+        <field name="model">cdt.journey.report</field>
+        <field name="arch" type="xml">
+            <list string="CDT Journey Data Report" 
+                  default_order="area_manager_name, is_total_row desc, clinic_name"
+                  create="false" edit="false" delete="false"
+                  decoration-info="is_area_manager_total == True"
+                  decoration-success="is_region_total == True"
+                  decoration-warning="is_total_row == True and is_area_manager_total == False and is_region_total == False"
+                  limit="80">
+                
+                <!-- Basic Info Fields with proper widths -->
+                <field name="display_name" invisible="1"/>
+                <field name="clinic_name" string="Clinic Name" width="150"/>
+                <field name="clinic_code" string="Clinic Code" width="100"/>
+                <field name="city" string="City" width="100" optional="show"/>
+                <field name="state" string="State" width="100" optional="show"/>
+                <field name="region" string="Region" width="100" optional="show"/>
+                <field name="area_manager_name" string="Area Manager" width="150" optional="show"/>
+                <field name="clinic_type" string="Clinic Type" width="120" optional="show"/>
+                <field name="opening_date" string="Opening Date" width="120" optional="show"/>
+
+                <!-- Total Appointments Section -->
+                <field name="total_appointments" string="Total Appointments" sum="Total" width="140"/>
+                <field name="ta_ext_dr_appointments" string="TA - Ext. Dr." sum="Total" optional="show" width="130"/>
+                <field name="ta_ext_dr_fup_appointments" string="TA - Ext. Dr. FUP" sum="Total" optional="show" width="140"/>
+                <field name="ta_int_dr_appointments" string="TA - Int. Dr." sum="Total" optional="show" width="130"/>
+                <field name="ta_int_dr_fup_appointments" string="TA - Int. Dr. FUP" sum="Total" optional="show" width="140"/>
+                <field name="ta_digital_marketing_appointments" string="TA - Digital Marketing" sum="Total" optional="show" width="160"/>
+                <field name="ta_digital_marketing_fup_appointments" string="TA - Digital Marketing FUP" sum="Total" optional="show" width="180"/>
+                <field name="ta_camp_doctor_appointments" string="TA - Camp with Doctor" sum="Total" optional="show" width="160"/>
+                <field name="ta_camp_rwa_appointments" string="TA - Camp with RWA" sum="Total" optional="show" width="150"/>
+                <field name="ta_outreach_appointments" string="TA - OUTREACH" sum="Total" optional="show" width="140"/>
+                <field name="ta_renew_appointments" string="TA - Renew" sum="Total" optional="show" width="130"/>
+
+                <!-- Diagnostic Appointments Section -->
+                <field name="total_diagnostic_appointments" string="Total Diagnostic Appts" sum="Total" width="160"/>
+                <field name="da_ext_dr_appointments" string="DA - Ext. Dr." sum="Total" optional="show" width="130"/>
+                <field name="da_ext_dr_fup_appointments" string="DA - Ext. Dr. FUP" sum="Total" optional="show" width="140"/>
+                <field name="da_int_dr_appointments" string="DA - Int. Dr." sum="Total" optional="show" width="130"/>
+                <field name="da_int_dr_fup_appointments" string="DA - Int. Dr. FUP" sum="Total" optional="show" width="140"/>
+                <field name="da_digital_marketing_appointments" string="DA - Digital Marketing" sum="Total" optional="show" width="160"/>
+                <field name="da_digital_marketing_fup_appointments" string="DA - Digital Marketing FUP" sum="Total" optional="show" width="180"/>
+                <field name="da_camp_doctor_appointments" string="DA - Camp with Doctor" sum="Total" optional="show" width="160"/>
+                <field name="da_camp_rwa_appointments" string="DA - Camp with RWA" sum="Total" optional="show" width="150"/>
+                <field name="da_outreach_appointments" string="DA - OUTREACH" sum="Total" optional="show" width="140"/>
+                <field name="da_renew_appointments" string="DA - Renew" sum="Total" optional="show" width="130"/>
+
+                <!-- Hearing Test Booked Section -->
+                <field name="hearing_test_booked" string="Hearing Test Booked" sum="Total" width="160"/>
+                <field name="htb_ext_dr_appointments" string="HTB - Ext. Dr." sum="Total" optional="show" width="130"/>
+                <field name="htb_ext_dr_fup_appointments" string="HTB - Ext. Dr. FUP" sum="Total" optional="show" width="140"/>
+                <field name="htb_int_dr_appointments" string="HTB - Int. Dr." sum="Total" optional="show" width="130"/>
+                <field name="htb_int_dr_fup_appointments" string="HTB - Int. Dr. FUP" sum="Total" optional="show" width="140"/>
+                <field name="htb_digital_marketing_appointments" string="HTB - Digital Marketing" sum="Total" optional="show" width="160"/>
+                <field name="htb_digital_marketing_fup_appointments" string="HTB - Digital Marketing FUP" sum="Total" optional="show" width="180"/>
+                <field name="htb_camp_doctor_appointments" string="HTB - Camp with Doctor" sum="Total" optional="show" width="160"/>
+                <field name="htb_camp_rwa_appointments" string="HTB - Camp with RWA" sum="Total" optional="show" width="150"/>
+                <field name="htb_outreach_appointments" string="HTB - OUTREACH" sum="Total" optional="show" width="140"/>
+                <field name="htb_renew_appointments" string="HTB - Renew" sum="Total" optional="show" width="130"/>
+
+                <!-- Hearing Test Attended Section -->
+                <field name="hearing_test_attended" string="Hearing Test Attended" sum="Total" width="170"/>
+                <field name="hta_ext_dr_appointments" string="HTA - Ext. Dr." sum="Total" optional="show" width="130"/>
+                <field name="hta_ext_dr_fup_appointments" string="HTA - Ext. Dr. FUP" sum="Total" optional="show" width="140"/>
+                <field name="hta_int_dr_appointments" string="HTA - Int. Dr." sum="Total" optional="show" width="130"/>
+                <field name="hta_int_dr_fup_appointments" string="HTA - Int. Dr. FUP" sum="Total" optional="show" width="140"/>
+                <field name="hta_digital_marketing_appointments" string="HTA - Digital Marketing" sum="Total" optional="show" width="160"/>
+                <field name="hta_digital_marketing_fup_appointments" string="HTA - Digital Marketing FUP" sum="Total" optional="show" width="180"/>
+                <field name="hta_camp_doctor_appointments" string="HTA - Camp with Doctor" sum="Total" optional="show" width="160"/>
+                <field name="hta_camp_rwa_appointments" string="HTA - Camp with RWA" sum="Total" optional="show" width="150"/>
+                <field name="hta_outreach_appointments" string="HTA - OUTREACH" sum="Total" optional="show" width="140"/>
+                <field name="hta_renew_appointments" string="HTA - Renew" sum="Total" optional="show" width="130"/>
+
+                <!-- Net Attendance Percentage Section -->
+                <field name="net_attendance_percent" string="Net Att. %"  sum="Avg" optional="show" width="130"/>
+                <field name="nap_ext_dr_appointments" string="NAP - Ext. Dr." sum="Total" optional="show" width="130"/>
+                <field name="nap_ext_dr_fup_appointments" string="NAP - Ext. Dr. FUP" sum="Total" optional="show" width="140"/>
+                <field name="nap_int_dr_appointments" string="NAP - Int. Dr." sum="Total" optional="show" width="130"/>
+                <field name="nap_int_dr_fup_appointments" string="NAP - Int. Dr. FUP" sum="Total" optional="show" width="140"/>
+                <field name="nap_digital_marketing_appointments" string="NAP - Digital Marketing" sum="Total" optional="show" width="160"/>
+                <field name="nap_digital_marketing_fup_appointments" string="NAP - Digital Marketing FUP" sum="Total" optional="show" width="180"/>
+                <field name="nap_camp_doctor_appointments" string="NAP - Camp with Doctor" sum="Total" optional="show" width="160"/>
+                <field name="nap_camp_rwa_appointments" string="NAP - Camp with RWA" sum="Total" optional="show" width="150"/>
+                <field name="nap_outreach_appointments" string="NAP - OUTREACH" sum="Total" optional="show" width="140"/>
+                <field name="nap_renew_appointments" string="NAP - Renew" sum="Total" optional="show" width="130"/>
+
+                <!-- Hearing Test Opportunity Section -->
+                <field name="hearing_test_opportunity" string="Hearing Test Opportunity" sum="Total" optional="show" width="190"/>
+                <field name="hto_ext_dr_appointments" string="HTO - Ext. Dr." sum="Total" optional="show" width="130"/>
+                <field name="hto_ext_dr_fup_appointments" string="HTO - Ext. Dr. FUP" sum="Total" optional="show" width="140"/>
+                <field name="hto_int_dr_appointments" string="HTO - Int. Dr." sum="Total" optional="show" width="130"/>
+                <field name="hto_int_dr_fup_appointments" string="HTO - Int. Dr. FUP" sum="Total" optional="show" width="140"/>
+                <field name="hto_digital_marketing_appointments" string="HTO - Digital Marketing" sum="Total" optional="show" width="160"/>
+                <field name="hto_digital_marketing_fup_appointments" string="HTO - Digital Marketing FUP" sum="Total" optional="show" width="180"/>
+                <field name="hto_camp_doctor_appointments" string="HTO - Camp with Doctor" sum="Total" optional="show" width="160"/>
+                <field name="hto_camp_rwa_appointments" string="HTO - Camp with RWA" sum="Total" optional="show" width="150"/>
+                <field name="hto_outreach_appointments" string="HTO - OUTREACH" sum="Total" optional="show" width="140"/>
+                <field name="hto_renew_appointments" string="HTO - Renew" sum="Total" optional="show" width="130"/>
+
+                <!-- Hearing Test Opportunity Percentage Section -->
+                <field name="hearing_test_opportunity_percentage" string="HTO %"  sum="Avg" optional="show" width="100"/>
+                <field name="htop_ext_dr_appointments" string="HTOP - Ext. Dr." sum="Total" optional="show" width="130"/>
+                <field name="htop_ext_dr_fup_appointments" string="HTOP - Ext. Dr. FUP" sum="Total" optional="show" width="140"/>
+                <field name="htop_int_dr_appointments" string="HTOP - Int. Dr." sum="Total" optional="show" width="130"/>
+                <field name="htop_int_dr_fup_appointments" string="HTOP - Int. Dr. FUP" sum="Total" optional="show" width="140"/>
+                <field name="htop_digital_marketing_appointments" string="HTOP - Digital Marketing" sum="Total" optional="show" width="160"/>
+                <field name="htop_digital_marketing_fup_appointments" string="HTOP - Digital Marketing FUP" sum="Total" optional="show" width="180"/>
+                <field name="htop_camp_doctor_appointments" string="HTOP - Camp with Doctor" sum="Total" optional="show" width="160"/>
+                <field name="htop_camp_rwa_appointments" string="HTOP - Camp with RWA" sum="Total" optional="show" width="150"/>
+                <field name="htop_outreach_appointments" string="HTOP - OUTREACH" sum="Total" optional="show" width="140"/>
+                <field name="htop_renew_appointments" string="HTOP - Renew" sum="Total" optional="show" width="130"/>
+
+                <!-- Conversions Section -->
+                <field name="conversions_prescriptions" string="# Conv." sum="Total" optional="show" width="100"/>
+                <field name="cp_ext_dr_appointments" string="CP - Ext. Dr." sum="Total" optional="show" width="130"/>
+                <field name="cp_ext_dr_fup_appointments" string="CP - Ext. Dr. FUP" sum="Total" optional="show" width="140"/>
+                <field name="cp_int_dr_appointments" string="CP - Int. Dr." sum="Total" optional="show" width="130"/>
+                <field name="cp_int_dr_fup_appointments" string="CP - Int. Dr. FUP" sum="Total" optional="show" width="140"/>
+                <field name="cp_digital_marketing_appointments" string="CP - Digital Marketing" sum="Total" optional="show" width="160"/>
+                <field name="cp_digital_marketing_fup_appointments" string="CP - Digital Marketing FUP" sum="Total" optional="show" width="180"/>
+                <field name="cp_camp_doctor_appointments" string="CP - Camp with Doctor" sum="Total" optional="show" width="160"/>
+                <field name="cp_camp_rwa_appointments" string="CP - Camp with RWA" sum="Total" optional="show" width="150"/>
+                <field name="cp_outreach_appointments" string="CP - OUTREACH" sum="Total" optional="show" width="140"/>
+                <field name="cp_renew_appointments" string="CP - Renew" sum="Total" optional="show" width="130"/>
+
+                <!-- Conversion Rate Section -->
+                <field name="conversion_rate_percent" string="Conv. %"  sum="Avg" optional="show" width="100"/>
+                <field name="crp_ext_dr_appointments" string="CRP - Ext. Dr." sum="Total" optional="show" width="130"/>
+                <field name="crp_ext_dr_fup_appointments" string="CRP - Ext. Dr. FUP" sum="Total" optional="show" width="140"/>
+                <field name="crp_int_dr_appointments" string="CRP - Int. Dr." sum="Total" optional="show" width="130"/>
+                <field name="crp_int_dr_fup_appointments" string="CRP - Int. Dr. FUP" sum="Total" optional="show" width="140"/>
+                <field name="crp_digital_marketing_appointments" string="CRP - Digital Marketing" sum="Total" optional="show" width="160"/>
+                <field name="crp_digital_marketing_fup_appointments" string="CRP - Digital Marketing FUP" sum="Total" optional="show" width="180"/>
+                <field name="crp_camp_doctor_appointments" string="CRP - Camp with Doctor" sum="Total" optional="show" width="160"/>
+                <field name="crp_camp_rwa_appointments" string="CRP - Camp with RWA" sum="Total" optional="show" width="150"/>
+                <field name="crp_outreach_appointments" string="CRP - OUTREACH" sum="Total" optional="show" width="140"/>
+                <field name="crp_renew_appointments" string="CRP - Renew" sum="Total" optional="show" width="130"/>
+
+                <!-- Binaural Section -->
+                <field name="binaural" string="Binaural" sum="Total" optional="show" width="120"/>
+                <field name="bin_ext_dr_appointments" string="BIN - Ext. Dr." sum="Total" optional="show" width="130"/>
+                <field name="bin_ext_dr_fup_appointments" string="BIN - Ext. Dr. FUP" sum="Total" optional="show" width="140"/>
+                <field name="bin_int_dr_appointments" string="BIN - Int. Dr." sum="Total" optional="show" width="130"/>
+                <field name="bin_int_dr_fup_appointments" string="BIN - Int. Dr. FUP" sum="Total" optional="show" width="140"/>
+                <field name="bin_digital_marketing_appointments" string="BIN - Digital Marketing" sum="Total" optional="show" width="160"/>
+                <field name="bin_digital_marketing_fup_appointments" string="BIN - Digital Marketing FUP" sum="Total" optional="show" width="180"/>
+                <field name="bin_camp_doctor_appointments" string="BIN - Camp with Doctor" sum="Total" optional="show" width="160"/>
+                <field name="bin_camp_rwa_appointments" string="BIN - Camp with RWA" sum="Total" optional="show" width="150"/>
+                <field name="bin_outreach_appointments" string="BIN - OUTREACH" sum="Total" optional="show" width="140"/>
+                <field name="bin_renew_appointments" string="BIN - Renew" sum="Total" optional="show" width="130"/>
+
+                <!-- Binaural Rate Section -->
+                <field name="binaural_rate_percentage" string="Binaural Rate %"  sum="Avg" optional="show" width="130"/>
+                <field name="brp_ext_dr_appointments" string="BRP - Ext. Dr." sum="Total" optional="show" width="130"/>
+                <field name="brp_ext_dr_fup_appointments" string="BRP - Ext. Dr. FUP" sum="Total" optional="show" width="140"/>
+                <field name="brp_int_dr_appointments" string="BRP - Int. Dr." sum="Total" optional="show" width="130"/>
+                <field name="brp_int_dr_fup_appointments" string="BRP - Int. Dr. FUP" sum="Total" optional="show" width="140"/>
+                <field name="brp_digital_marketing_appointments" string="BRP - Digital Marketing" sum="Total" optional="show" width="160"/>
+                <field name="brp_digital_marketing_fup_appointments" string="BRP - Digital Marketing FUP" sum="Total" optional="show" width="180"/>
+                <field name="brp_camp_doctor_appointments" string="BRP - Camp with Doctor" sum="Total" optional="show" width="160"/>
+                <field name="brp_camp_rwa_appointments" string="BRP - Camp with RWA" sum="Total" optional="show" width="150"/>
+                <field name="brp_outreach_appointments" string="BRP - OUTREACH" sum="Total" optional="show" width="140"/>
+                <field name="brp_renew_appointments" string="BRP - Renew" sum="Total" optional="show" width="130"/>
+
+                <!-- Hearing Aid Units Section -->
+                <field name="hearing_unit" string="Hearing Aid Units" sum="Total" optional="show" width="150"/>
+                <field name="ha_ext_dr_appointments" string="HA - Ext. Dr." sum="Total" optional="show" width="130"/>
+                <field name="ha_ext_dr_fup_appointments" string="HA - Ext. Dr. FUP" sum="Total" optional="show" width="140"/>
+                <field name="ha_int_dr_appointments" string="HA - Int. Dr." sum="Total" optional="show" width="130"/>
+                <field name="ha_int_dr_fup_appointments" string="HA - Int. Dr. FUP" sum="Total" optional="show" width="140"/>
+                <field name="ha_digital_marketing_appointments" string="HA - Digital Marketing" sum="Total" optional="show" width="160"/>
+                <field name="ha_digital_marketing_fup_appointments" string="HA - Digital Marketing FUP" sum="Total" optional="show" width="180"/>
+                <field name="ha_camp_doctor_appointments" string="HA - Camp with Doctor" sum="Total" optional="show" width="160"/>
+                <field name="ha_camp_rwa_appointments" string="HA - Camp with RWA" sum="Total" optional="show" width="150"/>
+                <field name="ha_outreach_appointments" string="HA - OUTREACH" sum="Total" optional="show" width="140"/>
+                <field name="ha_renew_appointments" string="HA - Renew" sum="Total" optional="show" width="130"/>
+
+                <!-- Average Selling Price Section -->
+                <field name="average_selling_price" string="Avg Selling Price" sum="Avg" optional="show" width="130"/>
+                <field name="asp_ext_dr_appointments" string="ASP - Ext. Dr." sum="Total" optional="show" width="130"/>
+                <field name="asp_ext_dr_fup_appointments" string="ASP - Ext. Dr. FUP" sum="Total" optional="show" width="140"/>
+                <field name="asp_int_dr_appointments" string="ASP - Int. Dr." sum="Total" optional="show" width="130"/>
+                <field name="asp_int_dr_fup_appointments" string="ASP - Int. Dr. FUP" sum="Total" optional="show" width="140"/>
+                <field name="asp_digital_marketing_appointments" string="ASP - Digital Marketing" sum="Total" optional="show" width="160"/>
+                <field name="asp_digital_marketing_fup_appointments" string="ASP - Digital Marketing FUP" sum="Total" optional="show" width="180"/>
+                <field name="asp_camp_doctor_appointments" string="ASP - Camp with Doctor" sum="Total" optional="show" width="160"/>
+                <field name="asp_camp_rwa_appointments" string="ASP - Camp with RWA" sum="Total" optional="show" width="150"/>
+                <field name="asp_outreach_appointments" string="ASP - OUTREACH" sum="Total" optional="show" width="140"/>
+                <field name="asp_renew_appointments" string="ASP - Renew" sum="Total" optional="show" width="130"/>
+
+                <!-- Gross Revenue Section -->
+                <field name="gross_revenue" string="Gross Revenue" sum="Total" optional="show" width="130"/>
+                <field name="gr_ext_dr_appointments" string="GR - Ext. Dr." sum="Total" optional="show" width="130"/>
+                <field name="gr_ext_dr_fup_appointments" string="GR - Ext. Dr. FUP" sum="Total" optional="show" width="140"/>
+                <field name="gr_int_dr_appointments" string="GR - Int. Dr." sum="Total" optional="show" width="130"/>
+                <field name="gr_int_dr_fup_appointments" string="GR - Int. Dr. FUP" sum="Total" optional="show" width="140"/>
+                <field name="gr_digital_marketing_appointments" string="GR - Digital Marketing" sum="Total" optional="show" width="160"/>
+                <field name="gr_digital_marketing_fup_appointments" string="GR - Digital Marketing FUP" sum="Total" optional="show" width="180"/>
+                <field name="gr_camp_doctor_appointments" string="GR - Camp with Doctor" sum="Total" optional="show" width="160"/>
+                <field name="gr_camp_rwa_appointments" string="GR - Camp with RWA" sum="Total" optional="show" width="150"/>
+                <field name="gr_outreach_appointments" string="GR - OUTREACH" sum="Total" optional="show" width="140"/>
+                <field name="gr_renew_appointments" string="GR - Renew" sum="Total" optional="show" width="130"/>
+
+                <!-- Fitting Revenue Section -->
+                <field name="fitting_revenue" string="Fitting Revenue" sum="Total" optional="show" width="130"/>
+                <field name="fitting_ext_dr_appointments" string="FR - Ext. Dr." sum="Total" optional="show" width="130"/>
+                <field name="fitting_ext_dr_fup_appointments" string="FR - Ext. Dr. FUP" sum="Total" optional="show" width="140"/>
+                <field name="fitting_int_dr_appointments" string="FR - Int. Dr." sum="Total" optional="show" width="130"/>
+                <field name="fitting_int_dr_fup_appointments" string="FR - Int. Dr. FUP" sum="Total" optional="show" width="140"/>
+                <field name="fitting_digital_marketing_appointments" string="FR - Digital Marketing" sum="Total" optional="show" width="160"/>
+                <field name="fitting_digital_marketing_fup_appointments" string="FR - Digital Marketing FUP" sum="Total" optional="show" width="180"/>
+                <field name="fitting_camp_doctor_appointments" string="FR - Camp with Doctor" sum="Total" optional="show" width="160"/>
+                <field name="fitting_camp_rwa_appointments" string="FR - Camp with RWA" sum="Total" optional="show" width="150"/>
+                <field name="fitting_outreach_appointments" string="FR - OUTREACH" sum="Total" optional="show" width="140"/>
+                <field name="fitting_renew_appointments" string="FR - Renew" sum="Total" optional="show" width="130"/>
+
+                <!-- Hidden fields -->
+                <field name="clinic_status" invisible="1"/>
+                <field name="date_from" invisible="1"/>
+                <field name="date_to" invisible="1"/>
+                <field name="report_type" invisible="1"/>
+                <field name="is_total_row" invisible="1"/>
+                <field name="is_area_manager_total" invisible="1"/>
+                <field name="is_region_total" invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_cdt_journey_report_form" model="ir.ui.view">
+        <field name="name">cdt.journey.report.form</field>
+        <field name="model">cdt.journey.report</field>
+        <field name="arch" type="xml">
+            <form string="CDT Journey Report">
+                  <header>
+                    <button name="generate_report" 
+                            string="Generate Report" 
+                            type="object" 
+                            class="btn-primary"
+                            icon="fa-file-pdf-o"/>
+                    <button name="generate_ytd_report" 
+                            string="Generate YTD" 
+                            type="object" 
+                            class="btn-secondary"
+                            icon="fa-calendar"/>
+                    <button name="generate_mtd_report" 
+                            string="Generate MTD" 
+                            type="object" 
+                            class="btn-secondary"
+                            icon="fa-calendar"/>
+                    <button name="generate_wtd_report" 
+                            string="Generate WTD" 
+                            type="object" 
+                            class="btn-secondary"
+                            icon="fa-calendar"/>
+                    <button name="generate_yesterday_report" 
+                            string="Generate Yesterday" 
+                            type="object" 
+                            class="btn-secondary"
+                            icon="fa-calendar"/>
+                    <button name="generate_all_reports" 
+                            string="Generate All Reports" 
+                            type="object" 
+                            class="btn-warning"
+                            icon="fa-list"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="display_name" readonly="1"/>
+                        </h1>
+                    </div>
+                    
+                    <group>
+                        <group>
+                            <field name="date_from" string="Date From"/>
+                            <field name="date_to" string="Date To"/>
+                            <field name="report_type" string="Report Type"/>
+                        </group>
+                        <group>
+                            <field name="clinic_name" string="Clinic Name"/>
+                            <field name="clinic_code" string="Clinic Code"/>
+                            <field name="clinic_status" string="Clinic Status"/>
+                        </group>
+                    </group>
+
+                    <group>
+                        <group>
+                            <field name="area_manager_name" string="Area Manager"/>
+                            <field name="region" string="Region"/>
+                            <field name="state" string="State"/>
+                            <field name="city" string="City"/>
+                        </group>
+                        <group>
+                            <field name="clinic_type" string="Clinic Type"/>
+                            <field name="opening_date" string="Opening Date"/>
+                            <field name="is_total_row" string="Total Row"/>
+                            <field name="is_area_manager_total" string="Area Manager Total"/>
+                            <field name="is_region_total" string="Region Total"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <!-- Summary Metrics Tab -->
+                        <page string="Summary Metrics">
+                            <group>
+                                <group string="Appointments">
+                                    <field name="total_appointments" string="Total Appointments"/>
+                                    <field name="total_diagnostic_appointments" string="Total Diagnostic Appointments"/>
+                                    <field name="hearing_test_booked" string="Hearing Test Booked"/>
+                                    <field name="hearing_test_attended" string="Hearing Test Attended"/>
+                                    <field name="net_attendance_percent" string="Net Attendance %" />
+                                </group>
+                                <group string="Hearing Test Metrics">
+                                    <field name="hearing_test_opportunity" string="Hearing Test Opportunity"/>
+                                    <field name="hearing_test_opportunity_percentage" string="HTO %" />
+                                    <field name="conversions_prescriptions" string="Conversions/Prescriptions"/>
+                                    <field name="conversion_rate_percent" string="Conversion Rate %" />
+                                </group>
+                            </group>
+                            <group>
+                                <group string="Revenue Metrics">
+                                    <field name="binaural" string="Binaural Units"/>
+                                    <field name="binaural_rate_percentage" string="Binaural Rate %" />
+                                    <field name="hearing_unit" string="Hearing Aid Units"/>
+                                    <field name="average_selling_price" string="Avg Selling Price"/>
+                                    <field name="gross_revenue" string="Gross Revenue"/>
+                                    <field name="fitting_revenue" string="Fitting Revenue"/>
+                                </group>
+                            </group>
+                        </page>
+
+                        <!-- Other tabs remain the same -->
+                        <page string="Appointment Breakup">
+                            <!-- Content same as before -->
+                        </page>
+                        <page string="Detailed Breakup">
+                            <!-- Content same as before -->
+                        </page>
+                        <page string="More Metrics">
+                            <!-- Content same as before -->
+                        </page>
+                        <page string="Revenue Breakup">
+                            <!-- Content same as before -->
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Updated Action -->
+    <record id="action_cdt_journey_report" model="ir.actions.act_window">
+        <field name="name">CDT Journey Data Report</field>
+        <field name="res_model">cdt.journey.report</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_id" ref="view_cdt_journey_report_tree"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                CDT Journey Data Report
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="menu_cdt_journey_root" 
+              name="CDT Journey Report" 
+              sequence="10"/>
+    
+    <menuitem id="menu_cdt_journey_report" 
+              name="Data Report" 
+              parent="menu_cdt_journey_root"
+              action="action_cdt_journey_report"
+              sequence="10"/>
+              
+
+</odoo>

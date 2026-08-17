@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Daily Report Generation -->
+    <record id="cron_generate_cdt_report" model="ir.cron">
+        <field name="name">Generate CDT Journey Report</field>
+        <field name="model_id" ref="model_cdt_journey_report"/>
+        <field name="state">code</field>
+        <field name="code">model.generate_report()</field>
+        <field name="user_id" ref="base.user_admin"/>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="active" eval="True"/>
+    </record>
+
+    <!-- Weekly Report Generation -->
+    <record id="cron_generate_cdt_report_weekly" model="ir.cron">
+        <field name="name">Generate CDT Journey Report (Weekly)</field>
+        <field name="model_id" ref="model_cdt_journey_report"/>
+        <field name="state">code</field>
+        <field name="code">model.generate_weekly_report()</field>
+        <field name="user_id" ref="base.user_admin"/>
+        <field name="interval_number">1</field>
+        <field name="interval_type">weeks</field>
+        <field name="active" eval="True"/>
+    </record>
+
+    <!-- Monthly Report Generation -->
+    <record id="cron_generate_cdt_report_monthly" model="ir.cron">
+        <field name="name">Generate CDT Journey Report (Monthly)</field>
+        <field name="model_id" ref="model_cdt_journey_report"/>
+        <field name="state">code</field>
+        <field name="code">model.generate_monthly_report()</field>
+        <field name="user_id" ref="base.user_admin"/>
+        <field name="interval_number">1</field>
+        <field name="interval_type">months</field>
+        <field name="active" eval="True"/>
+    </record>
+</odoo>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Security access for wizard -->
+    <record id="access_cdt_journey_report_wizard" model="ir.model.access">
+        <field name="name">cdt.journey.report.wizard.access</field>
+        <field name="model_id" ref="model_cdt_journey_report_wizard"/>
+        <field name="group_id" ref="base.group_user"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+
+    <!-- Access for report model -->
+    <record id="access_cdt_journey_report" model="ir.model.access">
+        <field name="name">cdt.journey.report.access</field>
+        <field name="model_id" ref="model_cdt_journey_report"/>
+        <field name="group_id" ref="base.group_user"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+</odoo>

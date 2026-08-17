@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Main Menu -->
+    <menuitem id="menu_cdt_fitting_report_root" 
+              name="CDT Reports" 
+              sequence="10"
+              web_icon="cdt_fitting_report,static/description/icon.png"/>
+
+    <!-- Fitting Report Menu -->
+    <menuitem id="menu_cdt_fitting_report" 
+              name="Fitting Report" 
+              parent="menu_cdt_fitting_report_root" 
+              action="action_cdt_fitting_report_wizard" 
+              sequence="10"/>
+
+    <!-- View Generated Reports Menu -->
+    <menuitem id="menu_cdt_fitting_report_data" 
+              name="Fitting Report Data" 
+              parent="menu_cdt_fitting_report_root" 
+              action="action_cdt_fitting_report" 
+              sequence="20"/>
+</odoo>

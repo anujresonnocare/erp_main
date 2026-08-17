@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Wizard Form View -->
+    <record id="view_cdt_journey_report_wizard_form" model="ir.ui.view">
+        <field name="name">cdt.journey.report.wizard.form</field>
+        <field name="model">cdt.journey.report.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Generate CDT Journey Report">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="report_type" widget="radio" options="{'horizontal': True}"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Date Range">
+                            <field name="date_from"/>
+                            <field name="date_to"/>
+                        </group>
+                        <group string="Filters">
+                            <field name="area_manager_id" widget="selection"/>
+                            <field name="region"/>
+                            <field name="clinic_ids" widget="many2many_tags"/>
+                        </group>
+                    </group>
+                    <group string="Report Format">
+                        <field name="report_format" widget="radio" options="{'horizontal': True}"/>
+                    </group>
+                    <group>
+                        <field name="file_name"/>
+                    </group>
+                </sheet>
+                <footer>
+                    <button name="generate_report" string="Generate Report" type="object" class="btn-primary" icon="fa-download"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+        <record id="action_cdt_journey_report" model="ir.actions.act_window">
+        <field name="name">CDT Journey Data Report</field>
+        <field name="res_model">cdt.journey.report</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_id" ref="view_cdt_journey_report_tree"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                CDT Journey Data Report
+            </p>
+        </field>
+    </record>
+
+
+    <!-- Wizard Action -->
+    <record id="action_cdt_journey_report_wizard" model="ir.actions.act_window">
+        <field name="name">Generate CDT Journey Report</field>
+        <field name="res_model">cdt.journey.report.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Generate CDT Journey Report
+            </p>
+        </field>
+    </record>
+
+
+
+    <!-- Menu Structure -->
+    <menuitem id="menu_cdt_journey_main" 
+              name="CDT Journey" 
+              sequence="10"
+              groups="base.group_user"
+              web_icon="resonnocare_patient_report,static/description/icon.png"/>
+
+    <menuitem id="menu_cdt_journey_data_report" 
+              name="Data Report" 
+              parent="menu_cdt_journey_main"
+              action="action_cdt_journey_report"
+              sequence="10"/>
+
+    <menuitem id="menu_cdt_journey_generate" 
+              name="Generate Report" 
+              parent="menu_cdt_journey_main"
+              action="action_cdt_journey_report_wizard"
+              sequence="5"/>
+
+
+</odoo>

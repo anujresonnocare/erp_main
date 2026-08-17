@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_cdt_fitting_report,cdt.fitting.report,model_cdt_fitting_report,base.group_user,1,1,1,1
+access_cdt_fitting_report_wizard,cdt.fitting.report.wizard,model_cdt_fitting_report_wizard,base.group_user,1,1,1,1
+access_cdt_fitting_report_manager,cdt.fitting.report.manager,model_cdt_fitting_report,base.group_system,1,1,1,1
