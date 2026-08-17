@@ -378,13 +378,64 @@ class AccountMove(models.Model):
     payment_mode = fields.Selection(
         [
             ("cash", "Cash"),
+            ("card", "Card"),
             ("bank", "Bank"),
+            ("eft", "EFT"),
             ("upi", "UPI / QR"),
             ("cheque", "Cheque"),
             ("paytm", "Paytm"),
         ],
         string="Payment Mode",
     )
+
+    revenue_mode = fields.Selection(
+        [("operational", "Operational"), ("fitting", "Fitting")],
+        string="Revenue Mode",
+        compute="_compute_revenue_mode",
+        store=True,
+        readonly=False,
+    )
+    revenue_model = fields.Selection(
+        [("ha", "HA"), ("diagnostic", "Diagnostic"), ("repair", "Repair")],
+        string="Revenue Model",
+        compute="_compute_revenue_model",
+        store=True,
+        readonly=False,
+    )
+    service_category = fields.Selection(
+        [
+            ("hearing", "Hearing"),
+            ("sleep", "Sleep"),
+            ("speech", "Speech"),
+            ("vestibular", "Vestibular"),
+        ],
+        string="Service Category",
+        default="hearing",
+    )
+
+    @api.depends("custom_invoice_category")
+    def _compute_revenue_mode(self):
+        for move in self:
+            cat = move.custom_invoice_category or ""
+            if cat in ("HI", "HC"):
+                move.revenue_mode = "fitting"
+            else:
+                move.revenue_mode = "operational"
+
+    @api.depends("custom_invoice_category")
+    def _compute_revenue_model(self):
+        _CATEGORY_MAP = {
+            "DI": "diagnostic",
+            "DC": "diagnostic",
+            "HI": "ha",
+            "HC": "ha",
+            "RI": "repair",
+            "RC": "repair",
+        }
+        for move in self:
+            move.revenue_model = _CATEGORY_MAP.get(
+                move.custom_invoice_category or "", False
+            )
 
     upi_transaction_id = fields.Char("UPI Transaction ID")
     cheque_number = fields.Char("Cheque Number")

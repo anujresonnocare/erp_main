@@ -96,6 +96,15 @@
         </record>
 
         <!-- ========================= -->
+        <!-- ID MAPPING ADMIN -->
+        <!-- ========================= -->
+        <record id="group_id_mapping_admin" model="res.groups">
+            <field name="name">ID Mapping Admin</field>
+            <field name="category_id" ref="module_category_resonnocare"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <!-- ========================= -->
         <!-- RES.USERS FULL ACCESS (ADMIN/HR) -->
         <!-- ========================= -->
         <record id="rule_res_users_full_admin_hr" model="ir.rule">

@@ -12,6 +12,18 @@
                     </group>
                 </group>
             </xpath>
+            <!-- Revenue Classification Section -->
+            <xpath expr="//notebook" position="before">
+                <group string="Revenue Classification" invisible="move_type not in ('out_invoice','out_refund')">
+                    <group>
+                        <field name="revenue_mode"/>
+                        <field name="revenue_model"/>
+                    </group>
+                    <group>
+                        <field name="service_category"/>
+                    </group>
+                </group>
+            </xpath>
             <xpath expr="//notebook" position="inside">
                 <page string="Warranty" invisible="move_type not in ('out_invoice','out_refund')">
                     <group>
@@ -26,11 +38,66 @@
                     </group>
                 </page>
             </xpath>
+            <xpath expr="//field[@name='invoice_line_ids']/list//field[@name='price_unit']" position="attributes">
+                <attribute name="readonly">1</attribute>
+            </xpath>
             <xpath expr="//field[@name='invoice_line_ids']/list//field[@name='tax_ids']" position="attributes">
+                <attribute name="readonly">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='invoice_line_ids']/form//field[@name='price_unit']" position="attributes">
                 <attribute name="readonly">1</attribute>
             </xpath>
             <xpath expr="//field[@name='invoice_line_ids']/form//field[@name='tax_ids']" position="attributes">
                 <attribute name="readonly">1</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Search View: Revenue Filters and Group By -->
+    <record id="view_account_move_search_resonnocare_revenue" model="ir.ui.view">
+        <field name="name">account.move.search.resonnocare.revenue</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_account_invoice_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr="//search/group" position="inside">
+                <filter string="Payment Mode" name="group_payment_mode" context="{'group_by': 'payment_mode'}"/>
+                <filter string="Revenue Mode" name="group_revenue_mode" context="{'group_by': 'revenue_mode'}"/>
+                <filter string="Revenue Model" name="group_revenue_model" context="{'group_by': 'revenue_model'}"/>
+                <filter string="Service Category" name="group_service_category" context="{'group_by': 'service_category'}"/>
+            </xpath>
+            <xpath expr="//search/separator[last()]" position="after">
+                <separator/>
+                <filter string="Cash" name="filter_cash" domain="[('payment_mode', '=', 'cash')]"/>
+                <filter string="Card" name="filter_card" domain="[('payment_mode', '=', 'card')]"/>
+                <filter string="EFT" name="filter_eft" domain="[('payment_mode', '=', 'eft')]"/>
+                <filter string="Cheque" name="filter_cheque" domain="[('payment_mode', '=', 'cheque')]"/>
+                <separator/>
+                <filter string="Operational" name="filter_operational" domain="[('revenue_mode', '=', 'operational')]"/>
+                <filter string="Fitting" name="filter_fitting" domain="[('revenue_mode', '=', 'fitting')]"/>
+                <separator/>
+                <filter string="HA" name="filter_ha" domain="[('revenue_model', '=', 'ha')]"/>
+                <filter string="Diagnostic" name="filter_diagnostic" domain="[('revenue_model', '=', 'diagnostic')]"/>
+                <filter string="Repair" name="filter_repair" domain="[('revenue_model', '=', 'repair')]"/>
+                <separator/>
+                <filter string="Hearing" name="filter_hearing" domain="[('service_category', '=', 'hearing')]"/>
+                <filter string="Sleep" name="filter_sleep" domain="[('service_category', '=', 'sleep')]"/>
+                <filter string="Speech" name="filter_speech" domain="[('service_category', '=', 'speech')]"/>
+                <filter string="Vestibular" name="filter_vestibular" domain="[('service_category', '=', 'vestibular')]"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- List View: Show revenue classification columns -->
+    <record id="view_account_move_list_resonnocare_revenue" model="ir.ui.view">
+        <field name="name">account.move.list.resonnocare.revenue</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_invoice_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="payment_mode" optional="hide"/>
+                <field name="revenue_mode" optional="hide"/>
+                <field name="revenue_model" optional="hide"/>
+                <field name="service_category" optional="hide"/>
             </xpath>
         </field>
     </record>
