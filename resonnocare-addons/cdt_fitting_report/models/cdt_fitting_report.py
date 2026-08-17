@@ -197,41 +197,45 @@ class CdtFittingReport(models.Model):
             raise ValidationError(_('No fitting appointments found for the selected date range.'))
         
         report_records = []
-        
-        # ========================================
-        # TRACK PROCESSED SALE ORDERS TO AVOID DUPLICATES
-        # ========================================
         processed_sale_orders = set()
         
         for appointment in fitting_appointments:
-            print(f"Processing Appointment ID: {appointment.id}, Date: {appointment.appointment_date}, Clinic: {appointment.clinic_id.name}")
-            
             sale_order = appointment.sale_order_id
-            print(f"Linked Sale Order: {sale_order.id if sale_order else 'None'}")
-            
             if not sale_order:
                 continue
             
-            # ========================================
-            # CHECK IF THIS SALE ORDER IS ALREADY PROCESSED
-            # ========================================
             if sale_order.id in processed_sale_orders:
-                print(f"SKIPPING - Sale Order {sale_order.id} already processed for this date range")
                 continue
             
-            # Mark this sale order as processed
             processed_sale_orders.add(sale_order.id)
             
-            # Get sale order lines (Odoo 18: 'consu', 'service', 'combo')
+            # Check if sale order has products
             sale_lines = sale_order.order_line.filtered(
                 lambda l: l.product_id and l.product_id.type in ['consu', 'service', 'combo']
             )
             if not sale_lines:
                 continue
             
-            for line in sale_lines:
-                print(f"Processing Sale Order Line: {line}")
-                vals = self._compute_fitting_metrics(appointment, line)
+            # Get all serial numbers for this sale order using move_ids
+            serial_numbers = self._get_serial_numbers_from_sale_order(sale_order)
+            
+            if serial_numbers:
+                # Create one record per serial number
+                for serial_no in serial_numbers:
+                    vals = self._compute_fitting_metrics(appointment, sale_order, serial_no)
+                    if vals:
+                        vals.update({
+                            'date_from': date_from,
+                            'date_to': date_to,
+                            'report_type': report_type,
+                            'is_total_row': False,
+                            'is_area_manager_total': False,
+                            'is_region_total': False,
+                        })
+                        report_records.append(vals)
+            else:
+                # No serial numbers, create one record with empty serial
+                vals = self._compute_fitting_metrics(appointment, sale_order, '')
                 if vals:
                     vals.update({
                         'date_from': date_from,
@@ -265,6 +269,7 @@ class CdtFittingReport(models.Model):
                 'is_area_manager_total': True,
                 'is_region_total': False,
                 'clinic_id': False,
+                'serial_numbers': '',  # No serial numbers for total rows
             })
             report_records.append(am_vals)
         
@@ -288,6 +293,7 @@ class CdtFittingReport(models.Model):
                 'clinic_id': False,
                 'area_manager_id': False,
                 'area_manager_name': '',
+                'serial_numbers': '',  # No serial numbers for total rows
             })
             report_records.append(region_vals)
         
@@ -295,7 +301,8 @@ class CdtFittingReport(models.Model):
             self.create(report_records)
         return {'type': 'ir.actions.client', 'tag': 'reload'}
     
-    def _compute_fitting_metrics(self, appointment, sale_line):
+    def _compute_fitting_metrics(self, appointment, sale_order, serial_no=None):
+        """Compute fitting metrics for a sale order, optionally for a specific serial number"""
         vals = {}
         vals['clinic_id'] = appointment.clinic_id.id
         vals['clinic_name'] = appointment.clinic_id.name
@@ -312,32 +319,58 @@ class CdtFittingReport(models.Model):
         vals['client_code'] = appointment.patient_id.ref
         vals['client_name'] = appointment.patient_id.name
         vals['client_type'] = self._get_client_type(appointment)
-        vals['sale_order_id'] = appointment.sale_order_id.id
-        vals['sale_order_line_id'] = sale_line.id
-        vals['product_id'] = sale_line.product_id.id
-        vals['equipment_type'] = sale_line.product_id.categ_id.name or 'Accessories'
-        vals['quantity'] = int(sale_line.product_uom_qty) if sale_line.product_uom_qty else 1
-        vals['unit_price'] = sale_line.price_unit or sale_line.product_id.lst_price or 0.0
-        discount_percentage = sale_line.discount or 0.0
-        vals['discount'] = discount_percentage
-        subtotal = vals['unit_price'] * vals['quantity']
-        discount_amount = subtotal * (discount_percentage / 100)
-        vals['discount_amount'] = discount_amount
-        vals['subtotal'] = subtotal - discount_amount
-        vals['gross'] = subtotal
-        vals['total_amt_receivable'] = vals['subtotal']
-        vals['weekly_target'] = self._get_weekly_target(appointment.clinic_id)
+        vals['sale_order_id'] = sale_order.id
         
-        # ========================================
-        # ADD APPOINTMENT STATUS
-        # ========================================
+        # Get all products from the sale order
+        sale_lines = sale_order.order_line.filtered(
+            lambda l: l.product_id and l.product_id.type in ['consu', 'service', 'combo']
+        )
+        
+        # Aggregate all products into a single string
+        product_names = []
+        total_quantity = 0
+        total_unit_price = 0
+        total_discount = 0
+        total_discount_amount = 0
+        total_subtotal = 0
+        total_gross = 0
+        total_receivable = 0
+        
+        for line in sale_lines:
+            product_names.append(line.product_id.name or 'Accessories')
+            qty = int(line.product_uom_qty) if line.product_uom_qty else 1
+            total_quantity += qty
+            
+            unit_price = line.price_unit or line.product_id.lst_price or 0.0
+            total_unit_price += unit_price * qty
+            
+            discount_percentage = line.discount or 0.0
+            subtotal = unit_price * qty
+            discount_amount = subtotal * (discount_percentage / 100)
+            
+            total_discount += discount_percentage
+            total_discount_amount += discount_amount
+            total_subtotal += subtotal - discount_amount
+            total_gross += subtotal
+            total_receivable += subtotal - discount_amount
+        
+        # Set the aggregated values
+        vals['equipment_type'] = ', '.join(product_names) if product_names else 'Accessories'
+        vals['quantity'] = total_quantity
+        vals['unit_price'] = total_unit_price / max(len(sale_lines), 1)  # Average unit price
+        vals['discount'] = total_discount / max(len(sale_lines), 1)  # Average discount
+        vals['discount_amount'] = total_discount_amount
+        vals['subtotal'] = total_subtotal
+        vals['gross'] = total_gross
+        vals['total_amt_receivable'] = total_receivable
+        vals['weekly_target'] = self._get_weekly_target(appointment.clinic_id)
         vals['status'] = appointment.status
         
-        # ========================================
-        # GET SERIAL NUMBERS FROM DELIVERY
-        # ========================================
-        serial_numbers = self._get_serial_numbers(sale_line)
-        vals['serial_numbers'] = serial_numbers
+        # If a specific serial number is provided, use it; otherwise keep as empty
+        vals['serial_numbers'] = serial_no or ''
+        
+        # Store first sale order line ID for reference (optional)
+        vals['sale_order_line_id'] = sale_lines[0].id if sale_lines else False
         
         return vals
     
@@ -360,34 +393,50 @@ class CdtFittingReport(models.Model):
         
     #     return ', '.join(serial_numbers) if serial_numbers else ''
 
+
+    def _get_serial_numbers_from_sale_order(self, sale_order):
+        """Get all serial numbers from stock moves linked to a sale order using move_ids"""
+        serial_numbers = []
+        
+        if not sale_order:
+            return serial_numbers
+        
+        # Get all stock moves directly from sale order's move_ids
+        for move in sale_order.move_ids:
+            # Check if the move is done or assigned (has serial numbers)
+            if move.state in ['done', 'assigned']:
+                for move_line in move.move_line_ids:
+                    if move_line.lot_id and move_line.lot_id.name:
+                        serial_numbers.append(move_line.lot_id.name)
+        
+        # Remove duplicates while preserving order
+        serial_numbers = list(dict.fromkeys(serial_numbers))
+        
+        return serial_numbers
+    
     def _get_serial_numbers(self, sale_line):
-        """Get serial numbers only from stock moves belonging to this
-        exact sale order line.
-        """
-        if not sale_line:
-            return ''
+        """Get serial numbers from stock moves linked to this sale order line."""
 
         serial_numbers = []
 
-        # Use the stock moves directly linked to this sale order line
-        moves = sale_line.move_ids.filtered(
-            lambda move: move.state != 'cancel'
-            and move.product_id == sale_line.product_id
-        )
+        if not sale_line:
+            return ''
+
+        # Find stock moves created from this specific sale order line
+        moves = self.env['stock.move'].search([
+            ('sale_line_id', '=', sale_line.id),
+            ('state', '!=', 'cancel'),
+        ])
 
         for move in moves:
             for move_line in move.move_line_ids:
-                if (
-                    move_line.lot_id
-                    and move_line.lot_id.name
-                    and move_line.qty_done > 0
-                ):
+                if move_line.lot_id and move_line.lot_id.name:
                     serial_numbers.append(move_line.lot_id.name)
 
-        # Remove duplicate serial numbers
+        # Remove duplicates while preserving order
         serial_numbers = list(dict.fromkeys(serial_numbers))
 
-        return ', '.join(serial_numbers)
+        return ', '.join(serial_numbers) if serial_numbers else ''
     
     def _get_client_type(self, appointment):
         if not appointment.patient_id:
@@ -423,18 +472,41 @@ class CdtFittingReport(models.Model):
             'gross', 'total_amt_receivable', 'weekly_target'
         ]
         
+        # Track processed sale orders to avoid double counting
+        processed_sale_orders = set()
+        
         for appointment in appointments:
             sale_order = appointment.sale_order_id
             if not sale_order:
                 continue
-            sale_lines = sale_order.order_line.filtered(
-                lambda l: l.product_id and l.product_id.type in ['consu', 'service', 'combo']
-            )
-            for line in sale_lines:
-                vals = self._compute_fitting_metrics(appointment, line)
-                for key, value in vals.items():
-                    if key in numeric_fields and value is not None:
-                        aggregated[key] = aggregated.get(key, 0) + value
+            
+            # Skip if this sale order was already processed
+            if sale_order.id in processed_sale_orders:
+                continue
+            processed_sale_orders.add(sale_order.id)
+            
+            # Get base metrics for the sale order (without serial number)
+            vals = self._compute_fitting_metrics(appointment, sale_order, '')
+            
+            # Sum numeric fields
+            for key, value in vals.items():
+                if key in numeric_fields and value is not None:
+                    aggregated[key] = aggregated.get(key, 0) + value
+            
+            # For equipment_type, collect all product names
+            if 'equipment_type' in vals and vals['equipment_type']:
+                if 'equipment_type' not in aggregated:
+                    aggregated['equipment_type'] = []
+                aggregated['equipment_type'].append(vals['equipment_type'])
+        
+        # Convert equipment_type list to string
+        if 'equipment_type' in aggregated and isinstance(aggregated['equipment_type'], list):
+            # Get unique product names
+            unique_products = set()
+            for eq_type in aggregated['equipment_type']:
+                for product in eq_type.split(', '):
+                    unique_products.add(product)
+            aggregated['equipment_type'] = ', '.join(sorted(unique_products))
         
         aggregated['client_name'] = 'Total'
         return aggregated
