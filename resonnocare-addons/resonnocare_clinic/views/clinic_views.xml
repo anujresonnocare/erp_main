@@ -54,6 +54,9 @@
                             <field name="go_live_date"/>
                             <field name="external_billing"/>
                             <field name="warehouse_id" readonly="1"/>
+                            <field name="area_manager_id"/>
+                            <field name="region"/>
+                            <field name="clinic_version"/>
                         </group>
                         <group string="State HQ Information">
                             <field name="state_hq_name" placeholder="State Head Quarter Name"/>
