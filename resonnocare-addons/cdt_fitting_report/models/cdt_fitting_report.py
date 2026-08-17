@@ -361,28 +361,33 @@ class CdtFittingReport(models.Model):
     #     return ', '.join(serial_numbers) if serial_numbers else ''
 
     def _get_serial_numbers(self, sale_line):
-        """Get serial numbers from stock moves linked to this sale order line."""
-
-        serial_numbers = []
-
+        """Get serial numbers only from stock moves belonging to this
+        exact sale order line.
+        """
         if not sale_line:
             return ''
 
-        # Find stock moves created from this specific sale order line
-        moves = self.env['stock.move'].search([
-            ('sale_line_id', '=', sale_line.id),
-            ('state', '!=', 'cancel'),
-        ])
+        serial_numbers = []
+
+        # Use the stock moves directly linked to this sale order line
+        moves = sale_line.move_ids.filtered(
+            lambda move: move.state != 'cancel'
+            and move.product_id == sale_line.product_id
+        )
 
         for move in moves:
             for move_line in move.move_line_ids:
-                if move_line.lot_id and move_line.lot_id.name:
+                if (
+                    move_line.lot_id
+                    and move_line.lot_id.name
+                    and move_line.qty_done > 0
+                ):
                     serial_numbers.append(move_line.lot_id.name)
 
-        # Remove duplicates while preserving order
+        # Remove duplicate serial numbers
         serial_numbers = list(dict.fromkeys(serial_numbers))
 
-        return ', '.join(serial_numbers) if serial_numbers else ''
+        return ', '.join(serial_numbers)
     
     def _get_client_type(self, appointment):
         if not appointment.patient_id:
