@@ -199,15 +199,6 @@ class SaleOrder(models.Model):
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
 
-    discount_type = fields.Selection(
-            selection=[
-                ('sol_discount', "On All Order Lines"),
-                ('so_discount', "Global Discount"),
-                ('amount', "Fixed Amount"),
-            ],
-            default='sol_discount',
-        )
-
     clinic_sharing_pct = fields.Float(
         string="Clinic Sharing %",
         compute="_compute_sharing_values",

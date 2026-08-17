@@ -52,24 +52,34 @@
                 <field name="clinic_id" readonly="1"/>
             </xpath>
             <xpath expr="//field[@name='order_line']/list/field[@name='discount']" position="replace">
-                <field name="discount" string="Disc.%" optional="show"/>
+                <field name="discount_type" optional="show"/>
+                <field name="discount" string="Disc.%" optional="show" readonly="discount_type == 'fixed'" force_save="1"/>
+                <field name="discount_fixed" string="Disc. ₹" optional="show" readonly="discount_type == 'percent'" force_save="1"/>
             </xpath>
-            <xpath expr="//field[@name='order_line']/list/field[@name='discount']" position="after">
+            <xpath expr="//field[@name='order_line']/list/field[@name='discount_fixed']" position="after">
                 <field name="discount_base_mrp" readonly="1" optional="show"/>
                 <field name="discount_channel" readonly="1" optional="show"/>
                 <field name="discount_slab" readonly="1" optional="show"/>
+            </xpath>
+            <xpath expr="//field[@name='order_line']/list/field[@name='price_unit']" position="attributes">
+                <attribute name="readonly">1</attribute>
             </xpath>
             <xpath expr="//field[@name='order_line']/list/field[@name='tax_id']" position="attributes">
                 <attribute name="readonly">1</attribute>
             </xpath>
             <xpath expr="//field[@name='order_line']/form//field[@name='discount']" position="replace">
-                <field name="discount" string="Disc.%"/>
+                <field name="discount_type"/>
+                <field name="discount" string="Disc.%" readonly="discount_type == 'fixed'" force_save="1"/>
+                <field name="discount_fixed" string="Disc. ₹" readonly="discount_type == 'percent'" force_save="1"/>
             </xpath>
-            <xpath expr="//field[@name='order_line']/form//field[@name='discount']" position="after">
+            <xpath expr="//field[@name='order_line']/form//field[@name='discount_fixed']" position="after">
                 <field name="discount_base_mrp" readonly="1"/>
                 <field name="discount_channel" readonly="1"/>
                 <field name="discount_grid_id" readonly="1"/>
                 <field name="discount_slab" readonly="1"/>
+            </xpath>
+            <xpath expr="//field[@name='order_line']/form//field[@name='price_unit']" position="attributes">
+                <attribute name="readonly">1</attribute>
             </xpath>
             <xpath expr="//field[@name='order_line']/form//field[@name='tax_id']" position="attributes">
                 <attribute name="readonly">1</attribute>

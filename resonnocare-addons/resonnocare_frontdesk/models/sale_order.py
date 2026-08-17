@@ -492,6 +492,38 @@ class SaleOrderLine(models.Model):
         store=True,
     )
 
+    discount_type = fields.Selection(
+        [("percent", "Percentage"), ("fixed", "Fixed Amount")],
+        string="Discount Type",
+        default="percent",
+    )
+    discount_fixed = fields.Float(
+        string="Discount (₹)",
+        digits="Product Price",
+        help="Fixed discount amount per unit in currency.",
+    )
+
+    @api.onchange("discount_type", "discount_fixed")
+    def _onchange_discount_fixed_to_pct(self):
+        """When user enters a fixed discount amount, convert to percentage."""
+        for line in self:
+            if line.discount_type != "fixed":
+                continue
+            price = line.price_unit or 0.0
+            if price > 0:
+                line.discount = (line.discount_fixed / price) * 100.0
+            else:
+                line.discount = 0.0
+
+    @api.onchange("discount", "discount_type", "price_unit")
+    def _onchange_discount_pct_to_fixed(self):
+        """When user enters a percentage discount, compute the fixed amount."""
+        for line in self:
+            if line.discount_type != "percent":
+                continue
+            price = line.price_unit or 0.0
+            line.discount_fixed = price * (line.discount or 0.0) / 100.0
+
     def _normalize_hsn_sac(self, code):
         return re.sub(r"[^0-9A-Za-z]", "", (code or "")).upper()
 
@@ -864,3 +896,16 @@ class SaleOrderLine(models.Model):
                     "For services, configure clinic-level diagnostic MRP; "
                     "for devices, verify product MRP and Discount Grid bands."
                 )
+
+    def _prepare_base_line_for_taxes_computation(self, **kwargs):
+        if self.discount_type == "fixed" and self.discount_fixed:
+            kwargs["price_unit"] = self.price_unit - self.discount_fixed
+            kwargs["discount"] = 0.0
+        return super()._prepare_base_line_for_taxes_computation(**kwargs)
+
+    def _prepare_invoice_line(self, **optional_values):
+        res = super()._prepare_invoice_line(**optional_values)
+        if self.discount_type == "fixed" and self.discount_fixed:
+            res["price_unit"] = self.price_unit - self.discount_fixed
+            res["discount"] = 0.0
+        return res

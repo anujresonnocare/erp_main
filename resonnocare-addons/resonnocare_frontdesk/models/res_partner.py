@@ -59,6 +59,7 @@ class ResPartner(models.Model):
             ("private", "Private Sector Employee"),
             ("business", "Business"),
             ("part_time", "Part-time Employed"),
+            ("student", "Student"),
             ("retired", "Retired"),
             ("home_maker", "Home Maker"),
         ],
@@ -288,6 +289,8 @@ class ResPartner(models.Model):
             ("walkin", "Walk-in"),
             ("doctor", "Doctor"),
             ("marketing", "Marketing"),
+            ("website", "Website"),
+            ("hear_com", "hear.com"),
         ]
     )
 
