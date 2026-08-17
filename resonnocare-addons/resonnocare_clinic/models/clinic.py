@@ -13,6 +13,23 @@ class ResonnocareClinic(models.Model):
     # Core Identity
     # ---------------------------------------------------------
 
+    area_manager_id = fields.Many2one(
+        'res.users',
+        string='Area Manager',
+        tracking=True,
+        help="Area Manager responsible for this clinic"
+    )
+
+    region = fields.Char(
+        string='Region',
+        help="Geographic region (North, South, East, West, etc.)"
+    )
+
+    clinic_version = fields.Char(
+        string='Store Version',
+        help="Version of the store (SIS Same Store, SIS Store 2023, etc.)"
+    )
+
     name = fields.Char(
         string="Clinic Name",
         required=True,
