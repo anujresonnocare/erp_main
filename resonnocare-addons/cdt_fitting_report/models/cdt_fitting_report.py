@@ -336,58 +336,29 @@ class CdtFittingReport(models.Model):
         # ========================================
         # GET SERIAL NUMBERS FROM DELIVERY
         # ========================================
-        serial_numbers = self._get_serial_numbers(sale_line)
+        serial_numbers = self._get_serial_numbers(appointment.sale_order_id)
         vals['serial_numbers'] = serial_numbers
         
         return vals
     
-    # def _get_serial_numbers(self, sale_order):
-    #     """Get serial numbers from the delivery (stock picking)"""
-    #     serial_numbers = []
-        
-    #     if sale_order:
-    #         # Find the delivery/picking for this sale order
-    #         pickings = self.env['stock.picking'].search([
-    #             ('origin', '=', sale_order.name),
-    #             ('state', 'in', ['assigned', 'done'])
-    #         ], limit=1)
-            
-    #         if pickings:
-    #             # Get all move lines with serial numbers
-    #             for move_line in pickings.move_line_ids:
-    #                 if move_line.lot_id and move_line.lot_id.name:
-    #                     serial_numbers.append(move_line.lot_id.name)
-        
-    #     return ', '.join(serial_numbers) if serial_numbers else ''
-
-    def _get_serial_numbers(self, sale_line):
-        """Get serial numbers only from stock moves belonging to this
-        exact sale order line.
-        """
-        if not sale_line:
-            return ''
-
+    def _get_serial_numbers(self, sale_order):
+        """Get serial numbers from the delivery (stock picking)"""
         serial_numbers = []
-
-        # Use the stock moves directly linked to this sale order line
-        moves = sale_line.move_ids.filtered(
-            lambda move: move.state != 'cancel'
-            and move.product_id == sale_line.product_id
-        )
-
-        for move in moves:
-            for move_line in move.move_line_ids:
-                if (
-                    move_line.lot_id
-                    and move_line.lot_id.name
-                    and move_line.qty_done > 0
-                ):
-                    serial_numbers.append(move_line.lot_id.name)
-
-        # Remove duplicate serial numbers
-        serial_numbers = list(dict.fromkeys(serial_numbers))
-
-        return ', '.join(serial_numbers)
+        
+        if sale_order:
+            # Find the delivery/picking for this sale order
+            pickings = self.env['stock.picking'].search([
+                ('origin', '=', sale_order.name),
+                ('state', 'in', ['assigned', 'done'])
+            ], limit=1)
+            
+            if pickings:
+                # Get all move lines with serial numbers
+                for move_line in pickings.move_line_ids:
+                    if move_line.lot_id and move_line.lot_id.name:
+                        serial_numbers.append(move_line.lot_id.name)
+        
+        return ', '.join(serial_numbers) if serial_numbers else ''
     
     def _get_client_type(self, appointment):
         if not appointment.patient_id:
