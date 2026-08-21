@@ -294,3 +294,4 @@ class AccountPayment(models.Model):
                 # Schedule them
                 appointments._schedule_after_payment()
 
+        return res
