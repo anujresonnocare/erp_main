@@ -1,6 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
+    <!-- EXTEND APPOINTMENT LIST VIEW -->
+    <!-- <record id="view_resonnocare_appointment_list_hierarchy" model="ir.ui.view">
+        <field name="name">resonnocare.appointment.list.hierarchy</field>
+        <field name="model">resonnocare.appointment</field>
+        <field name="inherit_id" ref="resonnocare_appointment.view_resonnocare_appointment_list"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='status']" position="after">
+                <field name="appointment_category" widget="badge"/>
+                <field name="journey_position" string="Step"/>
+                <field name="hierarchy_level" string="Level"/>
+                <field name="parent_appointment_id" invisible="not parent_appointment_id"/>
+                <field name="child_appointment_ids" count="true" string="Children" invisible="not child_appointment_ids"/>
+            </xpath>
+        </field>
+    </record>
+ -->
+
+<!-- </odoo> -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     <!-- EXTEND APPOINTMENT FORM VIEW -->
     <record id="view_resonnocare_appointment_form_cancel" model="ir.ui.view">
         <field name="name">resonnocare.appointment.form.cancel</field>
@@ -12,7 +53,57 @@
             <xpath expr="//sheet" position="inside">
             <div class="oe_button_box" name="button_box">
                 
+                <button name="action_view_parent" 
+                        string="Parent" 
+                        type="object" 
+                        class="oe_stat_button"
+                        icon="fa-level-up"
+                        invisible="not parent_appointment_id"
+                        help="Go to parent appointment"/>
                 
+                <button name="action_view_children" 
+                        string="Children" 
+                        type="object" 
+                        class="oe_stat_button"
+                        icon="fa-level-down"
+                        invisible="not child_appointment_ids"
+                        help="View child appointments"/>
+                
+                <button name="action_view_previous" 
+                        string="Previous" 
+                        type="object" 
+                        class="oe_stat_button"
+                        icon="fa-arrow-left"
+                        invisible="not previous_appointment_id"
+                        help="Go to previous appointment in journey"/>
+                
+                <button name="action_view_next" 
+                        string="Next" 
+                        type="object" 
+                        class="oe_stat_button"
+                        icon="fa-arrow-right"
+                        invisible="not next_appointment_id"
+                        help="Go to next appointment in journey"/>
+                
+                <button name="action_view_root" 
+                        string="Root" 
+                        type="object" 
+                        class="oe_stat_button"
+                        icon="fa-home"
+                        invisible="not root_appointment_id and root_appointment_id != id"
+                        help="Go to root appointment"/>
+
+                <!-- View Fitting Appointments button -->
+                <button name="action_view_fitting_appointments" 
+                        string="Fitting Appointments"
+                        type="object" 
+                        class="oe_stat_button"
+                        icon="fa-calendar-plus-o"
+                        invisible="not fitting_appointment_ids"
+                        help="View fitting appointments created from this appointment"/>
+                        
+
+                        
                 <!-- Create Cancel Appointment button (shows on original appointment with sale order) -->
                 <button name="action_create_cancel_appointment" 
                         string="Cancel Order"
@@ -80,12 +171,52 @@
                         icon="fa-exchange"
                         invisible="exchange_return_order_id or not sale_order_id  or status not in ['completed', 'in_consultation'] or has_cancellation_appointment"/>
 
+
             </div>
             </xpath>
+
+
+                   <xpath expr="//header" position="inside">
+                <button name="action_create_hearing_test_appointment" 
+                        string="Hearing Test" 
+                        type="object" 
+                        class="btn-primary"
+                        invisible="not sale_order_id"
+                        help="Create Hearing Test and Trial appointment"/>
+                
+                <button name="action_create_device_sale_appointment" 
+                        string="Device Sale" 
+                        type="object" 
+                        class="btn-primary"
+                        invisible="not sale_order_id"
+                        help="Create Device Sale appointment"/>
+                
+                <button name="action_create_followup_appointment" 
+                        string="Follow-up" 
+                        type="object" 
+                        class="btn-primary"
+                        invisible="not sale_order_id"
+                        help="Create Follow-up appointment"/>
+            </xpath>
+
 
             <!-- Add cancellation fields after appointment_type_id -->
             <xpath expr="//group[2]" position="after">
                 
+                <!-- Parent Appointment Details (Visible only in Fitting Appointment) -->
+                <!-- <group string="Original Appointment Details" invisible="not parent_appointment_id">
+                    <group>
+                        <field name="parent_appointment_id" readonly="1"/>
+                        <field name="parent_appointment_id.patient_id" readonly="1" string="Patient"/>
+                        <field name="parent_appointment_id.appointment_date" readonly="1" string="Original Date"/>
+                    </group>
+                    <group>
+                        <field name="parent_appointment_id.audiologist_id" readonly="1" string="Audiologist"/>
+                        <field name="parent_appointment_id.technician_id" readonly="1" string="Technician"/>
+                        <field name="parent_appointment_id.sale_order_id" readonly="1" string="Sale Order"/>
+                        <field name="parent_appointment_id.status" readonly="1" string="Original Status"/>
+                    </group>
+                </group> -->
                 <!-- ORIGINAL APPOINTMENT DETAILS (Visible only in Cancellation Appointment) -->
                 <group string="Original Appointment Details" invisible="appointment_type_id.name != 'Order Cancel'">
                     <group>
@@ -189,8 +320,47 @@
 
             </xpath>
 
+
+            <!-- <xpath expr="//notebook" position="inside">
+                <page string="Hierarchy" 
+                      attrs="{'invisible': [('parent_appointment_id', '=', False), ('child_appointment_ids', '=', False)]}">
+                    <group>
+                        <group>
+                            <field name="hierarchy_level" readonly="1"/>
+                            <field name="journey_position" readonly="1"/>
+                            <field name="appointment_category" widget="badge"/>
+                        </group>
+                        <group>
+                            <field name="root_appointment_id" readonly="1"/>
+                            <field name="previous_appointment_id" readonly="1"/>
+                            <field name="next_appointment_id" readonly="1"/>
+                        </group>
+                    </group>
+                    
+                    <group string="Parent Appointment" invisible="not parent_appointment_id">
+                        <field name="parent_appointment_id" readonly="1"/>
+                        <field name="parent_appointment_id.appointment_id" readonly="1" string="Parent ID"/>
+                        <field name="parent_appointment_id.appointment_type_id" readonly="1" string="Parent Type"/>
+                        <field name="parent_appointment_id.appointment_date" readonly="1" string="Parent Date"/>
+                        <field name="parent_appointment_id.status" readonly="1" string="Parent Status" widget="badge"/>
+                    </group>
+                    
+                    <group string="Child Appointments" invisible="not child_appointment_ids">
+                        <field name="child_appointment_ids" readonly="1">
+                            <list>
+                                <field name="appointment_id"/>
+                                <field name="appointment_type_id"/>
+                                <field name="appointment_date"/>
+                                <field name="status" widget="badge"/>
+                                <field name="appointment_category" widget="badge"/>
+                            </list>
+                        </field>
+                    </group>
+                </page>
+            </xpath> -->
+
             <!-- Hide original button boxes for cancellation appointments -->
-            <xpath expr="//button[@name='action_generate_device_sale']" position="attributes">
+            <!-- <xpath expr="//button[@name='action_generate_device_sale']" position="attributes">
                 <attribute name="invisible">appointment_type_id.name == 'Order Cancel'</attribute>
             </xpath>
 
@@ -208,7 +378,7 @@
 
             <xpath expr="//button[@name='action_open_min_advance_request']" position="attributes">
                 <attribute name="invisible">appointment_type_id.name == 'Order Cancel'</attribute>
-            </xpath>
+            </xpath> -->
 
         </field>
     </record>

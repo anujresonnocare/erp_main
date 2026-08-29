@@ -52,6 +52,389 @@ class AccountMove(models.Model):
 class ResonnocareAppointment(models.Model):
     _inherit = 'resonnocare.appointment'
 
+
+    child_appointment_ids = fields.One2many(
+        "resonnocare.appointment",
+        "parent_appointment_id",
+        string="Child Appointments",
+        help="Appointments created from this appointment"
+    )
+
+    # Root appointment (first in chain)
+    root_appointment_id = fields.Many2one(
+        "resonnocare.appointment",
+        string="Root Appointment",
+        compute="_compute_root_appointment",
+        store=True,
+        help="The first appointment in this patient journey"
+    )
+
+    # Previous appointment in journey
+    previous_appointment_id = fields.Many2one(
+        "resonnocare.appointment",
+        string="Previous Appointment",
+        compute="_compute_previous_next_appointments",
+        store=True,
+        help="Previous appointment in the patient journey"
+    )
+
+    # Next appointment in journey
+    next_appointment_id = fields.Many2one(
+        "resonnocare.appointment",
+        string="Next Appointment",
+        compute="_compute_previous_next_appointments",
+        store=True,
+        help="Next appointment in the patient journey"
+    )
+
+    # Journey position
+    journey_position = fields.Integer(
+        string="Journey Position",
+        compute="_compute_journey_position",
+        store=True,
+        help="Position in the patient journey (1 = first)"
+    )
+
+    # Hierarchy level
+    hierarchy_level = fields.Integer(
+        string="Hierarchy Level",
+        compute="_compute_hierarchy_level",
+        store=True,
+        help="Level in the hierarchy (0 = root)"
+    )
+
+    # Appointment category
+    appointment_category = fields.Selection([
+        ('service', 'Service/Diagnostic'),
+        ('hearing_test', 'Hearing Test & Trial'),
+        ('device_sale', 'Device Sale'),
+        ('fitting', 'Fitting'),
+        ('followup', 'Follow-up')
+    ], string="Appointment Category", compute="_compute_appointment_category", store=True)
+
+
+    # Add these compute methods in your ResonnocareAppointment class
+
+    @api.depends('parent_appointment_id', 'parent_appointment_id.root_appointment_id')
+    def _compute_root_appointment(self):
+        for rec in self:
+            if not rec.parent_appointment_id:
+                rec.root_appointment_id = rec.id
+            else:
+                current = rec
+                while current.parent_appointment_id:
+                    current = current.parent_appointment_id
+                rec.root_appointment_id = current.id
+
+    @api.depends('parent_appointment_id', 'child_appointment_ids')
+    def _compute_previous_next_appointments(self):
+        for rec in self:
+            # Previous appointment
+            if rec.parent_appointment_id:
+                rec.previous_appointment_id = rec.parent_appointment_id
+            else:
+                rec.previous_appointment_id = False
+            
+            # Next appointment (first child by creation date)
+            if rec.child_appointment_ids:
+                rec.next_appointment_id = rec.child_appointment_ids.sorted('create_date')[:1].id
+            else:
+                rec.next_appointment_id = False
+
+    @api.depends('root_appointment_id', 'root_appointment_id.child_appointment_ids')
+    def _compute_journey_position(self):
+        for rec in self:
+            if rec.root_appointment_id:
+                # Get all appointments in journey
+                all_appointments = rec.root_appointment_id | rec.root_appointment_id.child_appointment_ids
+                sorted_appointments = all_appointments.sorted('create_date')
+                positions = {appt.id: idx + 1 for idx, appt in enumerate(sorted_appointments)}
+                rec.journey_position = positions.get(rec.id, 0)
+            else:
+                rec.journey_position = 1
+
+    @api.depends('parent_appointment_id')
+    def _compute_hierarchy_level(self):
+        for rec in self:
+            level = 0
+            current = rec
+            while current.parent_appointment_id:
+                level += 1
+                current = current.parent_appointment_id
+            rec.hierarchy_level = level
+
+    @api.depends('appointment_type_id', 'appointment_type_id.name')
+    def _compute_appointment_category(self):
+        for rec in self:
+            type_name = (rec.appointment_type_id.name or '').lower()
+            if 'service' in type_name or 'diagnostic' in type_name:
+                rec.appointment_category = 'service'
+            elif 'hearing' in type_name or 'test' in type_name or 'trial' in type_name:
+                rec.appointment_category = 'hearing_test'
+            elif 'device' in type_name or 'sale' in type_name:
+                rec.appointment_category = 'device_sale'
+            elif 'fitting' in type_name:
+                rec.appointment_category = 'fitting'
+            elif 'follow' in type_name or 'followup' in type_name:
+                rec.appointment_category = 'followup'
+            else:
+                rec.appointment_category = False
+
+    # Add these navigation methods in your ResonnocareAppointment class
+
+    def action_view_parent(self):
+        """Navigate to parent appointment"""
+        self.ensure_one()
+        if not self.parent_appointment_id:
+            raise UserError("This appointment has no parent.")
+        
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Parent Appointment',
+            'res_model': 'resonnocare.appointment',
+            'view_mode': 'form',
+            'res_id': self.parent_appointment_id.id,
+            'target': 'current',
+        }
+
+    def action_view_children(self):
+        """View all child appointments"""
+        self.ensure_one()
+        if not self.child_appointment_ids:
+            raise UserError("This appointment has no child appointments.")
+        
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Child Appointments',
+            'res_model': 'resonnocare.appointment',
+            'view_mode': 'list,form',
+            'domain': [('parent_appointment_id', '=', self.id)],
+            'target': 'current',
+            'context': {
+                'default_parent_appointment_id': self.id,
+            }
+        }
+
+    def action_view_previous(self):
+        """Navigate to previous appointment in journey"""
+        self.ensure_one()
+        if not self.previous_appointment_id:
+            raise UserError("This is the first appointment in the journey.")
+        
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Previous Appointment',
+            'res_model': 'resonnocare.appointment',
+            'view_mode': 'form',
+            'res_id': self.previous_appointment_id.id,
+            'target': 'current',
+        }
+
+    def action_view_next(self):
+        """Navigate to next appointment in journey"""
+        self.ensure_one()
+        if not self.next_appointment_id:
+            raise UserError("This is the last appointment in the journey.")
+        
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Next Appointment',
+            'res_model': 'resonnocare.appointment',
+            'view_mode': 'form',
+            'res_id': self.next_appointment_id.id,
+            'target': 'current',
+        }
+
+    def action_view_root(self):
+        """Navigate to root appointment"""
+        self.ensure_one()
+        if not self.root_appointment_id:
+            raise UserError("No root appointment found.")
+        
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Root Appointment',
+            'res_model': 'resonnocare.appointment',
+            'view_mode': 'form',
+            'res_id': self.root_appointment_id.id,
+            'target': 'current',
+        }
+
+
+
+
+
+    def action_create_fitting_appointment(self):
+        """Create a Fitting appointment with proper hierarchy"""
+        self.ensure_one()
+        
+        fitting_type = self.env["resonnocare.appointment.type"].search(
+            [("name", "ilike", "fitting"), ("active", "=", True)],
+            limit=1,
+        )
+        if not fitting_type:
+            raise UserError(
+                "Appointment Type 'Fitting' is not configured. Please create/activate it in Masters."
+            )
+        
+        sale = self._get_effective_sale_order()
+        if sale:
+            minimum_required = (sale.amount_total or 0.0) * 0.30
+            total_paid = self._get_total_paid_for_sale(sale)
+            if total_paid < minimum_required:
+                approved_request = self.env["resonnocare.advance.approval.request"].search(
+                    [
+                        ("sale_order_id", "=", sale.id),
+                        ("state", "=", "approved"),
+                    ],
+                    order="id desc",
+                    limit=1,
+                )
+                if not approved_request or not approved_request.requested_min_advance:
+                    raise UserError(
+                        "Fitting appointment cannot be created because paid advance is below the required threshold.\n"
+                        f"Minimum Required (30%): {minimum_required:.2f}\n"
+                        f"Currently Paid: {total_paid:.2f}\n\n"
+                        "To continue with a lower advance, create and get approval for a Min Advance Request from this Appointment or related Sale Order."
+                    )
+                if total_paid < approved_request.requested_min_advance:
+                    raise UserError(
+                        "Min Advance Request is approved, but paid amount is still below the approved minimum.\n"
+                        f"Approved Minimum Advance: {approved_request.requested_min_advance:.2f}\n"
+                        f"Paid: {total_paid:.2f}"
+                    )
+        
+        # Get staff from original appointment
+        audiologist_id = self.audiologist_id.id if self.audiologist_id else False
+        technician_id = self.technician_id.id if self.technician_id else False
+        
+        # Calculate start time
+        now = fields.Datetime.now()
+        minutes = (now.minute // 5) * 5
+        start_time = now.replace(minute=minutes, second=0, microsecond=0)
+        appointment_start_time = start_time.hour + (start_time.minute / 60.0)
+        
+        # Create the fitting appointment with proper link
+        fitting_appointment = self.env["resonnocare.appointment"].create({
+            'parent_appointment_id': self.id,  # Link to original appointment
+            'patient_id': self.patient_id.id,
+            'clinic_id': self.clinic_id.id,
+            'appointment_type_id': fitting_type.id,
+            'sale_type': 'device',
+            'sale_order_id': self.sale_order_id.id,
+            'appointment_date': fields.Date.today(),
+            'appointment_start_time': appointment_start_time,
+            'audiologist_id': audiologist_id,
+            'technician_id': technician_id,
+            'source': self.source,
+            'status': 'draft',
+            'notes': f"Fitting appointment created from {self.appointment_id or self.name}",
+            'name': f"Fitting - {self.patient_id.name}",
+        })
+        
+        # Return to open the newly created fitting appointment
+        return {
+            "type": "ir.actions.act_window",
+            "name": "Fitting Appointment",
+            "res_model": "resonnocare.appointment",
+            "view_mode": "form",
+            "res_id": fitting_appointment.id,
+            "target": "current",
+        }
+
+
+
+    # Add these methods in your ResonnocareAppointment class
+
+    def action_create_hearing_test_appointment(self):
+        """Create a Hearing Test & Trial appointment"""
+        self.ensure_one()
+        return self._create_child_appointment('hearing_test')
+
+    def action_create_device_sale_appointment(self):
+        """Create a Device Sale appointment"""
+        self.ensure_one()
+        return self._create_child_appointment('device_sale')
+
+    def action_create_followup_appointment(self):
+        """Create a Follow-up appointment"""
+        self.ensure_one()
+        return self._create_child_appointment('followup')
+
+    def _create_child_appointment(self, appointment_type_key):
+        """Generic method to create child appointments with hierarchy"""
+        self.ensure_one()
+        
+        # Map appointment type key to actual appointment type
+        type_mapping = {
+            'hearing_test': ['Hearing Test', 'Test', 'Trial'],
+            'device_sale': ['Device Sale', 'Device', 'Sale'],
+            'fitting': ['Fitting'],
+            'followup': ['Follow-up', 'Followup', 'Follow'],
+        }
+        
+        # Find or create appointment type
+        search_domains = []
+        for keyword in type_mapping.get(appointment_type_key, []):
+            search_domains.append(('name', 'ilike', keyword))
+        
+        if search_domains:
+            domain = []
+            for i, _ in enumerate(search_domains):
+                if i > 0:
+                    domain.append('|')
+                domain.append(search_domains[i])
+            
+            app_type = self.env['resonnocare.appointment.type'].search(domain, limit=1)
+        else:
+            app_type = False
+        
+        if not app_type:
+            type_name = appointment_type_key.replace('_', ' ').title()
+            app_type = self.env['resonnocare.appointment.type'].create({
+                'name': type_name,
+                'code': f"APT-{appointment_type_key.upper()}",
+                'sequence': 10,
+                'active': True,
+                'duration': 30,
+                'sale_type': 'device' if appointment_type_key in ['device_sale', 'fitting'] else 'service',
+            })
+        
+        # Calculate start time
+        now = fields.Datetime.now()
+        minutes = (now.minute // 5) * 5
+        start_time = now.replace(minute=minutes, second=0, microsecond=0)
+        appointment_start_time = start_time.hour + (start_time.minute / 60.0)
+        
+        # Determine sale type
+        sale_type = 'device' if appointment_type_key in ['device_sale', 'fitting'] else 'service'
+        
+        # Create child appointment with hierarchy
+        child_appointment = self.env['resonnocare.appointment'].create({
+            'parent_appointment_id': self.id,
+            'patient_id': self.patient_id.id,
+            'clinic_id': self.clinic_id.id,
+            'appointment_type_id': app_type.id,
+            'appointment_date': fields.Date.today(),
+            'appointment_start_time': appointment_start_time,
+            'sale_type': sale_type,
+            'audiologist_id': self.audiologist_id.id if self.audiologist_id else False,
+            'technician_id': self.technician_id.id if self.technician_id else False,
+            'source': self.source,
+            'status': 'draft',
+            'sale_order_id': self.sale_order_id.id if self.sale_order_id else False,
+            'notes': f"Created from {self.appointment_id or self.name}",
+            'name': f"{appointment_type_key.replace('_', ' ').title()} - {self.patient_id.name}",
+        })
+        
+        return {
+            'type': 'ir.actions.act_window',
+            'name': f"{appointment_type_key.replace('_', ' ').title()} Appointment",
+            'res_model': 'resonnocare.appointment',
+            'view_mode': 'form',
+            'res_id': child_appointment.id,
+            'target': 'current',
+        }
     # ========================================
     # INVOICE RELATIONSHIP
     # ========================================
@@ -265,6 +648,43 @@ class ResonnocareAppointment(models.Model):
         string='Exchange Credit Note',
         help='Credit note created for exchange'
     )
+
+    # Add these fields to the appointment model if not already present
+    parent_appointment_id = fields.Many2one(
+        'resonnocare.appointment',
+        string='Original Appointment',
+        ondelete='set null',
+        help='Reference to the original appointment that created this fitting appointment'
+    )
+
+    fitting_appointment_ids = fields.One2many(
+        'resonnocare.appointment',
+        'parent_appointment_id',
+        string='Fitting Appointments',
+        help='List of fitting appointments created from this appointment'
+    )
+
+    fitting_device_line_ids = fields.One2many(
+        'resonnocare.appointment.device.line',
+        related='parent_appointment_id.device_sale_line_ids',
+        string='Fitting Devices',
+        readonly=True,
+    )
+
+    def action_view_fitting_appointments(self):
+        """Smart button to view fitting appointments"""
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Fitting Appointments',
+            'res_model': 'resonnocare.appointment',
+            'view_mode': 'list,form',
+            'domain': [('parent_appointment_id', '=', self.id)],
+            'target': 'current',
+            'context': {
+                'default_parent_appointment_id': self.id,
+            }
+        }
     
     @api.depends('original_appointment_id', 'original_appointment_id.invoice_ids')
     def _compute_original_invoice_names(self):
