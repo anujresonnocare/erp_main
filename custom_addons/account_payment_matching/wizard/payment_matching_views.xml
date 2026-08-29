@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<odoo>
+    <record id="payment_matching_wizard_form" model="ir.ui.view">
+        <field name="name">payment.matching.form</field>
+        <field name="model">payment.matching.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Payment Matching">
+                <sheet>
+                    <group>
+                        <field name="partner_id"/>
+                        <field name="payment_amount"/>
+                        <field name="total_selected"/>
+                        <field name="remaining_amount"/>
+                    </group>
+                    <group>
+                        <field name="invoice_ids" widget="many2many_tags"/>
+                    </group>
+                </sheet>
+                <footer>
+                    <button name="action_match" type="object" string="Match" class="btn-primary"/>
+                    <button string="Cancel" special="cancel" class="btn-secondary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_payment_matching" model="ir.actions.act_window">
+        <field name="name">Payment Matching</field>
+        <field name="res_model">payment.matching.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

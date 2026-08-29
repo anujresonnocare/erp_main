@@ -1,0 +1,337 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- EXTEND APPOINTMENT FORM VIEW -->
+    <record id="view_resonnocare_appointment_form_cancel" model="ir.ui.view">
+        <field name="name">resonnocare.appointment.form.cancel</field>
+        <field name="model">resonnocare.appointment</field>
+        <field name="inherit_id" ref="resonnocare_appointment.view_resonnocare_appointment_form"/>
+        <field name="arch" type="xml">
+            
+            <!-- Add cancellation and exchange buttons in button box -->
+            <xpath expr="//sheet" position="inside">
+            <div class="oe_button_box" name="button_box">
+                
+                
+                <!-- Create Cancel Appointment button (shows on original appointment with sale order) -->
+                <button name="action_create_cancel_appointment" 
+                        string="Cancel Order"
+                        type="object" 
+                        class="oe_stat_button"
+                        icon="fa-times-circle"
+                        invisible="exchange_order_id or not sale_order_id or status not in ['completed', 'in_consultation'] or has_cancellation_appointment"
+                        help="Create a cancellation appointment for this order"/>
+                
+                <!-- Process Cancellation button (shows on cancellation appointment) -->
+                <button name="action_process_cancellation" 
+                        string="Process Cancellation"
+                        type="object" 
+                        class="oe_stat_button"
+                        icon="fa-check-circle"
+                        invisible="not cancellation_amount or cancellation_processed"
+                        help="Process the cancellation, create return and credit note"/>
+                
+                <!-- View Cancellation Appointments (shows on original appointment) -->
+                <button name="action_view_cancellation_appointments" 
+                        string="Cancellations"
+                        type="object" 
+                        class="oe_stat_button"
+                        icon="fa-list"
+                        invisible="appointment_type_id.name == 'Order Cancel' or not has_cancellation_appointment"
+                        help="View cancellation appointments"/>
+                
+                <!-- View Sale Order -->
+                <button name="action_view_sale_order" 
+                        string="Sale Order"
+                        type="object" 
+                        class="oe_stat_button"
+                        icon="fa-shopping-cart"
+                        invisible="not sale_order_id or not cancellation_processed"/>
+                
+                <!-- View Return Order -->
+                <button name="action_view_return_order" 
+                        string="Return Order"
+                        type="object" 
+                        class="oe_stat_button"
+                        icon="fa-undo"
+                        invisible="not return_order_id or not cancellation_processed"/>
+                
+                <!-- View Credit Note -->
+                <button name="action_view_credit_note" 
+                        string="Credit Note"
+                        type="object" 
+                        class="oe_stat_button"
+                        icon="fa-file-invoice"
+                        invisible="not credit_note_id or not cancellation_processed"/>
+
+                <!-- View Exchange Order -->
+                <button name="action_view_exchange_order" 
+                        string="Exchange Order"
+                        type="object" 
+                        class="oe_stat_button"
+                        icon="fa-exchange"
+                        invisible="not exchange_order_id or not sale_order_id  or status not in ['completed', 'in_consultation'] or has_cancellation_appointment"/>
+
+                <!-- Create Exchange button -->
+                <button name="action_create_exchange_wizard" 
+                        string="Create Exchange"
+                        type="object" 
+                        class="oe_stat_button btn-primary"
+                        icon="fa-exchange"
+                        invisible="exchange_return_order_id or not sale_order_id  or status not in ['completed', 'in_consultation'] or has_cancellation_appointment"/>
+
+            </div>
+            </xpath>
+
+            <!-- Add cancellation fields after appointment_type_id -->
+            <xpath expr="//group[2]" position="after">
+                
+                <!-- ORIGINAL APPOINTMENT DETAILS (Visible only in Cancellation Appointment) -->
+                <group string="Original Appointment Details" invisible="appointment_type_id.name != 'Order Cancel'">
+                    <group>
+                        <field name="original_patient_id" readonly="1"/>
+                        <field name="original_patient_name" readonly="1"/>
+                        <field name="original_clinic_name" readonly="1"/>
+                        <field name="original_appointment_date" readonly="1"/>
+                    </group>
+                    <group>
+                        <field name="original_audiologist" readonly="1"/>
+                        <field name="original_technician" readonly="1"/>
+                        <field name="original_sale_order_name" readonly="1"/>
+                        <field name="original_sale_order_amount" readonly="1" widget="monetary"/>
+                    </group>
+                    <group>
+                        <field name="original_device_lines" readonly="1" nolabel="1" 
+                               placeholder="No devices in original appointment"/>
+                        <field name="original_diagnostic_tests" readonly="1" nolabel="1"
+                               placeholder="No diagnostic tests in original appointment"/>
+                    </group>
+                </group>
+
+                <!-- CANCELLATION DETAILS -->
+                <group string="Cancellation Details" invisible="appointment_type_id.name != 'Order Cancel'">
+                    <group>
+                        <field name="original_appointment_id" 
+                               domain="[('sale_order_id', '!=', False), ('status', 'in', ['completed', 'in_consultation'])]"
+                               required="appointment_type_id.name == 'Order Cancel'"
+                               help="Select the original appointment that is being cancelled"/>
+                        <field name="cancellation_status" widget="badge"/>
+                    </group>
+                    <group>
+                        <field name="cancellation_date"/>
+                        <field name="cancellation_amount" widget="monetary"/>
+                        <field name="cancellation_appointment_ids" readonly="1"/>
+                    </group>
+                    <group colspan="2">
+                        <field name="cancellation_reason" 
+                               placeholder="Enter reason for cancellation"/>
+                    </group>
+                </group>
+
+                <!-- INVOICE DETAILS -->
+                <group string="Invoice Details" invisible="not invoice_ids">
+                    <field name="invoice_ids" readonly="1" nolabel="1"/>
+                </group>
+
+                <!-- ORDER DETAILS -->
+                <group string="Order Details" invisible="not cancellation_processed">
+                    <field name="sale_order_id" readonly="1"/>
+                    <field name="return_order_id" readonly="1"/>
+                    <field name="credit_note_id" readonly="1"/>
+                </group>
+
+                <!-- EXCHANGE DETAILS -->
+                <group string="Exchange Details" >
+                    <group>
+                        <field name="exchange_order_id" readonly="1" widget="many2one"/>
+                        <field name="exchange_status" widget="badge"/>
+                        <field name="exchange_processed"/>
+                        <field name="exchange_amount_difference" widget="monetary"/>
+                    </group>
+                    <group>
+                        <field name="exchange_return_order_id" readonly="1" widget="many2one"/>
+                        <field name="exchange_credit_note_id" readonly="1" widget="many2one"/>
+                        <field name="exchange_product_ids" widget="many2many_tags" readonly="1"/>
+                        <field name="exchange_reason" readonly="1"/>
+
+
+                        <field name="original_appointment_id"/>
+                        <field name="cancellation_appointment_ids"/>
+                        <field name="return_order_id"/>
+                        <field name="credit_note_id"/>
+                        <field name="cancellation_status"/>
+                        <field name="cancellation_date"/>
+                        <field name="cancellation_reason"/>
+                        <field name="cancellation_amount"/>
+                        <field name="has_cancellation_appointment"/>
+                        <field name="original_patient_id"/>
+                        <field name="original_patient_name"/>
+                        <field name="original_appointment_date"/>
+                        <field name="original_clinic_name"/>
+                        <field name="original_audiologist"/>
+                        <field name="original_technician"/>
+                        <field name="original_device_lines"/>
+                        <field name="original_diagnostic_tests"/>
+                        <field name="original_sale_order_amount"/>
+                        <field name="original_sale_order_name"/>
+                        <field name="original_invoice_names"/>
+                        <field name="original_invoice_total"/>
+                        <field name="exchange_order_id"/>
+                        <field name="exchange_processed"/>
+                        <field name="exchange_status"/>
+                        <field name="exchange_amount_difference"/>
+                        <field name="exchange_reason"/>
+                        <field name="exchange_product_ids"/>
+                        <field name="exchange_return_order_id"/>
+                        <field name="exchange_credit_note_id"/>
+                    </group>
+                </group>
+
+            </xpath>
+
+            <!-- Hide original button boxes for cancellation appointments -->
+            <xpath expr="//button[@name='action_generate_device_sale']" position="attributes">
+                <attribute name="invisible">appointment_type_id.name == 'Order Cancel'</attribute>
+            </xpath>
+
+            <xpath expr="//button[@name='action_generate_bill']" position="attributes">
+                <attribute name="invisible">appointment_type_id.name == 'Order Cancel'</attribute>
+            </xpath>
+
+            <xpath expr="//button[@name='action_create_fitting_appointment']" position="attributes">
+                <attribute name="invisible">appointment_type_id.name == 'Order Cancel'</attribute>
+            </xpath>
+
+            <xpath expr="//button[@name='action_open_patient_reports']" position="attributes">
+                <attribute name="invisible">appointment_type_id.name == 'Order Cancel'</attribute>
+            </xpath>
+
+            <xpath expr="//button[@name='action_open_min_advance_request']" position="attributes">
+                <attribute name="invisible">appointment_type_id.name == 'Order Cancel'</attribute>
+            </xpath>
+
+        </field>
+    </record>
+
+    <!-- EXCHANGE WIZARD FORM VIEW -->
+    <record id="view_resonnocare_exchange_wizard_form" model="ir.ui.view">
+        <field name="name">resonnocare.exchange.wizard.form</field>
+        <field name="model">resonnocare.exchange.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Create Exchange">
+                <sheet>
+                    <div class="alert alert-info" role="alert" invisible="amount_difference == 0">
+                        <span invisible="amount_difference &gt; 0">
+                            <i class="fa fa-warning"/> Customer owes <b><field name="amount_difference" readonly="1" widget="monetary"/></b> for the exchange.
+                        </span>
+                        <span invisible="amount_difference &lt; 0">
+                            <i class="fa fa-check-circle"/> Customer will receive a refund of <b><field name="amount_difference" readonly="1" widget="monetary"/></b>.
+                        </span>
+                    </div>
+                    
+                    <group>
+                        <group>
+                            <field name="cancellation_appointment_id" readonly="1"/>
+                            <field name="original_appointment_id" readonly="1"/>
+                            <field name="patient_id" readonly="1"/>
+                            <field name="clinic_id" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="return_order_id" readonly="1"/>
+                            <field name="return_amount" readonly="1" widget="monetary"/>
+                            <field name="new_order_amount" readonly="1" widget="monetary"/>
+                            <field name="amount_difference" readonly="1" widget="monetary" 
+                                   decoration-danger="amount_difference &lt; 0"
+                                   decoration-success="amount_difference &gt; 0"/>
+                        </group>
+                    </group>
+                    
+                    <field name="reason" placeholder="Enter reason for exchange..." required="1"/>
+                    
+                    <group string="Exchange Products">
+                        <field name="exchange_line_ids">
+                            <list editable="bottom">
+                                <field name="product_id" options="{'no_create': True}" required="1"/>
+                                <field name="quantity" required="1"/>
+                                <field name="price_unit" required="1"/>
+                                <field name="subtotal" sum="Total" readonly="1"/>
+                            </list>
+                        </field>
+                    </group>
+                    
+                    <footer>
+                        <button name="action_confirm_exchange" 
+                                string="Confirm Exchange" 
+                                type="object" 
+                                class="btn-primary"/>
+                        <button string="Cancel" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- EXTEND APPOINTMENT LIST VIEW -->
+    <record id="view_resonnocare_appointment_list_cancel" model="ir.ui.view">
+        <field name="name">resonnocare.appointment.list.cancel</field>
+        <field name="model">resonnocare.appointment</field>
+        <field name="inherit_id" ref="resonnocare_appointment.view_resonnocare_appointment_list"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='status']" position="after">
+                <field name="cancellation_status" 
+                       widget="badge"
+                       invisible="appointment_type_id.name != 'Order Cancel'"/>
+                <field name="cancellation_amount"
+                       sum="Total"
+                       invisible="appointment_type_id.name != 'Order Cancel'"/>
+                <field name="exchange_status" 
+                       widget="badge"
+                       invisible="appointment_type_id.name != 'Order Cancel' or not exchange_processed"/>
+                <field name="original_appointment_id" invisible="1"/>
+                <!-- Show original appointment in list for cancellation appointments -->
+                <field name="original_appointment_id" 
+                       invisible="appointment_type_id.name == 'Order Cancel'"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- EXTEND APPOINTMENT SEARCH VIEW -->
+    <record id="view_resonnocare_appointment_search_cancel" model="ir.ui.view">
+        <field name="name">resonnocare.appointment.search.cancel</field>
+        <field name="model">resonnocare.appointment</field>
+        <field name="inherit_id" ref="resonnocare_appointment.view_resonnocare_appointment_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//search" position="inside">
+                <separator/>
+                <filter name="cancellation_completed" 
+                        string="Cancelled"
+                        domain="[('appointment_type_id.name', '=', 'Order Cancel'), ('cancellation_processed', '=', True)]"/>
+                <filter name="cancellation_pending" 
+                        string="Cancellation Pending"
+                        domain="[('appointment_type_id.name', '=', 'Order Cancel'), ('cancellation_processed', '=', False)]"/>
+                <filter name="order_cancel_type" 
+                        string="Order Cancel"
+                        domain="[('appointment_type_id.name', '=', 'Order Cancel')]"/>
+                <filter name="original_appointment" 
+                        string="Original Appointments"
+                        domain="[('appointment_type_id.name', '!=', 'Order Cancel')]"/>
+                <filter name="exchange_completed" 
+                        string="Exchange Completed"
+                        domain="[('exchange_status', '=', 'completed')]"/>
+                <filter name="exchange_failed" 
+                        string="Exchange Failed"
+                        domain="[('exchange_status', '=', 'failed')]"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- ACTION FOR EXCHANGE WIZARD -->
+    <record id="action_resonnocare_exchange_wizard" model="ir.actions.act_window">
+        <field name="name">Create Exchange</field>
+        <field name="res_model">resonnocare.exchange.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="view_id" ref="view_resonnocare_exchange_wizard_form"/>
+    </record>
+
+</odoo>

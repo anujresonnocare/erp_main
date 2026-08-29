@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<record id="action_payment_voucher_report" model="ir.actions.report">
+<field name="name">Payment Voucher</field>
+<field name="model">account.payment</field>
+<field name="report_type">qweb-pdf</field>
+<field name="report_name">account_payment_voucher.payment_voucher_report</field>
+<field name="report_file">account_payment_voucher.payment_voucher_report</field>
+<field name="binding_model_id" ref="account.model_account_payment"/>
+<field name="binding_type">report</field>
+</record>
+</odoo>

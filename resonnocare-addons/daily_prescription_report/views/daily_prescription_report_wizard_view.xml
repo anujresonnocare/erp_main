@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Wizard Form View -->
+    <record id="view_daily_prescription_report_wizard_form" model="ir.ui.view">
+        <field name="name">daily.prescription.report.wizard.form</field>
+        <field name="model">daily.prescription.report.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Daily Prescription Report">
+                <sheet>
+                    <div class="alert alert-info" role="alert" style="margin-bottom: 16px; background-color: #d9edf7; border-color: #bce8f1; color: #31708f; padding: 15px; border-radius: 4px;">
+                        <i class="fa fa-info-circle" style="margin-right: 8px;"/>
+                        <strong>Report Details:</strong><br/>
+                        This report generates a single Excel file with <strong>4 sheets</strong>:<br/>
+                        • <strong>YTD</strong> - Indian Financial Year (April 1 to date)<br/>
+                        • <strong>MTD</strong> - Month to Date<br/>
+                        • <strong>WTD</strong> - Week to Date (Monday to date)<br/>
+                        • <strong>YDAY</strong> - Yesterday<br/>
+                        <br/>
+                        <i class="fa fa-filter" style="margin-right: 4px;"/>
+                        <strong>Note:</strong> Only <strong>Device Sale</strong> appointments (sale_type = 'device') are included.
+                    </div>
+                    <group>
+                        <group string="Filters (Optional)">
+                            <field name="area_manager_id" options="{'no_create': True}"/>
+                            <field name="region"/>
+                            <field name="clinic_ids" widget="many2many_tags" options="{'no_create': True}"/>
+                        </group>
+                        <group string="Report Options">
+                            <field name="file_name" placeholder="Daily_Prescription_Report"/>
+                        </group>
+                    </group>
+                    <footer>
+                        <button name="print_report" string="Generate Report" type="object" class="btn-primary" icon="fa-file-excel-o"/>
+                        <button string="Cancel" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Wizard Action -->
+    <record id="action_daily_prescription_report_wizard" model="ir.actions.act_window">
+        <field name="name">Daily Prescription Report</field>
+        <field name="res_model">daily.prescription.report.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Daily Prescription Report
+            </p>
+            <p>
+                Generate a comprehensive prescription report for device sales with multiple date ranges.
+            </p>
+            <p>
+                <strong>Sheets included:</strong>
+                <ul>
+                    <li><strong>YTD</strong> - Indian Financial Year (April 1 to date)</li>
+                    <li><strong>MTD</strong> - Month to Date</li>
+                    <li><strong>WTD</strong> - Week to Date (Monday to date)</li>
+                    <li><strong>YDAY</strong> - Yesterday</li>
+                </ul>
+            </p>
+        </field>
+    </record>
+
+    <!-- Menu Item -->
+    <menuitem id="menu_daily_prescription_report_root" 
+              name="Prescription Reports" 
+              sequence="100"
+              groups="base.group_user"/>
+    
+    <menuitem id="menu_daily_prescription_report" 
+              name="Daily Prescription Report" 
+              parent="menu_daily_prescription_report_root" 
+              action="action_daily_prescription_report_wizard"
+              sequence="10"/>
+</odoo>

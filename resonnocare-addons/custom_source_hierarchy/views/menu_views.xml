@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <!-- Menu Items -->
+    <menuitem id="menu_custom_source_root"
+              name="Source Hierarchy"
+              sequence="10" />
+    
+    <menuitem id="menu_custom_source_main"
+              name="Sources"
+              parent="menu_custom_source_root"
+              sequence="10" />
+    
+    <!-- Action Window -->
+    <record id="action_custom_source" model="ir.actions.act_window">
+        <field name="name">Sources</field>
+        <field name="res_model">custom.source</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_custom_source_search" />
+        <field name="context">{'list_view_ref': 'view_custom_source_list'}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Add your first source!
+            </p>
+            <p>
+                Sources can be organized in a hierarchy with parent-child relationships.
+                Use the list view to see the full structure with proper indentation.
+            </p>
+        </field>
+    </record>
+    
+    <menuitem id="menu_custom_source_action"
+              name="All Sources"
+              parent="menu_custom_source_main"
+              action="action_custom_source"
+              sequence="10" />
+    
+    <!-- Root Sources Action -->
+    <record id="action_custom_source_root" model="ir.actions.act_window">
+        <field name="name">Root Sources</field>
+        <field name="res_model">custom.source</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('parent_id', '=', False)]</field>
+        <field name="search_view_id" ref="view_custom_source_search" />
+    </record>
+    
+    <menuitem id="menu_custom_source_root_action"
+              name="Root Sources"
+              parent="menu_custom_source_main"
+              action="action_custom_source_root"
+              sequence="20" />
+
+</odoo>

@@ -286,10 +286,13 @@ class ResonnocareAppointment(models.Model):
             if composed is not False:
                 rec.appointment_start_time = composed
 
-    @api.depends("parent_appointment_id")
+    @api.depends('parent_appointment_id')
     def _compute_appointment_role(self):
         for rec in self:
-            rec.appointment_role = "fitting" if rec.parent_appointment_id else "original"
+            if rec.parent_appointment_id:
+                rec.appointment_role = "fitting"
+            else:
+                rec.appointment_role = "original"
 
     @api.depends(
         "sale_order_id",
@@ -974,6 +977,7 @@ class ResonnocareAppointment(models.Model):
             raise UserError(
                 "Appointment Type 'Fitting' is not configured. Please create/activate it in Masters."
             )
+        
         sale = self._get_effective_sale_order()
         if sale:
             minimum_required = (sale.amount_total or 0.0) * 0.30
@@ -1000,11 +1004,35 @@ class ResonnocareAppointment(models.Model):
                         f"Approved Minimum Advance: {approved_request.requested_min_advance:.2f}\n"
                         f"Paid: {total_paid:.2f}"
                     )
+        
+        # Get the audiologist from the original appointment if available
+        audiologist_id = self.audiologist_id.id if self.audiologist_id else False
+        technician_id = self.technician_id.id if self.technician_id else False
+        
+        # Create the fitting appointment with proper link
+        fitting_appointment = self.env["resonnocare.appointment"].create({
+            'parent_appointment_id': self.id,  # Link to original appointment
+            'patient_id': self.patient_id.id,
+            'clinic_id': self.clinic_id.id,
+            'appointment_type_id': fitting_type.id,
+            'sale_type': 'device',
+            'sale_order_id': self.sale_order_id.id,
+            'appointment_date': fields.Date.today(),
+            'appointment_start_time': self.appointment_start_time,  # Copy start time
+            'audiologist_id': audiologist_id,  # Copy audiologist
+            'technician_id': technician_id,  # Copy technician
+            'source': self.source,
+            'status': 'draft',
+            'notes': f"Fitting appointment created from {self.appointment_id or self.name}",
+        })
+        
+        # Return to open the newly created fitting appointment
         return {
             "type": "ir.actions.act_window",
             "name": "Fitting Appointment",
             "res_model": "resonnocare.appointment",
             "view_mode": "form",
+            "res_id": fitting_appointment.id,
             "target": "current",
             "context": {
                 "default_parent_appointment_id": self.id,
@@ -1013,6 +1041,8 @@ class ResonnocareAppointment(models.Model):
                 "default_appointment_type_id": fitting_type.id,
                 "default_sale_type": "device",
                 "default_sale_order_id": self.sale_order_id.id,
+                "default_audiologist_id": audiologist_id,
+                "default_technician_id": technician_id,
             },
         }
 
@@ -1430,6 +1460,8 @@ class ResonnocareAppointment(models.Model):
             clinic_num = rec.clinic_id.clinic_code.split('-')[-1] if '-' in rec.clinic_id.clinic_code else rec.clinic_id.clinic_code
             patient_num = rec.patient_id.patient_id.split()[-1] if rec.patient_id.patient_id else ''
             rec.appointment_id = f"APT-{clinic_num}/{patient_num}/{count + 1}"
+            rec.status = "scheduled"
+        return rec    
 
     def _patient_has_prescribed_diagnostic(self):
         self.ensure_one()

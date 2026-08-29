@@ -1,0 +1,55 @@
+<odoo>
+
+    <record id="account_journal_0" model="account.journal">
+        <field name="company_id" ref="base.demo_company_ch" />
+        <field name="name">Bank2</field>
+        <field name="code">BNK2</field>
+        <field name="type">bank</field>
+        <field name="bank_statements_source">file_import</field>
+        <field name="currency_id" ref="base.CHF" />
+    </record>
+
+    <record id="bank_statement_line_0" model="account.bank.statement.line">
+        <field name="journal_id" ref="account_journal_0" />
+        <field name="payment_ref">RE/2025/00001</field>
+        <field name="amount">31750</field>
+        <field
+            name="date"
+            eval="(DateTime.now() + relativedelta(days=+1)).strftime('%Y-%m-%d')"
+        />
+        <field name="partner_id" ref="base.res_partner_12" />
+    </record>
+
+    <record id="bank_statement_line_1" model="account.bank.statement.line">
+        <field name="journal_id" ref="account_journal_0" />
+        <field name="payment_ref">RE/2025/00002</field>
+        <field name="amount">41750</field>
+        <field
+            name="date"
+            eval="(DateTime.now() + relativedelta(days=+2)).strftime('%Y-%m-%d')"
+        />
+        <field name="partner_id" ref="base.res_partner_2" />
+    </record>
+
+    <record id="bank_statement_line_2" model="account.bank.statement.line">
+        <field name="journal_id" ref="account_journal_0" />
+        <field name="payment_ref">RE/2025/00003</field>
+        <field name="amount">19250</field>
+        <field
+            name="date"
+            eval="(DateTime.now() + relativedelta(days=+1)).strftime('%Y-%m-%d')"
+        />
+        <field name="partner_id" ref="base.res_partner_2" />
+    </record>
+
+    <record id="bank_statement_line_3" model="account.bank.statement.line">
+        <field name="journal_id" ref="account_journal_0" />
+        <field name="payment_ref">RE/2025/00004</field>
+        <field name="amount">31750</field>
+        <field
+            name="date"
+            eval="(DateTime.now() + relativedelta(days=+2)).strftime('%Y-%m-%d')"
+        />
+        <field name="partner_id" ref="base.res_partner_2" />
+    </record>
+</odoo>

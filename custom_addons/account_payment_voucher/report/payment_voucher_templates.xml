@@ -1,0 +1,1195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+<template id="payment_voucher_report">
+
+
+<t t-call="web.html_container">
+    
+    <style>
+        .o_standard_footer,
+        .o_standard_header {
+            display: none !important;
+        }
+        
+        @page {
+            size: A4;
+            margin: 3mm;
+        }
+    </style>
+
+
+<t t-foreach="docs" t-as="o">
+
+<t t-call="web.basic_layout">
+
+
+<style>
+
+
+
+@font-face {
+    font-family: 'Cairo';
+    src: url('/account_payment_voucher/static/fonts/Cairo-Regular.ttf') format('truetype');
+    font-weight: normal;
+}
+
+@font-face {
+    font-family: 'Cairo';
+    src: url('/account_payment_voucher/static/fonts/Cairo-Bold.ttf') format('truetype');
+    font-weight: bold;
+}
+
+body,
+.page,
+table,
+div,
+span,
+p,
+td,
+th {
+    font-family: 'Cairo' !important;
+}
+
+
+
+@page{
+    size:A4;
+    margin:8mm;
+}
+
+body{
+    font-family:'DejaVu Sans','Arial',sans-serif;
+    font-size:14px;
+    color:#222;
+}
+
+.page{
+    width:100%;
+}
+
+.voucher{
+    width:100%;
+}
+
+.gold-border{
+    border:2px solid #b58a2a;
+    border-radius:8px;
+    
+}
+
+
+.box{
+    height:55px;
+    padding:6px 10px;
+}
+
+.field-box{
+    height:42px;
+    border:1px solid #d8d8d8;
+    border-radius:6px;
+    background:#fff;
+}
+
+.section-label{
+    text-align : center;
+    width:140px;
+    height : 42px;
+    background:#fff;
+    border:2px solid #b58a2a;
+    border-radius:8px;
+    font-weight:bold;
+    font-size:17px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.company-name{
+    font-size:28px;
+    font-weight:700;
+}
+
+.company-sub{
+    font-size:14px;
+    color:#444;
+}
+
+.title{
+    font-size:34px;
+    font-weight:700;
+    text-align:center;
+}
+
+.small-title{
+    font-size:16px;
+    font-weight:bold;
+    color:#555;
+}
+
+.value{
+    font-size:22px;
+    font-weight:bold;
+    color:#b00000;
+}
+
+.gold{
+    color:#b58a2a;
+}
+
+.line{
+    border-top:3px solid #222;
+    margin-top:12px;
+    margin-bottom:16px;
+}
+
+.text-right{
+    text-align:right;
+}
+
+.text-center{
+    text-align:center;
+}
+
+.mt5{margin-top:5px;}
+.mt10{margin-top:10px;}
+.mt15{margin-top:15px;}
+.mt20{margin-top:20px;}
+
+.mb5{margin-bottom:5px;}
+.mb10{margin-bottom:10px;}
+.mb15{margin-bottom:15px;}
+
+.rtl{
+    direction:rtl;
+}
+
+.logo{
+    max-height:75px;
+    max-width:120px;
+}
+
+.invoice-value{
+    margin-top:8px;
+    font-size:14px;
+    font-weight:bold;
+}
+
+.date-value{
+    margin-top:8px;
+    font-size:18px;
+}
+
+.checkbox{
+    width:18px;
+    height:18px;
+    border:2px solid #444;
+    display:inline-block;
+}
+
+.signature-line{
+    border-bottom:2px solid #b58a2a;
+    width:260px;
+    margin-top:55px;
+}
+
+</style>
+
+<div class="page" style="font-family: 'Cairo', sans-serif;">
+
+
+<div class="voucher">
+
+<!-- ================= HEADER ================= -->
+
+<div class="row align-items-center">
+
+    <!-- Invoice Number -->
+
+    <div class="col-2 gold-border" style="height: 80px;">
+
+        <div class=" box text-center">
+
+            <div class="small-title">
+                رقم الفاتورة
+            </div>
+
+            <div class="invoice-value">
+
+                <span t-field="o.name"/>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Date -->
+
+    <div class="col-2 gold-border" style="height: 80px;">
+
+        <div class=" box text-center">
+
+            <div class="small-title">
+                تاريخ الفاتورة
+            </div>
+
+            <div class="date-value">
+
+                <span t-field="o.date"/>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Title -->
+
+    <div class="col-3 text-center">
+
+        <div class="title">
+            <t t-if="o.payment_type == 'inbound'">
+
+            فاتورة صرف
+            
+            </t>
+            
+            <t t-else="">
+                فاتورة قبض
+            </t>
+
+        </div>
+
+    </div>
+
+    <!-- Company -->
+
+    <div class="col-4 text-right">
+
+        <div>
+
+            <h3>
+            شركة الأندلس للتجارة العامة والمقاولات 
+            </h3>
+
+        </div>
+
+        <div class="company-sub">
+
+            <span>AL-ANDALUS Co. | General Trading &amp; Contracts</span>
+
+        </div>
+
+    </div>
+
+    <!-- Logo -->
+
+    <div class="col-1 text-center">
+
+        <img t-if="o.company_id.logo" t-att-src="image_data_uri(o.company_id.logo)" class="logo"/>
+
+    </div>
+
+</div>
+
+<div class="line"/>
+
+<!-- ======== BODY STARTS HERE (Part 2 continues) ======== -->
+
+<!-- ================= ROW 1 ================= -->
+
+<div class="row mb10">
+
+    <div class="col-10">
+        <div class="field-box"/>
+    </div>
+
+    <div class="col-2" style="height : 42px;">
+        <div class="section-label">
+            السيد
+        </div>
+    </div>
+
+</div>
+
+<!-- ================= ROW 2 ================= -->
+
+<div class="row mb10">
+
+    <div class="col-10">
+
+        <div class="field-box">
+
+            <div style="padding:9px 12px;">
+
+                <span t-field="o.partner_id.name"/>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-2"  style="height : 42px;">
+
+        <div class="section-label">
+
+            المورد
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ================= ROW 3 ================= -->
+
+<div class="row mb10">
+
+    <div class="col-4">
+
+        <div class="field-box">
+
+            <div style="padding:9px 12px;">
+
+                <!-- <span t-field="o.memo"/> -->
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-2"  style="height : 42px;">
+
+        <div class="section-label">
+
+            رقم الدليل
+
+        </div>
+
+    </div>
+
+    <div class="col-4">
+
+        <div class="field-box">
+
+            <div style="padding:9px 12px;">
+
+                <span t-field="o.amount"/>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-2"  style="height : 42px;">
+
+        <div class="section-label">
+
+            مبلغ الفاتورة
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ================= DESCRIPTION ================= -->
+
+<div class="row mb10">
+
+    <div class="col-10">
+
+        <div class="field-box" style="height:42px;">
+
+            <div style="padding:12px;">
+
+                <span t-field="o.memo"/>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-2"  style="height : 42px;">
+
+        <div class="section-label">
+
+            البيان
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ================= PAYMENT TYPE ================= -->
+
+<div class="row mb10">
+
+    <div class="col-10">
+
+        <div class="field-box d-flex align-items-center justify-content-end px-4" style="height:42px;">
+
+            <!-- Cash -->
+
+            <div class="ms-5">
+
+                <span class="fw-bold">نقدي</span>
+
+                <span class="checkbox ms-2">
+
+                    <t t-if="o.payment_method_line_id">
+
+                        <t t-if="'cash' in (o.payment_method_line_id.name or '').lower()">
+
+                            ✓
+
+                        </t>
+
+                    </t>
+
+                </span>
+
+            </div>
+
+            <!-- Bank -->
+
+            <div class="ms-5">
+
+                <span class="fw-bold">كلي</span>
+
+                <span class="checkbox ms-2">
+
+                    <t t-if="o.payment_method_line_id">
+
+                        <t t-if="'bank' in (o.payment_method_line_id.name or '').lower()">
+
+                            ✓
+
+                        </t>
+
+                    </t>
+
+                </span>
+
+            </div>
+
+            <!-- Credit -->
+
+            <div style="margin-left : 20px;">
+
+                <span class="fw-bold">أجل</span>
+
+                <span class="checkbox ms-2"/>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-2"  style="height : 42px;">
+
+        <div class="section-label">
+
+            نوع الصرف
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ================= AMOUNT IN WORDS ================= -->
+
+<div class="row mb15">
+
+    <div class="col-9">
+
+        <div class="field-box" style="height:42px;">
+
+            <div style="padding : 5px">
+
+                <!-- Replace with your amount-in-words function -->
+
+                <span t-esc="o.currency_id.amount_to_text(o.amount)"/>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-3">
+
+        <div class="section-label" style="width : 200px !important;">
+
+            مبلغ الفاتورة كتابة
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ================= SIGNATURE AREA STARTS ================= -->
+
+<!-- ================= SIGNATURE SECTION ================= -->
+
+<div class="row mt10">
+
+    <!-- Prepared By -->
+
+    <div class="col-4 text-center">
+
+        <div style="height:30px;"/>
+
+        <div class="signature-line"/>
+
+        <div class="mt10 fw-bold">
+            توقيع أمين الصندوق
+        </div>
+
+    </div>
+
+    <!-- Approved By -->
+
+    <div class="col-4 text-center">
+
+        <!--<div style="height:70px;"/>-->
+
+        <!--<div class="signature-line"/>-->
+
+        <!--<div class="mt10 fw-bold">-->
+        <!--    اعتماد الإدارة-->
+        <!--</div>-->
+
+    </div>
+
+    <!-- Receiver -->
+
+    <div class="col-4 text-center">
+
+        <!--<div style="height:70px;"/>-->
+
+        <!--<div class="signature-line"/>-->
+
+        <!--<div class="mt10 fw-bold">-->
+        <!--    توقيع المستلم-->
+        <!--</div>-->
+
+    </div>
+
+</div>
+
+<!-- ================= STAMP ================= -->
+
+<!--<div class="row mt20">-->
+
+<!--    <div class="col-12 text-center">-->
+
+<!--        <div style="             width:170px;             height:170px;             border:2px dashed #b58a2a;             border-radius:50%;             margin:auto;             display:flex;             align-items:center;             justify-content:center;             color:#999;             font-size:18px;             font-weight:bold;">-->
+
+<!--            ختم الشركة-->
+
+<!--        </div>-->
+
+<!--    </div>-->
+
+<!--</div>-->
+
+<!-- ================= FOOTER ================= -->
+
+<!--<div class="row mt20">-->
+
+<!--    <div class="col-12">-->
+
+<!--        <table class="table table-bordered" style="font-size:13px;">-->
+
+<!--            <tr>-->
+
+<!--                <td width="20%" class="fw-bold text-center">-->
+<!--                    العملة-->
+<!--                </td>-->
+
+<!--                <td width="30%">-->
+<!--                    <span t-field="o.currency_id.name"/>-->
+<!--                </td>-->
+
+<!--                <td width="20%" class="fw-bold text-center">-->
+<!--                    الحالة-->
+<!--                </td>-->
+
+<!--                <td width="30%">-->
+<!--                    <span t-field="o.state"/>-->
+<!--                </td>-->
+
+<!--            </tr>-->
+
+<!--            <tr>-->
+
+<!--                <td class="fw-bold text-center">-->
+<!--                    طريقة الدفع-->
+<!--                </td>-->
+
+<!--                <td>-->
+<!--                    <span t-field="o.payment_method_line_id"/>-->
+<!--                </td>-->
+
+<!--                <td class="fw-bold text-center">-->
+<!--                    دفتر اليومية-->
+<!--                </td>-->
+
+<!--                <td>-->
+<!--                    <span t-field="o.journal_id"/>-->
+<!--                </td>-->
+
+<!--            </tr>-->
+
+<!--        </table>-->
+
+<!--    </div>-->
+
+<!--</div>-->
+
+<!-- ================= NOTES ================= -->
+
+<t>
+
+<!--<div class="row">-->
+
+<!--    <div class="col-12">-->
+
+<!--        <div class="gold-border" style="padding:12px;">-->
+
+<!--            <strong>ملاحظات :</strong>-->
+
+<!--            <br/>-->
+
+
+<!--        </div>-->
+
+<!--    </div>-->
+
+<!--</div>-->
+
+</t>
+
+</div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+<div class="page" style="font-family: 'Cairo', sans-serif; margin-top : 30px;">
+
+
+<div class="voucher">
+
+<!-- ================= HEADER ================= -->
+
+<div class="row align-items-center">
+
+    <!-- Invoice Number -->
+
+    <div class="col-2 gold-border" style="height: 80px;">
+
+        <div class=" box text-center">
+
+            <div class="small-title">
+                رقم الفاتورة
+            </div>
+
+            <div class="invoice-value">
+
+                <span t-field="o.name"/>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Date -->
+
+    <div class="col-2 gold-border" style="height: 80px;">
+
+        <div class=" box text-center">
+
+            <div class="small-title">
+                تاريخ الفاتورة
+            </div>
+
+            <div class="date-value">
+
+                <span t-field="o.date"/>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Title -->
+
+    <div class="col-3 text-center">
+
+        <div class="title">
+            <t t-if="o.payment_type == 'inbound'">
+
+            فاتورة صرف
+            
+            </t>
+            
+            <t t-else="">
+                فاتورة قبض
+            </t>
+
+        </div>
+
+    </div>
+
+    <!-- Company -->
+
+    <div class="col-4 text-right">
+
+        <div>
+
+            <h3>
+            شركة الأندلس للتجارة العامة والمقاولات 
+            </h3>
+
+        </div>
+
+        <div class="company-sub">
+
+            <span>AL-ANDALUS Co. | General Trading &amp; Contracts</span>
+
+        </div>
+
+    </div>
+
+    <!-- Logo -->
+
+    <div class="col-1 text-center">
+
+        <img t-if="o.company_id.logo" t-att-src="image_data_uri(o.company_id.logo)" class="logo"/>
+
+    </div>
+
+</div>
+
+<div class="line"/>
+
+<!-- ======== BODY STARTS HERE (Part 2 continues) ======== -->
+
+<!-- ================= ROW 1 ================= -->
+
+<div class="row mb10">
+
+    <div class="col-10">
+        <div class="field-box"/>
+    </div>
+
+    <div class="col-2" style="height : 42px;">
+        <div class="section-label">
+            السيد
+        </div>
+    </div>
+
+</div>
+
+<!-- ================= ROW 2 ================= -->
+
+<div class="row mb10">
+
+    <div class="col-10">
+
+        <div class="field-box">
+
+            <div style="padding:9px 12px;">
+
+                <span t-field="o.partner_id.name"/>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-2"  style="height : 42px;">
+
+        <div class="section-label">
+
+            المورد
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ================= ROW 3 ================= -->
+
+<div class="row mb10">
+
+    <div class="col-4">
+
+        <div class="field-box">
+
+            <div style="padding:9px 12px;">
+
+                <!-- <span t-field="o.memo"/> -->
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-2"  style="height : 42px;">
+
+        <div class="section-label">
+
+            رقم الدليل
+
+        </div>
+
+    </div>
+
+    <div class="col-4">
+
+        <div class="field-box">
+
+            <div style="padding:9px 12px;">
+
+                <span t-field="o.amount"/>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-2"  style="height : 42px;">
+
+        <div class="section-label">
+
+            مبلغ الفاتورة
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ================= DESCRIPTION ================= -->
+
+<div class="row mb10">
+
+    <div class="col-10">
+
+        <div class="field-box" style="height:42px;">
+
+            <div style="padding:12px;">
+
+                <span t-field="o.memo"/>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-2"  style="height : 42px;">
+
+        <div class="section-label">
+
+            البيان
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ================= PAYMENT TYPE ================= -->
+
+<div class="row mb10">
+
+    <div class="col-10">
+
+        <div class="field-box d-flex align-items-center justify-content-end px-4" style="height:42px;">
+
+            <!-- Cash -->
+
+            <div class="ms-5">
+
+                <span class="fw-bold">نقدي</span>
+
+                <span class="checkbox ms-2">
+
+                    <t t-if="o.payment_method_line_id">
+
+                        <t t-if="'cash' in (o.payment_method_line_id.name or '').lower()">
+
+                            ✓
+
+                        </t>
+
+                    </t>
+
+                </span>
+
+            </div>
+
+            <!-- Bank -->
+
+            <div class="ms-5">
+
+                <span class="fw-bold">كلي</span>
+
+                <span class="checkbox ms-2">
+
+                    <t t-if="o.payment_method_line_id">
+
+                        <t t-if="'bank' in (o.payment_method_line_id.name or '').lower()">
+
+                            ✓
+
+                        </t>
+
+                    </t>
+
+                </span>
+
+            </div>
+
+            <!-- Credit -->
+
+            <div style="margin-left : 20px;">
+
+                <span class="fw-bold">أجل</span>
+
+                <span class="checkbox ms-2"/>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-2"  style="height : 42px;">
+
+        <div class="section-label">
+
+            نوع الصرف
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ================= AMOUNT IN WORDS ================= -->
+
+<div class="row mb15">
+
+    <div class="col-9">
+
+        <div class="field-box" style="height:42px;">
+
+            <div style="padding : 5px">
+
+                <!-- Replace with your amount-in-words function -->
+
+                <span t-esc="o.currency_id.amount_to_text(o.amount)"/>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-3">
+
+        <div class="section-label" style="width : 200px !important;">
+
+            مبلغ الفاتورة كتابة
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ================= SIGNATURE AREA STARTS ================= -->
+
+<!-- ================= SIGNATURE SECTION ================= -->
+
+<div class="row mt10">
+
+    <!-- Prepared By -->
+
+    <div class="col-4 text-center">
+
+        <div style="height:30px;"/>
+
+        <div class="signature-line"/>
+
+        <div class="mt10 fw-bold">
+            توقيع أمين الصندوق
+        </div>
+
+    </div>
+
+    <!-- Approved By -->
+
+    <div class="col-4 text-center">
+
+        <!--<div style="height:70px;"/>-->
+
+        <!--<div class="signature-line"/>-->
+
+        <!--<div class="mt10 fw-bold">-->
+        <!--    اعتماد الإدارة-->
+        <!--</div>-->
+
+    </div>
+
+    <!-- Receiver -->
+
+    <div class="col-4 text-center">
+
+        <!--<div style="height:70px;"/>-->
+
+        <!--<div class="signature-line"/>-->
+
+        <!--<div class="mt10 fw-bold">-->
+        <!--    توقيع المستلم-->
+        <!--</div>-->
+
+    </div>
+
+</div>
+
+<!-- ================= STAMP ================= -->
+
+<!--<div class="row mt20">-->
+
+<!--    <div class="col-12 text-center">-->
+
+<!--        <div style="             width:170px;             height:170px;             border:2px dashed #b58a2a;             border-radius:50%;             margin:auto;             display:flex;             align-items:center;             justify-content:center;             color:#999;             font-size:18px;             font-weight:bold;">-->
+
+<!--            ختم الشركة-->
+
+<!--        </div>-->
+
+<!--    </div>-->
+
+<!--</div>-->
+
+<!-- ================= FOOTER ================= -->
+
+<!--<div class="row mt20">-->
+
+<!--    <div class="col-12">-->
+
+<!--        <table class="table table-bordered" style="font-size:13px;">-->
+
+<!--            <tr>-->
+
+<!--                <td width="20%" class="fw-bold text-center">-->
+<!--                    العملة-->
+<!--                </td>-->
+
+<!--                <td width="30%">-->
+<!--                    <span t-field="o.currency_id.name"/>-->
+<!--                </td>-->
+
+<!--                <td width="20%" class="fw-bold text-center">-->
+<!--                    الحالة-->
+<!--                </td>-->
+
+<!--                <td width="30%">-->
+<!--                    <span t-field="o.state"/>-->
+<!--                </td>-->
+
+<!--            </tr>-->
+
+<!--            <tr>-->
+
+<!--                <td class="fw-bold text-center">-->
+<!--                    طريقة الدفع-->
+<!--                </td>-->
+
+<!--                <td>-->
+<!--                    <span t-field="o.payment_method_line_id"/>-->
+<!--                </td>-->
+
+<!--                <td class="fw-bold text-center">-->
+<!--                    دفتر اليومية-->
+<!--                </td>-->
+
+<!--                <td>-->
+<!--                    <span t-field="o.journal_id"/>-->
+<!--                </td>-->
+
+<!--            </tr>-->
+
+<!--        </table>-->
+
+<!--    </div>-->
+
+<!--</div>-->
+
+<!-- ================= NOTES ================= -->
+
+<t>
+
+<!--<div class="row">-->
+
+<!--    <div class="col-12">-->
+
+<!--        <div class="gold-border" style="padding:12px;">-->
+
+<!--            <strong>ملاحظات :</strong>-->
+
+<!--            <br/>-->
+
+
+<!--        </div>-->
+
+<!--    </div>-->
+
+<!--</div>-->
+
+</t>
+
+</div>
+
+</div>
+
+</t>
+
+</t>
+
+</t>
+
+
+
+</template>
+
+</odoo>
