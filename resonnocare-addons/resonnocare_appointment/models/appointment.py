@@ -1401,7 +1401,7 @@ class ResonnocareAppointment(models.Model):
                 continue
             if rec.appointment_start_time in (False, None):
                 continue
-            if rec.appointment_date and rec._is_past_appointment_slot():
+            if rec.appointment_type_id.name != 'Fitting' and rec.appointment_date and rec._is_past_appointment_slot():
                 raise ValidationError(
                     _(
                         "Past date/time is not allowed for appointments."
