@@ -628,64 +628,298 @@ class ResonnocareAppointment(models.Model):
             product, location, strict=False
         )
 
+    # def _create_ho_supply_request_for_device_booking(self):
+    #     self.ensure_one()
+    #     if not self.device_sale_line_ids:
+    #         return False
+        
+    #     # ✅ CHECK: FULL PAYMENT OR MINIMUM ADVANCE APPROVED
+    #     sale = self._get_effective_sale_order()
+    #     if sale:
+    #         total_order = (sale.amount_total or 0.0)
+    #         total_paid = self._get_total_paid_for_sale(sale)
+            
+    #         # Supply order creates if:
+    #         # 1. FULL payment (100%) is done, OR
+    #         # 2. Minimum advance (30%) is APPROVED
+    #         is_full_paid = total_paid >= total_order
+            
+    #         if not is_full_paid:
+    #             # Check for approved minimum advance request
+    #             approved_request = self.env["resonnocare.advance.approval.request"].search(
+    #                 [
+    #                     ("sale_order_id", "=", sale.id),
+    #                     ("state", "=", "approved"),
+    #                 ],
+    #                 order="id desc",
+    #                 limit=1,
+    #             )
+                
+    #             # If no approved request, don't create supply order
+    #             if not approved_request:
+    #                 return False
+        
+    #     clinic = self.clinic_id
+    #     company = clinic.company_id or self.env.company
+    #     ho_warehouse = company.ho_warehouse_id
+    #     source_location = company.ho_hearing_aid_sale_location_id or (
+    #         ho_warehouse.lot_stock_id if ho_warehouse else False
+    #     )
+    #     destination_location = clinic.hearing_aid_sale_location_id or clinic.stock_location_id
+    #     picking_type = ho_warehouse.int_type_id if ho_warehouse else False
+
+    #     if not (ho_warehouse and source_location and destination_location and picking_type):
+    #         return False
+
+    #     # Requested qty:
+    #     # - Pre-booking: full booked quantity goes to HO request.
+    #     # - Normal flow: only clinic stock shortfall is requested.
+    #     request_qty_by_product = defaultdict(float)
+    #     available_cache = {}
+    #     consumed_qty = defaultdict(float)
+
+    #     for line in self.device_sale_line_ids:
+    #         product = line.product_id
+    #         if not product:
+    #             continue
+    #         ordered_qty = line.product_uom_qty or 0.0
+    #         if ordered_qty <= 0:
+    #             continue
+
+    #         if self.pre_booking:
+    #             req_qty = ordered_qty
+    #         else:
+    #             if product.id not in available_cache:
+    #                 available_cache[product.id] = self._get_available_qty_in_location(
+    #                     product, destination_location
+    #                 )
+    #             remaining = max(available_cache[product.id] - consumed_qty[product.id], 0.0)
+    #             req_qty = max(ordered_qty - remaining, 0.0)
+    #             consumed_qty[product.id] += ordered_qty
+
+    #         if req_qty > 0:
+    #             request_qty_by_product[product.id] += req_qty
+
+    #     if not request_qty_by_product:
+    #         return False
+
+    #     move_vals = []
+    #     for product_id, qty in request_qty_by_product.items():
+    #         product = self.env["product.product"].browse(product_id)
+    #         move_vals.append(
+    #             (
+    #                 0,
+    #                 0,
+    #                 {
+    #                     "name": product.display_name,
+    #                     "product_id": product.id,
+    #                     "product_uom_qty": qty,
+    #                     "product_uom": product.uom_id.id,
+    #                     "location_id": source_location.id,
+    #                     "location_dest_id": destination_location.id,
+    #                     "company_id": company.id,
+    #                 },
+    #             )
+    #         )
+
+    #     supply_picking = self.env["stock.picking"].create(
+    #         {
+    #             "picking_type_id": picking_type.id,
+    #             "location_id": source_location.id,
+    #             "location_dest_id": destination_location.id,
+    #             "origin": f"{self.appointment_id or self.display_name}",
+    #             "company_id": company.id,
+    #             "move_ids_without_package": move_vals,
+    #         }
+    #     )
+    #     supply_picking.action_confirm()
+    #     return supply_picking
+
     def _create_ho_supply_request_for_device_booking(self):
         self.ensure_one()
+        
+        # CHECK 1: Device lines exist
         if not self.device_sale_line_ids:
-            return False
+            raise UserError(
+                "❌ SCM Order cannot be created: No device sale lines found.\n"
+                "Please add at least one device to the appointment before generating SCM Order."
+            )
         
-        # ✅ CHECK: FULL PAYMENT OR MINIMUM ADVANCE APPROVED
+        # CHECK 2: Sale order exists
         sale = self._get_effective_sale_order()
-        if sale:
-            total_order = (sale.amount_total or 0.0)
-            total_paid = self._get_total_paid_for_sale(sale)
-            
-            # Supply order creates if:
-            # 1. FULL payment (100%) is done, OR
-            # 2. Minimum advance (30%) is APPROVED
-            is_full_paid = total_paid >= total_order
-            
-            if not is_full_paid:
-                # Check for approved minimum advance request
-                approved_request = self.env["resonnocare.advance.approval.request"].search(
-                    [
-                        ("sale_order_id", "=", sale.id),
-                        ("state", "=", "approved"),
-                    ],
-                    order="id desc",
-                    limit=1,
-                )
-                
-                # If no approved request, don't create supply order
-                if not approved_request:
-                    return False
+        if not sale:
+            raise UserError(
+                "❌ SCM Order cannot be created: No sale order linked to this appointment.\n"
+                "Please generate device sale first by clicking 'Create SCM Order' button."
+            )
         
+        # CHECK 3: Payment/Advance requirement
+        total_order = sale.amount_total or 0.0
+        total_paid = self._get_total_paid_for_sale(sale)
+        minimum_required = total_order * 0.30
+        
+        is_full_paid = total_paid >= total_order
+        
+        if not is_full_paid:
+            # Check for approved minimum advance request
+            approved_request = self.env["resonnocare.advance.approval.request"].search(
+                [
+                    ("sale_order_id", "=", sale.id),
+                    ("state", "=", "approved"),
+                ],
+                order="id desc",
+                limit=1,
+            )
+            
+            if not approved_request:
+                error_msg = (
+                    "❌ SCM Order cannot be created: Payment/Advance requirement not met.\n\n"
+                    f"📊 Sale Order: {sale.name}\n"
+                    f"💰 Total Amount: {total_order:.2f}\n"
+                    f"💳 Amount Paid: {total_paid:.2f}\n"
+                    f"📈 Paid Percentage: {(total_paid/total_order*100 if total_order else 0):.2f}%\n"
+                    f"⚠️ Minimum Required (30%): {minimum_required:.2f}\n\n"
+                    "📋 Required Actions (choose ONE):\n"
+                    "───────────────────────────────────────\n"
+                    "1️⃣ Collect FULL PAYMENT (100% of total amount)\n"
+                    "   → Click 'Collect Balance' button and create invoice\n"
+                    "   → Register payment for the full amount\n\n"
+                    "   OR\n\n"
+                    "2️⃣ Get MINIMUM ADVANCE APPROVAL (at least 30%)\n"
+                    "   → Click 'Min Advance Request' button\n"
+                    "   → Create a request with minimum {:.2f}\n"
+                    "   → Get it APPROVED by authorized person\n\n"
+                    "After completing either option, try creating SCM Order again."
+                ).format(minimum_required)
+                raise UserError(error_msg)
+            
+            # Check if paid amount meets the approved minimum
+            if total_paid < approved_request.requested_min_advance:
+                error_msg = (
+                    "❌ SCM Order cannot be created: Paid amount below approved minimum.\n\n"
+                    f"📊 Sale Order: {sale.name}\n"
+                    f"💰 Total Amount: {total_order:.2f}\n"
+                    f"💳 Amount Paid: {total_paid:.2f}\n"
+                    f"✅ Approved Minimum Advance: {approved_request.requested_min_advance:.2f}\n\n"
+                    f"📋 Required Action:\n"
+                    f"───────────────────────────────────────\n"
+                    f"Please collect additional payment of {approved_request.requested_min_advance - total_paid:.2f}\n"
+                    f"to reach the approved minimum advance amount.\n\n"
+                    f"Click 'Collect Balance' button to create invoice and register payment."
+                )
+                raise UserError(error_msg)
+        
+        # CHECK 4: Configuration
         clinic = self.clinic_id
+        if not clinic:
+            raise UserError(
+                "❌ SCM Order cannot be created: Clinic not configured.\n"
+                "Please select a clinic for this appointment."
+            )
+        
         company = clinic.company_id or self.env.company
+        if not company:
+            raise UserError(
+                "❌ SCM Order cannot be created: Company not configured.\n"
+                "Please ensure the clinic has a company associated."
+            )
+        
         ho_warehouse = company.ho_warehouse_id
-        source_location = company.ho_hearing_aid_sale_location_id or (
-            ho_warehouse.lot_stock_id if ho_warehouse else False
-        )
+        if not ho_warehouse:
+            error_msg = (
+                "❌ SCM Order cannot be created: HO Warehouse not configured.\n\n"
+                f"🏢 Company: {company.name}\n"
+                f"📦 HO Warehouse: Not Set\n\n"
+                "📋 Required Action:\n"
+                "───────────────────────────────────────\n"
+                "Go to Company settings and configure:\n"
+                "1. Settings → Companies → Select your company\n"
+                "2. Set 'HO Warehouse' field\n"
+                "3. Save and try again"
+            )
+            raise UserError(error_msg)
+        
+        source_location = company.ho_hearing_aid_sale_location_id or ho_warehouse.lot_stock_id
+        if not source_location:
+            error_msg = (
+                "❌ SCM Order cannot be created: Source location not configured.\n\n"
+                f"🏢 Company: {company.name}\n"
+                f"📦 HO Warehouse: {ho_warehouse.name}\n"
+                f"📍 Source Location: Not Set\n\n"
+                "📋 Required Action:\n"
+                "───────────────────────────────────────\n"
+                "Configure HO Hearing Aid Sale Location:\n"
+                "1. Go to Company settings\n"
+                "2. Set 'HO Hearing Aid Sale Location' field\n"
+                "   (Or ensure HO Warehouse has a default stock location)\n"
+                "3. Save and try again"
+            )
+            raise UserError(error_msg)
+        
         destination_location = clinic.hearing_aid_sale_location_id or clinic.stock_location_id
+        if not destination_location:
+            error_msg = (
+                "❌ SCM Order cannot be created: Destination location not configured.\n\n"
+                f"🏥 Clinic: {clinic.name}\n"
+                f"📍 Destination Location: Not Set\n\n"
+                "📋 Required Action:\n"
+                "───────────────────────────────────────\n"
+                "Configure Clinic Hearing Aid Sale Location:\n"
+                "1. Go to Clinic master\n"
+                "2. Set 'Hearing Aid Sale Location' field\n"
+                "   (Or ensure Clinic has a default stock location)\n"
+                "3. Save and try again"
+            )
+            raise UserError(error_msg)
+        
         picking_type = ho_warehouse.int_type_id if ho_warehouse else False
-
-        if not (ho_warehouse and source_location and destination_location and picking_type):
-            return False
-
-        # Requested qty:
-        # - Pre-booking: full booked quantity goes to HO request.
-        # - Normal flow: only clinic stock shortfall is requested.
-        request_qty_by_product = defaultdict(float)
-        available_cache = {}
-        consumed_qty = defaultdict(float)
-
+        if not picking_type:
+            error_msg = (
+                "❌ SCM Order cannot be created: Internal picking type not configured.\n\n"
+                f"🏢 Company: {company.name}\n"
+                f"📦 HO Warehouse: {ho_warehouse.name}\n"
+                f"📋 Picking Type: Not Set\n\n"
+                "📋 Required Action:\n"
+                "───────────────────────────────────────\n"
+                "Configure Internal Picking Type:\n"
+                "1. Go to Warehouse settings\n"
+                "2. Set 'Internal Transfers' picking type\n"
+                "3. Save and try again"
+            )
+            raise UserError(error_msg)
+        
+        # CHECK 5: Products have stock data
         for line in self.device_sale_line_ids:
             product = line.product_id
             if not product:
-                continue
+                error_msg = (
+                    "❌ SCM Order cannot be created: Device line missing product.\n\n"
+                    f"Line: {line.id}\n"
+                    "Please ensure all device lines have a product selected."
+                )
+                raise UserError(error_msg)
+            
+            if product.type not in ['product', 'consu']:
+                error_msg = (
+                    f"❌ SCM Order cannot be created: Product '{product.display_name}' is not storable.\n\n"
+                    f"Product Type: {product.type}\n"
+                    "Only storable products (Stockable or Consumable) can be used in SCM orders.\n\n"
+                    "Please use a different product or change the product type in product settings."
+                )
+                raise UserError(error_msg)
+        
+        # All checks passed - create supply request
+        # Requested qty calculation
+        request_qty_by_product = defaultdict(float)
+        available_cache = {}
+        consumed_qty = defaultdict(float)
+        
+        for line in self.device_sale_line_ids:
+            product = line.product_id
             ordered_qty = line.product_uom_qty or 0.0
             if ordered_qty <= 0:
                 continue
-
+            
             if self.pre_booking:
                 req_qty = ordered_qty
             else:
@@ -696,13 +930,18 @@ class ResonnocareAppointment(models.Model):
                 remaining = max(available_cache[product.id] - consumed_qty[product.id], 0.0)
                 req_qty = max(ordered_qty - remaining, 0.0)
                 consumed_qty[product.id] += ordered_qty
-
+            
             if req_qty > 0:
                 request_qty_by_product[product.id] += req_qty
-
+        
         if not request_qty_by_product:
-            return False
-
+            raise UserError(
+                "❌ SCM Order cannot be created: No products require supply.\n\n"
+                "All requested products are already available in stock.\n"
+                "No supply order needed for this appointment."
+            )
+        
+        # Create the supply picking
         move_vals = []
         for product_id, qty in request_qty_by_product.items():
             product = self.env["product.product"].browse(product_id)
@@ -721,7 +960,7 @@ class ResonnocareAppointment(models.Model):
                     },
                 )
             )
-
+        
         supply_picking = self.env["stock.picking"].create(
             {
                 "picking_type_id": picking_type.id,
