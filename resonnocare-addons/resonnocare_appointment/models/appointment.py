@@ -5,6 +5,10 @@ from datetime import datetime, time, timedelta
 from collections import defaultdict
 import pytz
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 def _build_time_slot_selection():
     slots = []
@@ -408,7 +412,18 @@ class ResonnocareAppointment(models.Model):
         invoices = self._get_related_customer_invoices(sale).filtered(
             lambda inv: inv.state == "posted"
         )
-        return sum(inv._get_contract_advance_paid() for inv in invoices)
+        logger.info(
+            "Calculating total paid for sale 77777777777777777777777%s: Found %d related posted invoices.",
+            sale.name,
+            len(invoices),
+        )
+        total_paid = sum(inv._get_contract_advance_paid() for inv in invoices)
+        logger.info(
+            "Total paid for sale 6666666666666666666666666%s: %f",
+            sale.name,
+            total_paid
+        )
+        return total_paid
 
     @api.depends("audiologist_id", "patient_id")
     def _compute_name(self):
@@ -755,12 +770,32 @@ class ResonnocareAppointment(models.Model):
         
         # CHECK 3: Payment/Advance requirement
         total_order = sale.amount_total or 0.0
+        
         total_paid = self._get_total_paid_for_sale(sale)
         minimum_required = total_order * 0.30
+
+        logger.info(
+            "Checking payment for sale888888888888888888888 %s: Total Order = %f, Total Paid = %f, Minimum Required = %f",
+            sale.name,
+            total_order,
+            total_paid,
+            minimum_required
+        )
         
         is_full_paid = total_paid >= total_order
-        
+        logger.info(
+            "Is full paid for sale999999999999999999999 %s: %s",
+            sale.name,
+            is_full_paid
+        )
+
         if not is_full_paid:
+            logger.info(
+                "Payment not full for sale000000000000000000000 %s: Total Paid = %f, Minimum Required = %f",
+                sale.name,
+                total_paid,
+                minimum_required
+            )
             # Check for approved minimum advance request
             approved_request = self.env["resonnocare.advance.approval.request"].search(
                 [
@@ -770,7 +805,12 @@ class ResonnocareAppointment(models.Model):
                 order="id desc",
                 limit=1,
             )
-            
+            logger.info(
+                "Found approved advance request for sale111111111111111111111 %s: %s",
+                sale.name,
+                bool(approved_request)
+            )
+
             if not approved_request:
                 error_msg = (
                     "❌ SCM Order cannot be created: Payment/Advance requirement not met.\n\n"
