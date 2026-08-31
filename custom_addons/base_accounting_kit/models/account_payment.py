@@ -108,28 +108,63 @@ class AccountPayment(models.Model):
                                  help='Effective date of PDC', copy=False,
                                  default=False)
 
+    # def open_payment_matching_screen(self):
+    #     """Open reconciliation view for customers/suppliers"""
+    #     move_line_id = False
+    #     for move_line in self.move_id.line_ids:
+    #         if move_line.account_id.reconcile:
+    #             move_line_id = move_line.id
+    #             break
+    #     if not self.partner_id:
+    #         raise UserError(_("Payments without a customer can't be matched"))
+    #     action_context = {'company_ids': [self.company_id.id], 'partner_ids': [
+    #         self.partner_id.commercial_partner_id.id]}
+    #     if self.partner_type == 'customer':
+    #         action_context.update({'mode': 'customers'})
+    #     elif self.partner_type == 'supplier':
+    #         action_context.update({'mode': 'suppliers'})
+    #     if move_line_id:
+    #         action_context.update({'move_line_id': move_line_id})
+    #     return {
+    #         'type': 'ir.actions.client',
+    #         'tag': 'manual_reconciliation_view',
+    #         'context': action_context,
+    #     }
+
     def open_payment_matching_screen(self):
-        """Open reconciliation view for customers/suppliers"""
-        move_line_id = False
-        for move_line in self.move_id.line_ids:
-            if move_line.account_id.reconcile:
-                move_line_id = move_line.id
-                break
+        self.ensure_one()
+
         if not self.partner_id:
-            raise UserError(_("Payments without a customer can't be matched"))
-        action_context = {'company_ids': [self.company_id.id], 'partner_ids': [
-            self.partner_id.commercial_partner_id.id]}
-        if self.partner_type == 'customer':
-            action_context.update({'mode': 'customers'})
-        elif self.partner_type == 'supplier':
-            action_context.update({'mode': 'suppliers'})
-        if move_line_id:
-            action_context.update({'move_line_id': move_line_id})
-        return {
-            'type': 'ir.actions.client',
-            'tag': 'manual_reconciliation_view',
-            'context': action_context,
+            raise UserError(_("Payments without a customer or vendor can't be matched."))
+
+        # 1. Fetch the un-reconciled line that belongs to a receivable/payable account
+        move_line = self.move_id.line_ids.filtered(
+            lambda l: l.account_id.reconcile and not l.reconciled
+        )[:1]
+
+        # 2. Build the standard modern window action pointing to the account.move.line model
+        action = {
+            'name': _('Payment Matching'),
+            'type': 'ir.actions.act_window',
+            'res_model': 'account.move.line',
+            'view_mode': 'list',
+            'target': 'current',
+            'domain': [
+                ('partner_id', '=', self.partner_id.commercial_partner_id.id),
+                ('account_id.reconcile', '=', True),
+                ('reconciled', '=', False),
+            ],
+            'context': {
+                'company_ids': [self.company_id.id],
+                'search_default_partner_id': self.partner_id.commercial_partner_id.id,
+            }
         }
+
+        # 3. Focus the view onto the exact payment move line if one exists
+        if move_line:
+            action['context']['search_default_id'] = move_line.id
+
+        return action
 
     def print_checks(self):
         """ Check that the recordset is valid, set the payments state to
