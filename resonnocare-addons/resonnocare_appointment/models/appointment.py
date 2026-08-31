@@ -796,59 +796,59 @@ class ResonnocareAppointment(models.Model):
                 total_paid,
                 minimum_required
             )
+            if total_paid < minimum_required:
             # Check for approved minimum advance request
-            approved_request = self.env["resonnocare.advance.approval.request"].search(
-                [
-                    ("sale_order_id", "=", sale.id),
-                    ("state", "=", "approved"),
-                ],
-                order="id desc",
-                limit=1,
-            )
-            logger.info(
-                "Found approved advance request for sale111111111111111111111 %s: %s",
-                sale.name,
-                bool(approved_request)
-            )
-
-            if not approved_request:
-                error_msg = (
-                    "❌ SCM Order cannot be created: Payment/Advance requirement not met.\n\n"
-                    f"📊 Sale Order: {sale.name}\n"
-                    f"💰 Total Amount: {total_order:.2f}\n"
-                    f"💳 Amount Paid: {total_paid:.2f}\n"
-                    f"📈 Paid Percentage: {(total_paid/total_order*100 if total_order else 0):.2f}%\n"
-                    f"⚠️ Minimum Required (30%): {minimum_required:.2f}\n\n"
-                    "📋 Required Actions (choose ONE):\n"
-                    "───────────────────────────────────────\n"
-                    "1️⃣ Collect FULL PAYMENT (100% of total amount)\n"
-                    "   → Click 'Collect Balance' button and create invoice\n"
-                    "   → Register payment for the full amount\n\n"
-                    "   OR\n\n"
-                    "2️⃣ Get MINIMUM ADVANCE APPROVAL (at least 30%)\n"
-                    "   → Click 'Min Advance Request' button\n"
-                    "   → Create a request with minimum {:.2f}\n"
-                    "   → Get it APPROVED by authorized person\n\n"
-                    "After completing either option, try creating SCM Order again."
-                ).format(minimum_required)
-                raise UserError(error_msg)
-            
-            # Check if paid amount meets the approved minimum
-            if total_paid < approved_request.requested_min_advance:
-                error_msg = (
-                    "❌ SCM Order cannot be created: Paid amount below approved minimum.\n\n"
-                    f"📊 Sale Order: {sale.name}\n"
-                    f"💰 Total Amount: {total_order:.2f}\n"
-                    f"💳 Amount Paid: {total_paid:.2f}\n"
-                    f"✅ Approved Minimum Advance: {approved_request.requested_min_advance:.2f}\n\n"
-                    f"📋 Required Action:\n"
-                    f"───────────────────────────────────────\n"
-                    f"Please collect additional payment of {approved_request.requested_min_advance - total_paid:.2f}\n"
-                    f"to reach the approved minimum advance amount.\n\n"
-                    f"Click 'Collect Balance' button to create invoice and register payment."
+                approved_request = self.env["resonnocare.advance.approval.request"].search(
+                    [
+                        ("sale_order_id", "=", sale.id),
+                        ("state", "=", "approved"),
+                    ],
+                    order="id desc",
+                    limit=1,
                 )
-                raise UserError(error_msg)
-        
+                logger.info(
+                    "Found approved advance request for sale111111111111111111111 %s: %s",
+                    sale.name,
+                    bool(approved_request)
+                )
+
+                if not approved_request:
+                    error_msg = (
+                        "❌ SCM Order cannot be created: Payment/Advance requirement not met.\n\n"
+                        f"📊 Sale Order: {sale.name}\n"
+                        f"💰 Total Amount: {total_order:.2f}\n"
+                        f"💳 Amount Paid: {total_paid:.2f}\n"
+                        f"📈 Paid Percentage: {(total_paid/total_order*100 if total_order else 0):.2f}%\n"
+                        f"⚠️ Minimum Required (30%): {minimum_required:.2f}\n\n"
+                        "📋 Required Actions (choose ONE):\n"
+                        "───────────────────────────────────────\n"
+                        "1️⃣ Collect FULL PAYMENT (100% of total amount)\n"
+                        "   → Click 'Collect Balance' button and create invoice\n"
+                        "   → Register payment for the full amount\n\n"
+                        "   OR\n\n"
+                        "2️⃣ Get MINIMUM ADVANCE APPROVAL (at least 30%)\n"
+                        "   → Click 'Min Advance Request' button\n"
+                        "   → Create a request with minimum {:.2f}\n"
+                        "   → Get it APPROVED by authorized person\n\n"
+                        "After completing either option, try creating SCM Order again."
+                    ).format(minimum_required)
+                    raise UserError(error_msg)
+                
+                # Check if paid amount meets the approved minimum
+                if total_paid < approved_request.requested_min_advance:
+                    error_msg = (
+                        "❌ SCM Order cannot be created: Paid amount below approved minimum.\n\n"
+                        f"💰 Total Amount: {total_order:.2f}\n"
+                        f"💳 Amount Paid: {total_paid:.2f}\n"
+                        f"✅ Approved Minimum Advance: {approved_request.requested_min_advance:.2f}\n\n"
+                        f"📋 Required Action:\n"
+                        f"───────────────────────────────────────\n"
+                        f"Please collect additional payment of {approved_request.requested_min_advance - total_paid:.2f}\n"
+                        f"to reach the approved minimum advance amount.\n\n"
+                        f"Click 'Collect Balance' button to create invoice and register payment."
+                    )
+                    raise UserError(error_msg)
+            
         # CHECK 4: Configuration
         clinic = self.clinic_id
         if not clinic:
