@@ -176,7 +176,7 @@
             </xpath>
 
 
-                   <xpath expr="//header" position="inside">
+                   <!-- <xpath expr="//header" position="inside">
                 <button name="action_create_hearing_test_appointment" 
                         string="Hearing Test" 
                         type="object" 
@@ -197,7 +197,7 @@
                         class="btn-primary"
                         invisible="not sale_order_id"
                         help="Create Follow-up appointment"/>
-            </xpath>
+            </xpath> -->
 
 
             <!-- Add cancellation fields after appointment_type_id -->
@@ -272,7 +272,7 @@
                 </group>
 
                 <!-- EXCHANGE DETAILS -->
-                <group string="Exchange Details" >
+                <group string="Exchange Details" invisible="1">
                     <group>
                         <field name="exchange_order_id" readonly="1" widget="many2one"/>
                         <field name="exchange_status" widget="badge"/>
