@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
 
-    <record id="view_hr_handbook_accept_wizard_form" model="ir.ui.view">
+    <!-- <record id="view_hr_handbook_accept_wizard_form" model="ir.ui.view">
         <field name="name">hr.handbook.accept.wizard.form</field>
         <field name="model">resonnocare.hr.handbook.accept.wizard</field>
         <field name="arch" type="xml">
@@ -47,6 +47,6 @@
         <field name="target">fullscreen</field>
         <field name="view_id" ref="view_hr_handbook_accept_wizard_form"/>
         <field name="context">{'create': False, 'form_view_initial_mode': 'edit', 'default_user_id': uid}</field>
-    </record>
+    </record> -->
 
 </odoo>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
-    <data noupdate="1">
+    <data>
 
         <!-- Super Admin can see all employees -->
         <record id="hr_employee_rule_super_admin" model="ir.rule">
@@ -86,12 +86,12 @@
         </record>
 
         <!-- Handbook Accept Wizard: user can only access their own transient record -->
-        <record id="resonnocare_hr_handbook_accept_wizard_rule_user" model="ir.rule">
+        <!-- <record id="resonnocare_hr_handbook_accept_wizard_rule_user" model="ir.rule">
             <field name="name">Handbook Accept Wizard: User Own</field>
             <field name="model_id" ref="model_resonnocare_hr_handbook_accept_wizard"/>
             <field name="groups" eval="[(4, ref('base.group_user'))]"/>
             <field name="domain_force">[('user_id', '=', user.id)]</field>
-        </record>
+        </record> -->
 
         <!-- Education: HR and super admin can see all -->
         <record id="resonnocare_hr_education_rule_hr" model="ir.rule">
