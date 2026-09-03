@@ -13,14 +13,19 @@ class CdtFittingReportWizard(models.TransientModel):
     date_from = fields.Date(string='Date From', required=True)
     date_to = fields.Date(string='Date To', required=True)
     report_type = fields.Selection([
-        ('ytd', 'Year to Date'), ('mtd', 'Month to Date'), 
-        ('wtd', 'Week to Date'), ('yday', 'Yesterday'), ('custom', 'Custom Range')
+        ('ytd', 'Year to Date'), 
+        ('mtd', 'Month to Date'), 
+        ('wtd', 'Week to Date'), 
+        ('yday', 'Yesterday'), 
+        ('custom', 'Custom Range')
     ], string='Report Type', default='ytd', required=True)
     area_manager_id = fields.Many2one('res.users', string='Area Manager')
     region = fields.Char(string='Region')
     clinic_ids = fields.Many2many('resonnocare.clinic', string='Clinics')
     report_format = fields.Selection([
-        ('excel', 'Excel'), ('pdf', 'PDF'), ('both', 'Both')
+        ('excel', 'Excel'), 
+        ('pdf', 'PDF'), 
+        ('both', 'Both')
     ], string='Report Format', default='excel', required=True)
     file_name = fields.Char(string='File Name', default='CDT_Fitting_Report')
 
@@ -47,108 +52,111 @@ class CdtFittingReportWizard(models.TransientModel):
 
     def generate_report(self):
         self.ensure_one()
+        
+        if not self.date_from or not self.date_to:
+            raise ValidationError(_('Please select valid date range.'))
+        
+        if self.date_from > self.date_to:
+            raise ValidationError(_('Date From cannot be greater than Date To.'))
+        
         if self.report_format in ['excel', 'both']:
             return self._generate_excel_report()
+        elif self.report_format == 'pdf':
+            return self._generate_pdf_report()
+        
         return False
 
-    def _get_report_data(self):
-        report_obj = self.env['cdt.fitting.report']
+    def _get_fitting_appointment_data(self):
+        """Fetch completed fitting appointments with their related data"""
+        fitting_type = self.env['resonnocare.appointment.type'].search([
+            ('name', 'ilike', 'fitting')
+        ], limit=1)
+
+        if not fitting_type:
+            raise ValidationError(_('Fitting appointment type not found. Please configure it in Masters.'))
+
+        # Build domain for appointments
         domain = [
-            ('date_from', '=', self.date_from),
-            ('date_to', '=', self.date_to),
-            ('report_type', '=', self.report_type)
+            ('appointment_type_id', '=', fitting_type.id),
+            ('status', '=', 'completed'),
+            ('appointment_date', '>=', self.date_from),
+            ('appointment_date', '<=', self.date_to)
         ]
+        
+        # Apply filters
         if self.area_manager_id:
-            domain.append(('area_manager_id', '=', self.area_manager_id.id))
+            domain.append(('clinic_id.area_manager_id', '=', self.area_manager_id.id))
         if self.region:
-            domain.append(('region', '=', self.region))
+            domain.append(('clinic_id.region', '=', self.region))
         if self.clinic_ids:
             domain.append(('clinic_id', 'in', self.clinic_ids.ids))
-        
-        records = report_obj.search(domain, order='is_total_row desc, fitting_date desc')
-        print(f"Retrieved222222222222222222 {len(records)} records for the report.")
-        # if not records:
-        report_obj.search([])._generate_report_data(self.date_from, self.date_to, self.report_type)
-        records = report_obj.search(domain, order='is_total_row desc, fitting_date desc')
-        return records
 
-    def _get_selection_dict(self, model, field_name):
-        """Get selection dictionary from a field"""
-        field = model._fields[field_name]
-        selection = field.selection
+        appointments = self.env['resonnocare.appointment'].search(domain)
         
-        if callable(selection):
-            # Odoo 18: selection is a lambda that takes model as argument
-            try:
-                result = selection(model)
-                if result:
-                    return dict(result)
-            except (TypeError, ValueError):
-                pass
-            
-            # Try with no arguments
-            try:
-                result = selection()
-                if result:
-                    return dict(result)
-            except (TypeError, ValueError):
-                pass
-            
-            # Try with field
-            try:
-                result = selection(field)
-                if result:
-                    return dict(result)
-            except (TypeError, ValueError):
-                pass
-            
-            return {}
-        
-        return dict(selection) if selection else {}
+        if not appointments:
+            raise ValidationError(_('No completed fitting appointments found for the selected criteria.'))
+
+        return appointments
 
     def _generate_excel_report(self):
-        records = self._get_report_data()
-        if not records:
-            raise ValidationError(_('No data found.'))
+        appointments = self._get_fitting_appointment_data()
         
         output = io.BytesIO()
         workbook = xlsxwriter.Workbook(output)
         
+        # Define formats
         header_format = workbook.add_format({
-            'bold': True, 'text_wrap': True, 'valign': 'top', 'align': 'center',
-            'fg_color': '#D9E1F2', 'border': 1, 'font_size': 11
+            'bold': True, 
+            'text_wrap': True, 
+            'valign': 'top', 
+            'align': 'center',
+            'fg_color': '#D9E1F2', 
+            'border': 1, 
+            'font_size': 11
         })
-        total_format = workbook.add_format({
-            'bold': True, 'text_wrap': True, 'valign': 'top', 'align': 'center',
-            'fg_color': '#E2EFDA', 'border': 1, 'font_size': 11
+        text_format = workbook.add_format({
+            'border': 1, 
+            'font_size': 10, 
+            'text_wrap': True
         })
-        region_total_format = workbook.add_format({
-            'bold': True, 'text_wrap': True, 'valign': 'top', 'align': 'center',
-            'fg_color': '#DAEEF3', 'border': 1, 'font_size': 11
+        title_format = workbook.add_format({
+            'bold': True, 
+            'font_size': 14, 
+            'align': 'center', 
+            'valign': 'vcenter'
         })
-        number_format = workbook.add_format({'num_format': '#,##0', 'border': 1, 'font_size': 10})
-        currency_format = workbook.add_format({'num_format': '#,##0.00', 'border': 1, 'font_size': 10})
-        text_format = workbook.add_format({'border': 1, 'font_size': 10, 'text_wrap': True})
-        title_format = workbook.add_format({'bold': True, 'font_size': 14, 'align': 'center', 'valign': 'vcenter'})
-        date_format = workbook.add_format({'border': 1, 'font_size': 10, 'num_format': 'dd-mmm-yyyy'})
-        percent_format = workbook.add_format({'num_format': '0.00%', 'border': 1, 'font_size': 10})
-        
-        # ========================================
-        # APPOINTMENT STATUS COLOR FORMATS
-        # ========================================
-        status_formats = {
-            'draft': workbook.add_format({'border': 1, 'font_size': 10, 'fg_color': '#FFE4E1'}),      # Light Coral
-            'scheduled': workbook.add_format({'border': 1, 'font_size': 10, 'fg_color': '#E0FFFF'}),   # Light Cyan
-            'checked_in': workbook.add_format({'border': 1, 'font_size': 10, 'fg_color': '#FFFACD'}),  # Light Goldenrod
-            'in_consultation': workbook.add_format({'border': 1, 'font_size': 10, 'fg_color': '#FFDAB9'}), # Peach Puff
-            'completed': workbook.add_format({'border': 1, 'font_size': 10, 'fg_color': '#98FB98'}),  # Light Green
-            'cancelled': workbook.add_format({'border': 1, 'font_size': 10, 'fg_color': '#FFC0C0'}),   # Light Pink
-            'no_show': workbook.add_format({'border': 1, 'font_size': 10, 'fg_color': '#D3D3D3'}),     # Light Gray
+        date_format = workbook.add_format({
+            'border': 1, 
+            'font_size': 10, 
+            'num_format': 'dd-mmm-yyyy'
+        })
+        number_format = workbook.add_format({
+            'num_format': '#,##0', 
+            'border': 1, 
+            'font_size': 10
+        })
+        currency_format = workbook.add_format({
+            'num_format': '#,##0.00', 
+            'border': 1, 
+            'font_size': 10
+        })
+        percent_format = workbook.add_format({
+            'num_format': '0.00%', 
+            'border': 1, 
+            'font_size': 10
+        })
+
+        # Status color formats
+        status_colors = {
+            'draft': '#FFE4E1',
+            'scheduled': '#E0FFFF',
+            'checked_in': '#FFFACD',
+            'in_consultation': '#FFDAB9',
+            'completed': '#98FB98',
+            'cancelled': '#FFC0C0',
+            'no_show': '#D3D3D3'
         }
         
-        # ========================================
-        # STATUS MAP FOR DISPLAY
-        # ========================================
         status_map = {
             'draft': 'Draft',
             'scheduled': 'Scheduled',
@@ -158,117 +166,186 @@ class CdtFittingReportWizard(models.TransientModel):
             'cancelled': 'Cancelled',
             'no_show': 'No Show'
         }
-        
+
+        # Patient type mapping
+        patient_type_map = {
+            'new': 'New',
+            'old': 'Old',
+            'existing': 'Existing',
+            'walkin': 'Walk-in'
+        }
+
         sheet_name = self.report_type.upper()
         worksheet = workbook.add_worksheet(sheet_name)
-        worksheet.merge_range('A1:U1', f'Fitting Report: {self.date_from.strftime("%d %b %Y")} To {self.date_to.strftime("%d %b %Y")}', title_format)
         
-        # ========================================
-        # HEADERS WITH STATUS AND SERIAL NUMBERS
-        # ========================================
+        # Title
+        title_text = f'Fitting Report: {self.date_from.strftime("%d %b %Y")} To {self.date_to.strftime("%d %b %Y")}'
+        worksheet.merge_range('A1:T1', title_text, title_format)
+        
+        # Headers - exactly as requested
         headers = [
-            ('Fitting Date', 14),
-            ('Audiologist Name', 20),
-            ('Patient Code', 14),
-            ('Name of Patient', 25),
-            ('Patient Type', 14),
-            ('Description Of Item', 35),
-            ('Quantity', 10),
-            ('MRP (Unit Price)', 16),
-            ('Gross MRP (Rs.)', 16),
-            ('Discount (%)', 12),
-            ('Discount Amount (Rs.)', 18),
-            ('Gross Sale (Rs.)', 22),
-            ('Clinic Name', 45),
-            ('Cost Centre', 45),
-            ('Weekly Target (Rs.)', 18),
-            ('Region', 14),
-            ('ABM', 18),
-            ('Type of Clinic', 14),
-            ('Status', 14),           # ← Appointment Status
-            ('Serial Numbers', 25)    # ← Serial Numbers
+            'Fitting Date',
+            'Audiologist Name',
+            'Patient Code',
+            'Name of Patient',
+            'Patient Type',
+            'Description Of Item',
+            'Quantity',
+            'MRP (Unit Price)',
+            'Gross MRP (Rs.)',
+            'Discount (%)',
+            'Discount Amount (Rs.)',
+            'Gross Sale (Rs.)',
+            'Clinic Name',
+            'Cost Centre',
+            'Weekly Target (Rs.)',
+            'Region',
+            'ABM',
+            'Type of Clinic',
+            'Status',
+            'Serial Numbers'
         ]
         
-        col = 0
-        for header, width in headers:
+        # Set column widths
+        col_widths = [14, 20, 14, 25, 14, 35, 10, 16, 16, 12, 18, 22, 45, 45, 18, 14, 18, 14, 14, 25]
+        
+        for col, (header, width) in enumerate(zip(headers, col_widths)):
             worksheet.write(1, col, header, header_format)
             worksheet.set_column(col, col, width)
-            col += 1
         
         row = 2
-        field_mapping = [
-            'fitting_date',
-            'audiologist_name',
-            'client_code',
-            'client_name',
-            'client_type',
-            'equipment_type',
-            'quantity',
-            'unit_price',
-            'gross',
-            'discount',
-            'discount_amount',
-            'total_amt_receivable',
-            'clinic_name',
-            'cost_centre',
-            'weekly_target',
-            'region',
-            'area_manager_name',
-            'clinic_type',
-            'status',           # ← Appointment Status
-            'serial_numbers'    # ← Serial Numbers
-        ]
         
-        # ========================================
-        # GET SELECTION MAPS FOR DISPLAY
-        # ========================================
-        ReportModel = self.env['cdt.fitting.report']
-        
-        # Get client_type and clinic_type selection maps
-        client_type_map = self._get_selection_dict(ReportModel, 'client_type')
-        clinic_type_map = self._get_selection_dict(ReportModel, 'clinic_type')
-        
-        for record in records:
-            row_format = region_total_format if record.is_region_total else total_format if record.is_area_manager_total else text_format
+        # Process each appointment
+        for appointment in appointments:
+            # Get sale order (check both direct and parent)
+            sale_order = appointment.sale_order_id or appointment.parent_appointment_id.sale_order_id
             
-            col = 0
-            for field_name in field_mapping:
-                value = getattr(record, field_name, '') or ''
+            if not sale_order:
+                continue
+
+            # Get serial numbers from completed deliveries
+            serial_numbers = []
+            for picking in sale_order.picking_ids.filtered(lambda p: p.state == 'done'):
+                for move_line in picking.move_line_ids:
+                    if move_line.lot_id:
+                        serial_numbers.append(move_line.lot_id.name)
+                    elif move_line.lot_name:
+                        serial_numbers.append(move_line.lot_name)
+            
+            serial_numbers_str = ', '.join(set(serial_numbers)) if serial_numbers else ''
+
+            # Process each sale order line
+            for line in sale_order.order_line:
+                if not line.product_id:
+                    continue
+
+                # Calculate values
+                list_price = line.product_id.lst_price or line.price_unit
+                unit_price = line.price_unit
+                quantity = line.product_uom_qty
                 
-                if field_name == 'fitting_date' and value:
-                    worksheet.write(row, col, value, date_format)
-                elif field_name in ['quantity']:
-                    worksheet.write(row, col, value or 0, number_format)
-                elif field_name in ['unit_price', 'gross', 'discount_amount', 'total_amt_receivable', 'weekly_target']:
-                    worksheet.write(row, col, value or 0, currency_format)
-                elif field_name == 'discount':
-                    worksheet.write(row, col, (value / 100) if value else 0, percent_format)
-                elif field_name == 'client_type':
-                    worksheet.write(row, col, client_type_map.get(value, value), row_format)
-                elif field_name == 'clinic_type':
-                    worksheet.write(row, col, clinic_type_map.get(value, value), row_format)
-                elif field_name == 'status':
-                    display_value = status_map.get(value, value)
-                    status_format = status_formats.get(value, text_format)
-                    worksheet.write(row, col, display_value, status_format)
-                elif field_name == 'serial_numbers':
-                    worksheet.write(row, col, value or '', row_format)
-                else:
-                    worksheet.write(row, col, value or '', row_format)
-                col += 1
-            row += 1
-        
+                gross_mrp = quantity * list_price
+                total_sale = quantity * unit_price
+                
+                discount_percent = 0.0
+                discount_amount = 0.0
+                
+                if list_price > 0 and unit_price < list_price:
+                    discount_percent = ((list_price - unit_price) / list_price) * 100
+                    discount_amount = gross_mrp - total_sale
+
+                # Determine patient type
+                patient_type = 'existing'
+                if appointment.patient_id:
+                    if appointment.patient_id.create_date and appointment.patient_id.create_date.date() == appointment.appointment_date:
+                        patient_type = 'new'
+                    elif appointment.patient_id.referral_source == 'walkin':
+                        patient_type = 'walkin'
+                    else:
+                        patient_type = 'existing'
+
+                # Get clinic type
+                clinic_type = appointment.clinic_id.clinic_type if appointment.clinic_id else 'clinic'
+                clinic_type_map = {
+                    'ho': 'HO',
+                    'franchise': 'Franchise',
+                    'clinic': 'Clinic'
+                }
+                clinic_type_display = clinic_type_map.get(clinic_type, 'Clinic')
+
+                # Write row data
+                row_data = [
+                    appointment.appointment_date,  # Fitting Date
+                    appointment.audiologist_id.name if appointment.audiologist_id else '',  # Audiologist Name
+                    appointment.patient_id.patient_id or appointment.patient_id.id or '',  # Patient Code
+                    appointment.patient_id.name if appointment.patient_id else '',  # Name of Patient
+                    patient_type_map.get(patient_type, patient_type),  # Patient Type
+                    line.product_id.name,  # Description Of Item
+                    quantity,  # Quantity
+                    unit_price,  # MRP (Unit Price)
+                    gross_mrp,  # Gross MRP (Rs.)
+                    discount_percent,  # Discount (%)
+                    discount_amount,  # Discount Amount (Rs.)
+                    total_sale,  # Gross Sale (Rs.)
+                    appointment.clinic_id.name if appointment.clinic_id else '',  # Clinic Name
+                    appointment.clinic_id.cost_center if appointment.clinic_id else '',  # Cost Centre
+                    appointment.clinic_id.weekly_target if appointment.clinic_id else 0.0,  # Weekly Target (Rs.)
+                    appointment.clinic_id.region if appointment.clinic_id else '',  # Region
+                    appointment.clinic_id.area_manager_id.name if appointment.clinic_id and appointment.clinic_id.area_manager_id else '',  # ABM
+                    clinic_type_display,  # Type of Clinic
+                    status_map.get(appointment.status, appointment.status),  # Status
+                    serial_numbers_str  # Serial Numbers
+                ]
+
+                # Write each cell with appropriate formatting
+                col = 0
+                for idx, value in enumerate(row_data):
+                    if idx == 0:  # Date
+                        worksheet.write(row, col, value, date_format)
+                    elif idx in [6]:  # Quantity
+                        worksheet.write(row, col, value or 0, number_format)
+                    elif idx in [7, 8, 10, 11, 14]:  # Monetary values
+                        worksheet.write(row, col, value or 0, currency_format)
+                    elif idx == 9:  # Discount percentage
+                        worksheet.write(row, col, (value / 100) if value else 0, percent_format)
+                    elif idx == 18:  # Status - with color
+                        status_color = status_colors.get(appointment.status, '')
+                        if status_color:
+                            status_format = workbook.add_format({
+                                'border': 1,
+                                'font_size': 10,
+                                'fg_color': status_color
+                            })
+                            worksheet.write(row, col, value, status_format)
+                        else:
+                            worksheet.write(row, col, value, text_format)
+                    else:
+                        worksheet.write(row, col, value or '', text_format)
+                    col += 1
+                
+                row += 1
+
         workbook.close()
+        
         file_data = output.getvalue()
         file_name = f"{self.file_name}_{self.report_type}_{self.date_from.strftime('%Y%m%d')}_{self.date_to.strftime('%Y%m%d')}.xlsx"
         file_data_base64 = base64.b64encode(file_data)
+        
         attachment = self.env['ir.attachment'].create({
-            'name': file_name, 'type': 'binary', 'datas': file_data_base64,
+            'name': file_name,
+            'type': 'binary',
+            'datas': file_data_base64,
             'mimetype': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            'res_model': 'cdt.fitting.report.wizard', 'res_id': self.id
+            'res_model': 'cdt.fitting.report.wizard',
+            'res_id': self.id
         })
+        
         return {
             'type': 'ir.actions.act_url',
             'url': f'/web/content/{attachment.id}?download=true',
             'target': 'new'
         }
+
+    def _generate_pdf_report(self):
+        """Placeholder for PDF report generation"""
+        raise ValidationError(_('PDF report generation is not yet implemented. Please use Excel format.'))
