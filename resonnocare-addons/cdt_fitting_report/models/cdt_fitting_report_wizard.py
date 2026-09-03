@@ -252,9 +252,9 @@ class CdtFittingReportWizard(models.TransientModel):
             title_text += f' - AM: {self.area_manager_id.name}'
         if self.region:
             title_text += f' - Region: {self.region}'
-        worksheet.merge_range('A1:W1', title_text, title_format)
+        worksheet.merge_range('A1:X1', title_text, title_format)
         
-        # Headers - updated with Clinic Sub Type
+        # Headers - Complete list with all columns
         headers = [
             'Fitting Date',
             'Audiologist Name',
@@ -278,11 +278,12 @@ class CdtFittingReportWizard(models.TransientModel):
             'ABM',
             'Type of Clinic',
             'Clinic Sub Type',
-            'Status'
+            'Status',
+            'Serial Numbers'
         ]
         
-        # Set column widths - updated with Clinic Sub Type
-        col_widths = [14, 20, 14, 25, 14, 35, 10, 16, 16, 12, 18, 22, 20, 14, 16, 45, 45, 18, 14, 18, 14, 14, 14]
+        # Set column widths - updated with all columns
+        col_widths = [14, 20, 14, 25, 14, 35, 10, 16, 16, 12, 18, 22, 20, 14, 16, 45, 45, 18, 14, 18, 14, 14, 14, 25]
         
         for col, (header, width) in enumerate(zip(headers, col_widths)):
             worksheet.write(1, col, header, header_format)
@@ -364,7 +365,7 @@ class CdtFittingReportWizard(models.TransientModel):
                 region = clinic.region if clinic else ''
                 area_manager = clinic.area_manager_id.name if clinic and clinic.area_manager_id else ''
 
-                # Write row data with new columns
+                # Write row data with all columns
                 row_data = [
                     appointment.appointment_date,  # Fitting Date
                     appointment.audiologist_id.name if appointment.audiologist_id else '',  # Audiologist Name
@@ -389,6 +390,7 @@ class CdtFittingReportWizard(models.TransientModel):
                     clinic_type_display,  # Type of Clinic
                     clinic_subtype_display,  # Clinic Sub Type
                     status_map.get(appointment.status, appointment.status),  # Status
+                    serial_numbers_str  # Serial Numbers
                 ]
 
                 # Write each cell with appropriate formatting
