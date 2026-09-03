@@ -354,3 +354,4 @@ class CdtFittingReportWizard(models.TransientModel):
     def _generate_pdf_report(self):
         """Placeholder for PDF report generation"""
         raise ValidationError(_('PDF report generation is not yet implemented. Please use Excel format.'))
+    
