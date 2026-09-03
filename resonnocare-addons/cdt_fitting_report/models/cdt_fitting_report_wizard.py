@@ -266,9 +266,20 @@ class CdtFittingReportWizard(models.TransientModel):
             
             serial_numbers_str = ', '.join(set(serial_numbers)) if serial_numbers else ''
 
-            # Process each sale order line
+            # Process each sale order line - ONLY HA products
             for line in sale_order.order_line:
                 if not line.product_id:
+                    continue
+                
+                # Check if product has item_type field and it's 'ha'
+                product_item_type = False
+                if hasattr(line.product_id, 'item_type'):
+                    product_item_type = line.product_id.item_type
+                elif hasattr(line.product_id.product_tmpl_id, 'item_type'):
+                    product_item_type = line.product_id.product_tmpl_id.item_type
+                
+                # Skip if item_type is not 'ha'
+                if product_item_type != 'ha':
                     continue
 
                 # Calculate values
@@ -279,7 +290,6 @@ class CdtFittingReportWizard(models.TransientModel):
                 gross_mrp = quantity * list_price
                 
                 # Use price_subtotal from the line (already includes discount)
-                # This is the Gross Sale amount after discount
                 total_sale = line.price_subtotal if hasattr(line, 'price_subtotal') else (quantity * unit_price)
                 
                 # Calculate discount using the helper method
@@ -320,7 +330,7 @@ class CdtFittingReportWizard(models.TransientModel):
                     gross_mrp,  # Gross MRP (Rs.)
                     discount_percent,  # Discount (%)
                     discount_amount,  # Discount Amount (Rs.)
-                    total_sale,  # Gross Sale (Rs.) - using price_subtotal
+                    total_sale,  # Gross Sale (Rs.)
                     clinic_name,  # Clinic Name
                     cost_centre,  # Cost Centre (same as Clinic Name)
                     weekly_target,  # Weekly Target (Rs.)
