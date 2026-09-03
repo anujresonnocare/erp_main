@@ -236,6 +236,12 @@ class CdtFittingReportWizard(models.TransientModel):
             'sis': 'SIS',
             'coco': 'COCO'
         }
+        
+        # Clinic subtype mapping
+        clinic_subtype_map = {
+            'b2b': 'B2B',
+            'b2c': 'B2C'
+        }
 
         sheet_name = self.report_type.upper()
         worksheet = workbook.add_worksheet(sheet_name)
@@ -246,9 +252,9 @@ class CdtFittingReportWizard(models.TransientModel):
             title_text += f' - AM: {self.area_manager_id.name}'
         if self.region:
             title_text += f' - Region: {self.region}'
-        worksheet.merge_range('A1:V1', title_text, title_format)
+        worksheet.merge_range('A1:W1', title_text, title_format)
         
-        # Headers - updated with new columns
+        # Headers - updated with Clinic Sub Type
         headers = [
             'Fitting Date',
             'Audiologist Name',
@@ -271,11 +277,12 @@ class CdtFittingReportWizard(models.TransientModel):
             'Region',
             'ABM',
             'Type of Clinic',
+            'Clinic Sub Type',
             'Status'
         ]
         
-        # Set column widths - updated with new columns
-        col_widths = [14, 20, 14, 25, 14, 35, 10, 16, 16, 12, 18, 22, 20, 14, 16, 45, 45, 18, 14, 18, 14, 14]
+        # Set column widths - updated with Clinic Sub Type
+        col_widths = [14, 20, 14, 25, 14, 35, 10, 16, 16, 12, 18, 22, 20, 14, 16, 45, 45, 18, 14, 18, 14, 14, 14]
         
         for col, (header, width) in enumerate(zip(headers, col_widths)):
             worksheet.write(1, col, header, header_format)
@@ -349,6 +356,7 @@ class CdtFittingReportWizard(models.TransientModel):
                 # Get clinic data from the clinic model
                 clinic = appointment.clinic_id
                 clinic_type_display = clinic_type_map.get(clinic.clinic_type, '') if clinic else ''
+                clinic_subtype_display = clinic_subtype_map.get(clinic.clinic_subtype, '') if clinic else ''
                 clinic_name = clinic.name if clinic else ''
                 # Cost Centre - using clinic name only
                 cost_centre = clinic_name
@@ -379,6 +387,7 @@ class CdtFittingReportWizard(models.TransientModel):
                     region,  # Region
                     area_manager,  # ABM
                     clinic_type_display,  # Type of Clinic
+                    clinic_subtype_display,  # Clinic Sub Type
                     status_map.get(appointment.status, appointment.status),  # Status
                 ]
 
@@ -397,7 +406,7 @@ class CdtFittingReportWizard(models.TransientModel):
                         worksheet.write(row, col, (value / 100) if value else 0, percent_format)
                     elif idx == 13:  # Invoice Date
                         worksheet.write(row, col, value, date_format)
-                    elif idx == 21:  # Status - with color
+                    elif idx == 22:  # Status - with color
                         status_color = status_colors.get(appointment.status, '')
                         if status_color:
                             status_format = workbook.add_format({
