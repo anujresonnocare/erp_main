@@ -98,6 +98,36 @@ class CdtFittingReportWizard(models.TransientModel):
 
         return appointments
 
+    def _calculate_discount(self, line):
+        """Calculate discount percentage and amount from sale order line"""
+        discount_percent = 0.0
+        discount_amount = 0.0
+        
+        list_price = line.product_id.lst_price or line.price_unit
+        unit_price = line.price_unit
+        quantity = line.product_uom_qty
+        gross_mrp = quantity * list_price
+        total_sale = quantity * unit_price
+        
+        # Check if line has discount_type field
+        if hasattr(line, 'discount_type'):
+            if line.discount_type == 'percent':
+                # Percentage discount
+                discount_percent = line.discount or 0.0
+                discount_amount = (gross_mrp * discount_percent) / 100
+            elif line.discount_type == 'fixed':
+                # Fixed amount discount per unit
+                discount_fixed = line.discount_fixed or 0.0
+                discount_amount = discount_fixed * quantity
+                discount_percent = (discount_amount / gross_mrp * 100) if gross_mrp > 0 else 0.0
+        else:
+            # Fallback: calculate from price difference
+            if list_price > 0 and unit_price < list_price:
+                discount_percent = ((list_price - unit_price) / list_price) * 100
+                discount_amount = gross_mrp - total_sale
+        
+        return discount_percent, discount_amount
+
     def _generate_excel_report(self):
         appointments = self._get_fitting_appointment_data()
         
@@ -250,12 +280,8 @@ class CdtFittingReportWizard(models.TransientModel):
                 gross_mrp = quantity * list_price
                 total_sale = quantity * unit_price
                 
-                discount_percent = 0.0
-                discount_amount = 0.0
-                
-                if list_price > 0 and unit_price < list_price:
-                    discount_percent = ((list_price - unit_price) / list_price) * 100
-                    discount_amount = gross_mrp - total_sale
+                # Calculate discount using the helper method
+                discount_percent, discount_amount = self._calculate_discount(line)
 
                 # Determine patient type
                 patient_type = 'Existing'
@@ -273,7 +299,8 @@ class CdtFittingReportWizard(models.TransientModel):
                 clinic = appointment.clinic_id
                 clinic_type_display = clinic_type_map.get(clinic.clinic_type, '') if clinic else ''
                 clinic_name = clinic.name if clinic else ''
-                cost_centre = clinic.name if clinic else ''
+                # Cost Centre - using clinic name only
+                cost_centre = clinic_name
                 weekly_target = clinic.weekly_target if hasattr(clinic, 'weekly_target') and clinic.weekly_target else 0.0
                 region = clinic.region if clinic else ''
                 area_manager = clinic.area_manager_id.name if clinic and clinic.area_manager_id else ''
@@ -293,7 +320,7 @@ class CdtFittingReportWizard(models.TransientModel):
                     discount_amount,  # Discount Amount (Rs.)
                     total_sale,  # Gross Sale (Rs.)
                     clinic_name,  # Clinic Name
-                    cost_centre,  # Cost Centre
+                    cost_centre,  # Cost Centre (same as Clinic Name)
                     weekly_target,  # Weekly Target (Rs.)
                     region,  # Region
                     area_manager,  # ABM
@@ -354,4 +381,3 @@ class CdtFittingReportWizard(models.TransientModel):
     def _generate_pdf_report(self):
         """Placeholder for PDF report generation"""
         raise ValidationError(_('PDF report generation is not yet implemented. Please use Excel format.'))
-    
