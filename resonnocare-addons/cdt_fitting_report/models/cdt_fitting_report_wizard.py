@@ -66,9 +66,10 @@ class CdtFittingReportWizard(models.TransientModel):
             domain.append(('clinic_id', 'in', self.clinic_ids.ids))
         
         records = report_obj.search(domain, order='is_total_row desc, fitting_date desc')
-        if not records:
-            report_obj.search([])._generate_report_data(self.date_from, self.date_to, self.report_type)
-            records = report_obj.search(domain, order='is_total_row desc, fitting_date desc')
+        print(f"Retrieved222222222222222222 {len(records)} records for the report.")
+        # if not records:
+        report_obj.search([])._generate_report_data(self.date_from, self.date_to, self.report_type)
+        records = report_obj.search(domain, order='is_total_row desc, fitting_date desc')
         return records
 
     def _get_selection_dict(self, model, field_name):
@@ -168,18 +169,18 @@ class CdtFittingReportWizard(models.TransientModel):
         headers = [
             ('Fitting Date', 14),
             ('Audiologist Name', 20),
-            ('Client Code', 14),
-            ('Name of Client', 25),
-            ('Client Type', 14),
-            ('Type of Hearing Equipment & Accessories', 35),
+            ('Patient Code', 14),
+            ('Name of Patient', 25),
+            ('Patient Type', 14),
+            ('Description Of Item', 35),
             ('Quantity', 10),
             ('MRP (Unit Price)', 16),
-            ('Gross (Rs.)', 16),
+            ('Gross MRP (Rs.)', 16),
             ('Discount (%)', 12),
             ('Discount Amount (Rs.)', 18),
-            ('Total Amt. Receivable (Rs.)', 22),
-            ('Clinic Name', 20),
-            ('Cost Centre', 14),
+            ('Gross Sale (Rs.)', 22),
+            ('Clinic Name', 45),
+            ('Cost Centre', 45),
             ('Weekly Target (Rs.)', 18),
             ('Region', 14),
             ('ABM', 18),

@@ -151,6 +151,9 @@ class CdtFittingReport(models.Model):
         return self._generate_report_data(date_from, date_to, report_type)
     
     def _generate_report_data(self, date_from, date_to, report_type):
+        _logger.info("=== _generate_report_data called ===")
+        _logger.info("Date From: %s, Date To: %s, Report Type: %s", date_from, date_to, report_type)
+        
         # Archive existing records instead of deleting
         existing = self.search([
             ('date_from', '=', date_from),
@@ -202,6 +205,7 @@ class CdtFittingReport(models.Model):
             
             # Get all serial numbers for this sale order
             serial_numbers = self._get_serial_numbers_from_sale_order(sale_order)
+            _logger.info("Sale Order %s - Found %s serial numbers: %s", sale_order.id, len(serial_numbers), serial_numbers)
             
             if serial_numbers:
                 # Create one record per serial number
@@ -283,6 +287,7 @@ class CdtFittingReport(models.Model):
         
         if report_records:
             self.create(report_records)
+            _logger.info("Created %s report records", len(report_records))
         return {'type': 'ir.actions.client', 'tag': 'reload'}
     
     def _compute_fitting_metrics(self, appointment, sale_order, serial_no=None, sale_lines=None):
@@ -300,7 +305,7 @@ class CdtFittingReport(models.Model):
         vals['audiologist_id'] = appointment.audiologist_id.id if appointment.audiologist_id else False
         vals['audiologist_name'] = appointment.audiologist_id.name if appointment.audiologist_id else ''
         vals['client_id'] = appointment.patient_id.id
-        vals['client_code'] = appointment.patient_id.ref
+        vals['client_code'] = appointment.patient_id.patient_id if appointment.patient_id else ''
         vals['client_name'] = appointment.patient_id.name
         vals['client_type'] = self._get_client_type(appointment)
         vals['sale_order_id'] = sale_order.id
@@ -363,19 +368,21 @@ class CdtFittingReport(models.Model):
         return vals
 
     def _get_serial_numbers_from_sale_order(self, sale_order):
-        """Get all serial numbers from stock moves linked to a sale order using move_ids"""
+        """Get all serial numbers from stock moves linked to a sale order"""
         serial_numbers = []
         
         if not sale_order:
             return serial_numbers
         
-        # Get all stock moves directly from sale order's move_ids
-        for move in sale_order.move_ids:
-            # Check if the move is done or assigned (has serial numbers)
-            if move.state in ['done', 'assigned']:
-                for move_line in move.move_line_ids:
-                    if move_line.lot_id and move_line.lot_id.name and move_line.qty_done > 0:
-                        serial_numbers.append(move_line.lot_id.name)
+        # Get all sale order lines
+        for sale_line in sale_order.order_line:
+            # Get stock moves from each sale order line's move_ids
+            for move in sale_line.move_ids:
+                # Check if the move is done or assigned (has serial numbers)
+                if move.state in ['done', 'assigned']:
+                    for move_line in move.move_line_ids:
+                        if move_line.lot_id and move_line.lot_id.name:
+                            serial_numbers.append(move_line.lot_id.name)
         
         # Remove duplicates while preserving order
         serial_numbers = list(dict.fromkeys(serial_numbers))
