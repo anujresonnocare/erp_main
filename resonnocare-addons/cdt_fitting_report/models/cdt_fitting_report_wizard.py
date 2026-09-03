@@ -164,6 +164,21 @@ class CdtFittingReportWizard(models.TransientModel):
         
         return invoice_names_str, invoice_dates_str
 
+    def _get_final_invoice(self, sale_order):
+        """Get final invoice name from resonnocare.final.invoice model"""
+        final_invoice_name = ''
+        
+        if sale_order:
+            # Search for final invoice linked to this sale order
+            final_invoice = self.env['resonnocare.final.invoice'].search([
+                ('sale_order_id', '=', sale_order.id)
+            ], limit=1)
+            
+            if final_invoice:
+                final_invoice_name = final_invoice.name or ''
+        
+        return final_invoice_name
+
     def _generate_excel_report(self):
         appointments = self._get_fitting_appointment_data()
         
@@ -265,9 +280,9 @@ class CdtFittingReportWizard(models.TransientModel):
             title_text += f' - AM: {self.area_manager_id.name}'
         if self.region:
             title_text += f' - Region: {self.region}'
-        worksheet.merge_range('A1:X1', title_text, title_format)
+        worksheet.merge_range('A1:Y1', title_text, title_format)
         
-        # Headers - Complete list with all columns
+        # Headers - Complete list with all columns including Final Invoice
         headers = [
             'Fitting Date',
             'Audiologist Name',
@@ -283,6 +298,7 @@ class CdtFittingReportWizard(models.TransientModel):
             'Net Sale (Rs.)',
             'Invoice Name',
             'Invoice Date',
+            'Final Invoice',
             'Cancelled Order',
             'Clinic Name',
             'Cost Centre',
@@ -295,8 +311,8 @@ class CdtFittingReportWizard(models.TransientModel):
             'Serial Numbers'
         ]
         
-        # Set column widths - updated with all columns
-        col_widths = [14, 20, 14, 25, 14, 35, 10, 16, 16, 12, 18, 22, 30, 20, 16, 45, 45, 18, 14, 18, 14, 14, 14, 25]
+        # Set column widths - updated with Final Invoice column
+        col_widths = [14, 20, 14, 25, 14, 35, 10, 16, 16, 12, 18, 22, 30, 20, 20, 16, 45, 45, 18, 14, 18, 14, 14, 14, 25]
         
         for col, (header, width) in enumerate(zip(headers, col_widths)):
             worksheet.write(1, col, header, header_format)
@@ -314,6 +330,9 @@ class CdtFittingReportWizard(models.TransientModel):
 
             # Get all invoice details
             invoice_names_str, invoice_dates_str = self._get_invoice_details(sale_order)
+            
+            # Get final invoice
+            final_invoice = self._get_final_invoice(sale_order)
 
             # Get serial numbers from completed deliveries
             serial_numbers = []
@@ -394,6 +413,7 @@ class CdtFittingReportWizard(models.TransientModel):
                     total_sale,  # Gross Sale (Rs.)
                     invoice_names_str,  # Invoice Name (all invoices)
                     invoice_dates_str,  # Invoice Date (all dates)
+                    final_invoice,  # Final Invoice
                     '',  # Cancelled Order - always blank
                     clinic_name,  # Clinic Name
                     cost_centre,  # Cost Centre (same as Clinic Name)
@@ -411,17 +431,17 @@ class CdtFittingReportWizard(models.TransientModel):
                 for idx, value in enumerate(row_data):
                     if idx == 0:  # Date
                         worksheet.write(row, col, value, date_format)
-                    elif idx == 14:  # Cancelled Order - always blank and in red
+                    elif idx == 15:  # Cancelled Order - always blank and in red
                         worksheet.write(row, col, '', red_format)
                     elif idx in [6]:  # Quantity
                         worksheet.write(row, col, value or 0, number_format)
-                    elif idx in [7, 8, 10, 11, 17]:  # Monetary values
+                    elif idx in [7, 8, 10, 11, 18]:  # Monetary values
                         worksheet.write(row, col, value or 0, currency_format)
                     elif idx == 9:  # Discount percentage
                         worksheet.write(row, col, (value / 100) if value else 0, percent_format)
                     elif idx == 13:  # Invoice Date
                         worksheet.write(row, col, value, text_format)  # Text format for comma-separated dates
-                    elif idx == 22:  # Status - with color
+                    elif idx == 23:  # Status - with color
                         status_color = status_colors.get(appointment.status, '')
                         if status_color:
                             status_format = workbook.add_format({
