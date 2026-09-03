@@ -75,7 +75,7 @@ class CdtFittingReportWizard(models.TransientModel):
         if not fitting_type:
             raise ValidationError(_('Fitting appointment type not found. Please configure it in Masters.'))
 
-        # Build domain for appointments
+        # Build domain for appointments - only completed
         domain = [
             ('appointment_type_id', '=', fitting_type.id),
             ('status', '=', 'completed'),
@@ -167,12 +167,11 @@ class CdtFittingReportWizard(models.TransientModel):
             'no_show': 'No Show'
         }
 
-        # Patient type mapping
-        patient_type_map = {
-            'new': 'New',
-            'old': 'Old',
-            'existing': 'Existing',
-            'walkin': 'Walk-in'
+        # Clinic type mapping
+        clinic_type_map = {
+            'h': 'H',
+            'sis': 'SIS',
+            'coco': 'COCO'
         }
 
         sheet_name = self.report_type.upper()
@@ -180,6 +179,10 @@ class CdtFittingReportWizard(models.TransientModel):
         
         # Title
         title_text = f'Fitting Report: {self.date_from.strftime("%d %b %Y")} To {self.date_to.strftime("%d %b %Y")}'
+        if self.area_manager_id:
+            title_text += f' - AM: {self.area_manager_id.name}'
+        if self.region:
+            title_text += f' - Region: {self.region}'
         worksheet.merge_range('A1:T1', title_text, title_format)
         
         # Headers - exactly as requested
@@ -255,23 +258,25 @@ class CdtFittingReportWizard(models.TransientModel):
                     discount_amount = gross_mrp - total_sale
 
                 # Determine patient type
-                patient_type = 'existing'
+                patient_type = 'Existing'
                 if appointment.patient_id:
                     if appointment.patient_id.create_date and appointment.patient_id.create_date.date() == appointment.appointment_date:
-                        patient_type = 'new'
+                        patient_type = 'New'
                     elif appointment.patient_id.referral_source == 'walkin':
-                        patient_type = 'walkin'
+                        patient_type = 'Walk-in'
+                    elif appointment.patient_id.referral_source == 'crm':
+                        patient_type = 'CRM'
                     else:
-                        patient_type = 'existing'
+                        patient_type = 'Existing'
 
-                # Get clinic type
-                clinic_type = appointment.clinic_id.clinic_type if appointment.clinic_id else 'clinic'
-                clinic_type_map = {
-                    'ho': 'HO',
-                    'franchise': 'Franchise',
-                    'clinic': 'Clinic'
-                }
-                clinic_type_display = clinic_type_map.get(clinic_type, 'Clinic')
+                # Get clinic data from the clinic model
+                clinic = appointment.clinic_id
+                clinic_type_display = clinic_type_map.get(clinic.clinic_type, '') if clinic else ''
+                clinic_name = clinic.name if clinic else ''
+                cost_centre = clinic.name if clinic else ''
+                weekly_target = clinic.weekly_target if hasattr(clinic, 'weekly_target') and clinic.weekly_target else 0.0
+                region = clinic.region if clinic else ''
+                area_manager = clinic.area_manager_id.name if clinic and clinic.area_manager_id else ''
 
                 # Write row data
                 row_data = [
@@ -279,7 +284,7 @@ class CdtFittingReportWizard(models.TransientModel):
                     appointment.audiologist_id.name if appointment.audiologist_id else '',  # Audiologist Name
                     appointment.patient_id.patient_id or appointment.patient_id.id or '',  # Patient Code
                     appointment.patient_id.name if appointment.patient_id else '',  # Name of Patient
-                    patient_type_map.get(patient_type, patient_type),  # Patient Type
+                    patient_type,  # Patient Type
                     line.product_id.name,  # Description Of Item
                     quantity,  # Quantity
                     unit_price,  # MRP (Unit Price)
@@ -287,11 +292,11 @@ class CdtFittingReportWizard(models.TransientModel):
                     discount_percent,  # Discount (%)
                     discount_amount,  # Discount Amount (Rs.)
                     total_sale,  # Gross Sale (Rs.)
-                    appointment.clinic_id.name if appointment.clinic_id else '',  # Clinic Name
-                    appointment.clinic_id.cost_center if appointment.clinic_id else '',  # Cost Centre
-                    appointment.clinic_id.weekly_target if appointment.clinic_id else 0.0,  # Weekly Target (Rs.)
-                    appointment.clinic_id.region if appointment.clinic_id else '',  # Region
-                    appointment.clinic_id.area_manager_id.name if appointment.clinic_id and appointment.clinic_id.area_manager_id else '',  # ABM
+                    clinic_name,  # Clinic Name
+                    cost_centre,  # Cost Centre
+                    weekly_target,  # Weekly Target (Rs.)
+                    region,  # Region
+                    area_manager,  # ABM
                     clinic_type_display,  # Type of Clinic
                     status_map.get(appointment.status, appointment.status),  # Status
                     serial_numbers_str  # Serial Numbers
