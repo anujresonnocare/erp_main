@@ -128,9 +128,9 @@ class CdtFittingReportWizard(models.TransientModel):
         return discount_percent, discount_amount
 
     def _get_invoice_details(self, sale_order):
-        """Get invoice name and date from sale order"""
-        invoice_name = ''
-        invoice_date = ''
+        """Get all invoice names and dates from sale order"""
+        invoice_names = []
+        invoice_dates = []
         
         if sale_order:
             # Get all invoices related to this sale order
@@ -138,18 +138,31 @@ class CdtFittingReportWizard(models.TransientModel):
                 lambda inv: inv.move_type == 'out_invoice' and inv.state != 'cancel'
             )
             
+            # Also get invoices from invoice lines linked to sale order lines
+            if not invoices:
+                invoices = self.env['account.move'].search([
+                    ('move_type', '=', 'out_invoice'),
+                    ('state', '!=', 'cancel'),
+                    ('invoice_line_ids.sale_line_ids.order_id', '=', sale_order.id)
+                ])
+            
             if invoices:
-                # Get the first posted invoice or the latest one
-                posted_invoices = invoices.filtered(lambda inv: inv.state == 'posted')
-                if posted_invoices:
-                    invoice = posted_invoices[0]
-                else:
-                    invoice = invoices[0]
+                # Sort by invoice date
+                invoices = invoices.sorted(key=lambda inv: inv.invoice_date or inv.date or inv.create_date)
                 
-                invoice_name = invoice.name or ''
-                invoice_date = invoice.invoice_date or invoice.date or ''
+                for invoice in invoices:
+                    if invoice.name:
+                        invoice_names.append(invoice.name)
+                    if invoice.invoice_date:
+                        invoice_dates.append(invoice.invoice_date.strftime('%d-%b-%Y'))
+                    elif invoice.date:
+                        invoice_dates.append(invoice.date.strftime('%d-%b-%Y'))
         
-        return invoice_name, invoice_date
+        # Join with commas
+        invoice_names_str = ', '.join(invoice_names) if invoice_names else ''
+        invoice_dates_str = ', '.join(invoice_dates) if invoice_dates else ''
+        
+        return invoice_names_str, invoice_dates_str
 
     def _generate_excel_report(self):
         appointments = self._get_fitting_appointment_data()
@@ -283,7 +296,7 @@ class CdtFittingReportWizard(models.TransientModel):
         ]
         
         # Set column widths - updated with all columns
-        col_widths = [14, 20, 14, 25, 14, 35, 10, 16, 16, 12, 18, 22, 20, 14, 16, 45, 45, 18, 14, 18, 14, 14, 14, 25]
+        col_widths = [14, 20, 14, 25, 14, 35, 10, 16, 16, 12, 18, 22, 30, 20, 16, 45, 45, 18, 14, 18, 14, 14, 14, 25]
         
         for col, (header, width) in enumerate(zip(headers, col_widths)):
             worksheet.write(1, col, header, header_format)
@@ -299,8 +312,8 @@ class CdtFittingReportWizard(models.TransientModel):
             if not sale_order:
                 continue
 
-            # Get invoice details
-            invoice_name, invoice_date = self._get_invoice_details(sale_order)
+            # Get all invoice details
+            invoice_names_str, invoice_dates_str = self._get_invoice_details(sale_order)
 
             # Get serial numbers from completed deliveries
             serial_numbers = []
@@ -379,8 +392,8 @@ class CdtFittingReportWizard(models.TransientModel):
                     discount_percent,  # Discount (%)
                     discount_amount,  # Discount Amount (Rs.)
                     total_sale,  # Gross Sale (Rs.)
-                    invoice_name,  # Invoice Name
-                    invoice_date,  # Invoice Date
+                    invoice_names_str,  # Invoice Name (all invoices)
+                    invoice_dates_str,  # Invoice Date (all dates)
                     '',  # Cancelled Order - always blank
                     clinic_name,  # Clinic Name
                     cost_centre,  # Cost Centre (same as Clinic Name)
@@ -407,7 +420,7 @@ class CdtFittingReportWizard(models.TransientModel):
                     elif idx == 9:  # Discount percentage
                         worksheet.write(row, col, (value / 100) if value else 0, percent_format)
                     elif idx == 13:  # Invoice Date
-                        worksheet.write(row, col, value, date_format)
+                        worksheet.write(row, col, value, text_format)  # Text format for comma-separated dates
                     elif idx == 22:  # Status - with color
                         status_color = status_colors.get(appointment.status, '')
                         if status_color:
