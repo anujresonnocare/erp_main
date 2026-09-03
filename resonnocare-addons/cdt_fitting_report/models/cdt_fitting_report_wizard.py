@@ -107,7 +107,6 @@ class CdtFittingReportWizard(models.TransientModel):
         unit_price = line.price_unit
         quantity = line.product_uom_qty
         gross_mrp = quantity * list_price
-        total_sale = quantity * unit_price
         
         # Check if line has discount_type field
         if hasattr(line, 'discount_type'):
@@ -124,7 +123,7 @@ class CdtFittingReportWizard(models.TransientModel):
             # Fallback: calculate from price difference
             if list_price > 0 and unit_price < list_price:
                 discount_percent = ((list_price - unit_price) / list_price) * 100
-                discount_amount = gross_mrp - total_sale
+                discount_amount = gross_mrp - (quantity * unit_price)
         
         return discount_percent, discount_amount
 
@@ -278,7 +277,10 @@ class CdtFittingReportWizard(models.TransientModel):
                 quantity = line.product_uom_qty
                 
                 gross_mrp = quantity * list_price
-                total_sale = quantity * unit_price
+                
+                # Use price_subtotal from the line (already includes discount)
+                # This is the Gross Sale amount after discount
+                total_sale = line.price_subtotal if hasattr(line, 'price_subtotal') else (quantity * unit_price)
                 
                 # Calculate discount using the helper method
                 discount_percent, discount_amount = self._calculate_discount(line)
@@ -318,7 +320,7 @@ class CdtFittingReportWizard(models.TransientModel):
                     gross_mrp,  # Gross MRP (Rs.)
                     discount_percent,  # Discount (%)
                     discount_amount,  # Discount Amount (Rs.)
-                    total_sale,  # Gross Sale (Rs.)
+                    total_sale,  # Gross Sale (Rs.) - using price_subtotal
                     clinic_name,  # Clinic Name
                     cost_centre,  # Cost Centre (same as Clinic Name)
                     weekly_target,  # Weekly Target (Rs.)
