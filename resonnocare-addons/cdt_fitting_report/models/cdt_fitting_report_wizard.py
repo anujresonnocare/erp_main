@@ -179,12 +179,12 @@ class CdtFittingReportWizard(models.TransientModel):
         
         return final_invoice_name
 
-    def _get_serial_numbers_for_line(self, sale_order, product_id, line_id, used_serials):
-        """Get serial numbers from deliveries for a specific product/line"""
-        serial_numbers = []
+    def _get_serial_numbers_for_sale_order(self, sale_order):
+        """Get all serial numbers from deliveries grouped by product"""
+        serials_by_product = {}
         
-        if not sale_order or not product_id:
-            return ''
+        if not sale_order:
+            return serials_by_product
         
         # Get all completed pickings for this sale order
         pickings = sale_order.picking_ids.filtered(
@@ -192,24 +192,24 @@ class CdtFittingReportWizard(models.TransientModel):
         )
         
         for picking in pickings:
-            # Look for move lines with this product
             for move_line in picking.move_line_ids:
-                if move_line.product_id.id == product_id:
-                    # Check if the move line has a lot/serial number
-                    serial = ''
-                    if move_line.lot_id:
-                        serial = move_line.lot_id.name
-                    elif move_line.lot_name:
-                        serial = move_line.lot_name
-                    elif move_line.lot_id and move_line.lot_id.name:
-                        serial = move_line.lot_id.name
-                    
-                    # Only add if not already used
-                    if serial and serial not in used_serials:
-                        serial_numbers.append(serial)
-                        used_serials.append(serial)
+                product_id = move_line.product_id.id
+                if product_id not in serials_by_product:
+                    serials_by_product[product_id] = []
+                
+                # Get serial number
+                serial = ''
+                if move_line.lot_id:
+                    serial = move_line.lot_id.name
+                elif move_line.lot_name:
+                    serial = move_line.lot_name
+                elif move_line.lot_id and move_line.lot_id.name:
+                    serial = move_line.lot_id.name
+                
+                if serial:
+                    serials_by_product[product_id].append(serial)
         
-        return ', '.join(serial_numbers) if serial_numbers else ''
+        return serials_by_product
 
     def _generate_excel_report(self):
         appointments = self._get_fitting_appointment_data()
@@ -366,8 +366,11 @@ class CdtFittingReportWizard(models.TransientModel):
             # Get final invoice
             final_invoice = self._get_final_invoice(sale_order)
 
-            # Track used serial numbers to avoid duplication across lines
-            used_serials = []
+            # Get all serial numbers grouped by product
+            serials_by_product = self._get_serial_numbers_for_sale_order(sale_order)
+            
+            # Track used serials per product to distribute correctly
+            used_serials_by_product = {}
 
             # Process each sale order line - ONLY HA products
             for line in sale_order.order_line:
@@ -385,14 +388,24 @@ class CdtFittingReportWizard(models.TransientModel):
                 if product_item_type != 'ha':
                     continue
 
-                # Get serial numbers for this specific line/product
-                # Pass the used_serials list to track which serials have been assigned
-                serial_numbers_str = self._get_serial_numbers_for_line(
-                    sale_order, 
-                    line.product_id.id, 
-                    line.id,
-                    used_serials
-                )
+                product_id = line.product_id.id
+                
+                # Initialize used serials for this product if not exists
+                if product_id not in used_serials_by_product:
+                    used_serials_by_product[product_id] = []
+                
+                # Get serial numbers for this specific line
+                serial_numbers_str = ''
+                if product_id in serials_by_product:
+                    available_serials = serials_by_product[product_id]
+                    used_serials = used_serials_by_product[product_id]
+                    
+                    # Find next unused serial
+                    for serial in available_serials:
+                        if serial not in used_serials:
+                            serial_numbers_str = serial
+                            used_serials.append(serial)
+                            break
 
                 # Calculate values
                 list_price = line.product_id.lst_price or line.price_unit
