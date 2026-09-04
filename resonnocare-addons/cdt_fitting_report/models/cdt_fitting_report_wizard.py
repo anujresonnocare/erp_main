@@ -179,6 +179,33 @@ class CdtFittingReportWizard(models.TransientModel):
         
         return final_invoice_name
 
+    def _get_serial_numbers_for_line(self, sale_order, product_id, line_quantity):
+        """Get serial numbers from deliveries for a specific product/line"""
+        serial_numbers = []
+        
+        if not sale_order or not product_id:
+            return ''
+        
+        # Get all completed pickings for this sale order
+        pickings = sale_order.picking_ids.filtered(
+            lambda p: p.state == 'done' and p.picking_type_code == 'outgoing'
+        )
+        
+        for picking in pickings:
+            # Look for move lines with this product
+            for move_line in picking.move_line_ids:
+                if move_line.product_id.id == product_id:
+                    # Check if the move line has a lot/serial number
+                    if move_line.lot_id:
+                        serial_numbers.append(move_line.lot_id.name)
+                    elif move_line.lot_name:
+                        serial_numbers.append(move_line.lot_name)
+                    elif move_line.lot_id and move_line.lot_id.name:
+                        serial_numbers.append(move_line.lot_id.name)
+        
+        # Remove duplicates and join with commas
+        return ', '.join(list(set(serial_numbers))) if serial_numbers else ''
+
     def _generate_excel_report(self):
         appointments = self._get_fitting_appointment_data()
         
@@ -282,7 +309,7 @@ class CdtFittingReportWizard(models.TransientModel):
             title_text += f' - Region: {self.region}'
         worksheet.merge_range('A1:Y1', title_text, title_format)
         
-        # Headers - Complete list with all columns including Final Invoice
+        # Headers - Complete list with all columns
         headers = [
             'Fitting Date',
             'Audiologist Name',
@@ -295,7 +322,7 @@ class CdtFittingReportWizard(models.TransientModel):
             'Gross MRP (Rs.)',
             'Discount (%)',
             'Discount Amount (Rs.)',
-            'Net Sale (Rs.)',
+            'Gross Sale (Rs.)',
             'Invoice Name',
             'Invoice Date',
             'Final Invoice',
@@ -311,7 +338,7 @@ class CdtFittingReportWizard(models.TransientModel):
             'Serial Numbers'
         ]
         
-        # Set column widths - updated with Final Invoice column
+        # Set column widths
         col_widths = [14, 20, 14, 25, 14, 35, 10, 16, 16, 12, 18, 22, 30, 20, 20, 16, 45, 45, 18, 14, 18, 14, 14, 14, 25]
         
         for col, (header, width) in enumerate(zip(headers, col_widths)):
@@ -334,17 +361,6 @@ class CdtFittingReportWizard(models.TransientModel):
             # Get final invoice
             final_invoice = self._get_final_invoice(sale_order)
 
-            # Get serial numbers from completed deliveries
-            serial_numbers = []
-            for picking in sale_order.picking_ids.filtered(lambda p: p.state == 'done'):
-                for move_line in picking.move_line_ids:
-                    if move_line.lot_id:
-                        serial_numbers.append(move_line.lot_id.name)
-                    elif move_line.lot_name:
-                        serial_numbers.append(move_line.lot_name)
-            
-            serial_numbers_str = ', '.join(set(serial_numbers)) if serial_numbers else ''
-
             # Process each sale order line - ONLY HA products
             for line in sale_order.order_line:
                 if not line.product_id:
@@ -360,6 +376,13 @@ class CdtFittingReportWizard(models.TransientModel):
                 # Skip if item_type is not 'ha'
                 if product_item_type != 'ha':
                     continue
+
+                # Get serial numbers for this specific line/product
+                serial_numbers_str = self._get_serial_numbers_for_line(
+                    sale_order, 
+                    line.product_id.id, 
+                    line.product_uom_qty
+                )
 
                 # Calculate values
                 list_price = line.product_id.lst_price or line.price_unit
@@ -423,7 +446,7 @@ class CdtFittingReportWizard(models.TransientModel):
                     clinic_type_display,  # Type of Clinic
                     clinic_subtype_display,  # Clinic Sub Type
                     status_map.get(appointment.status, appointment.status),  # Status
-                    serial_numbers_str  # Serial Numbers
+                    serial_numbers_str  # Serial Numbers (specific to this line)
                 ]
 
                 # Write each cell with appropriate formatting
@@ -432,7 +455,7 @@ class CdtFittingReportWizard(models.TransientModel):
                     if idx == 0:  # Date
                         worksheet.write(row, col, value, date_format)
                     elif idx == 15:  # Cancelled Order - always blank and in red
-                        worksheet.write(row, col, '', red_format)
+                        worksheet.write(row, col, 'CANCELLED', red_format)
                     elif idx in [6]:  # Quantity
                         worksheet.write(row, col, value or 0, number_format)
                     elif idx in [7, 8, 10, 11, 18]:  # Monetary values
