@@ -391,8 +391,8 @@ class ResonnocareClinic(models.Model):
 
     def write(self, vals):
         for clinic in self:
-            # if "name" in vals and vals["name"] != clinic.name:
-            #     raise UserError("Clinic name cannot be modified.")
+            if "name" in vals and vals["name"] != clinic.name:
+                raise UserError("Clinic name cannot be modified.")
 
             if "clinic_code" in vals and vals["clinic_code"] != clinic.clinic_code:
                 raise UserError("Clinic code cannot be modified.")

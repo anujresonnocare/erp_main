@@ -20,6 +20,11 @@
                         <strong>Note:</strong> Only <strong>Device Sale</strong> appointments (sale_type = 'device') are included.
                     </div>
                     <group>
+                        <group string="Date Range">
+                            <field name="date_from" required="1"/>
+                        
+                            <field name="date_to" required="1"/>
+                        </group>
                         <group string="Filters (Optional)">
                             <field name="area_manager_id" options="{'no_create': True}"/>
                             <field name="region"/>
