@@ -1596,11 +1596,17 @@ class ResonnocareAppointment(models.Model):
 
     @api.onchange("appointment_date", "appointment_start_time")
     def _onchange_block_past_slot_for_non_admin(self):
-        if self.env.user.has_group("base.group_system") or self.env.user.has_group(
-            "resonnocare_base.group_resonnocare_super_admin"
+
+        if (
+            self.env.user.has_group("base.group_system")
+            or self.env.user.has_group(
+                "resonnocare_base.group_resonnocare_super_admin"
+            )
         ):
             return
+
         for rec in self:
+
             if rec.appointment_date and not rec._has_valid_start_time():
                 return {
                     "warning": {
@@ -1608,19 +1614,23 @@ class ResonnocareAppointment(models.Model):
                         "message": _("Please select appointment start time."),
                     }
                 }
+
             if rec.appointment_start_time in (False, None):
                 continue
-            if rec.appointment_date and rec._is_past_appointment_slot():
+
+            # Allow today and future dates.
+            # Block only dates before today.
+            if rec.appointment_date and rec.appointment_date < fields.Date.today():
                 rec.appointment_start_time = False
+
                 return {
                     "warning": {
                         "title": _("Past Slot Not Allowed"),
                         "message": _(
-                            "Past date/time cannot be selected for appointments."
+                            "Past date cannot be selected for appointments."
                         ),
                     }
                 }
-
 
 
     @api.constrains("audiologist_id", "appointment_date", "appointment_start_time", "appointment_end_time", "appointment_type_id", "status")

@@ -81,7 +81,7 @@ class DailyPrescriptionReportWizard(models.TransientModel):
             ('appointment_date', '>=', self.date_from),
             ('appointment_date', '<=', self.date_to),
             ('status', 'not in', ['cancelled', 'no_show']),
-            ('appointment_type_id', 'in', device_appointment_types.ids)
+            ('appointment_type_id', 'in', [475])
         ]
         
         if self.area_manager_id:
