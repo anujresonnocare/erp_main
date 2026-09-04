@@ -1681,20 +1681,40 @@ class ResonnocareAppointment(models.Model):
                         f"({conflict.appointment_id or conflict.id}). Please choose another time or technician."
                     )
 
+    # @api.constrains("appointment_date", "appointment_start_time")
+    # def _check_past_slot_for_non_admin(self):
+    #     for rec in self:
+    #         if rec.appointment_date and not rec._has_valid_start_time():
+    #             raise ValidationError(_("Appointment start time is mandatory."))
+    #         if rec._is_resonnocare_admin_user():
+    #             continue
+    #         if rec.appointment_start_time in (False, None):
+    #             continue
+    #         if rec.appointment_type_id.name != 'Fitting' and rec.appointment_date and rec._is_past_appointment_slot():
+    #             raise ValidationError(
+    #                 _(
+    #                     "Past date/time is not allowed for appointments."
+    #                 )
+    #             )
+
     @api.constrains("appointment_date", "appointment_start_time")
     def _check_past_slot_for_non_admin(self):
         for rec in self:
             if rec.appointment_date and not rec._has_valid_start_time():
                 raise ValidationError(_("Appointment start time is mandatory."))
+
             if rec._is_resonnocare_admin_user():
                 continue
+
             if rec.appointment_start_time in (False, None):
                 continue
-            if rec.appointment_type_id.name != 'Fitting' and rec.appointment_date and rec._is_past_appointment_slot():
+
+            if (
+                rec.appointment_date
+                and rec.appointment_date < fields.Date.today()
+            ):
                 raise ValidationError(
-                    _(
-                        "Past date/time is not allowed for appointments."
-                    )
+                    _("Past date is not allowed for appointments.")
                 )
 
     # ---------------------------------------------------------------------
@@ -1731,10 +1751,10 @@ class ResonnocareAppointment(models.Model):
                 )
             if not rec._has_valid_start_time():
                 raise ValidationError(_("Appointment start time is mandatory."))
-            if (not rec._is_resonnocare_admin_user()) and rec._is_past_appointment_slot():
-                raise ValidationError(
-                    _("Past date/time is not allowed for appointments.")
-                )
+            # if (not rec._is_resonnocare_admin_user()) and rec._is_past_appointment_slot():
+            #     raise ValidationError(
+            #         _("Past date/time is not allowed for appointments.")
+            #     )
             if not rec.audiologist_id:
                 raise UserError("Please select an audiologist before confirming the appointment.")
             # if not rec.technician_id:
