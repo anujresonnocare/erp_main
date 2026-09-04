@@ -750,7 +750,8 @@ class SaleOrderLine(models.Model):
     discount_type = fields.Selection(
         [("percent", "Percentage"), ("fixed", "Fixed Amount")],
         string="Discount Type",
-        default="percent",
+        readonly=True,
+        default="fixed",
     )
     discount_fixed = fields.Float(
         string="Discount (₹)",
