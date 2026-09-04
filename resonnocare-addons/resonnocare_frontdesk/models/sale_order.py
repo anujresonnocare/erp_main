@@ -2,6 +2,9 @@ from odoo import models, fields, api
 from odoo.exceptions import ValidationError, UserError
 import re
 
+import logging
+
+_logger = logging.getLogger(__name__)
 
 class SaleOrder(models.Model):
     _inherit = "sale.order"
@@ -90,32 +93,195 @@ class SaleOrder(models.Model):
             is_first_invoice = not bool(existing_customer_invoices)
             order.show_create_contract_button = bool(is_device_flow and is_first_invoice)
 
+    # def _get_required_discount_approval_level(self):
+    #     self.ensure_one()
+    #     required_level = "none"
+    #     product_lines = self.order_line.filtered(lambda l: l.product_id and not l.display_type)
+
+    #     # Primary path: rely on precomputed slab on lines.
+    #     for line in product_lines:
+    #         if line.discount_slab == "slab3":
+    #             return "admin"
+    #         if line.discount_slab == "slab2":
+    #             required_level = "manager"
+
+    #     Grid = self.env["resonnocare.discount.grid"]
+    #     Diag = self.env["resonnocare.diagnostic.item"]
+    #     ClinicDiag = self.env["resonnocare.clinic.diagnostic"]
+
+    #     for line in product_lines:
+    #         channel = line._get_discount_channel()
+    #         ptype = getattr(line.product_id, "type", False)
+    #         clinic = line.order_id.clinic_id or line.order_id.patient_id.clinic_id
+
+    #         if ptype == "service":
+    #             mrp = 0.0
+    #             if clinic:
+    #                 diag = Diag.search([("product_id", "=", line.product_id.id)], limit=1)
+    #                 if diag:
+    #                     clinic_diag = ClinicDiag.search(
+    #                         [
+    #                             ("clinic_id", "=", clinic.id),
+    #                             ("diagnostic_item_id", "=", diag.id),
+    #                         ],
+    #                         limit=1,
+    #                     )
+    #                     mrp = clinic_diag.mrp or 0.0
+    #         else:
+    #             mrp = line.product_id.lst_price or 0.0
+
+    #         grid = Grid.search(
+    #             [
+    #                 ("active", "=", True),
+    #                 ("channel", "=", channel),
+    #                 ("mrp_from", "<=", mrp),
+    #                 "|",
+    #                 ("mrp_to", "=", 0),
+    #                 ("mrp_to", ">=", mrp),
+    #             ],
+    #             order="mrp_from desc, id desc",
+    #             limit=1,
+    #         )
+    #         if not grid:
+    #             continue
+
+    #         discount = line.discount or 0.0
+    #         if discount > (grid.slab2_max or 0.0):
+    #             required_level = "admin"
+    #             break
+    #         if discount > (grid.slab1_max or 0.0):
+    #             required_level = "manager"
+    #     return required_level
+
+
+
+
     def _get_required_discount_approval_level(self):
+        _logger.info("Starting _get_required_discount_approval_level()")
         self.ensure_one()
+        _logger.info("ensure_one() completed for sale order ID: %s", self.id)
+
         required_level = "none"
-        product_lines = self.order_line.filtered(lambda l: l.product_id and not l.display_type)
+        _logger.info("Initial required_level: %s", required_level)
+
+        product_lines = self.order_line.filtered(
+            lambda l: l.product_id and not l.display_type
+        )
+        _logger.info(
+            "Filtered product lines count: %s, line IDs: %s",
+            len(product_lines),
+            product_lines.ids,
+        )
 
         # Primary path: rely on precomputed slab on lines.
+        _logger.info("Checking precomputed discount slabs on order lines")
+
         for line in product_lines:
+            _logger.info(
+                "Checking line ID: %s, product: %s, discount_slab: %s",
+                line.id,
+                line.product_id.display_name,
+                line.discount_slab,
+            )
+
             if line.discount_slab == "slab3":
+                _logger.info(
+                    "Line ID %s has slab3. Required approval level: admin",
+                    line.id,
+                )
                 return "admin"
+
             if line.discount_slab == "slab2":
+                _logger.info(
+                    "Line ID %s has slab2. Setting required_level to manager",
+                    line.id,
+                )
                 required_level = "manager"
 
+        _logger.info(
+            "After precomputed slab check, required_level: %s",
+            required_level,
+        )
+
         Grid = self.env["resonnocare.discount.grid"]
+        _logger.info("Loaded discount grid model: %s", Grid)
+
         Diag = self.env["resonnocare.diagnostic.item"]
+        _logger.info("Loaded diagnostic item model: %s", Diag)
+
         ClinicDiag = self.env["resonnocare.clinic.diagnostic"]
+        _logger.info("Loaded clinic diagnostic model: %s", ClinicDiag)
 
         for line in product_lines:
+            _logger.info(
+                "Processing line ID: %s, product: %s",
+                line.id,
+                line.product_id.display_name,
+            )
+
             channel = line._get_discount_channel()
+            _logger.info(
+                "Line ID %s discount channel: %s",
+                line.id,
+                channel,
+            )
+
             ptype = getattr(line.product_id, "type", False)
-            clinic = line.order_id.clinic_id or line.order_id.patient_id.clinic_id
+            _logger.info(
+                "Line ID %s product type: %s",
+                line.id,
+                ptype,
+            )
+
+            clinic = (
+                line.order_id.clinic_id
+                or line.order_id.patient_id.clinic_id
+            )
+            _logger.info(
+                "Line ID %s clinic: %s (ID: %s)",
+                line.id,
+                clinic.display_name if clinic else False,
+                clinic.id if clinic else False,
+            )
 
             if ptype == "service":
+                _logger.info(
+                    "Line ID %s is a service product",
+                    line.id,
+                )
+
                 mrp = 0.0
+                _logger.info(
+                    "Initial MRP for line ID %s: %s",
+                    line.id,
+                    mrp,
+                )
+
                 if clinic:
-                    diag = Diag.search([("product_id", "=", line.product_id.id)], limit=1)
+                    _logger.info(
+                        "Clinic found for line ID %s. Searching diagnostic item",
+                        line.id,
+                    )
+
+                    diag = Diag.search(
+                        [
+                            ("product_id", "=", line.product_id.id)
+                        ],
+                        limit=1,
+                    )
+                    _logger.info(
+                        "Diagnostic item search result for line ID %s: %s (ID: %s)",
+                        line.id,
+                        diag.display_name if diag else False,
+                        diag.id if diag else False,
+                    )
+
                     if diag:
+                        _logger.info(
+                            "Diagnostic item found. Searching clinic diagnostic for line ID %s",
+                            line.id,
+                        )
+
                         clinic_diag = ClinicDiag.search(
                             [
                                 ("clinic_id", "=", clinic.id),
@@ -123,9 +289,38 @@ class SaleOrder(models.Model):
                             ],
                             limit=1,
                         )
+                        _logger.info(
+                            "Clinic diagnostic search result for line ID %s: %s (ID: %s)",
+                            line.id,
+                            clinic_diag.display_name if clinic_diag else False,
+                            clinic_diag.id if clinic_diag else False,
+                        )
+
                         mrp = clinic_diag.mrp or 0.0
+                        _logger.info(
+                            "MRP calculated from clinic diagnostic for line ID %s: %s",
+                            line.id,
+                            mrp,
+                        )
             else:
+                _logger.info(
+                    "Line ID %s is not a service product",
+                    line.id,
+                )
+
                 mrp = line.product_id.lst_price or 0.0
+                _logger.info(
+                    "MRP taken from product lst_price for line ID %s: %s",
+                    line.id,
+                    mrp,
+                )
+
+            _logger.info(
+                "Searching discount grid for line ID %s with channel=%s, mrp=%s",
+                line.id,
+                channel,
+                mrp,
+            )
 
             grid = Grid.search(
                 [
@@ -139,15 +334,75 @@ class SaleOrder(models.Model):
                 order="mrp_from desc, id desc",
                 limit=1,
             )
+            _logger.info(
+                "Discount grid search result for line ID %s: %s (ID: %s)",
+                line.id,
+                grid.display_name if grid else False,
+                grid.id if grid else False,
+            )
+
             if not grid:
+                _logger.info(
+                    "No discount grid found for line ID %s. Continuing to next line.",
+                    line.id,
+                )
                 continue
 
             discount = line.discount or 0.0
-            if discount > (grid.slab2_max or 0.0):
+            _logger.info(
+                "Line ID %s discount: %s",
+                line.id,
+                discount,
+            )
+
+            slab2_max = grid.slab2_max or 0.0
+            _logger.info(
+                "Line ID %s grid slab2_max: %s",
+                line.id,
+                slab2_max,
+            )
+
+            if discount > slab2_max:
+                _logger.info(
+                    "Line ID %s discount %s > slab2_max %s. "
+                    "Required approval level: admin",
+                    line.id,
+                    discount,
+                    slab2_max,
+                )
                 required_level = "admin"
                 break
-            if discount > (grid.slab1_max or 0.0):
+
+            slab1_max = grid.slab1_max or 0.0
+            _logger.info(
+                "Line ID %s grid slab1_max: %s",
+                line.id,
+                slab1_max,
+            )
+
+            if discount > slab1_max:
+                _logger.info(
+                    "Line ID %s discount %s > slab1_max %s. "
+                    "Setting required_level to manager",
+                    line.id,
+                    discount,
+                    slab1_max,
+                )
                 required_level = "manager"
+
+            _logger.info(
+                "Completed processing line ID %s. Current required_level: %s",
+                line.id,
+                required_level,
+            )
+
+        _logger.info(
+            "Completed _get_required_discount_approval_level() for sale order ID %s. "
+            "Final required_level: %s",
+            self.id,
+            required_level,
+        )
+
         return required_level
 
     def _check_discount_approval_before_confirm(self):
