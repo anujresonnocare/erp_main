@@ -22,7 +22,6 @@
                     <group>
                         <group string="Date Range">
                             <field name="date_from" required="1"/>
-                        
                             <field name="date_to" required="1"/>
                         </group>
                         <group string="Filters (Optional)">

@@ -81,7 +81,7 @@ class DailyPrescriptionReportWizard(models.TransientModel):
             ('appointment_date', '>=', self.date_from),
             ('appointment_date', '<=', self.date_to),
             ('status', 'not in', ['cancelled', 'no_show']),
-            ('appointment_type_id', 'in', device_appointment_types.ids)  # Only device appointment types
+            ('appointment_type_id', 'in', device_appointment_types.ids)
         ]
         
         if self.area_manager_id:
@@ -259,10 +259,10 @@ class DailyPrescriptionReportWizard(models.TransientModel):
             title_text += f' - AM: {self.area_manager_id.name}'
         if self.region:
             title_text += f' - Region: {self.region}'
-        worksheet.merge_range('A1:S1', title_text, title_format)
+        worksheet.merge_range('A1:R1', title_text, title_format)
 
         # ========================================
-        # HEADERS
+        # HEADERS - Removed Gross MRP, renamed Gross Sale to Net Sale
         # ========================================
         headers = [
             'Date',
@@ -273,11 +273,10 @@ class DailyPrescriptionReportWizard(models.TransientModel):
             'Description Of Item',
             'Item Style',
             'Quantity',
-            'MRP (Unit Price)',
-            'Gross MRP (Rs.)',
+            'Gross MRP (Unit Price)',
             'Discount (%)',
             'Discount Amount (Rs.)',
-            'Gross Sale (Rs.)',
+            'Net Sale (Rs.)',
             'Clinic Name',
             'Region',
             'ABM',
@@ -286,7 +285,7 @@ class DailyPrescriptionReportWizard(models.TransientModel):
             'Status'
         ]
         
-        col_widths = [14, 20, 14, 25, 14, 35, 20, 10, 16, 16, 12, 18, 22, 45, 14, 18, 14, 14, 14]
+        col_widths = [14, 20, 14, 25, 14, 35, 20, 10, 16, 12, 18, 22, 45, 14, 18, 14, 14, 14]
 
         for col, (header, width) in enumerate(zip(headers, col_widths)):
             worksheet.write(1, col, header, header_format)
@@ -324,7 +323,6 @@ class DailyPrescriptionReportWizard(models.TransientModel):
                 list_price = line.product_id.lst_price or line.price_unit
                 unit_price = line.price_unit
                 quantity = line.product_uom_qty
-                gross_mrp = quantity * list_price
                 total_sale = line.price_subtotal if hasattr(line, 'price_subtotal') else (quantity * unit_price)
                 
                 discount_percent, discount_amount = self._calculate_discount(line)
@@ -355,7 +353,6 @@ class DailyPrescriptionReportWizard(models.TransientModel):
                     'item_style': item_style,
                     'quantity': quantity,
                     'unit_price': unit_price,
-                    'gross_mrp': gross_mrp,
                     'discount_percent': discount_percent,
                     'discount_amount': discount_amount,
                     'total_sale': total_sale,
@@ -379,7 +376,6 @@ class DailyPrescriptionReportWizard(models.TransientModel):
                     row_data['item_style'],
                     row_data['quantity'],
                     row_data['unit_price'],
-                    row_data['gross_mrp'],
                     row_data['discount_percent'],
                     row_data['discount_amount'],
                     row_data['total_sale'],
@@ -394,11 +390,11 @@ class DailyPrescriptionReportWizard(models.TransientModel):
                         worksheet.write(row, col, value, date_format)
                     elif idx in [7]:
                         worksheet.write(row, col, value or 0, number_format)
-                    elif idx in [8, 9, 11, 12]:
+                    elif idx in [8, 10, 11]:
                         worksheet.write(row, col, value or 0, currency_format)
-                    elif idx == 10:
+                    elif idx == 9:
                         worksheet.write(row, col, (value / 100) if value else 0, percent_format)
-                    elif idx == 18:
+                    elif idx == 17:
                         status_color = status_colors.get(appointment.status, '')
                         if status_color:
                             status_format = workbook.add_format({
@@ -423,9 +419,8 @@ class DailyPrescriptionReportWizard(models.TransientModel):
                 am = data.get('area_manager', '')
                 if am:
                     if am not in am_totals:
-                        am_totals[am] = {'quantity': 0, 'gross_mrp': 0, 'discount_amount': 0, 'total_sale': 0}
+                        am_totals[am] = {'quantity': 0, 'discount_amount': 0, 'total_sale': 0}
                     am_totals[am]['quantity'] += data.get('quantity', 0)
-                    am_totals[am]['gross_mrp'] += data.get('gross_mrp', 0)
                     am_totals[am]['discount_amount'] += data.get('discount_amount', 0)
                     am_totals[am]['total_sale'] += data.get('total_sale', 0)
 
@@ -434,56 +429,51 @@ class DailyPrescriptionReportWizard(models.TransientModel):
                 region = data.get('region', '')
                 if region:
                     if region not in region_totals:
-                        region_totals[region] = {'quantity': 0, 'gross_mrp': 0, 'discount_amount': 0, 'total_sale': 0}
+                        region_totals[region] = {'quantity': 0, 'discount_amount': 0, 'total_sale': 0}
                     region_totals[region]['quantity'] += data.get('quantity', 0)
-                    region_totals[region]['gross_mrp'] += data.get('gross_mrp', 0)
                     region_totals[region]['discount_amount'] += data.get('discount_amount', 0)
                     region_totals[region]['total_sale'] += data.get('total_sale', 0)
 
             grand_total = {
                 'quantity': sum(d.get('quantity', 0) for d in all_report_data),
-                'gross_mrp': sum(d.get('gross_mrp', 0) for d in all_report_data),
                 'discount_amount': sum(d.get('discount_amount', 0) for d in all_report_data),
                 'total_sale': sum(d.get('total_sale', 0) for d in all_report_data)
             }
 
             if region_totals:
                 row += 1
-                worksheet.merge_range(row, 0, row, 18, 'REGION TOTALS', total_format)
+                worksheet.merge_range(row, 0, row, 17, 'REGION TOTALS', total_format)
                 row += 1
                 
                 for region, totals in region_totals.items():
-                    worksheet.write(row, 13, region, region_total_format)
+                    worksheet.write(row, 12, region, region_total_format)
                     worksheet.write(row, 5, 'Total', region_total_format)
                     worksheet.write(row, 7, totals.get('quantity', 0), number_format)
-                    worksheet.write(row, 9, totals.get('gross_mrp', 0), currency_format)
-                    worksheet.write(row, 11, totals.get('discount_amount', 0), currency_format)
-                    worksheet.write(row, 12, totals.get('total_sale', 0), currency_format)
+                    worksheet.write(row, 10, totals.get('discount_amount', 0), currency_format)
+                    worksheet.write(row, 11, totals.get('total_sale', 0), currency_format)
                     row += 1
 
             if am_totals:
                 row += 1
-                worksheet.merge_range(row, 0, row, 18, 'AREA MANAGER TOTALS', total_format)
+                worksheet.merge_range(row, 0, row, 17, 'AREA MANAGER TOTALS', total_format)
                 row += 1
                 
                 for am, totals in am_totals.items():
-                    worksheet.write(row, 15, am, am_total_format)
+                    worksheet.write(row, 14, am, am_total_format)
                     worksheet.write(row, 5, 'Total', am_total_format)
                     worksheet.write(row, 7, totals.get('quantity', 0), number_format)
-                    worksheet.write(row, 9, totals.get('gross_mrp', 0), currency_format)
-                    worksheet.write(row, 11, totals.get('discount_amount', 0), currency_format)
-                    worksheet.write(row, 12, totals.get('total_sale', 0), currency_format)
+                    worksheet.write(row, 10, totals.get('discount_amount', 0), currency_format)
+                    worksheet.write(row, 11, totals.get('total_sale', 0), currency_format)
                     row += 1
 
             row += 1
-            worksheet.merge_range(row, 0, row, 18, 'GRAND TOTAL', total_format)
+            worksheet.merge_range(row, 0, row, 17, 'GRAND TOTAL', total_format)
             row += 1
             
             worksheet.write(row, 5, 'Grand Total', total_format)
             worksheet.write(row, 7, grand_total.get('quantity', 0), number_format)
-            worksheet.write(row, 9, grand_total.get('gross_mrp', 0), currency_format)
-            worksheet.write(row, 11, grand_total.get('discount_amount', 0), currency_format)
-            worksheet.write(row, 12, grand_total.get('total_sale', 0), currency_format)
+            worksheet.write(row, 10, grand_total.get('discount_amount', 0), currency_format)
+            worksheet.write(row, 11, grand_total.get('total_sale', 0), currency_format)
 
         workbook.close()
 
