@@ -86,6 +86,7 @@
                         <group string="Visit Context">
                             <group>
                                 <field name="visit_type" widget="radio" options="{'horizontal': true}"/>
+                                <field name="ref_source"/>
                                 <field name="referral_source"/>
                             </group>
                             <group>
