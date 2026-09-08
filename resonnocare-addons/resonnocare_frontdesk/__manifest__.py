@@ -14,6 +14,7 @@
         "resonnocare_hr",
         "resonnocare_master",
         "resonnocare_inventory",
+        "custom_source_hierarchy",
         "sale",
         "crm",
     ],

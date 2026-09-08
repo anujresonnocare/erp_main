@@ -27,6 +27,12 @@ class ResonnocarePatientRegistrationWizard(models.TransientModel):
         "crm.lead", string="Matched Expected Walk-in", readonly=True
     )
 
+    ref_source = fields.Many2one(
+        "custom.source",
+        string="Referral Source",
+        help="Select the referral source. Only sources marked as 'Is Doctor',  will be shown.",
+    )
+
     is_otp_step = fields.Boolean(compute="_compute_step_flags")
     otp_required = fields.Boolean(string="OTP Required", default=False)
 
