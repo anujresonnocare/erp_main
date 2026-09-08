@@ -21,7 +21,7 @@ class ResonnocarePatientRegistrationWizard(models.TransientModel):
 
     def action_register_patient(self):
         for wizard in self:
-            if wizard.referral_source == "doctor" and not wizard.referring_doctor_id:
+            if wizard.ref_source.is_doctor == True and not wizard.referring_doctor_id:
                 raise UserError(
                     _(
                         "Please select Referring Doctor Profile for Doctor referral source."

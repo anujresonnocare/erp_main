@@ -569,6 +569,7 @@ class ResonnocarePatientRegistrationWizard(models.TransientModel):
             "visit_reason": self.visit_reason,
             "visit_type": self.visit_type,
             "referral_source": self.referral_source,
+            "ref_source": self.ref_source.id if self.ref_source else False,
             # ✅ CORRECT: Set both company (HQ) and clinic
             "company_id": self.env.company.id,  # ✅ Resonnocare HQ (for accounting)
             "clinic_id": (

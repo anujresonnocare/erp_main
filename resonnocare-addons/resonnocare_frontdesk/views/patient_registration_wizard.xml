@@ -87,7 +87,7 @@
                             <group>
                                 <field name="visit_type" widget="radio" options="{'horizontal': true}"/>
                                 <field name="ref_source" options="{'no_open': True, 'no_create': True, 'no_edit': True}" domain="[('parent_id', '!=', False)]"/>
-                                <field name="referral_source"/>
+                                <field name="referral_source" invisible="True"/>
                             </group>
                             <group>
                                 <field name="visit_reason" placeholder="Why is the patient visiting today?"/>

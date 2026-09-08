@@ -283,6 +283,13 @@ class ResPartner(models.Model):
     visit_reason = fields.Text()
     visit_type = fields.Selection([("new", "New"), ("followup", "Follow-up")])
 
+
+    ref_source = fields.Many2one(
+        "custom.source",
+        string="Referral Source",
+        help="Select the referral source. Only sources marked as 'Is Doctor',  will be shown.",
+    )
+
     referral_source = fields.Selection(
         [
             ("crm", "CRM"),
