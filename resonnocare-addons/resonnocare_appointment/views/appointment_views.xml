@@ -161,7 +161,10 @@
                         </group>
                         <group>
                             <field name="appointment_id" readonly="1"/>
-                            <field name="source" readonly="1"/>
+                            <field name="ref_source" readonly="1"/>
+                            <field name="referring_doctor_id" readonly="1"/>
+                            <field name="referring_doctor" readonly="1"/>
+                            <!-- <field name="source" readonly="1"/> -->
                             <field name="parent_appointment_id" readonly="1"/>
                             <field name="appointment_role" readonly="1"/>
                             <field name="balance_due" readonly="1" invisible="parent_appointment_id == False"/>

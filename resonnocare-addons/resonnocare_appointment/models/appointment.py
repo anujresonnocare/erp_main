@@ -202,6 +202,12 @@ class ResonnocareAppointment(models.Model):
 
     notes = fields.Text(string="Notes")
 
+    ref_source = fields.Many2one(
+        "custom.source",
+        string="Referral Source",
+        help="Select the referral source. Only sources marked as 'Is Doctor',  will be shown.",
+    )
+
     source = fields.Selection(
         [
             ("crm", "CRM"),
@@ -453,15 +459,15 @@ class ResonnocareAppointment(models.Model):
             else:
                 rec.name = "Appointment"
 
-    def _get_source_from_patient(self, patient):
-        if not patient:
-            return False
-        mapping = {
-            "crm": "crm",
-            "walkin": "walkin",
-            "doctor": "referral",
-        }
-        return mapping.get(patient.referral_source, False)
+    # def _get_source_from_patient(self, patient):
+    #     if not patient:
+    #         return False
+    #     mapping = {
+    #         "crm": "crm",
+    #         "walkin": "walkin",
+    #         "doctor": "referral",
+    #     }
+    #     return mapping.get(patient.referral_source, False)
 
     @api.depends("patient_id")
     def _compute_clinic_id(self):
@@ -476,9 +482,9 @@ class ResonnocareAppointment(models.Model):
     def _onchange_patient_source(self):
         for rec in self:
             if rec.patient_id:
-                mapped = rec._get_source_from_patient(rec.patient_id)
-                if mapped:
-                    rec.source = mapped
+                source = rec.patient_id.ref_source
+                if source:
+                    rec.ref_source = source
                 if rec.patient_id.clinic_id:
                     rec.clinic_id = rec.patient_id.clinic_id
 
@@ -1172,11 +1178,11 @@ class ResonnocareAppointment(models.Model):
     def create(self, vals_list):
         for vals in vals_list:
             self._apply_calendar_datetime_defaults(vals)
-            if not vals.get("source") and vals.get("patient_id"):
+            if not vals.get("ref_source") and vals.get("patient_id"):
                 patient = self.env["res.partner"].browse(vals["patient_id"])
-                mapped = self._get_source_from_patient(patient)
-                if mapped:
-                    vals["source"] = mapped
+                source = patient.ref_source
+                if source:
+                    vals["source"] = source.id
         return super().create(vals_list)
 
     @api.model
@@ -1211,9 +1217,9 @@ class ResonnocareAppointment(models.Model):
         res = super().write(vals)
         if "patient_id" in vals:
             for rec in self:
-                mapped = rec._get_source_from_patient(rec.patient_id)
-                if mapped and rec.source != mapped:
-                    rec.source = mapped
+                source = rec.patient_id.ref_source
+                if source and rec.ref_source.id != source.id:
+                    rec.ref_source = source.id
         return res
 
     def action_view_bill(self):
@@ -1300,7 +1306,7 @@ class ResonnocareAppointment(models.Model):
             'appointment_start_time': self.appointment_start_time,  # Copy start time
             'audiologist_id': audiologist_id,  # Copy audiologist
             'technician_id': technician_id,  # Copy technician
-            'source': self.source,
+            'ref_source': self.ref_source.id if self.ref_source else False,
             'status': 'draft',
             'notes': f"Fitting appointment created from {self.appointment_id or self.name}",
         })
@@ -1322,6 +1328,7 @@ class ResonnocareAppointment(models.Model):
                 "default_sale_order_id": self.sale_order_id.id,
                 "default_audiologist_id": audiologist_id,
                 "default_technician_id": technician_id,
+                "default_ref_source": self.ref_source.id if self.ref_source else False,
             },
         }
 
