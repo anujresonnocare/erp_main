@@ -20,7 +20,16 @@ class CustomSource(models.Model):
         required=True,
         help='Unique identifier for this source'
     )
-    
+    is_doctor = fields.Boolean(
+        string='Is Doctor'
+    )
+    is_market = fields.Boolean(
+        string='Is Market'
+    )
+    is_outreach = fields.Boolean(
+        string='Is Outreach'
+    )
+
     description = fields.Text(
         string='Description',
         translate=True

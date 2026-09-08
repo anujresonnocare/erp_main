@@ -47,6 +47,10 @@
                                    domain="[('id', '!=', id)]"
                                    context="{'check_hierarchy_cycle': False}" />
                             <field name="level" readonly="1" />
+
+                            <field name="is_doctor" />
+                            <field name="is_market" />
+                            <field name="is_outreach" />
                             <field name="is_root" readonly="1" />
                         </group>
                         <group>
