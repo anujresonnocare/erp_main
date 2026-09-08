@@ -290,6 +290,34 @@ class ResonnocarePatientRegistrationWizard(models.TransientModel):
     visit_type = fields.Selection(
         [("new", "New"), ("followup", "Follow-up")], string="Visit Type", default="new"
     )
+
+    show_doctor_field = fields.Boolean(compute='_compute_show_doctor_field', store=False)
+
+    @api.depends('ref_source')
+    def _compute_show_doctor_field(self):
+        for record in self:
+            record.show_doctor_field = record.ref_source and record.ref_source.is_doctor
+
+    @api.onchange('ref_source')
+    def _onchange_ref_source(self):
+        if self.ref_source and self.ref_source.is_doctor:
+            # If ref_source is a doctor, show and filter referring_doctor_id
+            return {
+                'domain': {
+                    'referring_doctor_id': [('parent_id', '!=', False)]
+                }
+            }
+        else:
+            # Hide referring_doctor_id
+            return {
+                'value': {
+                    'referring_doctor_id': False
+                },
+                'domain': {
+                    'referring_doctor_id': [('id', '=', False)]
+                }
+            }
+        
     referral_source = fields.Selection(
         [
             ("crm", "CRM"),
