@@ -41,7 +41,7 @@ class ResonnocareDoctorProfile(models.Model):
     city = fields.Char(string="Town/City")
     region_name = fields.Char(string="Region Name")
     mobile = fields.Char(string="Mobile Number", tracking=True)
-    email = fields.Char(string="Email", required=True, tracking=True)
+    email = fields.Char(string="Email", tracking=True)
     enrolment_date = fields.Date(string="Enrolment Date")
     doctor_type = fields.Selection(
         [("ent", "ENT"), ("gp", "GP"), ("outreach", "OUTREACH")],
