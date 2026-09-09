@@ -8,7 +8,7 @@
         <field name="groups_id" eval="[(5, 0, 0)]"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='referral_source']" position="after">
-                <field name="referring_doctor_id" string="Referal Doctor" invisible="not show_doctor_field"/>
+                <field name="referring_doctor_id" string="Referal Doctor" invisible="not show_doctor_field" context="{'source_model': 'resonnocare.patient.registration.wizard'}"/>
             </xpath>
             <xpath expr="//field[@name='referring_doctor']" position="attributes">
                 <attribute name="invisible">1</attribute>

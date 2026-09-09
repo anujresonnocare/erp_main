@@ -212,6 +212,24 @@ class ResonnocareDoctorProfile(models.Model):
         compute="_compute_doctor_metrics",
     )
 
+    @api.model
+    def name_create(self, name):
+        """Detect if created from res.partner"""
+        # Check if coming from res.partner
+        # The model is passed in context when created from a Many2one
+        source_model = self._context.get('source_model', '')
+        
+        if source_model == 'resonnocare.patient.registration.wizard':
+            custom_name = f"{name} (New Doctor)"
+        else:
+            custom_name = f"{name}"
+        
+        record = self.create({
+            'name': custom_name,
+        })
+        
+        return record.id, record.name
+    
     def _register_hook(self):
         result = super()._register_hook()
         self._cleanup_legacy_my_profile_entries()

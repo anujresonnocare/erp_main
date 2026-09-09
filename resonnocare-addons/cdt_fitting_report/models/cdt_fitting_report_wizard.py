@@ -478,7 +478,7 @@ class CdtFittingReportWizard(models.TransientModel):
                     if idx == 0:  # Date
                         worksheet.write(row, col, value, date_format)
                     elif idx == 15:  # Cancelled Order - always blank and in red
-                        worksheet.write(row, col, 'CANCELLED', red_format)
+                        worksheet.write(row, col, '', red_format)
                     elif idx in [6]:  # Quantity
                         worksheet.write(row, col, value or 0, number_format)
                     elif idx in [7, 8, 10, 11, 18]:  # Monetary values
