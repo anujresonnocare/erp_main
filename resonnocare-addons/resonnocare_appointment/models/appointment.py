@@ -1182,7 +1182,7 @@ class ResonnocareAppointment(models.Model):
                 patient = self.env["res.partner"].browse(vals["patient_id"])
                 source = patient.ref_source
                 if source:
-                    vals["source"] = source.id
+                    vals["ref_source"] = source.id
         return super().create(vals_list)
 
     @api.model
