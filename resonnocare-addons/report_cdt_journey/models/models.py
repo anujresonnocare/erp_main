@@ -65,21 +65,6 @@ class CdtJourneyReportWizard(models.TransientModel):
     # DYNAMIC SOURCE HIERARCHY
     # ========================================
     def _get_source_hierarchy(self):
-        """
-        Build dynamic source hierarchy from custom.source records.
-        Returns: [
-            {
-                'parent_code': 'DR',
-                'parent_name': 'Doctor',
-                'children': [
-                    {'code': 'IN', 'name': 'Internal Doctor', 'key': 'in'},
-                    {'code': 'EXT', 'name': 'External Doctor', 'key': 'ext'},
-                    ...
-                ]
-            },
-            ...
-        ]
-        """
         CustomSource = self.env['custom.source'].sudo()
         parents = CustomSource.search([('parent_id', '=', False), ('active', '=', True)], order='code')
 
@@ -92,7 +77,6 @@ class CdtJourneyReportWizard(models.TransientModel):
 
             children_data = []
             for child in children:
-                # Generate key from code (safe for dict keys)
                 key = child.code.lower().replace(' ', '_').replace('.', '').replace('-', '_')
                 children_data.append({
                     'id': child.id,
@@ -117,11 +101,6 @@ class CdtJourneyReportWizard(models.TransientModel):
         return hierarchy
 
     def _build_source_map(self, hierarchy):
-        """
-        Flatten hierarchy into a lookup dict:
-        source_id -> child_key
-        Also builds list of all child keys.
-        """
         source_map = {}
         all_keys = []
         for parent in hierarchy:
@@ -131,7 +110,6 @@ class CdtJourneyReportWizard(models.TransientModel):
         return source_map, all_keys
 
     def _get_source_key_for_appointment(self, appointment, source_map):
-        """Return the dynamic key for the appointment's ref_source"""
         if not appointment.ref_source:
             return None
         return source_map.get(appointment.ref_source.id)
@@ -185,9 +163,7 @@ class CdtJourneyReportWizard(models.TransientModel):
     METRIC_PREFIXES = ['ta', 'da', 'htb', 'hta', 'hto', 'cp', 'bin', 'ha', 'gr', 'fr']
 
     def _empty_metrics(self, all_keys):
-        """Build empty metrics dict with dynamic keys"""
         m = {}
-        # Overview (OVERALL) totals
         m['total_appointments'] = 0
         m['total_diagnostic_appointments'] = 0
         m['hearing_test_booked'] = 0
@@ -204,12 +180,10 @@ class CdtJourneyReportWizard(models.TransientModel):
         m['binaural_rate_percentage'] = 0.0
         m['average_selling_price'] = 0.0
 
-        # Per-source keys (dynamic)
         for prefix in self.METRIC_PREFIXES:
             for key in all_keys:
                 m[f'{prefix}_{key}'] = 0 if prefix in ('ta', 'da', 'htb', 'hta', 'hto', 'cp', 'bin', 'ha') else 0.0
 
-        # Per-source percentages
         for key in all_keys:
             m[f'nap_{key}'] = 0.0
             m[f'htop_{key}'] = 0.0
@@ -228,10 +202,8 @@ class CdtJourneyReportWizard(models.TransientModel):
             is_fup = self._is_followup(appt)
             fup_suffix = '_fup' if is_fup else ''
 
-            # Determine dynamic key with FUP variant
             dyn_key = None
             if source_key:
-                # Try FUP variant first, then fallback
                 fup_key = f'{source_key}{fup_suffix}'
                 if fup_key in all_keys:
                     dyn_key = fup_key
@@ -348,16 +320,6 @@ class CdtJourneyReportWizard(models.TransientModel):
 
         return m
 
-    def _merge_metrics(self, target, source):
-        for k, v in source.items():
-            if k in target and isinstance(v, (int, float)):
-                target[k] += v
-        return target
-
-    def _recompute_percentages(self, m, all_keys):
-        """Recompute percentages after merging"""
-        return self._compute_percentages(m, all_keys)
-
     # ========================================
     # EXCEL GENERATION
     # ========================================
@@ -366,7 +328,6 @@ class CdtJourneyReportWizard(models.TransientModel):
         if not clinics:
             raise ValidationError(_('No clinics found.'))
 
-        # Build dynamic hierarchy
         hierarchy = self._get_source_hierarchy()
         source_map, all_keys = self._build_source_map(hierarchy)
         if not all_keys:
@@ -482,13 +443,46 @@ class CdtJourneyReportWizard(models.TransientModel):
         })
 
         # ========================================
+        # PACKAGE FORMATS FOR HELPERS
+        # ========================================
+        formats = {
+            'number': number_format,
+            'currency': currency_format,
+            'percent': percent_format,
+            'text': text_format,
+            'text_left': text_left_format,
+            'date': date_format,
+            'total': {
+                'number': total_number_format,
+                'currency': total_currency_format,
+                'percent': total_percent_format,
+                'text': total_format,
+                'text_left': total_left_format,
+            },
+            'region': {
+                'number': region_total_number_format,
+                'currency': region_total_currency_format,
+                'percent': region_total_percent_format,
+                'text': region_total_format,
+                'text_left': region_total_left_format,
+            },
+            'india': {
+                'number': india_total_number_format,
+                'currency': india_total_currency_format,
+                'percent': india_total_percent_format,
+                'text': india_total_format,
+                'text_left': india_total_left_format,
+            },
+        }
+
+        # ========================================
         # WORKSHEET
         # ========================================
         sheet_name = self.report_type.upper()
         ws = workbook.add_worksheet(sheet_name)
         ws.set_zoom(70)
 
-        # ===== BASE COLUMNS (first 9) =====
+        # ===== BASE COLUMNS =====
         base_headers = [
             ('Store Name', 30),
             ('StoreCode', 10),
@@ -505,7 +499,6 @@ class CdtJourneyReportWizard(models.TransientModel):
             ws.set_column(i, i, w)
 
         # ===== DYNAMIC METRIC COLUMNS =====
-        # For each metric, we have: [child1, child2, ..., childN, OVERALL]
         METRIC_GROUPS = [
             ('TOTAL NUMBER OF APPOINTMENTS', 'ta', 'number'),
             ('TOTAL NUMBER OF DIAGNOSTIC APPOINTMENTS', 'da', 'number'),
@@ -525,20 +518,18 @@ class CdtJourneyReportWizard(models.TransientModel):
         ]
 
         col = 9
-        metric_start_cols = {}   # prefix -> (start_col, overall_col, child_cols_map)
-        col_map = {}             # (prefix, key) -> col_index
+        metric_start_cols = {}
+        col_map = {}
 
         for metric_name, prefix, fmt_type in METRIC_GROUPS:
             start_col = col
 
-            # ===== ROW 0: Parent headers (dynamic hierarchy) =====
-            # For each parent (Doctor, Marketing, OUTREACH), merge across its children
+            # ROW 0: Parent headers
             parent_span_start = col
             for parent in hierarchy:
                 children = parent['children']
                 if not children:
                     continue
-                # Count only children that appear in our all_keys
                 valid_children = [c for c in children if c['key'] in all_keys]
                 if not valid_children:
                     continue
@@ -548,12 +539,12 @@ class CdtJourneyReportWizard(models.TransientModel):
                                parent['parent_name'].upper(), parent_header_format)
                 parent_span_start += span
 
-            # OVERALL merged header for this metric
+            # OVERALL
             overall_col = parent_span_start
             ws.merge_range(0, overall_col, 1, overall_col, 'OVERALL', overall_header_format)
             ws.set_column(overall_col, overall_col, 12)
 
-            # ===== ROW 1: Child headers =====
+            # ROW 1: Child headers
             child_col = start_col
             child_col_map = {}
             for parent in hierarchy:
@@ -575,7 +566,7 @@ class CdtJourneyReportWizard(models.TransientModel):
             }
             col = overall_col + 1
 
-        # ===== Last two columns =====
+        # Last two columns
         opening_date_col = col
         ws.merge_range(0, opening_date_col, 1, opening_date_col, 'Opening Date', base_header_format)
         ws.set_column(opening_date_col, opening_date_col, 12)
@@ -591,7 +582,6 @@ class CdtJourneyReportWizard(models.TransientModel):
         # ========================================
         row = 2
 
-        # Group clinics by (Area Manager, Region)
         am_groups = {}
         for clinic in clinics:
             am_name = clinic.area_manager_id.name if clinic.area_manager_id else 'Unassigned'
@@ -602,7 +592,6 @@ class CdtJourneyReportWizard(models.TransientModel):
         grand_overall = self._empty_metrics(all_keys)
 
         for (am_name, region_name), group_clinics in sorted(am_groups.items()):
-            # AM header row
             ws.merge_range(row, 0, row, total_cols - 1,
                            f'AM: {am_name}  |  Region: {region_name}', am_header_format)
             row += 1
@@ -613,14 +602,13 @@ class CdtJourneyReportWizard(models.TransientModel):
                 raw = self._compute_clinic_metrics(clinic, source_map, all_keys)
                 raw = self._compute_percentages(raw, all_keys)
 
-                # Accumulate into AM and Grand
                 for k, v in raw.items():
                     if k in am_metrics and isinstance(v, (int, float)):
                         am_metrics[k] += v
                     if k in grand_overall and isinstance(v, (int, float)):
                         grand_overall[k] += v
 
-                # Write base columns
+                # Base columns
                 ws.write(row, 0, clinic.name or '', text_left_format)
                 ws.write(row, 1, clinic.clinic_code or '', text_format)
                 ws.write(row, 2, clinic.city or '', text_format)
@@ -631,13 +619,12 @@ class CdtJourneyReportWizard(models.TransientModel):
                 ws.write(row, 7, clinic.go_live_date, date_format)
                 ws.write(row, 8, clinic.clinic_version or '', text_format)
 
-                # Write metric columns
+                # Metric columns
                 for prefix, info in metric_start_cols.items():
                     fmt_type = info['fmt_type']
                     for key, c in info['children'].items():
                         val = raw.get(f'{prefix}_{key}', 0)
-                        self._write_cell(ws, row, c, val, fmt_type,
-                                        number_format, currency_format, percent_format)
+                        self._write_cell(ws, row, c, val, fmt_type, formats)
                     # OVERALL
                     overall_key_map = {
                         'ta': 'total_appointments',
@@ -657,21 +644,18 @@ class CdtJourneyReportWizard(models.TransientModel):
                         'fr': 'fitting_revenue',
                     }
                     overall_val = raw.get(overall_key_map[prefix], 0)
-                    self._write_cell(ws, row, info['overall'], overall_val, fmt_type,
-                                    number_format, currency_format, percent_format)
+                    self._write_cell(ws, row, info['overall'], overall_val, fmt_type, formats)
 
-                # Opening and closing date at end
                 ws.write(row, opening_date_col, clinic.go_live_date, date_format)
                 ws.write(row, closed_date_col, '', date_format)
                 row += 1
 
-            # ---- AM TOTAL ROW ----
+            # AM TOTAL
             am_metrics = self._compute_percentages(am_metrics, all_keys)
             ws.write(row, 0, f'{am_name} Total', total_left_format)
             for i in range(1, 9):
                 ws.write(row, i, '', total_format)
-            self._write_total_metrics(ws, row, am_metrics, metric_start_cols,
-                                     all_keys, 'total')
+            self._write_total_metrics(ws, row, am_metrics, metric_start_cols, all_keys, 'total', formats)
             ws.write(row, opening_date_col, '', total_format)
             ws.write(row, closed_date_col, '', total_format)
             row += 1
@@ -695,8 +679,7 @@ class CdtJourneyReportWizard(models.TransientModel):
             ws.write(row, 0, f'{region_name} Total', region_total_left_format)
             for i in range(1, 9):
                 ws.write(row, i, '', region_total_format)
-            self._write_total_metrics(ws, row, reg_metrics, metric_start_cols,
-                                     all_keys, 'region')
+            self._write_total_metrics(ws, row, reg_metrics, metric_start_cols, all_keys, 'region', formats)
             ws.write(row, opening_date_col, '', region_total_format)
             ws.write(row, closed_date_col, '', region_total_format)
             row += 1
@@ -712,8 +695,7 @@ class CdtJourneyReportWizard(models.TransientModel):
         ws.write(row, 0, 'India Total', india_total_left_format)
         for i in range(1, 9):
             ws.write(row, i, '', india_total_format)
-        self._write_total_metrics(ws, row, grand_overall, metric_start_cols,
-                                 all_keys, 'india')
+        self._write_total_metrics(ws, row, grand_overall, metric_start_cols, all_keys, 'india', formats)
 
         workbook.close()
 
@@ -743,25 +725,23 @@ class CdtJourneyReportWizard(models.TransientModel):
     # ========================================
     # HELPERS
     # ========================================
-    def _write_cell(self, ws, row, col, val, fmt_type,
-                    number_format, currency_format, percent_format):
+    def _write_cell(self, ws, row, col, val, fmt_type, formats):
+        """Write a single cell using the appropriate format."""
         if fmt_type == 'number':
-            ws.write(row, col, val or 0, number_format)
+            ws.write(row, col, val or 0, formats['number'])
         elif fmt_type == 'currency':
-            ws.write(row, col, val or 0, currency_format)
+            ws.write(row, col, val or 0, formats['currency'])
         elif fmt_type == 'percent':
-            ws.write(row, col, val or 0, percent_format)
+            ws.write(row, col, val or 0, formats['percent'])
         else:
-            ws.write(row, col, val or '', number_format)
+            ws.write(row, col, val or '', formats['number'])
 
-    def _write_total_metrics(self, ws, row, m, metric_start_cols, all_keys, style):
+    def _write_total_metrics(self, ws, row, m, metric_start_cols, all_keys, style, formats):
         """Write total row metric cells with style variant: total/region/india"""
-        style_map = {
-            'total': (total_number_format, total_currency_format, total_percent_format),
-            'region': (region_total_number_format, region_total_currency_format, region_total_percent_format),
-            'india': (india_total_number_format, india_total_currency_format, india_total_percent_format),
-        }
-        num_f, cur_f, pct_f = style_map[style]
+        style_formats = formats.get(style, formats['total'])
+        num_f = style_formats['number']
+        cur_f = style_formats['currency']
+        pct_f = style_formats['percent']
 
         overall_key_map = {
             'ta': 'total_appointments',
@@ -792,7 +772,7 @@ class CdtJourneyReportWizard(models.TransientModel):
                 elif fmt_type == 'percent':
                     ws.write(row, c, val or 0, pct_f)
 
-            overall_val = m.get(overall_key_map[prefix], 0)
+            overall_val = m.get(overall_key_map.get(prefix, ''), 0)
             if fmt_type == 'number':
                 ws.write(row, info['overall'], overall_val or 0, num_f)
             elif fmt_type == 'currency':
