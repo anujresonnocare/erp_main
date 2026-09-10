@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- ============================================ -->
+        <!-- WIZARD FORM VIEW                             -->
+        <!-- ============================================ -->
+        <record id="view_cdt_journey_report_wizard_form" model="ir.ui.view">
+            <field name="name">cdt.journey.report.wizard.form</field>
+            <field name="model">cdt.journey.report.wizard</field>
+            <field name="arch" type="xml">
+                <form string="CDT Journey Report">
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>CDT Journey Report</h1>
+                            <p class="oe_grey">
+                                Generate the CDT Journey report with a dynamic source hierarchy
+                                breakdown (Doctor, Marketing, OUTREACH).
+                            </p>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="report_type" widget="radio" options="{'no_create': True}"/>
+                                <field name="date_from"/>
+                                <field name="date_to"/>
+                            </group>
+                            <group>
+                                <field name="area_manager_id"
+                                       options="{'no_create': True, 'no_open': True}"/>
+                                <field name="region"/>
+                                <field name="clinic_ids"
+                                       widget="many2many_tags"
+                                       options="{'no_create': True}"/>
+                            </group>
+                        </group>
+                        <group>
+                            <field name="file_name"/>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button name="print_report"
+                                string="Generate Report"
+                                type="object"
+                                class="btn-primary"
+                                icon="fa-download"/>
+                        <button string="Cancel"
+                                class="btn-secondary"
+                                special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <!-- ============================================ -->
+        <!-- ACTION FOR THE WIZARD                        -->
+        <!-- ============================================ -->
+        <record id="action_cdt_journey_report_wizard" model="ir.actions.act_window">
+            <field name="name">CDT Journey Report</field>
+            <field name="res_model">cdt.journey.report.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="view_id" ref="view_cdt_journey_report_wizard_form"/>
+            <!-- FIX: use full module-qualified xmlid -->
+            <field name="binding_model_id" ref="resonnocare_appointment.model_resonnocare_appointment"/>
+            <field name="binding_view_types">list,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Generate CDT Journey Report
+                </p>
+                <p>
+                    Create the YTD / MTD / WTD / Yesterday report with a dynamic breakdown
+                    based on the <strong>Source Hierarchy</strong> (Doctor, Marketing, OUTREACH).
+                </p>
+            </field>
+        </record>
+
+        <!-- ============================================ -->
+        <!-- MENU ITEMS                                   -->
+        <!-- ============================================ -->
+
+        <!-- Optional root menu for CDT Reports -->
+        <menuitem id="menu_cdt_reports_root"
+                  name="CDT Journey Reports"
+                  sequence="85"
+                  groups="base.group_user"/>
+
+        <!-- Submenu: Reports -->
+        <menuitem id="menu_cdt_journey_reports"
+                  name="Reports"
+                  parent="menu_cdt_reports_root"
+                  sequence="10"/>
+
+        <!-- Main action menu -->
+        <menuitem id="menu_cdt_journey_report"
+                  name="CDT Journey Report"
+                  parent="menu_cdt_journey_reports"
+                  action="action_cdt_journey_report_wizard"
+                  sequence="10"/>
+
+    </data>
+</odoo>
