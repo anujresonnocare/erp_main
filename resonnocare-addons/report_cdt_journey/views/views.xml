@@ -91,7 +91,7 @@
                   sequence="10"/>
 
         <!-- Main action menu -->
-        <menuitem id="menu_cdt_journey_report"
+        <menuitem id="menu_cdt_journey_report_data"
                   name="CDT Journey Report"
                   parent="menu_cdt_journey_reports"
                   action="action_cdt_journey_report_wizard"
