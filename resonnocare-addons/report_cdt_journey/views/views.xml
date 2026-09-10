@@ -5,7 +5,7 @@
         <!-- ============================================ -->
         <!-- WIZARD FORM VIEW                             -->
         <!-- ============================================ -->
-        <record id="view_cdt_journey_report_wizard_form" model="ir.ui.view">
+        <record id="view_cdt_journey_report_wizard_form_root" model="ir.ui.view">
             <field name="name">cdt.journey.report.wizard.form</field>
             <field name="model">cdt.journey.report.wizard</field>
             <field name="arch" type="xml">
@@ -54,12 +54,12 @@
         <!-- ============================================ -->
         <!-- ACTION FOR THE WIZARD                        -->
         <!-- ============================================ -->
-        <record id="action_cdt_journey_report_wizard" model="ir.actions.act_window">
+        <record id="action_cdt_journey_report_wizard_root" model="ir.actions.act_window">
             <field name="name">CDT Journey Report</field>
             <field name="res_model">cdt.journey.report.wizard</field>
             <field name="view_mode">form</field>
             <field name="target">new</field>
-            <field name="view_id" ref="view_cdt_journey_report_wizard_form"/>
+            <field name="view_id" ref="view_cdt_journey_report_wizard_form_root"/>
             <!-- FIX: use full module-qualified xmlid -->
             <field name="binding_model_id" ref="resonnocare_appointment.model_resonnocare_appointment"/>
             <field name="binding_view_types">list,form</field>
@@ -81,11 +81,10 @@
         <!-- Optional root menu for CDT Reports -->
         <menuitem id="menu_cdt_reports_root"
                   name="CDT Journey Reports"
-                  sequence="85"
-                  groups="base.group_user"/>
+                  sequence="85"/>
 
         <!-- Submenu: Reports -->
-        <menuitem id="menu_cdt_journey_reports"
+        <menuitem id="menu_cdt_journey_reports_root"
                   name="Reports"
                   parent="menu_cdt_reports_root"
                   sequence="10"/>
@@ -93,8 +92,8 @@
         <!-- Main action menu -->
         <menuitem id="menu_cdt_journey_report_data"
                   name="CDT Journey Report"
-                  parent="menu_cdt_journey_reports"
-                  action="action_cdt_journey_report_wizard"
+                  parent="menu_cdt_journey_reports_root"
+                  action="action_cdt_journey_report_wizard_root"
                   sequence="10"/>
 
     </data>
