@@ -565,7 +565,7 @@ class CdtJourneyReportWizard(models.TransientModel):
 
                 span = len(valid_children)
                 ws.merge_range(1, parent_span_start, 1, parent_span_start + span - 1,
-                               parent['parent_name'].upper(), parent_header_format)
+                                parent['parent_name'].upper(), parent_header_format)
                 parent_span_start += span
 
             # OVERALL column: merge rows 1-2 vertically
@@ -631,7 +631,7 @@ class CdtJourneyReportWizard(models.TransientModel):
 
         for (am_name, region_name), group_clinics in sorted(am_groups.items()):
             ws.merge_range(row, 0, row, total_cols - 1,
-                           f'AM:  {am_name}   |   Region: {region_name}', am_header_format)
+                            f'AM:  {am_name}   |   Region: {region_name}', am_header_format)
             row += 1
 
             am_metrics = self._empty_metrics(all_keys)
@@ -737,3 +737,61 @@ class CdtJourneyReportWizard(models.TransientModel):
             'url': f'/web/content/{attachment.id}?download=true',
             'target': 'new'
         }
+
+    # ========================================
+    # HELPERS
+    # ========================================
+    def _write_cell(self, ws, row, col, val, fmt_type, formats):
+        """Write a single cell using the appropriate format."""
+        if fmt_type == 'number':
+            ws.write(row, col, val or 0, formats['number'])
+        elif fmt_type == 'currency':
+            ws.write(row, col, val or 0, formats['currency'])
+        elif fmt_type == 'percent':
+            ws.write(row, col, val or 0, formats['percent'])
+        else:
+            ws.write(row, col, val or '', formats['number'])
+
+    def _write_total_metrics(self, ws, row, m, metric_start_cols, all_keys, style, formats):
+        """Write total row metric cells with style variant: total/region/india"""
+        style_formats = formats.get(style, formats['total'])
+        num_f = style_formats['number']
+        cur_f = style_formats['currency']
+        pct_f = style_formats['percent']
+
+        overall_key_map = {
+            'ta': 'total_appointments',
+            'da': 'total_diagnostic_appointments',
+            'htb': 'hearing_test_booked',
+            'hta': 'hearing_test_attended',
+            'nap': 'net_attendance_percent',
+            'hto': 'hearing_test_opportunity',
+            'htop': 'hearing_test_opportunity_percentage',
+            'cp': 'conversions_prescriptions',
+            'crp': 'conversion_rate_percent',
+            'bin': 'binaural',
+            'brp': 'binaural_rate_percentage',
+            'ha': 'hearing_unit',
+            'asp': 'average_selling_price',
+            'gr': 'gross_revenue',
+            'fr': 'fitting_revenue',
+        }
+
+        for prefix, info in metric_start_cols.items():
+            fmt_type = info['fmt_type']
+            for key, c in info['children'].items():
+                val = m.get(f'{prefix}_{key}', 0)
+                if fmt_type == 'number':
+                    ws.write(row, c, val or 0, num_f)
+                elif fmt_type == 'currency':
+                    ws.write(row, c, val or 0, cur_f)
+                elif fmt_type == 'percent':
+                    ws.write(row, c, val or 0, pct_f)
+
+            overall_val = m.get(overall_key_map.get(prefix, ''), 0)
+            if fmt_type == 'number':
+                ws.write(row, info['overall'], overall_val or 0, num_f)
+            elif fmt_type == 'currency':
+                ws.write(row, info['overall'], overall_val or 0, cur_f)
+            elif fmt_type == 'percent':
+                ws.write(row, info['overall'], overall_val or 0, pct_f)
