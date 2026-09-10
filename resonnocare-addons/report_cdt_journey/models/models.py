@@ -337,7 +337,7 @@ class CdtJourneyReportWizard(models.TransientModel):
         workbook = xlsxwriter.Workbook(output, {'in_memory': True})
 
         # ========================================
-        # FORMATS
+        # FORMATS (unchanged)
         # ========================================
         parent_header_format = workbook.add_format({
             'bold': True, 'text_wrap': True, 'valign': 'vcenter', 'align': 'center',
@@ -355,6 +355,14 @@ class CdtJourneyReportWizard(models.TransientModel):
             'bold': True, 'text_wrap': True, 'valign': 'vcenter', 'align': 'center',
             'fg_color': '#4472C4', 'font_color': 'white', 'border': 1, 'font_size': 9
         })
+        metric_header_format = workbook.add_format({
+            'bold': True, 'text_wrap': True, 'valign': 'vcenter', 'align': 'center',
+            'fg_color': '#2E75B6', 'font_color': 'white', 'border': 1, 'font_size': 10
+        })
+        date_range_format = workbook.add_format({
+            'bold': True, 'font_size': 11, 'align': 'left', 'valign': 'vcenter',
+            'border': 1, 'bg_color': '#FFF2CC'
+        })
         text_format = workbook.add_format({
             'border': 1, 'font_size': 9, 'text_wrap': True, 'valign': 'vcenter'
         })
@@ -369,9 +377,6 @@ class CdtJourneyReportWizard(models.TransientModel):
         })
         percent_format = workbook.add_format({
             'num_format': '0.00"%"', 'border': 1, 'font_size': 9, 'align': 'center', 'valign': 'vcenter'
-        })
-        title_format = workbook.add_format({
-            'bold': True, 'font_size': 12, 'align': 'left', 'valign': 'vcenter'
         })
         am_header_format = workbook.add_format({
             'bold': True, 'text_wrap': True, 'valign': 'vcenter', 'align': 'left',
@@ -442,9 +447,6 @@ class CdtJourneyReportWizard(models.TransientModel):
             'align': 'center', 'valign': 'vcenter'
         })
 
-        # ========================================
-        # PACKAGE FORMATS FOR HELPERS
-        # ========================================
         formats = {
             'number': number_format,
             'currency': currency_format,
@@ -482,23 +484,18 @@ class CdtJourneyReportWizard(models.TransientModel):
         ws = workbook.add_worksheet(sheet_name)
         ws.set_zoom(70)
 
-        # ===== BASE COLUMNS =====
-        base_headers = [
-            ('Store Name', 30),
-            ('StoreCode', 10),
-            ('City', 14),
-            ('State', 14),
-            ('Area Manager', 14),
-            ('Region', 10),
-            ('Clinic Type', 10),
-            ('Opening Date', 12),
-            ('Store Version', 14),
-        ]
-        for i, (h, w) in enumerate(base_headers):
-            ws.merge_range(0, i, 1, i, h, base_header_format)
-            ws.set_column(i, i, w)
+        # ========================================
+        # ROW 0: Date Range + Metric Group Headers
+        # ========================================
+        # Date Range cell spans base columns (0-8)
+        date_range_text = f"Date Range: {self.date_from.strftime('%d %b %Y')} To {self.date_to.strftime('%d %b %Y')}"
+        ws.merge_range(0, 0, 0, 8, date_range_text, date_range_format)
 
-        # ===== DYNAMIC METRIC COLUMNS =====
+        # We need to know metric group column ranges BEFORE writing headers.
+        # Pre-calculate the total width of each metric group = number of children + 1 (OVERALL)
+        num_children = len(all_keys)
+        group_width = num_children + 1  # children + OVERALL
+
         METRIC_GROUPS = [
             ('TOTAL NUMBER OF APPOINTMENTS', 'ta', 'number'),
             ('TOTAL NUMBER OF DIAGNOSTIC APPOINTMENTS', 'da', 'number'),
@@ -517,70 +514,93 @@ class CdtJourneyReportWizard(models.TransientModel):
             ('Fitting Revenue', 'fr', 'currency'),
         ]
 
+        # Write Row 0: metric group names merged across their column range
         col = 9
+        metric_col_start = {}   # prefix -> start_col
+        for metric_name, prefix, fmt_type in METRIC_GROUPS:
+            metric_col_start[prefix] = col
+            ws.merge_range(0, col, 0, col + group_width - 1, metric_name, metric_header_format)
+            col += group_width
+
+        # Last 2 columns on row 0 (Opening Date, Closed Date duplicates)
+        closing_open_col = col
+        closing_closed_col = col + 1
+        ws.merge_range(0, closing_open_col, 2, closing_open_col, 'Opening Date', base_header_format)
+        ws.merge_range(0, closing_closed_col, 2, closing_closed_col, 'Closed Date', base_header_format)
+        ws.set_column(closing_open_col, closing_open_col, 12)
+        ws.set_column(closing_closed_col, closing_closed_col, 12)
+
+        # ========================================
+        # ROW 1 (Parent Names) + ROW 2 (Child Names) — headers
+        # ========================================
+        # Base columns: merge rows 1-2 vertically
+        base_headers = [
+            ('Store Name', 30),
+            ('StoreCode', 10),
+            ('City', 14),
+            ('State', 14),
+            ('Area Manager', 14),
+            ('Region', 10),
+            ('Clinic Type', 10),
+            ('Opening Date', 12),
+            ('Store Version', 14),
+        ]
+        for i, (h, w) in enumerate(base_headers):
+            ws.merge_range(1, i, 2, i, h, base_header_format)
+            ws.set_column(i, i, w)
+
+        # For each metric group: row 1 = parent groups merged, row 2 = children + OVERALL
         metric_start_cols = {}
-        col_map = {}
 
         for metric_name, prefix, fmt_type in METRIC_GROUPS:
-            start_col = col
+            start_col = metric_col_start[prefix]
 
-            # ROW 0: Parent headers
-            parent_span_start = col
+            # ROW 1: Parent headers (DOCTOR, MARKETING, OUTREACH)
+            parent_span_start = start_col
             for parent in hierarchy:
                 children = parent['children']
-                if not children:
-                    continue
                 valid_children = [c for c in children if c['key'] in all_keys]
                 if not valid_children:
                     continue
 
                 span = len(valid_children)
-                ws.merge_range(0, parent_span_start, 0, parent_span_start + span - 1,
+                ws.merge_range(1, parent_span_start, 1, parent_span_start + span - 1,
                                parent['parent_name'].upper(), parent_header_format)
                 parent_span_start += span
 
-            # OVERALL
+            # OVERALL column: merge rows 1-2 vertically
             overall_col = parent_span_start
-            ws.merge_range(0, overall_col, 1, overall_col, 'OVERALL', overall_header_format)
+            ws.merge_range(1, overall_col, 2, overall_col, 'OVERALL', overall_header_format)
             ws.set_column(overall_col, overall_col, 12)
 
-            # ROW 1: Child headers
+            # ROW 2: Child names
             child_col = start_col
             child_col_map = {}
             for parent in hierarchy:
                 for child in parent['children']:
                     if child['key'] not in all_keys:
                         continue
-                    ws.write(1, child_col, child['name'], child_header_format)
+                    ws.write(2, child_col, child['name'], child_header_format)
                     ws.set_column(child_col, child_col, 11)
                     child_col_map[child['key']] = child_col
-                    col_map[(prefix, child['key'])] = child_col
                     child_col += 1
 
-            col_map[(prefix, 'OVERALL')] = overall_col
             metric_start_cols[prefix] = {
                 'start': start_col,
                 'overall': overall_col,
                 'children': child_col_map,
                 'fmt_type': fmt_type,
             }
-            col = overall_col + 1
 
-        # Last two columns
-        opening_date_col = col
-        ws.merge_range(0, opening_date_col, 1, opening_date_col, 'Opening Date', base_header_format)
-        ws.set_column(opening_date_col, opening_date_col, 12)
+        total_cols = closing_closed_col + 1
 
-        closed_date_col = col + 1
-        ws.merge_range(0, closed_date_col, 1, closed_date_col, 'Closed Date', base_header_format)
-        ws.set_column(closed_date_col, closed_date_col, 12)
-
-        total_cols = col + 2
+        # Freeze panes: keep first 9 cols and first 3 rows visible
+        ws.freeze_panes(3, 9)
 
         # ========================================
-        # WRITE DATA
+        # WRITE DATA — starting at ROW 3
         # ========================================
-        row = 2
+        row = 3
 
         am_groups = {}
         for clinic in clinics:
@@ -591,9 +611,27 @@ class CdtJourneyReportWizard(models.TransientModel):
         region_overall = {}
         grand_overall = self._empty_metrics(all_keys)
 
+        overall_key_map = {
+            'ta': 'total_appointments',
+            'da': 'total_diagnostic_appointments',
+            'htb': 'hearing_test_booked',
+            'hta': 'hearing_test_attended',
+            'nap': 'net_attendance_percent',
+            'hto': 'hearing_test_opportunity',
+            'htop': 'hearing_test_opportunity_percentage',
+            'cp': 'conversions_prescriptions',
+            'crp': 'conversion_rate_percent',
+            'bin': 'binaural',
+            'brp': 'binaural_rate_percentage',
+            'ha': 'hearing_unit',
+            'asp': 'average_selling_price',
+            'gr': 'gross_revenue',
+            'fr': 'fitting_revenue',
+        }
+
         for (am_name, region_name), group_clinics in sorted(am_groups.items()):
             ws.merge_range(row, 0, row, total_cols - 1,
-                           f'AM: {am_name}  |  Region: {region_name}', am_header_format)
+                           f'AM:  {am_name}   |   Region: {region_name}', am_header_format)
             row += 1
 
             am_metrics = self._empty_metrics(all_keys)
@@ -625,29 +663,11 @@ class CdtJourneyReportWizard(models.TransientModel):
                     for key, c in info['children'].items():
                         val = raw.get(f'{prefix}_{key}', 0)
                         self._write_cell(ws, row, c, val, fmt_type, formats)
-                    # OVERALL
-                    overall_key_map = {
-                        'ta': 'total_appointments',
-                        'da': 'total_diagnostic_appointments',
-                        'htb': 'hearing_test_booked',
-                        'hta': 'hearing_test_attended',
-                        'nap': 'net_attendance_percent',
-                        'hto': 'hearing_test_opportunity',
-                        'htop': 'hearing_test_opportunity_percentage',
-                        'cp': 'conversions_prescriptions',
-                        'crp': 'conversion_rate_percent',
-                        'bin': 'binaural',
-                        'brp': 'binaural_rate_percentage',
-                        'ha': 'hearing_unit',
-                        'asp': 'average_selling_price',
-                        'gr': 'gross_revenue',
-                        'fr': 'fitting_revenue',
-                    }
                     overall_val = raw.get(overall_key_map[prefix], 0)
                     self._write_cell(ws, row, info['overall'], overall_val, fmt_type, formats)
 
-                ws.write(row, opening_date_col, clinic.go_live_date, date_format)
-                ws.write(row, closed_date_col, '', date_format)
+                ws.write(row, closing_open_col, clinic.go_live_date, date_format)
+                ws.write(row, closing_closed_col, '', date_format)
                 row += 1
 
             # AM TOTAL
@@ -656,8 +676,8 @@ class CdtJourneyReportWizard(models.TransientModel):
             for i in range(1, 9):
                 ws.write(row, i, '', total_format)
             self._write_total_metrics(ws, row, am_metrics, metric_start_cols, all_keys, 'total', formats)
-            ws.write(row, opening_date_col, '', total_format)
-            ws.write(row, closed_date_col, '', total_format)
+            ws.write(row, closing_open_col, '', total_format)
+            ws.write(row, closing_closed_col, '', total_format)
             row += 1
 
             # Accumulate region
@@ -667,9 +687,7 @@ class CdtJourneyReportWizard(models.TransientModel):
                 if k in region_overall[region_name] and isinstance(v, (int, float)):
                     region_overall[region_name][k] += v
 
-        # ========================================
         # REGION TOTALS
-        # ========================================
         row += 1
         ws.merge_range(row, 0, row, total_cols - 1, 'REGION TOTALS', parent_header_format)
         row += 1
@@ -680,13 +698,11 @@ class CdtJourneyReportWizard(models.TransientModel):
             for i in range(1, 9):
                 ws.write(row, i, '', region_total_format)
             self._write_total_metrics(ws, row, reg_metrics, metric_start_cols, all_keys, 'region', formats)
-            ws.write(row, opening_date_col, '', region_total_format)
-            ws.write(row, closed_date_col, '', region_total_format)
+            ws.write(row, closing_open_col, '', region_total_format)
+            ws.write(row, closing_closed_col, '', region_total_format)
             row += 1
 
-        # ========================================
         # INDIA TOTAL
-        # ========================================
         grand_overall = self._compute_percentages(grand_overall, all_keys)
         row += 1
         ws.merge_range(row, 0, row, total_cols - 1, 'INDIA TOTAL', parent_header_format)
@@ -721,61 +737,3 @@ class CdtJourneyReportWizard(models.TransientModel):
             'url': f'/web/content/{attachment.id}?download=true',
             'target': 'new'
         }
-
-    # ========================================
-    # HELPERS
-    # ========================================
-    def _write_cell(self, ws, row, col, val, fmt_type, formats):
-        """Write a single cell using the appropriate format."""
-        if fmt_type == 'number':
-            ws.write(row, col, val or 0, formats['number'])
-        elif fmt_type == 'currency':
-            ws.write(row, col, val or 0, formats['currency'])
-        elif fmt_type == 'percent':
-            ws.write(row, col, val or 0, formats['percent'])
-        else:
-            ws.write(row, col, val or '', formats['number'])
-
-    def _write_total_metrics(self, ws, row, m, metric_start_cols, all_keys, style, formats):
-        """Write total row metric cells with style variant: total/region/india"""
-        style_formats = formats.get(style, formats['total'])
-        num_f = style_formats['number']
-        cur_f = style_formats['currency']
-        pct_f = style_formats['percent']
-
-        overall_key_map = {
-            'ta': 'total_appointments',
-            'da': 'total_diagnostic_appointments',
-            'htb': 'hearing_test_booked',
-            'hta': 'hearing_test_attended',
-            'nap': 'net_attendance_percent',
-            'hto': 'hearing_test_opportunity',
-            'htop': 'hearing_test_opportunity_percentage',
-            'cp': 'conversions_prescriptions',
-            'crp': 'conversion_rate_percent',
-            'bin': 'binaural',
-            'brp': 'binaural_rate_percentage',
-            'ha': 'hearing_unit',
-            'asp': 'average_selling_price',
-            'gr': 'gross_revenue',
-            'fr': 'fitting_revenue',
-        }
-
-        for prefix, info in metric_start_cols.items():
-            fmt_type = info['fmt_type']
-            for key, c in info['children'].items():
-                val = m.get(f'{prefix}_{key}', 0)
-                if fmt_type == 'number':
-                    ws.write(row, c, val or 0, num_f)
-                elif fmt_type == 'currency':
-                    ws.write(row, c, val or 0, cur_f)
-                elif fmt_type == 'percent':
-                    ws.write(row, c, val or 0, pct_f)
-
-            overall_val = m.get(overall_key_map.get(prefix, ''), 0)
-            if fmt_type == 'number':
-                ws.write(row, info['overall'], overall_val or 0, num_f)
-            elif fmt_type == 'currency':
-                ws.write(row, info['overall'], overall_val or 0, cur_f)
-            elif fmt_type == 'percent':
-                ws.write(row, info['overall'], overall_val or 0, pct_f)
