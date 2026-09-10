@@ -1,2 +1,3 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_patient_journey,patient.journey,model_patient_journey,base.group_user,1,1,1,1
+access_cdt_journey_report_wizard_user,cdt.journey.report.wizard.user,model_cdt_journey_report_wizard,base.group_user,1,1,1,1
+access_cdt_journey_report_wizard_manager,cdt.journey.report.wizard.manager,model_cdt_journey_report_wizard,base.group_system,1,1,1,1
