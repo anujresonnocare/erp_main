@@ -12,6 +12,9 @@
                 <field name="code"/>
                 <field name="product_id"/>
                 <field name="active"/>
+                <field name="is_diagnostic"/>
+                <field name="is_hearing_loss"/>
+
             </list>
         </field>
     </record>
@@ -35,6 +38,8 @@
                         <group>
                             <field name="sequence"/>
                             <field name="active"/>
+                            <field name="is_diagnostic"/>
+                            <field name="is_hearing_loss"/>
                         </group>
                     </group>
 

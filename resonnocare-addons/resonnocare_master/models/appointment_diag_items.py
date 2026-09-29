@@ -40,6 +40,10 @@ class ResonnocareDiagnosticItem(models.Model):
         default=True
     )
 
+    is_diagnostic = fields.Boolean("Is Diagnostic")
+
+    is_hearing_loss = fields.Boolean("Is Hearing Loss")
+
     _sql_constraints = [
         ('code_unique', 'unique(code)', 'Diagnostic Item code must be unique.')
     ]
