@@ -9,7 +9,7 @@
                 <field name="name"/>
                 <field name="mobile"/>
                 <field name="email"/>
-                <field name="referral_source"/>
+                <field name="ref_source"/>
                 <field name="referring_doctor_id"/>
             </list>
         </field>
