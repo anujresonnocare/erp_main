@@ -8,11 +8,6 @@ class ResonnocarePatientRegistrationWizard(models.TransientModel):
     referring_doctor_id = fields.Many2one(
         "resonnocare.doctor.profile",
         string="Referring Doctor Profile",
-        domain=[
-            ("state", "=", "approved"),
-            ("change_type", "=", "addition"),
-            ("active", "=", True),
-        ],
     )
 
     @api.onchange("referring_doctor_id")
