@@ -25,6 +25,12 @@ class ResonnocareAppointmentType(models.Model):
     description = fields.Text(string="Description")
     active = fields.Boolean(default=True)
 
+    diagnostic_test_ids = fields.Many2many(
+        "resonnocare.diagnostic.item",
+        string="Diagnostic Tests",
+        help="Diagnostic tests associated with this appointment type.",
+    )
+
     _sql_constraints = [
         ("unique_appointment_code", "unique(code)", "Appointment Code must be unique."),
         ("unique_appointment_name", "unique(name)", "Appointment Type name must be unique."),
