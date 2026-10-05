@@ -33,6 +33,9 @@ class SaleOrder(models.Model):
         help='Original sale order if this is a return or exchange'
     )
 
+    appointment_type_id = fields.Many2one(
+        "resonnocare.appointment.type", string="Appointment Type", related="appointment_id.appointment_type_id", store=True, readonly=True
+    )
 
 class AccountMove(models.Model):
     _inherit = 'account.move'
