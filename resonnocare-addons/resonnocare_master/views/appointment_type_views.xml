@@ -13,6 +13,7 @@
                         <field name="description"/>
                         <field name="sequence"/>
                         <field name="active"/>
+                        <field name="diagnostic_test_ids" widget="many2many_tags"/>
                     </group>
                 </sheet>
             </form>

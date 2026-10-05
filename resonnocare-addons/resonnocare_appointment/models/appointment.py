@@ -625,6 +625,7 @@ class ResonnocareAppointment(models.Model):
                 "warehouse_id": rec.clinic_id.warehouse_id.id,
                 "origin": rec.appointment_id,
                 "order_line": order_lines,
+                "appointment_id" : rec.id
             })
             # Force GST matrix taxes on auto-generated lines.
             sale.order_line._apply_fixed_tax_from_matrix()
