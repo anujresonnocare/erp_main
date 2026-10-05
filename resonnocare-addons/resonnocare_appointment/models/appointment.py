@@ -33,6 +33,10 @@ class ResonnocareAppointment(models.Model):
     name = fields.Char(string="Title", compute="_compute_name", store=True)
     name = fields.Char(string="Title", compute="_compute_name", store=True)
 
+    appointment_type_id = fields.Many2one(
+        "resonnocare.appointment.type", string="Appointment Type", related="appointment_id.appointment_type_id", store=True, readonly=True
+    )
+
     clinic_id = fields.Many2one(
         "resonnocare.clinic",
         string="Clinic",
