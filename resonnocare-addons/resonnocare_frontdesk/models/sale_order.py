@@ -872,7 +872,7 @@ class SaleOrderLine(models.Model):
                     "Please configure CGST+SGST (intra-state) and IGST (inter-state) taxes."
                 )
             # Fixed-tax mode: do not allow fiscal-position remapping to alter matrix rate.
-            line.tax_id = taxes
+            # line.tax_id = taxes
 
     def _get_fixed_gst_rate_from_client_matrix(self):
         """Resolve GST from GST Rate Matrix master by HSN/SAC."""
