@@ -104,6 +104,12 @@ class ResonnocareClinic(models.Model):
         default=True,
     )
 
+    fiscal_position_id = fields.Many2one(
+        "account.fiscal.position",
+        string="Fiscal Position",
+        help="Fiscal position to be used for this clinic's transactions",
+    )
+
     def init(self):
         # Idempotent migration: map legacy clinic type/subtype values to the new model.
         self._cr.execute(
