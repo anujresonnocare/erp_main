@@ -219,16 +219,20 @@ class ResonnocareClinic(models.Model):
 
     state_hq_name = fields.Char(
         string="State HQ Name",
+        related="state_id.name",
+        store=True,
         help="Head Quarter Name for the State",
     )
 
     state_hq_address = fields.Text(
         string="State HQ Address",
+        related="state_id.gst_state_hq",
         help="Address of the State Head Quarter",
     )
 
     state_gst = fields.Char(
         string="State GST",
+        related="state_id.gstin",
         help="GST Number for State Operations",
     )
 
