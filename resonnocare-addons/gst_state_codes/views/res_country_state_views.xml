@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_country_state_form_gst" model="ir.ui.view">
+        <field name="name">res.country.state.form.gst</field>
+        <field name="model">res.country.state</field>
+        <field name="inherit_id" ref="base.view_country_state_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="gstin"/>
+            </xpath>
+            <xpath expr="//field[@name='country_id']" position="after">
+                <field name="gst_state_hq"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_country_state_list_gst" model="ir.ui.view">
+        <field name="name">res.country.state.list.gst</field>
+        <field name="model">res.country.state</field>
+        <field name="arch" type="xml">
+            <list string="GST State Codes">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="gstin"/>
+                <field name="country_id"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_gst_indian_states" model="ir.actions.act_window">
+        <field name="name">GST State Codes</field>
+        <field name="res_model">res.country.state</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_id" ref="view_country_state_list_gst"/>
+        <field name="domain">[('country_id.code', '=', 'IN')]</field>
+    </record>
+
+    <menuitem id="menu_gst_indian_states"
+              name="GST State Codes"
+              parent="base.menu_administration"
+              action="action_gst_indian_states"
+              sequence="80"/>
+</odoo>
