@@ -117,6 +117,36 @@ class ResonnocareAppointment(models.Model):
     diagnostic_item_ids = fields.Many2many(
         "resonnocare.diagnostic.item", string="Diagnostic Tests"
     )
+
+
+    @api.onchange('appointment_type_id')
+    def _onchange_appointment_type_id(self):
+        """Filter diagnostic_item_ids to only the tests of the selected appointment type."""
+        for rec in self:
+            if rec.appointment_type_id:
+                # 1) Reset the selected diagnostics if they are not part of the new type
+                allowed_ids = rec.appointment_type_id.diagnostic_test_ids.ids
+                rec.diagnostic_item_ids = rec.diagnostic_item_ids.filtered(
+                    lambda d: d.id in allowed_ids
+                )
+
+                # 2) Return a domain so the dropdown only shows the allowed ones
+                return {
+                    'domain': {
+                        'diagnostic_item_ids': [
+                            ('id', 'in', allowed_ids)
+                        ]
+                    }
+                }
+            else:
+                # No appointment type selected → clear and allow everything
+                rec.diagnostic_item_ids = [(5, 0, 0)]
+                return {
+                    'domain': {
+                        'diagnostic_item_ids': []
+                    }
+                }
+
     appointment_outcome_ids = fields.Many2many(
         "resonnocare.appointment.outcome",
         "resonnocare_appointment_outcome_rel",
