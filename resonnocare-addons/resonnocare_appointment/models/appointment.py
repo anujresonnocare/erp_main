@@ -1827,20 +1827,24 @@ class ResonnocareAppointment(models.Model):
                     "Fitting appointment cannot be completed while balance due is greater than 0."
                 )
             )
-        wizard = self.env["resonnocare.appointment.complete.wizard"].create(
-            {"appointment_id": self.id}
-        )
-        return {
-            "type": "ir.actions.act_window",
-            "name": "Complete Appointment",
-            "res_model": "resonnocare.appointment.complete.wizard",
-            "view_mode": "form",
-            "view_id": self.env.ref(
-                "resonnocare_appointment.view_resonnocare_appointment_complete_wizard_form"
-            ).id,
-            "res_id": wizard.id,
-            "target": "new",
-        }
+        if not self.appointment_outcome_ids:
+            raise UserError("An appointment outcome must be selected to complete the appointment.")
+        else:
+            self.status = "completed"
+        # wizard = self.env["resonnocare.appointment.complete.wizard"].create(
+        #     {"appointment_id": self.id}
+        # )
+        # return {
+        #     "type": "ir.actions.act_window",
+        #     "name": "Complete Appointment",
+        #     "res_model": "resonnocare.appointment.complete.wizard",
+        #     "view_mode": "form",
+        #     "view_id": self.env.ref(
+        #         "resonnocare_appointment.view_resonnocare_appointment_complete_wizard_form"
+        #     ).id,
+        #     "res_id": wizard.id,
+        #     "target": "new",
+        # }
 
     def action_no_show(self):
         for rec in self:
