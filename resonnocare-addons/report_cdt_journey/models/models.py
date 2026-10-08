@@ -406,7 +406,7 @@ class CdtJourneyReportWizard(models.TransientModel):
                     m['ha_units'] += int(ha_qty)
                     bump('ha', int(ha_qty))
 
-                    gross = sum(ha_lines.mapped('price_subtotal'))
+                    gross = sum(ha_lines.mapped('price_unit') * ha_lines.mapped('product_uom_qty'))
                     m['gross_rev_ha'] += gross
                     bump('gr', gross)
 
@@ -438,7 +438,7 @@ class CdtJourneyReportWizard(models.TransientModel):
                                   l.product_id.product_tmpl_id.item_category == 'Speech'
                     )
                     if sp_lines:
-                        sgr = sum(sp_lines.mapped('price_subtotal'))
+                        sgr = sum(sp_lines.mapped('price_unit') * sp_lines.mapped('product_uom_qty '))
                         snr = sum(
                             (getattr(l, 'price_subtotal_after_discount', None) or l.price_subtotal)
                             for l in sp_lines
@@ -469,7 +469,7 @@ class CdtJourneyReportWizard(models.TransientModel):
                                   l.product_id.product_tmpl_id.item_category == 'Sleep'
                     )
                     if sl_lines:
-                        sgr = sum(sl_lines.mapped('price_subtotal'))
+                        sgr = sum(sl_lines.mapped('price_unit') * sl_lines.mapped('product_uom_qty '))
                         snr = sum(
                             (getattr(l, 'price_subtotal_after_discount', None) or l.price_subtotal)
                             for l in sl_lines
@@ -490,7 +490,7 @@ class CdtJourneyReportWizard(models.TransientModel):
                 if diag_lines:
                     for line in diag_lines:
                         product = line.product_id.product_tmpl_id
-                        gross = line.price_subtotal
+                        gross = line.price_unit * line.product_uom_qty
                         net = getattr(line, 'price_subtotal_after_discount', None) or line.price_subtotal
 
                         if product.item_type == 'ha' or product.item_category == 'Hearing Device':
