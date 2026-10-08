@@ -47,7 +47,8 @@ class SaleOrder(models.Model):
                 for rec in self.product_pack_ids.pack_products_ids:
                     if not product_already_added:
                         new_order_lines.append((0, 0, {
-                            'product_id': rec.id,
+                            'product_id': rec.product_id,
+                            'product_template_id': rec.product_tmpl_id.id,
                             'name': "KIT (2+1)" + rec.product_id.name,
                             'product_uom_qty': rec.quantity,
                             'price_unit': rec.price,
