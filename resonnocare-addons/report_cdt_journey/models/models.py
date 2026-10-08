@@ -29,25 +29,18 @@ class CdtJourneyReportWizard(models.TransientModel):
     clinic_ids = fields.Many2many('resonnocare.clinic', string='Clinics')
     file_name = fields.Char(string='File Name', default='CDT_Journey_Report')
 
-    # =====================================================================
-    # CONSTANTS
-    # =====================================================================
-    APPT_TYPE_DIAGNOSTIC   = 'Diagnostics'
     APPT_TYPE_HEARING_TEST = 'Hearing Test & Trial'
+    APPT_TYPE_DIAGNOSTIC   = 'Diagnostics'
     APPT_TYPE_SPEECH       = 'Speech'
     APPT_TYPE_VOICE        = 'Voice'
     APPT_TYPE_SWALLOWING   = 'Swallowing'
     APPT_TYPE_SLEEP        = 'Sleep'
     APPT_TYPE_DEVICE_SALE  = 'Device Sale'
 
-    # NOTE: these must be UPPERCASE because _outcome_codes uppercases everything.
     HEARING_LOSS_OUTCOMES = ('HATS', 'RX', 'DEF', 'DRREF', 'USER')
     EXCLUDED_OUTCOMES     = ('ANSP', 'FTA')
     SPEECH_TYPES          = ('Speech', 'Voice', 'Swallowing')
 
-    # Map outcome-name / code (upper) → short code.
-    # Applied to BOTH the `code` and the `outcome` label, so it works
-    # whichever field holds the human-readable value.
     OUTCOME_NAME_MAP = {
         'FAILED TO ATTEND':                    'FTA',
         'HEARING AID TRIAL SUCCESSFUL':        'HATS',
@@ -64,17 +57,18 @@ class CdtJourneyReportWizard(models.TransientModel):
         'HEARING AID USER':                    'USER',
     }
 
-    # =====================================================================
-    # METRIC PREFIXES
-    # =====================================================================
     INT_PREFIXES = (
         'da', 'htb', 'hta', 'hl', 'cp', 'bin', 'ha',
         'sphb', 'spha', 'ther', 'slpb', 'slpa', 'pap',
     )
     FLOAT_PREFIXES = (
-        'asp', 'gr', 'nr', 'fr', 'sgr', 'snr',
-        'slgr', 'slnr',
-        'dgha', 'dnha', 'dgsp', 'dnsp', 'dgsl', 'dnsl',
+        'asp',
+        'mrp', 'disc', 'gr',
+        'mrpsp', 'discsp', 'sgr',
+        'mrpsl', 'discsl', 'slgr',
+        'mrpgh', 'discgh', 'dgha',
+        'mrpgp', 'discgp', 'dgsp',
+        'mrpgl', 'discgl', 'dgsl',
     )
 
     # =====================================================================
@@ -84,22 +78,19 @@ class CdtJourneyReportWizard(models.TransientModel):
     def _onchange_report_type(self):
         today = fields.Date.today()
         if self.report_type == 'ytd':
-            if today.month >= 4:
-                self.date_from = date(today.year, 4, 1)
-            else:
-                self.date_from = date(today.year - 1, 4, 1)
+            self.date_from = date(today.year, 4, 1) if today.month >= 4 \
+                else date(today.year - 1, 4, 1)
             self.date_to = today
         elif self.report_type == 'mtd':
             self.date_from = date(today.year, today.month, 1)
             self.date_to = today
         elif self.report_type == 'wtd':
-            monday = today - timedelta(days=today.weekday())
-            self.date_from = monday
+            self.date_from = today - timedelta(days=today.weekday())
             self.date_to = today
         elif self.report_type == 'yday':
-            yesterday = today - timedelta(days=1)
-            self.date_from = yesterday
-            self.date_to = yesterday
+            y = today - timedelta(days=1)
+            self.date_from = y
+            self.date_to = y
         else:
             self.date_from = False
             self.date_to = False
@@ -113,6 +104,46 @@ class CdtJourneyReportWizard(models.TransientModel):
         return self._generate_excel_report()
 
     # =====================================================================
+    # TEST SETS
+    # =====================================================================
+    def _build_test_sets(self):
+        ApptType = self.env['resonnocare.appointment.type']
+        def ids_for(name):
+            t = ApptType.search([('name', '=', name)], limit=1)
+            return set(t.diagnostic_test_ids.ids) if t else set()
+
+        self._test_sets = {
+            'hearing':     ids_for(self.APPT_TYPE_HEARING_TEST),
+            'diagnostic':  ids_for(self.APPT_TYPE_DIAGNOSTIC),
+            'speech':      ids_for(self.APPT_TYPE_SPEECH),
+            'voice':       ids_for(self.APPT_TYPE_VOICE),
+            'swallowing':  ids_for(self.APPT_TYPE_SWALLOWING),
+            'sleep':       ids_for(self.APPT_TYPE_SLEEP),
+            'device_sale': ids_for(self.APPT_TYPE_DEVICE_SALE),
+        }
+        _logger.info("CDT test sets: %s", {k: len(v) for k, v in self._test_sets.items()})
+
+    def _get_appt_test_ids(self, appointment):
+        ids = set()
+        direct = getattr(appointment, 'diagnostic_test_ids', None)
+        if direct:
+            ids |= set(direct.ids)
+        if appointment.appointment_type_id:
+            ids |= set(appointment.appointment_type_id.diagnostic_test_ids.ids)
+        return ids
+
+    def _appt_matches_set(self, appointment, set_name):
+        return bool(self._get_appt_test_ids(appointment) & self._test_sets.get(set_name, set()))
+
+    def _appt_is_speech_like(self, appointment):
+        ids = self._get_appt_test_ids(appointment)
+        return bool(ids & (
+            self._test_sets['speech'] |
+            self._test_sets['voice'] |
+            self._test_sets['swallowing']
+        ))
+
+    # =====================================================================
     # SOURCE HIERARCHY
     # =====================================================================
     def _get_source_hierarchy(self):
@@ -120,39 +151,27 @@ class CdtJourneyReportWizard(models.TransientModel):
         parents = CustomSource.search(
             [('parent_id', '=', False), ('active', '=', True)], order='code'
         )
-
         hierarchy = []
         for parent in parents:
             children = CustomSource.search([
-                ('parent_id', '=', parent.id),
-                ('active', '=', True)
+                ('parent_id', '=', parent.id), ('active', '=', True)
             ], order='code')
-
             children_data = []
             for child in children:
                 key = child.code.lower().replace(' ', '_').replace('.', '').replace('-', '_')
                 children_data.append({
-                    'id': child.id,
-                    'code': child.code,
-                    'name': child.name,
-                    'key': key,
-                    'is_doctor': child.is_doctor,
-                    'is_market': child.is_market,
-                    'is_outreach': child.is_outreach,
+                    'id': child.id, 'code': child.code, 'name': child.name,
+                    'key': key, 'is_doctor': child.is_doctor,
+                    'is_market': child.is_market, 'is_outreach': child.is_outreach,
                 })
-
             hierarchy.append({
-                'parent_id': parent.id,
-                'parent_code': parent.code,
-                'parent_name': parent.name,
-                'children': children_data,
+                'parent_id': parent.id, 'parent_code': parent.code,
+                'parent_name': parent.name, 'children': children_data,
             })
-
         return hierarchy
 
     def _build_source_map(self, hierarchy):
-        source_map = {}
-        all_keys = []
+        source_map, all_keys = {}, []
         for parent in hierarchy:
             for child in parent['children']:
                 source_map[child['id']] = child['key']
@@ -180,7 +199,6 @@ class CdtJourneyReportWizard(models.TransientModel):
         return bool(previous)
 
     def _is_ha_product(self, product):
-        """HA item_type == 'ha'."""
         if not product:
             return False
         item_type = False
@@ -190,87 +208,39 @@ class CdtJourneyReportWizard(models.TransientModel):
             item_type = product.product_tmpl_id.item_type
         return item_type == 'ha'
 
-    def _appt_type_name(self, appointment):
-        if appointment.appointment_type_id:
-            return appointment.appointment_type_id.name
-        return None
-
     def _outcome_codes(self, appointment):
-        """
-        Return a set of UPPERCASE short outcome codes for this appointment.
-
-        Handles both cases:
-          * o.code     contains the short code ('Rx', 'HATS', ...)
-          * o.outcome  contains the human-readable label ('Prescribed', ...)
-
-        Every value is passed through OUTCOME_NAME_MAP so 'Prescribed' → 'RX',
-        'Rx' → 'RX', etc.
-        """
         outcomes = appointment.appointment_outcome_ids
         codes = set()
-        if not outcomes:
-            return codes
-
         for o in outcomes:
             raw_code = (getattr(o, 'code', '') or '').strip().upper()
-            # NOTE: resonnocare.appointment.outcome has NO `name` field.
-            # The human-readable label lives in `outcome`.
-            raw_name = (getattr(o, 'outcome', None)
-                        or getattr(o, 'name', None)
-                        or '').strip().upper()
-
-            # 1) Prefer explicit code, normalised via map
+            raw_name = (getattr(o, 'outcome', None) or getattr(o, 'name', None) or '').strip().upper()
             if raw_code:
-                mapped_code = self.OUTCOME_NAME_MAP.get(raw_code, raw_code)
-                if mapped_code:
-                    codes.add(mapped_code)
+                codes.add(self.OUTCOME_NAME_MAP.get(raw_code, raw_code))
                 continue
-
-            # 2) Fall back to the label, normalised via map
             if raw_name:
-                mapped_name = self.OUTCOME_NAME_MAP.get(raw_name, raw_name)
-                if mapped_name:
-                    codes.add(mapped_name)
-
+                codes.add(self.OUTCOME_NAME_MAP.get(raw_name, raw_name))
         return codes
 
-    def _is_diagnostic_type(self, appointment):
-        return self._appt_type_name(appointment) == self.APPT_TYPE_DIAGNOSTIC
-
-    def _is_hearing_test_type(self, appointment):
-        return self._appt_type_name(appointment) == self.APPT_TYPE_HEARING_TEST
-
-    def _is_speech_type(self, appointment):
-        return self._appt_type_name(appointment) in self.SPEECH_TYPES
-
-    def _is_sleep_type(self, appointment):
-        return self._appt_type_name(appointment) == self.APPT_TYPE_SLEEP
-
-    def _is_device_sale_type(self, appointment):
-        return self._appt_type_name(appointment) == self.APPT_TYPE_DEVICE_SALE
-
     def _is_attended(self, appointment):
-        """status = completed AND no outcome is ANSP / FTA."""
         if appointment.status != 'completed':
             return False
         codes = self._outcome_codes(appointment)
-        excluded = {c.upper() for c in self.EXCLUDED_OUTCOMES}
-        if codes & excluded:
-            return False
-        return True
+        return not bool(codes & {c.upper() for c in self.EXCLUDED_OUTCOMES})
 
     def _has_hearing_loss(self, appointment):
         codes = self._outcome_codes(appointment)
-        hl_set = {c.upper() for c in self.HEARING_LOSS_OUTCOMES}
-        return bool(codes & hl_set)
+        return bool(codes & {c.upper() for c in self.HEARING_LOSS_OUTCOMES})
 
     def _is_scm_order_completed(self, sale_order):
-        """SCM order created + completed."""
         if not sale_order:
             return False
         is_scm = getattr(sale_order, 'is_scm_order', True)
-        is_done = sale_order.state in ('sale', 'done')
-        return is_scm and is_done
+        return is_scm and sale_order.state in ('sale', 'done')
+
+    def _line_amounts(self, line):
+        mrp = line.price_unit * line.product_uom_qty
+        gross = getattr(line, 'price_subtotal_after_discount', None) or line.price_subtotal
+        return mrp, (mrp - gross), gross
 
     def _get_clinics(self):
         domain = []
@@ -296,41 +266,41 @@ class CdtJourneyReportWizard(models.TransientModel):
     # =====================================================================
     def _empty_metrics(self, all_keys):
         m = {}
+        m['diag_appts']            = 0
+        m['ht_booked']             = 0
+        m['ht_attended']           = 0
+        m['hearing_loss']          = 0
+        m['conversions_ha']        = 0
+        m['binaural']              = 0
+        m['ha_units']              = 0
+        m['asp']                   = 0.0
+        m['mrp_ha']                = 0.0
+        m['disc_rev_ha']           = 0.0
+        m['gross_rev_ha']          = 0.0
 
-        m['diag_appts']              = 0
-        m['ht_booked']               = 0
-        m['ht_attended']             = 0
-        m['hearing_loss']            = 0
-        m['conversions_ha']          = 0
-        m['binaural']                = 0
-        m['ha_units']                = 0
-        m['asp']                     = 0.0
-        m['gross_rev_ha']            = 0.0
-        m['net_rev_ha']              = 0.0
-        m['fitting_rev_ha']          = 0.0
+        m['speech_booked']         = 0
+        m['speech_attended']       = 0
+        m['therapy_enrolls']       = 0
+        m['mrp_speech']            = 0.0
+        m['disc_rev_speech']       = 0.0
+        m['gross_rev_speech']      = 0.0
 
-        m['speech_booked']           = 0
-        m['speech_attended']         = 0
-        m['therapy_enrolls']         = 0
-        m['gross_rev_speech']        = 0.0
-        m['net_rev_speech']          = 0.0
+        m['sleep_booked']          = 0
+        m['sleep_attended']        = 0
+        m['pap_conversions']       = 0
+        m['mrp_sleep']             = 0.0
+        m['disc_rev_sleep']        = 0.0
+        m['gross_rev_sleep']       = 0.0
 
-        m['sleep_booked']            = 0
-        m['sleep_attended']          = 0
-        m['pap_conversions']         = 0
-        m['gross_rev_sleep']         = 0.0
-        m['net_rev_sleep']           = 0.0
-
-        m['diag_rev_gross_ha']       = 0.0
-        m['diag_rev_net_ha']         = 0.0
-        m['diag_rev_gross_speech']   = 0.0
-        m['diag_rev_net_speech']     = 0.0
-        m['diag_rev_gross_sleep']    = 0.0
-        m['diag_rev_net_sleep']      = 0.0
-
-        m['net_rev_treatment_total'] = 0.0
-        m['net_rev_diag_total']      = 0.0
-        m['net_rev_all_services']    = 0.0
+        m['mrp_diag_ha']           = 0.0
+        m['disc_rev_diag_ha']      = 0.0
+        m['gross_rev_diag_ha']     = 0.0
+        m['mrp_diag_speech']       = 0.0
+        m['disc_rev_diag_speech']  = 0.0
+        m['gross_rev_diag_speech'] = 0.0
+        m['mrp_diag_sleep']        = 0.0
+        m['disc_rev_diag_sleep']   = 0.0
+        m['gross_rev_diag_sleep']  = 0.0
 
         for prefix in self.INT_PREFIXES:
             for key in all_keys:
@@ -338,7 +308,6 @@ class CdtJourneyReportWizard(models.TransientModel):
         for prefix in self.FLOAT_PREFIXES:
             for key in all_keys:
                 m[f'{prefix}_{key}'] = 0.0
-
         return m
 
     def _compute_clinic_metrics(self, clinic, source_map, all_keys):
@@ -358,7 +327,7 @@ class CdtJourneyReportWizard(models.TransientModel):
                 elif source_key in all_keys:
                     dyn_key = source_key
 
-            def bump(prefix, val=1):
+            def bump(prefix, val):
                 if dyn_key:
                     k = f'{prefix}_{dyn_key}'
                     if k in m:
@@ -372,27 +341,33 @@ class CdtJourneyReportWizard(models.TransientModel):
                 if appt.parent_appointment_id else False
             )
 
-            # -----------------------------------------------------
-            # BLOCK A: HA FUNNEL
-            # -----------------------------------------------------
-            if self._is_diagnostic_type(appt):
+            # ---- test-set membership ----
+            is_diag    = self._appt_matches_set(appt, 'diagnostic')
+            is_hearing = self._appt_matches_set(appt, 'hearing')
+            is_speech  = self._appt_is_speech_like(appt)
+            is_sleep   = self._appt_matches_set(appt, 'sleep')
+            is_devsale = self._appt_matches_set(appt, 'device_sale')
+
+            # ---- BLOCK A: HA funnel ----
+            if is_diag:
                 m['diag_appts'] += 1
-                bump('da')
+                bump('da', 1)
 
-            if self._is_hearing_test_type(appt):
+            if is_hearing:
                 m['ht_booked'] += 1
-                bump('htb')
+                bump('htb', 1)
 
-            if self._is_hearing_test_type(appt) and is_attended:
+            if is_hearing and is_attended:
                 m['ht_attended'] += 1
-                bump('hta')
+                bump('hta', 1)
                 if self._has_hearing_loss(appt):
                     m['hearing_loss'] += 1
-                    bump('hl')
+                    bump('hl', 1)
 
-            if self._is_device_sale_type(appt) and self._is_scm_order_completed(sale_order):
+            # ---- HA sale ----
+            if is_devsale and self._is_scm_order_completed(sale_order):
                 m['conversions_ha'] += 1
-                bump('cp')
+                bump('cp', 1)
 
                 ha_lines = sale_order.order_line.filtered(
                     lambda l: l.product_id and self._is_ha_product(l.product_id)
@@ -401,44 +376,28 @@ class CdtJourneyReportWizard(models.TransientModel):
                     ha_qty = sum(ha_lines.mapped('product_uom_qty'))
                     if ha_qty >= 2:
                         m['binaural'] += 1
-                        bump('bin')
-
+                        bump('bin', 1)
                     m['ha_units'] += int(ha_qty)
                     bump('ha', int(ha_qty))
 
+                    mrp = disc = gross = 0.0
+                    for l in ha_lines:
+                        a, b, c = self._line_amounts(l)
+                        mrp += a; disc += b; gross += c
+                    m['mrp_ha'] += mrp;         bump('mrp', mrp)
+                    m['disc_rev_ha'] += disc;   bump('disc', disc)
+                    m['gross_rev_ha'] += gross; bump('gr', gross)
 
-                    gross = sum(l.price_unit * l.product_uom_qty for l in ha_lines)
-                    m['gross_rev_ha'] += gross
-                    bump('gr', gross)
-
-                    # gross = sum(ha_lines.mapped('price_subtotal'))
-                    # m['gross_rev_ha'] += gross
-                    # bump('gr', gross)
-
-                    net = sum(
-                        (getattr(l, 'price_subtotal_after_discount', None) or l.price_subtotal)
-                        for l in ha_lines
-                    )
-                    m['net_rev_ha'] += net
-                    bump('nr', net)
-
-            # -----------------------------------------------------
-            # BLOCK B: SPEECH
-            # -----------------------------------------------------
-            # -----------------------------------------------------
-            # BLOCK B: SPEECH
-            # -----------------------------------------------------
-            if self._is_speech_type(appt):
+            # ---- BLOCK B: Speech ----
+            if is_speech:
                 m['speech_booked'] += 1
-                bump('sphb')
-
+                bump('sphb', 1)
                 if is_attended:
                     m['speech_attended'] += 1
-                    bump('spha')
-
+                    bump('spha', 1)
                 if is_completed:
                     m['therapy_enrolls'] += 1
-                    bump('ther')
+                    bump('ther', 1)
 
                 if sale_order and is_completed:
                     sp_lines = sale_order.order_line.filtered(
@@ -446,31 +405,24 @@ class CdtJourneyReportWizard(models.TransientModel):
                                   l.product_id.product_tmpl_id.item_category == 'Speech'
                     )
                     if sp_lines:
-                        # Gross = price_unit * qty (list amount, before discount)
-                        sgr = sum(l.price_unit * l.product_uom_qty for l in sp_lines)
-                        snr = sum(
-                            (getattr(l, 'price_subtotal_after_discount', None) or l.price_subtotal)
-                            for l in sp_lines
-                        )
-                        m['gross_rev_speech'] += sgr
-                        bump('sgr', sgr)
-                        m['net_rev_speech'] += snr
-                        bump('snr', snr)
+                        mrp = disc = gross = 0.0
+                        for l in sp_lines:
+                            a, b, c = self._line_amounts(l)
+                            mrp += a; disc += b; gross += c
+                        m['mrp_speech'] += mrp;         bump('mrpsp', mrp)
+                        m['disc_rev_speech'] += disc;   bump('discsp', disc)
+                        m['gross_rev_speech'] += gross; bump('sgr', gross)
 
-            # -----------------------------------------------------
-            # BLOCK C: SLEEP
-            # -----------------------------------------------------
-            if self._is_sleep_type(appt):
+            # ---- BLOCK C: Sleep ----
+            if is_sleep:
                 m['sleep_booked'] += 1
-                bump('slpb')
-
+                bump('slpb', 1)
                 if is_attended:
                     m['sleep_attended'] += 1
-                    bump('slpa')
-
+                    bump('slpa', 1)
                 if self._is_scm_order_completed(sale_order):
                     m['pap_conversions'] += 1
-                    bump('pap')
+                    bump('pap', 1)
 
                 if sale_order and is_completed:
                     sl_lines = sale_order.order_line.filtered(
@@ -478,61 +430,42 @@ class CdtJourneyReportWizard(models.TransientModel):
                                   l.product_id.product_tmpl_id.item_category == 'Sleep'
                     )
                     if sl_lines:
-                        # Gross = price_unit * qty (list amount, before discount)
-                        sgr = sum(l.price_unit * l.product_uom_qty for l in sl_lines)
-                        snr = sum(
-                            (getattr(l, 'price_subtotal_after_discount', None) or l.price_subtotal)
-                            for l in sl_lines
-                        )
-                        m['gross_rev_sleep'] += sgr
-                        bump('slgr', sgr)
-                        m['net_rev_sleep'] += snr
-                        bump('slnr', snr)
+                        mrp = disc = gross = 0.0
+                        for l in sl_lines:
+                            a, b, c = self._line_amounts(l)
+                            mrp += a; disc += b; gross += c
+                        m['mrp_sleep'] += mrp;         bump('mrpsl', mrp)
+                        m['disc_rev_sleep'] += disc;   bump('discsl', disc)
+                        m['gross_rev_sleep'] += gross; bump('slgr', gross)
 
-            # -----------------------------------------------------
-            # BLOCK D: DIAGNOSTICS REVENUE
-            # -----------------------------------------------------
+            # ---- BLOCK D: Diagnostics revenue ----
             if is_completed and sale_order:
                 diag_lines = sale_order.order_line.filtered(
                     lambda l: l.product_id and
                               l.product_id.product_tmpl_id.item_category == 'Diagnostic Services'
                 )
-                if diag_lines:
-                    for line in diag_lines:
-                        product = line.product_id.product_tmpl_id
-                        # Gross = price_unit * qty (list amount, before discount)
-                        gross = line.price_unit * line.product_uom_qty
-                        net = getattr(line, 'price_subtotal_after_discount', None) or line.price_subtotal
+                for line in diag_lines:
+                    product = line.product_id.product_tmpl_id
+                    mrp, disc, gross = self._line_amounts(line)
 
-                        if product.item_type == 'ha' or product.item_category == 'Hearing Device':
-                            m['diag_rev_gross_ha'] += gross
-                            m['diag_rev_net_ha']   += net
-                            bump('dgha', gross)
-                            bump('dnha', net)
-                        elif self._is_speech_type(appt):
-                            m['diag_rev_gross_speech'] += gross
-                            m['diag_rev_net_speech']   += net
-                            bump('dgsp', gross)
-                            bump('dnsp', net)
-                        elif self._is_sleep_type(appt):
-                            m['diag_rev_gross_sleep'] += gross
-                            m['diag_rev_net_sleep']   += net
-                            bump('dgsl', gross)
-                            bump('dnsl', net)
+                    if product.item_type == 'ha' or product.item_category == 'Hearing Device':
+                        m['mrp_diag_ha']           += mrp;   bump('mrpgh', mrp)
+                        m['disc_rev_diag_ha']      += disc;  bump('discgh', disc)
+                        m['gross_rev_diag_ha']     += gross; bump('dgha', gross)
+                    elif is_speech:
+                        m['mrp_diag_speech']       += mrp;   bump('mrpgp', mrp)
+                        m['disc_rev_diag_speech']  += disc;  bump('discgp', disc)
+                        m['gross_rev_diag_speech'] += gross; bump('dgsp', gross)
+                    elif is_sleep:
+                        m['mrp_diag_sleep']        += mrp;   bump('mrpgl', mrp)
+                        m['disc_rev_diag_sleep']   += disc;  bump('discgl', disc)
+                        m['gross_rev_diag_sleep']  += gross; bump('dgsl', gross)
 
-        # ---------------------------------------------------------
-        # BLOCK E: TOTALS
-        # ---------------------------------------------------------
-        m['net_rev_treatment_total'] = m['net_rev_ha'] + m['net_rev_speech'] + m['net_rev_sleep']
-        m['net_rev_diag_total'] = (m['diag_rev_net_ha'] +
-                                   m['diag_rev_net_speech'] +
-                                   m['diag_rev_net_sleep'])
-        m['net_rev_all_services'] = m['net_rev_treatment_total'] + m['net_rev_diag_total']
-
-        m['asp'] = (m['gross_rev_ha'] / m['ha_units']) if m['ha_units'] else 0.0
-        m['fitting_rev_ha'] = m['net_rev_ha']
-
+        m['asp'] = (m['mrp_ha'] / m['ha_units']) if m['ha_units'] else 0.0
         return m
+
+    def _recalc_derived(self, m):
+        m['asp'] = (m['mrp_ha'] / m['ha_units']) if m.get('ha_units') else 0.0
 
     # =====================================================================
     # EXCEL GENERATION
@@ -549,140 +482,58 @@ class CdtJourneyReportWizard(models.TransientModel):
                 _('No custom source children found. Please configure Source Hierarchy.')
             )
 
+        self._build_test_sets()
+
         output = io.BytesIO()
         workbook = xlsxwriter.Workbook(output, {'in_memory': True})
 
-        # -----------------------------------------------------------------
-        # FORMATS
-        # -----------------------------------------------------------------
+        # ---- formats (identical to your current file) ----
         parent_header_format = workbook.add_format({
             'bold': True, 'text_wrap': True, 'valign': 'vcenter', 'align': 'center',
-            'fg_color': '#1F4E78', 'font_color': 'white', 'border': 1, 'font_size': 10
-        })
+            'fg_color': '#1F4E78', 'font_color': 'white', 'border': 1, 'font_size': 10})
         child_header_format = workbook.add_format({
             'bold': True, 'text_wrap': True, 'valign': 'vcenter', 'align': 'center',
-            'fg_color': '#D9E1F2', 'border': 1, 'font_size': 9
-        })
+            'fg_color': '#D9E1F2', 'border': 1, 'font_size': 9})
         overall_header_format = workbook.add_format({
             'bold': True, 'text_wrap': True, 'valign': 'vcenter', 'align': 'center',
-            'fg_color': '#FFD966', 'border': 1, 'font_size': 9
-        })
+            'fg_color': '#FFD966', 'border': 1, 'font_size': 9})
         base_header_format = workbook.add_format({
             'bold': True, 'text_wrap': True, 'valign': 'vcenter', 'align': 'center',
-            'fg_color': '#4472C4', 'font_color': 'white', 'border': 1, 'font_size': 9
-        })
-        text_format = workbook.add_format({
-            'border': 1, 'font_size': 9, 'text_wrap': True, 'valign': 'vcenter'
-        })
-        text_left_format = workbook.add_format({
-            'border': 1, 'font_size': 9, 'text_wrap': True, 'valign': 'vcenter', 'align': 'left'
-        })
-        number_format = workbook.add_format({
-            'num_format': '#,##0', 'border': 1, 'font_size': 9,
-            'align': 'center', 'valign': 'vcenter'
-        })
-        currency_format = workbook.add_format({
-            'num_format': '#,##0', 'border': 1, 'font_size': 9,
-            'align': 'right', 'valign': 'vcenter'
-        })
-        percent_format = workbook.add_format({
-            'num_format': '0.00"%"', 'border': 1, 'font_size': 9,
-            'align': 'center', 'valign': 'vcenter'
-        })
-        am_header_format = workbook.add_format({
-            'bold': True, 'text_wrap': True, 'valign': 'vcenter', 'align': 'left',
-            'fg_color': '#FFE699', 'border': 1, 'font_size': 10
-        })
-        total_format = workbook.add_format({
-            'bold': True, 'border': 1, 'font_size': 9, 'align': 'center',
-            'valign': 'vcenter', 'fg_color': '#E2EFDA'
-        })
-        total_left_format = workbook.add_format({
-            'bold': True, 'border': 1, 'font_size': 9, 'align': 'left',
-            'valign': 'vcenter', 'fg_color': '#E2EFDA'
-        })
-        total_number_format = workbook.add_format({
-            'bold': True, 'num_format': '#,##0', 'border': 1, 'font_size': 9,
-            'align': 'center', 'valign': 'vcenter', 'fg_color': '#E2EFDA'
-        })
-        total_currency_format = workbook.add_format({
-            'bold': True, 'num_format': '#,##0', 'border': 1, 'font_size': 9,
-            'align': 'right', 'valign': 'vcenter', 'fg_color': '#E2EFDA'
-        })
-        region_total_format = workbook.add_format({
-            'bold': True, 'border': 1, 'font_size': 9, 'align': 'center',
-            'valign': 'vcenter', 'fg_color': '#DAEEF3'
-        })
-        region_total_left_format = workbook.add_format({
-            'bold': True, 'border': 1, 'font_size': 9, 'align': 'left',
-            'valign': 'vcenter', 'fg_color': '#DAEEF3'
-        })
-        region_total_number_format = workbook.add_format({
-            'bold': True, 'num_format': '#,##0', 'border': 1, 'font_size': 9,
-            'align': 'center', 'valign': 'vcenter', 'fg_color': '#DAEEF3'
-        })
-        region_total_currency_format = workbook.add_format({
-            'bold': True, 'num_format': '#,##0', 'border': 1, 'font_size': 9,
-            'align': 'right', 'valign': 'vcenter', 'fg_color': '#DAEEF3'
-        })
-        india_total_format = workbook.add_format({
-            'bold': True, 'border': 1, 'font_size': 9, 'align': 'center',
-            'valign': 'vcenter', 'fg_color': '#FFC7CE'
-        })
-        india_total_left_format = workbook.add_format({
-            'bold': True, 'border': 1, 'font_size': 9, 'align': 'left',
-            'valign': 'vcenter', 'fg_color': '#FFC7CE'
-        })
-        india_total_number_format = workbook.add_format({
-            'bold': True, 'num_format': '#,##0', 'border': 1, 'font_size': 9,
-            'align': 'center', 'valign': 'vcenter', 'fg_color': '#FFC7CE'
-        })
-        india_total_currency_format = workbook.add_format({
-            'bold': True, 'num_format': '#,##0', 'border': 1, 'font_size': 9,
-            'align': 'right', 'valign': 'vcenter', 'fg_color': '#FFC7CE'
-        })
-        date_format = workbook.add_format({
-            'border': 1, 'font_size': 9, 'num_format': 'dd-mmm-yyyy',
-            'align': 'center', 'valign': 'vcenter'
-        })
+            'fg_color': '#4472C4', 'font_color': 'white', 'border': 1, 'font_size': 9})
+        text_format      = workbook.add_format({'border': 1, 'font_size': 9, 'text_wrap': True, 'valign': 'vcenter'})
+        text_left_format = workbook.add_format({'border': 1, 'font_size': 9, 'text_wrap': True, 'valign': 'vcenter', 'align': 'left'})
+        number_format    = workbook.add_format({'num_format': '#,##0', 'border': 1, 'font_size': 9, 'align': 'center', 'valign': 'vcenter'})
+        currency_format  = workbook.add_format({'num_format': '#,##0', 'border': 1, 'font_size': 9, 'align': 'right', 'valign': 'vcenter'})
+        percent_format   = workbook.add_format({'num_format': '0.00"%"', 'border': 1, 'font_size': 9, 'align': 'center', 'valign': 'vcenter'})
+        am_header_format = workbook.add_format({'bold': True, 'text_wrap': True, 'valign': 'vcenter', 'align': 'left', 'fg_color': '#FFE699', 'border': 1, 'font_size': 10})
+        total_format     = workbook.add_format({'bold': True, 'border': 1, 'font_size': 9, 'align': 'center', 'valign': 'vcenter', 'fg_color': '#E2EFDA'})
+        total_left_format= workbook.add_format({'bold': True, 'border': 1, 'font_size': 9, 'align': 'left', 'valign': 'vcenter', 'fg_color': '#E2EFDA'})
+        total_number_format   = workbook.add_format({'bold': True, 'num_format': '#,##0', 'border': 1, 'font_size': 9, 'align': 'center', 'valign': 'vcenter', 'fg_color': '#E2EFDA'})
+        total_currency_format = workbook.add_format({'bold': True, 'num_format': '#,##0', 'border': 1, 'font_size': 9, 'align': 'right', 'valign': 'vcenter', 'fg_color': '#E2EFDA'})
+        region_total_format   = workbook.add_format({'bold': True, 'border': 1, 'font_size': 9, 'align': 'center', 'valign': 'vcenter', 'fg_color': '#DAEEF3'})
+        region_total_left_format  = workbook.add_format({'bold': True, 'border': 1, 'font_size': 9, 'align': 'left', 'valign': 'vcenter', 'fg_color': '#DAEEF3'})
+        region_total_number_format= workbook.add_format({'bold': True, 'num_format': '#,##0', 'border': 1, 'font_size': 9, 'align': 'center', 'valign': 'vcenter', 'fg_color': '#DAEEF3'})
+        region_total_currency_format=workbook.add_format({'bold': True, 'num_format': '#,##0', 'border': 1, 'font_size': 9, 'align': 'right', 'valign': 'vcenter', 'fg_color': '#DAEEF3'})
+        india_total_format    = workbook.add_format({'bold': True, 'border': 1, 'font_size': 9, 'align': 'center', 'valign': 'vcenter', 'fg_color': '#FFC7CE'})
+        india_total_left_format   = workbook.add_format({'bold': True, 'border': 1, 'font_size': 9, 'align': 'left', 'valign': 'vcenter', 'fg_color': '#FFC7CE'})
+        india_total_number_format = workbook.add_format({'bold': True, 'num_format': '#,##0', 'border': 1, 'font_size': 9, 'align': 'center', 'valign': 'vcenter', 'fg_color': '#FFC7CE'})
+        india_total_currency_format=workbook.add_format({'bold': True, 'num_format': '#,##0', 'border': 1, 'font_size': 9, 'align': 'right', 'valign': 'vcenter', 'fg_color': '#FFC7CE'})
+        date_format      = workbook.add_format({'border': 1, 'font_size': 9, 'num_format': 'dd-mmm-yyyy', 'align': 'center', 'valign': 'vcenter'})
 
         formats = {
-            'number': number_format,
-            'currency': currency_format,
-            'percent': percent_format,
-            'text': text_format,
-            'text_left': text_left_format,
-            'date': date_format,
+            'number': number_format, 'currency': currency_format, 'percent': percent_format,
+            'text': text_format, 'text_left': text_left_format, 'date': date_format,
             'total': {
-                'number': total_number_format,
-                'currency': total_currency_format,
-                'percent': percent_format,
-                'text': total_format,
-                'text_left': total_left_format,
-            },
+                'number': total_number_format, 'currency': total_currency_format,
+                'percent': percent_format, 'text': total_format, 'text_left': total_left_format},
             'region': {
-                'number': region_total_number_format,
-                'currency': region_total_currency_format,
-                'percent': percent_format,
-                'text': region_total_format,
-                'text_left': region_total_left_format,
-            },
+                'number': region_total_number_format, 'currency': region_total_currency_format,
+                'percent': percent_format, 'text': region_total_format, 'text_left': region_total_left_format},
             'india': {
-                'number': india_total_number_format,
-                'currency': india_total_currency_format,
-                'percent': percent_format,
-                'text': india_total_format,
-                'text_left': india_total_left_format,
-            },
+                'number': india_total_number_format, 'currency': india_total_currency_format,
+                'percent': percent_format, 'text': india_total_format, 'text_left': india_total_left_format},
         }
 
-        # -----------------------------------------------------------------
-        # WORKSHEET
-        #   Three-row header layout:
-        #     Row 0 = Metric name (merged across each metric's whole column block)
-        #     Row 1 = Parent source group (DOCTOR / MARKETING / OUTREACH / OVERALL)
-        #     Row 2 = Child source name
-        # -----------------------------------------------------------------
         sheet_name = self.report_type.upper()
         ws = workbook.add_worksheet(sheet_name)
         ws.set_zoom(70)
@@ -693,69 +544,57 @@ class CdtJourneyReportWizard(models.TransientModel):
         DATA_START_ROW    = 3
 
         base_headers = [
-            ('Store Name', 30),
-            ('StoreCode', 10),
-            ('City', 14),
-            ('State', 14),
-            ('Area Manager', 14),
-            ('Region', 10),
-            ('Clinic Type', 10),
-            ('Opening Date', 12),
-            ('Store Version', 14),
+            ('Store Name', 30), ('StoreCode', 10), ('City', 14), ('State', 14),
+            ('Area Manager', 14), ('Region', 10), ('Clinic Type', 10),
+            ('Opening Date', 12), ('Store Version', 14),
         ]
         for i, (h, w) in enumerate(base_headers):
-            ws.merge_range(HEADER_ROW_METRIC, i, HEADER_ROW_CHILD, i,
-                           h, base_header_format)
+            ws.merge_range(HEADER_ROW_METRIC, i, HEADER_ROW_CHILD, i, h, base_header_format)
             ws.set_column(i, i, w)
 
-        # -----------------------------------------------------------------
-        # METRIC GROUPS
-        # -----------------------------------------------------------------
         METRIC_GROUPS = [
-            # HA Funnel
-            ('TOTAL # DIAGNOSTIC APPTS',                 'da',   'number'),
-            ('TOTAL # HEARING TEST BOOKED',              'htb',  'number'),
-            ('TOTAL # HEARING TEST ATTENDED',            'hta',  'number'),
-            ('TOTAL # HEARING LOSS',                     'hl',   'number'),
-            ('# CONVERSIONS (Rx) (HA)',                  'cp',   'number'),
-            ('# BINAURAL (Rx)',                          'bin',  'number'),
-            ('HA UNITS',                                 'ha',   'number'),
-            ('ASP',                                      'asp',  'currency'),
-            ('GROSS REVENUE (HA)',                       'gr',   'currency'),
-            ('NET REVENUE (AFTER DISCOUNT) (HA)',        'nr',   'currency'),
-            ('FITTING REVENUE (AFTER DISCOUNT) (HA)',    'fr',   'currency'),
+            ('TOTAL # DIAGNOSTIC APPTS',                 'da',     'number'),
+            ('TOTAL # HEARING TEST BOOKED',              'htb',    'number'),
+            ('TOTAL # HEARING TEST ATTENDED',            'hta',    'number'),
+            ('TOTAL # HEARING LOSS',                     'hl',     'number'),
+            ('# CONVERSIONS (Rx) (HA)',                  'cp',     'number'),
+            ('# BINAURAL (Rx)',                          'bin',    'number'),
+            ('HA UNITS',                                 'ha',     'number'),
+            ('ASP',                                      'asp',    'currency'),
+            ('MRP (HA)',                                 'mrp',    'currency'),
+            ('DISCOUNT (HA)',                            'disc',   'currency'),
+            ('GROSS REVENUE (HA)',                       'gr',     'currency'),
 
-            # Speech
-            ('TOTAL # SPEECH APPT BOOKED',               'sphb', 'number'),
-            ('TOTAL # SPEECH APPT ATTENDED',             'spha', 'number'),
-            ('TOTAL # THERAPY ENROLLS',                  'ther', 'number'),
-            ('GROSS REVENUE (SPEECH)',                   'sgr',  'currency'),
-            ('NET REVENUE (AFTER DISCOUNT) (SPEECH)',    'snr',  'currency'),
+            ('TOTAL # SPEECH APPT BOOKED',               'sphb',   'number'),
+            ('TOTAL # SPEECH APPT ATTENDED',             'spha',   'number'),
+            ('TOTAL # THERAPY ENROLLS',                  'ther',   'number'),
+            ('MRP (SPEECH)',                             'mrpsp',  'currency'),
+            ('DISCOUNT (SPEECH)',                        'discsp', 'currency'),
+            ('GROSS REVENUE (SPEECH)',                   'sgr',    'currency'),
 
-            # Sleep
-            ('TOTAL # SLEEP APPT BOOKED',                'slpb', 'number'),
-            ('TOTAL # SLEEP APPT ATTENDED',              'slpa', 'number'),
-            ('TOTAL # CONVERSION (Rx) PAP',              'pap',  'number'),
-            ('GROSS REVENUE (SLEEP)',                    'slgr', 'currency'),
-            ('NET REVENUE (AFTER DISCOUNT) (SLEEP)',     'slnr', 'currency'),
+            ('TOTAL # SLEEP APPT BOOKED',                'slpb',   'number'),
+            ('TOTAL # SLEEP APPT ATTENDED',              'slpa',   'number'),
+            ('TOTAL # CONVERSION (Rx) PAP',              'pap',    'number'),
+            ('MRP (SLEEP)',                              'mrpsl',  'currency'),
+            ('DISCOUNT (SLEEP)',                         'discsl', 'currency'),
+            ('GROSS REVENUE (SLEEP)',                    'slgr',   'currency'),
 
-            # Diagnostics Revenue
-            ('DIAGNOSTICS REVENUE (GROSS) (HA)',         'dgha', 'currency'),
-            ('DIAGNOSTICS REVENUE (NET) (HA)',           'dnha', 'currency'),
-            ('DIAGNOSTICS REVENUE (GROSS) (SPEECH)',     'dgsp', 'currency'),
-            ('DIAGNOSTICS REVENUE (NET) (SPEECH)',       'dnsp', 'currency'),
-            ('DIAGNOSTICS REVENUE (GROSS) (SLEEP)',      'dgsl', 'currency'),
-            ('DIAGNOSTICS REVENUE (NET) (SLEEP)',        'dnsl', 'currency'),
+            ('MRP (DIAGNOSTICS) (HA)',                   'mrpgh',  'currency'),
+            ('DISCOUNT (DIAGNOSTICS) (HA)',              'discgh', 'currency'),
+            ('GROSS REVENUE (DIAGNOSTICS) (HA)',         'dgha',   'currency'),
+            ('MRP (DIAGNOSTICS) (SPEECH)',               'mrpgp',  'currency'),
+            ('DISCOUNT (DIAGNOSTICS) (SPEECH)',          'discgp', 'currency'),
+            ('GROSS REVENUE (DIAGNOSTICS) (SPEECH)',     'dgsp',   'currency'),
+            ('MRP (DIAGNOSTICS) (SLEEP)',                'mrpgl',  'currency'),
+            ('DISCOUNT (DIAGNOSTICS) (SLEEP)',           'discgl', 'currency'),
+            ('GROSS REVENUE (DIAGNOSTICS) (SLEEP)',      'dgsl',   'currency'),
         ]
 
         col = 9
         metric_start_cols = {}
-
         for metric_name, prefix, fmt_type in METRIC_GROUPS:
             start_col = col
             parent_span_start = col
-
-            # ---- Row 1: parent (source hierarchy) headers ----
             for parent in hierarchy:
                 valid_children = [c for c in parent['children'] if c['key'] in all_keys]
                 if not valid_children:
@@ -765,15 +604,11 @@ class CdtJourneyReportWizard(models.TransientModel):
                                HEADER_ROW_PARENT, parent_span_start + span - 1,
                                parent['parent_name'].upper(), parent_header_format)
                 parent_span_start += span
-
-            # ---- OVERALL column (spans rows 1 & 2) ----
             overall_col = parent_span_start
             ws.merge_range(HEADER_ROW_PARENT, overall_col,
-                           HEADER_ROW_CHILD,  overall_col,
-                           'OVERALL', overall_header_format)
+                           HEADER_ROW_CHILD,  overall_col, 'OVERALL', overall_header_format)
             ws.set_column(overall_col, overall_col, 12)
 
-            # ---- Row 2: child headers ----
             child_col = start_col
             child_col_map = {}
             for parent in hierarchy:
@@ -785,38 +620,43 @@ class CdtJourneyReportWizard(models.TransientModel):
                     child_col_map[child['key']] = child_col
                     child_col += 1
 
-            # ---- Row 0: metric name merged across the whole metric block ----
-            metric_end_col = overall_col  # includes OVERALL
             ws.merge_range(HEADER_ROW_METRIC, start_col,
-                           HEADER_ROW_METRIC, metric_end_col,
-                           metric_name, base_header_format)
+                           HEADER_ROW_METRIC, overall_col, metric_name, base_header_format)
 
             metric_start_cols[prefix] = {
-                'start': start_col,
-                'overall': overall_col,
-                'children': child_col_map,
-                'fmt_type': fmt_type,
+                'start': start_col, 'overall': overall_col,
+                'children': child_col_map, 'fmt_type': fmt_type,
             }
             col = overall_col + 1
 
-        # ---- Opening / Closed date columns (span all 3 header rows) ----
         opening_date_col = col
         ws.merge_range(HEADER_ROW_METRIC, opening_date_col,
-                       HEADER_ROW_CHILD,  opening_date_col,
-                       'Opening Date', base_header_format)
+                       HEADER_ROW_CHILD,  opening_date_col, 'Opening Date', base_header_format)
         ws.set_column(opening_date_col, opening_date_col, 12)
-
         closed_date_col = col + 1
         ws.merge_range(HEADER_ROW_METRIC, closed_date_col,
-                       HEADER_ROW_CHILD,  closed_date_col,
-                       'Closed Date', base_header_format)
+                       HEADER_ROW_CHILD,  closed_date_col, 'Closed Date', base_header_format)
         ws.set_column(closed_date_col, closed_date_col, 12)
-
         total_cols = col + 2
 
-        # -----------------------------------------------------------------
-        # WRITE DATA
-        # -----------------------------------------------------------------
+        overall_map = {
+            'da': 'diag_appts', 'htb': 'ht_booked', 'hta': 'ht_attended',
+            'hl': 'hearing_loss', 'cp': 'conversions_ha', 'bin': 'binaural',
+            'ha': 'ha_units', 'asp': 'asp',
+
+            'mrp': 'mrp_ha', 'disc': 'disc_rev_ha', 'gr': 'gross_rev_ha',
+
+            'sphb': 'speech_booked', 'spha': 'speech_attended', 'ther': 'therapy_enrolls',
+            'mrpsp': 'mrp_speech', 'discsp': 'disc_rev_speech', 'sgr': 'gross_rev_speech',
+
+            'slpb': 'sleep_booked', 'slpa': 'sleep_attended', 'pap': 'pap_conversions',
+            'mrpsl': 'mrp_sleep', 'discsl': 'disc_rev_sleep', 'slgr': 'gross_rev_sleep',
+
+            'mrpgh': 'mrp_diag_ha', 'discgh': 'disc_rev_diag_ha', 'dgha': 'gross_rev_diag_ha',
+            'mrpgp': 'mrp_diag_speech', 'discgp': 'disc_rev_diag_speech', 'dgsp': 'gross_rev_diag_speech',
+            'mrpgl': 'mrp_diag_sleep', 'discgl': 'disc_rev_diag_sleep', 'dgsl': 'gross_rev_diag_sleep',
+        }
+
         row = DATA_START_ROW
         am_groups = {}
         for clinic in clinics:
@@ -827,46 +667,14 @@ class CdtJourneyReportWizard(models.TransientModel):
         region_overall = {}
         grand_overall = self._empty_metrics(all_keys)
 
-        overall_map = {
-            'da':   'diag_appts',
-            'htb':  'ht_booked',
-            'hta':  'ht_attended',
-            'hl':   'hearing_loss',
-            'cp':   'conversions_ha',
-            'bin':  'binaural',
-            'ha':   'ha_units',
-            'asp':  'asp',
-            'gr':   'gross_rev_ha',
-            'nr':   'net_rev_ha',
-            'fr':   'fitting_rev_ha',
-            'sphb': 'speech_booked',
-            'spha': 'speech_attended',
-            'ther': 'therapy_enrolls',
-            'sgr':  'gross_rev_speech',
-            'snr':  'net_rev_speech',
-            'slpb': 'sleep_booked',
-            'slpa': 'sleep_attended',
-            'pap':  'pap_conversions',
-            'slgr': 'gross_rev_sleep',
-            'slnr': 'net_rev_sleep',
-            'dgha': 'diag_rev_gross_ha',
-            'dnha': 'diag_rev_net_ha',
-            'dgsp': 'diag_rev_gross_speech',
-            'dnsp': 'diag_rev_net_speech',
-            'dgsl': 'diag_rev_gross_sleep',
-            'dnsl': 'diag_rev_net_sleep',
-        }
-
         for (am_name, region_name), group_clinics in sorted(am_groups.items()):
             ws.merge_range(row, 0, row, total_cols - 1,
                            f'AM: {am_name}  |  Region: {region_name}', am_header_format)
             row += 1
 
             am_metrics = self._empty_metrics(all_keys)
-
             for clinic in group_clinics:
                 raw = self._compute_clinic_metrics(clinic, source_map, all_keys)
-
                 for k, v in raw.items():
                     if isinstance(v, (int, float)):
                         if k in am_metrics:
@@ -874,7 +682,6 @@ class CdtJourneyReportWizard(models.TransientModel):
                         if k in grand_overall:
                             grand_overall[k] += v
 
-                # Base cols
                 ws.write(row, 0, clinic.name or '', text_left_format)
                 ws.write(row, 1, clinic.clinic_code or '', text_format)
                 ws.write(row, 2, clinic.city or '', text_format)
@@ -885,7 +692,6 @@ class CdtJourneyReportWizard(models.TransientModel):
                 ws.write(row, 7, clinic.go_live_date, date_format)
                 ws.write(row, 8, clinic.clinic_version or '', text_format)
 
-                # Metric cols
                 for prefix, info in metric_start_cols.items():
                     fmt_type = info['fmt_type']
                     for key, c in info['children'].items():
@@ -898,7 +704,6 @@ class CdtJourneyReportWizard(models.TransientModel):
                 ws.write(row, closed_date_col, '', date_format)
                 row += 1
 
-            # AM total row
             self._recalc_derived(am_metrics)
             ws.write(row, 0, f'{am_name} Total', total_left_format)
             for i in range(1, 9):
@@ -909,14 +714,12 @@ class CdtJourneyReportWizard(models.TransientModel):
             ws.write(row, closed_date_col, '', total_format)
             row += 1
 
-            # Region accumulate
             if region_name not in region_overall:
                 region_overall[region_name] = self._empty_metrics(all_keys)
             for k, v in am_metrics.items():
                 if isinstance(v, (int, float)) and k in region_overall[region_name]:
                     region_overall[region_name][k] += v
 
-        # Region totals
         row += 1
         ws.merge_range(row, 0, row, total_cols - 1, 'REGION TOTALS', parent_header_format)
         row += 1
@@ -931,7 +734,6 @@ class CdtJourneyReportWizard(models.TransientModel):
             ws.write(row, closed_date_col, '', region_total_format)
             row += 1
 
-        # India total
         row += 1
         ws.merge_range(row, 0, row, total_cols - 1, 'INDIA TOTAL', parent_header_format)
         row += 1
@@ -942,51 +744,27 @@ class CdtJourneyReportWizard(models.TransientModel):
         self._write_total_metrics(ws, row, grand_overall, metric_start_cols,
                                   overall_map, 'india', formats)
 
-        # Freeze panes so base columns + header rows stay visible while scrolling
         ws.freeze_panes(DATA_START_ROW, 9)
-
         workbook.close()
 
-        # -----------------------------------------------------------------
-        # DOWNLOAD
-        # -----------------------------------------------------------------
         file_data = output.getvalue()
         today = fields.Date.today()
         file_name = f"{self.file_name}_{self.report_type}_{today.strftime('%Y%m%d')}.xlsx"
-        file_data_base64 = base64.b64encode(file_data)
-
         attachment = self.env['ir.attachment'].create({
-            'name': file_name,
-            'type': 'binary',
-            'datas': file_data_base64,
+            'name': file_name, 'type': 'binary',
+            'datas': base64.b64encode(file_data),
             'mimetype': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            'res_model': 'cdt.journey.report.wizard',
-            'res_id': self.id
+            'res_model': 'cdt.journey.report.wizard', 'res_id': self.id,
         })
-
         return {
             'type': 'ir.actions.act_url',
             'url': f'/web/content/{attachment.id}?download=true',
-            'target': 'new'
+            'target': 'new',
         }
 
     # =====================================================================
     # HELPERS
     # =====================================================================
-    def _recalc_derived(self, m):
-        """Recompute ASP, fitting revenue, and roll-up totals for aggregate rows."""
-        m['asp'] = (m['gross_rev_ha'] / m['ha_units']) if m.get('ha_units') else 0.0
-        m['fitting_rev_ha'] = m.get('net_rev_ha', 0.0)
-        m['net_rev_treatment_total'] = (
-            m.get('net_rev_ha', 0.0) + m.get('net_rev_speech', 0.0) + m.get('net_rev_sleep', 0.0)
-        )
-        m['net_rev_diag_total'] = (
-            m.get('diag_rev_net_ha', 0.0) +
-            m.get('diag_rev_net_speech', 0.0) +
-            m.get('diag_rev_net_sleep', 0.0)
-        )
-        m['net_rev_all_services'] = m['net_rev_treatment_total'] + m['net_rev_diag_total']
-
     def _write_cell(self, ws, row, col, val, fmt_type, formats):
         if fmt_type == 'number':
             ws.write(row, col, val or 0, formats['number'])
@@ -999,26 +777,12 @@ class CdtJourneyReportWizard(models.TransientModel):
 
     def _write_total_metrics(self, ws, row, m, metric_start_cols,
                              overall_map, style, formats):
-        style_formats = formats.get(style, formats['total'])
-        num_f = style_formats['number']
-        cur_f = style_formats['currency']
-        pct_f = style_formats['percent']
-
+        sf = formats.get(style, formats['total'])
         for prefix, info in metric_start_cols.items():
             fmt_type = info['fmt_type']
+            f = sf['number'] if fmt_type == 'number' else \
+                sf['currency'] if fmt_type == 'currency' else \
+                sf['percent'] if fmt_type == 'percent' else sf['number']
             for key, c in info['children'].items():
-                val = m.get(f'{prefix}_{key}', 0)
-                if fmt_type == 'number':
-                    ws.write(row, c, val or 0, num_f)
-                elif fmt_type == 'currency':
-                    ws.write(row, c, val or 0, cur_f)
-                elif fmt_type == 'percent':
-                    ws.write(row, c, val or 0, pct_f)
-
-            overall_val = m.get(overall_map.get(prefix, ''), 0)
-            if fmt_type == 'number':
-                ws.write(row, info['overall'], overall_val or 0, num_f)
-            elif fmt_type == 'currency':
-                ws.write(row, info['overall'], overall_val or 0, cur_f)
-            elif fmt_type == 'percent':
-                ws.write(row, info['overall'], overall_val or 0, pct_f)
+                ws.write(row, c, m.get(f'{prefix}_{key}', 0) or 0, f)
+            ws.write(row, info['overall'], m.get(overall_map.get(prefix, ''), 0) or 0, f)
