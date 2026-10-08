@@ -59,6 +59,33 @@ class CdtJourneyReportWizard(models.TransientModel):
 
     # =====================================================================
     # METRIC PREFIXES
+    #   da   = Total # Diagnostic Appts
+    #   htb  = Total # Hearing Test Booked
+    #   hta  = Total # Hearing Test Attended
+    #   hl   = Total # Hearing Loss
+    #   cp   = # Conversions (Rx) (HA)
+    #   bin  = # Binaural (Rx)
+    #   ha   = HA Units
+    #   asp  = ASP
+    #   gr   = Gross Revenue (HA)
+    #   nr   = Net Revenue (After Discount) (HA)
+    #   fr   = Fitting Revenue (After Discount) (HA)
+    #   sphb = Total # Speech Appt Booked
+    #   spha = Total # Speech Appt Attended
+    #   ther = Total # Therapy Enrolls
+    #   sgr  = Gross Revenue (Speech)
+    #   snr  = Net Revenue (After Discount) (Speech)
+    #   slpb = Total # Sleep Appt Booked
+    #   slpa = Total # Sleep Appt Attended
+    #   pap  = Total # Conversion (Rx) PAP
+    #   slgr = Gross Revenue (Sleep)
+    #   slnr = Net Revenue (After Discount) (Sleep)
+    #   dgha = Diagnostics Revenue (Gross) (HA)
+    #   dnha = Diagnostics Revenue (Net) (HA)
+    #   dgsp = Diagnostics Revenue (Gross) (Speech)
+    #   dnsp = Diagnostics Revenue (Net) (Speech)
+    #   dgsl = Diagnostics Revenue (Gross) (Sleep)
+    #   dnsl = Diagnostics Revenue (Net) (Sleep)
     # =====================================================================
     INT_PREFIXES = (
         'da', 'htb', 'hta', 'hl', 'cp', 'bin', 'ha',
@@ -638,10 +665,19 @@ class CdtJourneyReportWizard(models.TransientModel):
 
         # -----------------------------------------------------------------
         # WORKSHEET
+        #   Three-row header layout:
+        #     Row 0 = Metric name (merged across each metric's whole column block)
+        #     Row 1 = Parent source group (DOCTOR / MARKETING / OUTREACH / OVERALL)
+        #     Row 2 = Child source name
         # -----------------------------------------------------------------
         sheet_name = self.report_type.upper()
         ws = workbook.add_worksheet(sheet_name)
         ws.set_zoom(70)
+
+        HEADER_ROW_METRIC = 0
+        HEADER_ROW_PARENT = 1
+        HEADER_ROW_CHILD  = 2
+        DATA_START_ROW    = 3
 
         base_headers = [
             ('Store Name', 30),
@@ -655,7 +691,9 @@ class CdtJourneyReportWizard(models.TransientModel):
             ('Store Version', 14),
         ]
         for i, (h, w) in enumerate(base_headers):
-            ws.merge_range(0, i, 1, i, h, base_header_format)
+            # Base columns span all 3 header rows
+            ws.merge_range(HEADER_ROW_METRIC, i, HEADER_ROW_CHILD, i,
+                           h, base_header_format)
             ws.set_column(i, i, w)
 
         # -----------------------------------------------------------------
@@ -705,35 +743,41 @@ class CdtJourneyReportWizard(models.TransientModel):
             start_col = col
             parent_span_start = col
 
-            # Row 0 – parent (source hierarchy) headers
+            # ---- Row 1: parent (source hierarchy) headers ----
             for parent in hierarchy:
-                children = parent['children']
-                if not children:
-                    continue
-                valid_children = [c for c in children if c['key'] in all_keys]
+                valid_children = [c for c in parent['children'] if c['key'] in all_keys]
                 if not valid_children:
                     continue
                 span = len(valid_children)
-                ws.merge_range(0, parent_span_start, 0, parent_span_start + span - 1,
+                ws.merge_range(HEADER_ROW_PARENT, parent_span_start,
+                               HEADER_ROW_PARENT, parent_span_start + span - 1,
                                parent['parent_name'].upper(), parent_header_format)
                 parent_span_start += span
 
-            # OVERALL column
+            # ---- OVERALL column (spans rows 1 & 2) ----
             overall_col = parent_span_start
-            ws.merge_range(0, overall_col, 1, overall_col, 'OVERALL', overall_header_format)
+            ws.merge_range(HEADER_ROW_PARENT, overall_col,
+                           HEADER_ROW_CHILD,  overall_col,
+                           'OVERALL', overall_header_format)
             ws.set_column(overall_col, overall_col, 12)
 
-            # Row 1 – child headers
+            # ---- Row 2: child headers ----
             child_col = start_col
             child_col_map = {}
             for parent in hierarchy:
                 for child in parent['children']:
                     if child['key'] not in all_keys:
                         continue
-                    ws.write(1, child_col, child['name'], child_header_format)
+                    ws.write(HEADER_ROW_CHILD, child_col, child['name'], child_header_format)
                     ws.set_column(child_col, child_col, 11)
                     child_col_map[child['key']] = child_col
                     child_col += 1
+
+            # ---- Row 0: metric name merged across the whole metric block ----
+            metric_end_col = overall_col  # includes OVERALL
+            ws.merge_range(HEADER_ROW_METRIC, start_col,
+                           HEADER_ROW_METRIC, metric_end_col,
+                           metric_name, base_header_format)
 
             metric_start_cols[prefix] = {
                 'start': start_col,
@@ -743,13 +787,16 @@ class CdtJourneyReportWizard(models.TransientModel):
             }
             col = overall_col + 1
 
+        # ---- Opening / Closed date columns (span all 3 header rows) ----
         opening_date_col = col
-        ws.merge_range(0, opening_date_col, 1, opening_date_col,
+        ws.merge_range(HEADER_ROW_METRIC, opening_date_col,
+                       HEADER_ROW_CHILD,  opening_date_col,
                        'Opening Date', base_header_format)
         ws.set_column(opening_date_col, opening_date_col, 12)
 
         closed_date_col = col + 1
-        ws.merge_range(0, closed_date_col, 1, closed_date_col,
+        ws.merge_range(HEADER_ROW_METRIC, closed_date_col,
+                       HEADER_ROW_CHILD,  closed_date_col,
                        'Closed Date', base_header_format)
         ws.set_column(closed_date_col, closed_date_col, 12)
 
@@ -758,7 +805,7 @@ class CdtJourneyReportWizard(models.TransientModel):
         # -----------------------------------------------------------------
         # WRITE DATA
         # -----------------------------------------------------------------
-        row = 2
+        row = DATA_START_ROW
         am_groups = {}
         for clinic in clinics:
             am_name = clinic.area_manager_id.name if clinic.area_manager_id else 'Unassigned'
@@ -882,6 +929,9 @@ class CdtJourneyReportWizard(models.TransientModel):
             ws.write(row, i, '', india_total_format)
         self._write_total_metrics(ws, row, grand_overall, metric_start_cols,
                                   overall_map, 'india', formats)
+
+        # Freeze panes so base columns + header rows stay visible while scrolling
+        ws.freeze_panes(DATA_START_ROW, 9)
 
         workbook.close()
 
