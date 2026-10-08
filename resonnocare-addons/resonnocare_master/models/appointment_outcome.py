@@ -34,10 +34,18 @@ class ResonnocareAppointmentOutcome(models.Model):
         default=True,
     )
 
-    appointment = fields.Many2many(
+    # appointment_type_id = fields.Many2many(
+    #     "resonnocare.appointment.type",
+    #     string="Appointment Type",
+    #     help="Appointment type for which this diagnostic test is applicable."
+    # )
+
+    appointment_type_ids = fields.Many2many(
         "resonnocare.appointment.type",
-        string="Appointment Type",
-        help="Appointment type for which this diagnostic test is applicable."
+        relation="appointment_outcome_type_rel",
+        column1="outcome_id",
+        column2="appointment_type_id",
+        string="Appointment Types",
     )
 
     _sql_constraints = [

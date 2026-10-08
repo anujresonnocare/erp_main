@@ -10,7 +10,7 @@
                 <field name="meaning"/>
                 <field name="sequence"/>
                 <field name="active"/>
-                <field name="appointment" widget="many2many_tags"/>
+                <field name="appointment_type_ids" widget="many2many_tags"/>
             </list>
         </field>
     </record>
@@ -28,7 +28,7 @@
                         <field name="meaning"/>
                         <field name="sequence"/>
                         <field name="active"/>
-                        <field name="appointment" widget="many2many_tags"/>
+                        <field name="appointment_type_ids" widget="many2many_tags"/>
                     </group>
                 </sheet>
             </form>
