@@ -181,3 +181,19 @@ class ProductTemplate(models.Model):
         if history_vals:
             self.env["resonnocare.product.price.history"].sudo().create(history_vals)
         return res
+
+
+class ProductProduct(models.Model):
+    _inherit = "product.product"
+
+    def action_open_price_history(self):
+        self.ensure_one()
+        action = self.env.ref(
+            "resonnocare_inventory.action_resonnocare_product_price_history"
+        ).read()[0]
+        action["domain"] = [("product_tmpl_id", "=", self.id)]
+        action["context"] = {
+            "default_product_tmpl_id": self.id,
+            "search_default_product": 1,
+        }
+        return action
