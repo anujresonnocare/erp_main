@@ -223,7 +223,7 @@ class CdtJourneyReportWizard(models.TransientModel):
             return codes
         for o in outcomes:
             raw_code = (o.code or '').strip().upper()
-            raw_name = (o.name or '').strip().upper()
+            raw_name = (o.outcome or '').strip().upper()
             mapped = self.OUTCOME_NAME_MAP.get(raw_name, None)
             final = raw_code or mapped or raw_name
             if final:
