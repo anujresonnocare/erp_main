@@ -40,20 +40,19 @@ class SaleOrder(models.Model):
         """Perform actions when the selected pack product changes."""
         if self.product_pack_ids:
             new_order_lines = []
-            for rec in self.product_pack_ids:
-                product_already_added = any(
-                    line.product_id.id == rec._origin.id for line in
-                    self.order_line)
-                for rec in self.product_pack_ids.pack_products_ids:
-                    if not product_already_added:
-                        new_order_lines.append((0, 0, {
-                            'product_id': rec.product_id,
-                            'product_template_id': rec.product_tmpl_id.id,
-                            'name': "KIT (2+1)" + rec.product_id.name,
-                            'product_uom_qty': rec.quantity,
-                            'price_unit': rec.price,
-                        }))
-                        self.order_line = new_order_lines
+            # product_already_added = any(
+            #     line.product_id.id == rec._origin.id for line in
+            #     self.order_line)
+            for rec in self.product_pack_ids.pack_products_ids:
+                # if not product_already_added:
+                    new_order_lines.append((0, 0, {
+                        'product_id': rec.product_id,
+                        'product_template_id': rec.product_tmpl_id.id,
+                        'name': "KIT (2+1)" + rec.product_id.name,
+                        'product_uom_qty': rec.quantity,
+                        'price_unit': rec.price,
+                    }))
+                    self.order_line = new_order_lines
         elif not self.product_pack_ids:
             self.order_line = [(5, 0, 0)]
 
