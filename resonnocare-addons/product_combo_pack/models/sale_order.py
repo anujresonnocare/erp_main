@@ -40,40 +40,41 @@ class SaleOrder(models.Model):
         """Perform actions when the selected pack product changes."""
         if self.product_pack_ids:
             new_order_lines = []
-            # product_already_added = any(
-            #     line.product_id.id == rec._origin.id for line in
-            #     self.order_line)
-            for rec in self.product_pack_ids.pack_products_ids:
-                # if not product_already_added:
-                    new_order_lines.append((0, 0, {
-                        'product_id': rec.product_id,
-                        'product_template_id': rec.product_tmpl_id.id,
-                        'name': "KIT (2+1)" + rec.product_id.name,
-                        'product_uom_qty': rec.quantity,
-                        'price_unit': rec.price,
-                    }))
-                    self.order_line = new_order_lines
+            for rec in self.product_pack_ids:
+                product_already_added = any(
+                    line.product_id.id == rec._origin.id for line in
+                    self.order_line)
+                for rec in self.product_pack_ids.pack_products_ids:
+                    if not product_already_added:
+                        new_order_lines.append((0, 0, {
+                            'product_id': rec.product_id,
+                            'product_template_id': rec.product_tmpl_id.id,
+                            'name': "KIT (2+1)" + rec.product_id.name,
+                            'product_uom_qty': rec.quantity,
+                            'price_unit': rec.price,
+                        }))
+                self.order_line = new_order_lines
         elif not self.product_pack_ids:
             self.order_line = [(5, 0, 0)]
 
-    def action_confirm(self):
-        """Override the action_confirm method to create stock moves
-        for pack products."""
-        super().action_confirm()
-        for line in self.order_line:
-            if line.product_id.is_pack:
-                for record in line.product_id.pack_products_ids:
-                    for rec in self.picking_ids:
-                        move = rec.move_ids.create({
-                            'name': record.product_id.name,
-                            'product_id': record.product_id.id,
-                            'product_uom_qty': record.quantity * line.product_uom_qty,
-                            'product_uom': record.product_id.uom_id.id,
-                            'picking_id': rec.id,
-                            'location_id': rec.location_id.id,
-                            'location_dest_id': rec.location_dest_id.id,
-                        })
-                        move._action_confirm()
+    # def action_confirm(self):
+    #     """Override the action_confirm method to create stock moves
+    #     for pack products."""
+    #     super().action_confirm()
+    #     for line in self.order_line:
+    #         if line.product_id.is_pack:
+    #             for record in line.product_id.pack_products_ids:
+    #                 for rec in self.picking_ids:
+    #                     move = rec.move_ids.create({
+    #                         'name': record.product_id.name,
+    #                         'product_id': record.product_id.id,
+    #                         'product_uom_qty': record.quantity * line.product_uom_qty,
+    #                         'product_uom': record.product_id.uom_id.id,
+    #                         'picking_id': rec.id,
+    #                         'location_id': rec.location_id.id,
+    #                         'location_dest_id': rec.location_dest_id.id,
+    #                     })
+    #                     move._action_confirm()
 
 
 class SaleOrderLine(models.Model):
