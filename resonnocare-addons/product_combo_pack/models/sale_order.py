@@ -44,14 +44,15 @@ class SaleOrder(models.Model):
                 product_already_added = any(
                     line.product_id.id == rec._origin.id for line in
                     self.order_line)
-                if not product_already_added:
-                    new_order_lines.append((0, 0, {
-                        'product_id': rec.id,
-                        'name': rec.name,
-                        'product_uom_qty': 1,
-                        'price_unit': rec.pack_price,
-                    }))
-                    self.order_line = new_order_lines
+                for rec in self.product_pack_ids.pack_products_ids:
+                    if not product_already_added:
+                        new_order_lines.append((0, 0, {
+                            'product_id': rec.id,
+                            'name': rec.name,
+                            'product_uom_qty': rec.quantity,
+                            'price_unit': rec.price,
+                        }))
+                        self.order_line = new_order_lines
         elif not self.product_pack_ids:
             self.order_line = [(5, 0, 0)]
 
@@ -93,7 +94,7 @@ class SaleOrderLine(models.Model):
             'name': self.name,
             'product_id': self.product_id.id,
             'product_uom_id': self.product_uom.id,
-            'quantity': self.qty_to_invoice,
+            'quantity': self.qty_to_inv2oice,
             'discount': self.discount,
             'price_unit': 0 if self.product_id.is_pack == True else self.price_unit,
             'tax_ids': [Command.set(self.tax_id.ids)],
