@@ -10,6 +10,7 @@
                 <field name="meaning"/>
                 <field name="sequence"/>
                 <field name="active"/>
+                <field name="appointment_type_id"/>
             </list>
         </field>
     </record>
@@ -27,6 +28,7 @@
                         <field name="meaning"/>
                         <field name="sequence"/>
                         <field name="active"/>
+                        <field name="appointment_type_id"/>
                     </group>
                 </sheet>
             </form>

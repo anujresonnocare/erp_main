@@ -14,6 +14,7 @@
                 <field name="active"/>
                 <field name="is_diagnostic"/>
                 <field name="is_hearing_loss"/>
+                <field name="appointment_type_id"/>
 
             </list>
         </field>
@@ -34,6 +35,7 @@
                             <field name="product_id"
                                    domain="[('type','=','service')]"
                                    options="{'no_create': False}"/>
+                            <field name="appointment_type_id"/>
                         </group>
                         <group>
                             <field name="sequence"/>

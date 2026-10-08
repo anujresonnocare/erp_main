@@ -44,6 +44,14 @@ class ResonnocareDiagnosticItem(models.Model):
 
     is_hearing_loss = fields.Boolean("Is Hearing Loss")
 
+    appointment_type_id = fields.Many2one(
+        "resonnocare.appointment.type",
+        string="Appointment Type",
+        help="Appointment type for which this diagnostic test is applicable."
+    )
+
+    
+
     _sql_constraints = [
         ('code_unique', 'unique(code)', 'Diagnostic Item code must be unique.')
     ]

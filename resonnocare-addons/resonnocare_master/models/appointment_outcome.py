@@ -34,6 +34,12 @@ class ResonnocareAppointmentOutcome(models.Model):
         default=True,
     )
 
+    appointment_type_id = fields.Many2one(
+        "resonnocare.appointment.type",
+        string="Appointment Type",
+        help="Appointment type for which this diagnostic test is applicable."
+    )
+
     _sql_constraints = [
         ("unique_outcome_code", "unique(code)", "Outcome Code must be unique.")
     ]
