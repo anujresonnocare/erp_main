@@ -406,9 +406,14 @@ class CdtJourneyReportWizard(models.TransientModel):
                     m['ha_units'] += int(ha_qty)
                     bump('ha', int(ha_qty))
 
-                    gross = sum(ha_lines.mapped('price_unit') * ha_lines.mapped('product_uom_qty'))
+
+                    gross = sum(l.price_unit * l.product_uom_qty for l in ha_lines)
                     m['gross_rev_ha'] += gross
                     bump('gr', gross)
+
+                    # gross = sum(ha_lines.mapped('price_subtotal'))
+                    # m['gross_rev_ha'] += gross
+                    # bump('gr', gross)
 
                     net = sum(
                         (getattr(l, 'price_subtotal_after_discount', None) or l.price_subtotal)
@@ -417,6 +422,9 @@ class CdtJourneyReportWizard(models.TransientModel):
                     m['net_rev_ha'] += net
                     bump('nr', net)
 
+            # -----------------------------------------------------
+            # BLOCK B: SPEECH
+            # -----------------------------------------------------
             # -----------------------------------------------------
             # BLOCK B: SPEECH
             # -----------------------------------------------------
@@ -438,7 +446,8 @@ class CdtJourneyReportWizard(models.TransientModel):
                                   l.product_id.product_tmpl_id.item_category == 'Speech'
                     )
                     if sp_lines:
-                        sgr = sum(sp_lines.mapped('price_unit') * sp_lines.mapped('product_uom_qty '))
+                        # Gross = price_unit * qty (list amount, before discount)
+                        sgr = sum(l.price_unit * l.product_uom_qty for l in sp_lines)
                         snr = sum(
                             (getattr(l, 'price_subtotal_after_discount', None) or l.price_subtotal)
                             for l in sp_lines
@@ -469,7 +478,8 @@ class CdtJourneyReportWizard(models.TransientModel):
                                   l.product_id.product_tmpl_id.item_category == 'Sleep'
                     )
                     if sl_lines:
-                        sgr = sum(sl_lines.mapped('price_unit') * sl_lines.mapped('product_uom_qty '))
+                        # Gross = price_unit * qty (list amount, before discount)
+                        sgr = sum(l.price_unit * l.product_uom_qty for l in sl_lines)
                         snr = sum(
                             (getattr(l, 'price_subtotal_after_discount', None) or l.price_subtotal)
                             for l in sl_lines
@@ -490,6 +500,7 @@ class CdtJourneyReportWizard(models.TransientModel):
                 if diag_lines:
                     for line in diag_lines:
                         product = line.product_id.product_tmpl_id
+                        # Gross = price_unit * qty (list amount, before discount)
                         gross = line.price_unit * line.product_uom_qty
                         net = getattr(line, 'price_subtotal_after_discount', None) or line.price_subtotal
 
