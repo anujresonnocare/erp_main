@@ -40,52 +40,32 @@ class CdtJourneyReportWizard(models.TransientModel):
     APPT_TYPE_SLEEP        = 'Sleep'
     APPT_TYPE_DEVICE_SALE  = 'Device Sale'
 
-    HEARING_LOSS_OUTCOMES = ('HATS', 'Rx', 'DEF', 'DRREF', 'USER')
+    # NOTE: these must be UPPERCASE because _outcome_codes uppercases everything.
+    HEARING_LOSS_OUTCOMES = ('HATS', 'RX', 'DEF', 'DRREF', 'USER')
     EXCLUDED_OUTCOMES     = ('ANSP', 'FTA')
     SPEECH_TYPES          = ('Speech', 'Voice', 'Swallowing')
 
-    # Map outcome-name (upper) → short code, used when `code` is empty
+    # Map outcome-name / code (upper) → short code.
+    # Applied to BOTH the `code` and the `outcome` label, so it works
+    # whichever field holds the human-readable value.
     OUTCOME_NAME_MAP = {
         'FAILED TO ATTEND':                    'FTA',
         'HEARING AID TRIAL SUCCESSFUL':        'HATS',
         'PRESCRIBED':                          'RX',
+        'PRESCRIPTION':                        'RX',
         'REFERRED TO DOCTOR':                  'DRREF',
+        'REFERRED TO DOCTOR.':                 'DRREF',
         'CLIENT DEFERRED':                     'DEF',
         'APPOINTMENT SUCCESSFULLY COMPLETED':  'ASC',
+        'APPOINTMENT SUCCESSFUL':              'ASC',
         'NORMAL HEARING':                      'NORM',
         'ATTENDED NO SERVICE PROVIDED':        'ANSP',
         'HA USER':                             'USER',
+        'HEARING AID USER':                    'USER',
     }
 
     # =====================================================================
     # METRIC PREFIXES
-    #   da   = Total # Diagnostic Appts
-    #   htb  = Total # Hearing Test Booked
-    #   hta  = Total # Hearing Test Attended
-    #   hl   = Total # Hearing Loss
-    #   cp   = # Conversions (Rx) (HA)
-    #   bin  = # Binaural (Rx)
-    #   ha   = HA Units
-    #   asp  = ASP
-    #   gr   = Gross Revenue (HA)
-    #   nr   = Net Revenue (After Discount) (HA)
-    #   fr   = Fitting Revenue (After Discount) (HA)
-    #   sphb = Total # Speech Appt Booked
-    #   spha = Total # Speech Appt Attended
-    #   ther = Total # Therapy Enrolls
-    #   sgr  = Gross Revenue (Speech)
-    #   snr  = Net Revenue (After Discount) (Speech)
-    #   slpb = Total # Sleep Appt Booked
-    #   slpa = Total # Sleep Appt Attended
-    #   pap  = Total # Conversion (Rx) PAP
-    #   slgr = Gross Revenue (Sleep)
-    #   slnr = Net Revenue (After Discount) (Sleep)
-    #   dgha = Diagnostics Revenue (Gross) (HA)
-    #   dnha = Diagnostics Revenue (Net) (HA)
-    #   dgsp = Diagnostics Revenue (Gross) (Speech)
-    #   dnsp = Diagnostics Revenue (Net) (Speech)
-    #   dgsl = Diagnostics Revenue (Gross) (Sleep)
-    #   dnsl = Diagnostics Revenue (Net) (Sleep)
     # =====================================================================
     INT_PREFIXES = (
         'da', 'htb', 'hta', 'hl', 'cp', 'bin', 'ha',
@@ -216,20 +196,42 @@ class CdtJourneyReportWizard(models.TransientModel):
         return None
 
     def _outcome_codes(self, appointment):
-        """Return a set of UPPERCASE outcome codes for this appointment."""
+        """
+        Return a set of UPPERCASE short outcome codes for this appointment.
+
+        Handles both cases:
+          * o.code     contains the short code ('Rx', 'HATS', ...)
+          * o.outcome  contains the human-readable label ('Prescribed', ...)
+
+        Every value is passed through OUTCOME_NAME_MAP so 'Prescribed' → 'RX',
+        'Rx' → 'RX', etc.
+        """
         outcomes = appointment.appointment_outcome_ids
         codes = set()
         if not outcomes:
             return codes
+
         for o in outcomes:
-            raw_code = (o.code or '').strip().upper()
-            # NOTE: model resonnocare.appointment.outcome has NO `name` field.
-            # The human-readable label lives in the `outcome` field.
-            raw_name = (getattr(o, 'outcome', None) or getattr(o, 'name', None) or '').strip().upper()
-            mapped = self.OUTCOME_NAME_MAP.get(raw_name, None)
-            final = raw_code or mapped or raw_name
-            if final:
-                codes.add(final)
+            raw_code = (getattr(o, 'code', '') or '').strip().upper()
+            # NOTE: resonnocare.appointment.outcome has NO `name` field.
+            # The human-readable label lives in `outcome`.
+            raw_name = (getattr(o, 'outcome', None)
+                        or getattr(o, 'name', None)
+                        or '').strip().upper()
+
+            # 1) Prefer explicit code, normalised via map
+            if raw_code:
+                mapped_code = self.OUTCOME_NAME_MAP.get(raw_code, raw_code)
+                if mapped_code:
+                    codes.add(mapped_code)
+                continue
+
+            # 2) Fall back to the label, normalised via map
+            if raw_name:
+                mapped_name = self.OUTCOME_NAME_MAP.get(raw_name, raw_name)
+                if mapped_name:
+                    codes.add(mapped_name)
+
         return codes
 
     def _is_diagnostic_type(self, appointment):
@@ -252,13 +254,15 @@ class CdtJourneyReportWizard(models.TransientModel):
         if appointment.status != 'completed':
             return False
         codes = self._outcome_codes(appointment)
-        if codes & set(self.EXCLUDED_OUTCOMES):
+        excluded = {c.upper() for c in self.EXCLUDED_OUTCOMES}
+        if codes & excluded:
             return False
         return True
 
     def _has_hearing_loss(self, appointment):
         codes = self._outcome_codes(appointment)
-        return bool(codes & set(self.HEARING_LOSS_OUTCOMES))
+        hl_set = {c.upper() for c in self.HEARING_LOSS_OUTCOMES}
+        return bool(codes & hl_set)
 
     def _is_scm_order_completed(self, sale_order):
         """SCM order created + completed."""
@@ -293,7 +297,6 @@ class CdtJourneyReportWizard(models.TransientModel):
     def _empty_metrics(self, all_keys):
         m = {}
 
-        # Overall
         m['diag_appts']              = 0
         m['ht_booked']               = 0
         m['ht_attended']             = 0
@@ -329,7 +332,6 @@ class CdtJourneyReportWizard(models.TransientModel):
         m['net_rev_diag_total']      = 0.0
         m['net_rev_all_services']    = 0.0
 
-        # Dynamic per-source
         for prefix in self.INT_PREFIXES:
             for key in all_keys:
                 m[f'{prefix}_{key}'] = 0
@@ -691,7 +693,6 @@ class CdtJourneyReportWizard(models.TransientModel):
             ('Store Version', 14),
         ]
         for i, (h, w) in enumerate(base_headers):
-            # Base columns span all 3 header rows
             ws.merge_range(HEADER_ROW_METRIC, i, HEADER_ROW_CHILD, i,
                            h, base_header_format)
             ws.set_column(i, i, w)
