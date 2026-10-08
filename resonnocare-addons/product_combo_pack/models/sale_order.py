@@ -48,7 +48,7 @@ class SaleOrder(models.Model):
                     if not product_already_added:
                         new_order_lines.append((0, 0, {
                             'product_id': rec.id,
-                            'name': rec.name,
+                            'name': "KIT (2+1)" + rec.product_id.name,
                             'product_uom_qty': rec.quantity,
                             'price_unit': rec.price,
                         }))
