@@ -119,29 +119,6 @@ class ResonnocareAppointment(models.Model):
     )
 
 
-    @api.onchange('appointment_type_id')
-    def _onchange_appointment_type_id(self):
-        for rec in self:
-            if rec.appointment_type_id:
-                allowed_ids = rec.appointment_type_id.diagnostic_test_ids.ids
-                # remove any selected test that is not in the new type
-                rec.diagnostic_item_ids = rec.diagnostic_item_ids.filtered(
-                    lambda d: d.id in allowed_ids
-                )
-                return {
-                    'domain': {
-                        'diagnostic_item_ids': [('id', 'in', allowed_ids)]
-                    }
-                }
-            else:
-                rec.diagnostic_item_ids = [(5, 0, 0)]
-                return {
-                    'domain': {
-                        'diagnostic_item_ids': []
-                    }
-                }
-
-            
     appointment_outcome_ids = fields.Many2many(
         "resonnocare.appointment.outcome",
         "resonnocare_appointment_outcome_rel",
@@ -555,6 +532,19 @@ class ResonnocareAppointment(models.Model):
     @api.onchange("appointment_type_id")
     def _onchange_appointment_type_force_service(self):
         for rec in self:
+            if rec.appointment_type_id:
+                allowed_ids = rec.appointment_type_id.diagnostic_test_ids.ids
+                # remove any selected test that is not in the new type
+                rec.diagnostic_item_ids = rec.diagnostic_item_ids.filtered(
+                    lambda d: d.id in allowed_ids
+                )
+                return {
+                    'domain': {
+                        'diagnostic_item_ids': [('id', 'in', allowed_ids)]
+                    }
+                }
+
+            
             if rec.appointment_type_id and rec.appointment_type_id.sale_type:
                 rec.sale_type = rec.appointment_type_id.sale_type
                 continue
