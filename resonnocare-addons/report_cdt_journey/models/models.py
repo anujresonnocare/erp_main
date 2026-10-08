@@ -59,33 +59,6 @@ class CdtJourneyReportWizard(models.TransientModel):
 
     # =====================================================================
     # METRIC PREFIXES
-    #   da   = Total # Diagnostic Appts
-    #   htb  = Total # Hearing Test Booked
-    #   hta  = Total # Hearing Test Attended
-    #   hl   = Total # Hearing Loss
-    #   cp   = # Conversions (Rx) (HA)
-    #   bin  = # Binaural (Rx)
-    #   ha   = HA Units
-    #   asp  = ASP
-    #   gr   = Gross Revenue (HA)
-    #   nr   = Net Revenue (After Discount) (HA)
-    #   fr   = Fitting Revenue (After Discount) (HA)
-    #   sphb = Total # Speech Appt Booked
-    #   spha = Total # Speech Appt Attended
-    #   ther = Total # Therapy Enrolls
-    #   sgr  = Gross Revenue (Speech)
-    #   snr  = Net Revenue (After Discount) (Speech)
-    #   slpb = Total # Sleep Appt Booked
-    #   slpa = Total # Sleep Appt Attended
-    #   pap  = Total # Conversion (Rx) PAP
-    #   slgr = Gross Revenue (Sleep)
-    #   slnr = Net Revenue (After Discount) (Sleep)
-    #   dgha = Diagnostics Revenue (Gross) (HA)
-    #   dnha = Diagnostics Revenue (Net) (HA)
-    #   dgsp = Diagnostics Revenue (Gross) (Speech)
-    #   dnsp = Diagnostics Revenue (Net) (Speech)
-    #   dgsl = Diagnostics Revenue (Gross) (Sleep)
-    #   dnsl = Diagnostics Revenue (Net) (Sleep)
     # =====================================================================
     INT_PREFIXES = (
         'da', 'htb', 'hta', 'hl', 'cp', 'bin', 'ha',
@@ -223,7 +196,9 @@ class CdtJourneyReportWizard(models.TransientModel):
             return codes
         for o in outcomes:
             raw_code = (o.code or '').strip().upper()
-            raw_name = (o.outcome or '').strip().upper()
+            # NOTE: model resonnocare.appointment.outcome has NO `name` field.
+            # The human-readable label lives in the `outcome` field.
+            raw_name = (getattr(o, 'outcome', None) or getattr(o, 'name', None) or '').strip().upper()
             mapped = self.OUTCOME_NAME_MAP.get(raw_name, None)
             final = raw_code or mapped or raw_name
             if final:
