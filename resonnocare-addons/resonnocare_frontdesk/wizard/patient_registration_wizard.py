@@ -16,6 +16,27 @@ class ResonnocarePatientRegistrationWizard(models.TransientModel):
         string="State",
     )
 
+    type_of_service = fields.Selection(
+        selection=[
+            ('audiology', 'Audiology'),
+            ('sleep', 'Sleep'),
+            ('speech_communication', 'Speech and Communication'),
+            ('tinnitus', 'Tinnitus'),
+        ],
+        string='Type of Service',
+        tracking=True,
+    )
+
+    mode_of_service = fields.Selection(
+        selection=[
+            ('clinic_visit', 'Clinic Visit'),
+            ('online', 'Online'),
+            ('home_visit', 'Home Visit'),
+        ],
+        string='Mode of Service',
+        tracking=True,
+    )
+
     # OTP Step Fields
     phone = fields.Char(string="Phone Number", required=True)
     otp_input = fields.Char(string="Enter OTP")

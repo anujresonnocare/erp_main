@@ -85,6 +85,8 @@
 
                         <group string="Visit Context">
                             <group>
+                                <field name="type_of_service" widget="radio" options="{'horizontal': true}"/>
+                                <field name="mode_of_service" widget="radio" options="{'horizontal': true}"/>
                                 <field name="visit_type" widget="radio" options="{'horizontal': true}"/>
                                 <field name="ref_source" options="{'no_open': True, 'no_create': True, 'no_edit': True}" domain="[('parent_id', '!=', False)]"/>
                                 <field name="referral_source" invisible="True"/>
