@@ -132,26 +132,22 @@ class DailyPrescriptionReportWizard(models.TransientModel):
 
         return ''
 
-    def _get_advance_received(self, sale_order):
-        """Get advance received from sale order"""
+    def _get_advance_received(self, sale_order, appointment):
+        """
+        Advance Received = Sale Order Total - Balance Due
+        (Balance Due comes from the appointment)
+        """
         if not sale_order:
             return 0.0
 
-        # Try common field names
-        for field_name in ['advance_payment_amount', 'advance_received', 'amount_paid', 'amount_advance']:
-            if hasattr(sale_order, field_name):
-                val = getattr(sale_order, field_name)
-                if val:
-                    return val
+        sale_total = sale_order.amount_total or 0.0
+        balance_due = 0.0
 
-        # Fallback: sum of advance payments from payment lines
-        try:
-            if hasattr(sale_order, 'advance_payment_ids'):
-                return sum(sale_order.advance_payment_ids.mapped('amount'))
-        except Exception:
-            pass
+        if appointment and hasattr(appointment, 'balance_due'):
+            balance_due = appointment.balance_due or 0.0
 
-        return 0.0
+        advance = sale_total - balance_due
+        return advance if advance > 0 else 0.0
 
     def _get_patient_source(self, patient):
         """Get patient source from ref_source (Many2one)"""
@@ -393,9 +389,9 @@ class DailyPrescriptionReportWizard(models.TransientModel):
                         idx += 1
 
             # ------------------------------------------------
-            # Advance Received from sale order
+            # Advance Received = Sale Order Total - Balance Due
             # ------------------------------------------------
-            advance_received = self._get_advance_received(sale_order)
+            advance_received = self._get_advance_received(sale_order, appointment)
 
             # ------------------------------------------------
             # Patient Source from ref_source (Many2one)
