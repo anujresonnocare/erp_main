@@ -64,6 +64,7 @@
                             <field name="mode_of_service"/>
                             <field name="visit_type"/>
                             <field name="ref_source"/>
+                            <field name="referral_source" invisible="1"/>
                         </group>
                         <group>
                             <field name="visit_reason"/>
