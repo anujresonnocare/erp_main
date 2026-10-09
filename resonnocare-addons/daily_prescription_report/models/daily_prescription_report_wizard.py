@@ -157,6 +157,44 @@ class DailyPrescriptionReportWizard(models.TransientModel):
             return patient.ref_source.name or ''
         return ''
 
+    def _get_appointment_status_label(self, appointment):
+        """
+        Determine the status label for the appointment:
+        - If appointment.status == 'draft' -> 'Draft'
+        - Else if an SCM internal stock picking exists
+          (origin = appointment_id or display_name) -> 'Order Process to SCM'
+        - Else -> normal status label
+        """
+        # Rule 1: Draft
+        if appointment.status == 'draft':
+            return 'Draft'
+
+        # Rule 2: SCM order check
+        origin_candidates = []
+        if hasattr(appointment, 'appointment_id') and appointment.appointment_id:
+            origin_candidates.append(appointment.appointment_id)
+        if appointment.display_name:
+            origin_candidates.append(appointment.display_name)
+
+        if origin_candidates:
+            scm_picking = self.env['stock.picking'].search([
+                ('origin', 'in', origin_candidates),
+                ('picking_type_code', '=', 'internal'),
+                ('state', 'not in', ('cancel',)),
+            ], limit=1)
+            if scm_picking:
+                return 'Order Process to SCM'
+
+        # Fallback: normal status label
+        status_map = {
+            'draft': 'Draft',
+            'scheduled': 'Scheduled',
+            'checked_in': 'Checked In',
+            'in_consultation': 'In Consultation',
+            'completed': 'Completed',
+        }
+        return status_map.get(appointment.status, appointment.status)
+
     def _generate_excel_report(self):
         """Generate Excel report with prescription data"""
         appointments = self._get_appointments()
@@ -398,6 +436,11 @@ class DailyPrescriptionReportWizard(models.TransientModel):
             # ------------------------------------------------
             patient_source = self._get_patient_source(appointment.patient_id)
 
+            # ------------------------------------------------
+            # Status label (Draft / Order Process to SCM / normal)
+            # ------------------------------------------------
+            status_label = self._get_appointment_status_label(appointment)
+
             # Clinic info
             clinic = appointment.clinic_id
             clinic_type_display = clinic_type_map.get(clinic.clinic_type, '') if clinic else ''
@@ -461,7 +504,7 @@ class DailyPrescriptionReportWizard(models.TransientModel):
                     'discount_amount': total_discount_amount,
                     'advance_received': advance_received,
                     'total_sale': total_net_sale,
-                    'status': status_map.get(appointment.status, appointment.status)
+                    'status': status_label
                 }
                 all_report_data.append(row_data)
 
@@ -497,16 +540,25 @@ class DailyPrescriptionReportWizard(models.TransientModel):
                     elif idx == 15:
                         worksheet.write(row, col, (value / 100) if value else 0, percent_format)
                     elif idx == 19:
-                        status_color = status_colors.get(appointment.status, '')
-                        if status_color:
+                        # Status coloring
+                        if status_label == 'Order Process to SCM':
                             status_format = workbook.add_format({
                                 'border': 1,
                                 'font_size': 10,
-                                'fg_color': status_color
+                                'fg_color': '#B0E0E6'  # light blue for SCM
                             })
                             worksheet.write(row, col, value, status_format)
                         else:
-                            worksheet.write(row, col, value, text_format)
+                            status_color = status_colors.get(appointment.status, '')
+                            if status_color:
+                                status_format = workbook.add_format({
+                                    'border': 1,
+                                    'font_size': 10,
+                                    'fg_color': status_color
+                                })
+                                worksheet.write(row, col, value, status_format)
+                            else:
+                                worksheet.write(row, col, value, text_format)
                     else:
                         worksheet.write(row, col, value or '', text_format)
                     col += 1
