@@ -290,6 +290,27 @@ class ResPartner(models.Model):
         help="Select the referral source. Only sources marked as 'Is Doctor',  will be shown.",
     )
 
+    type_of_service = fields.Selection(
+        selection=[
+            ('audiology', 'Audiology'),
+            ('sleep', 'Sleep'),
+            ('speech_communication', 'Speech and Communication'),
+            ('tinnitus', 'Tinnitus'),
+        ],
+        string='Type of Service',
+        tracking=True,
+    )
+
+    mode_of_service = fields.Selection(
+        selection=[
+            ('clinic_visit', 'Clinic Visit'),
+            ('online', 'Online'),
+            ('home_visit', 'Home Visit'),
+        ],
+        string='Mode of Service',
+        tracking=True,
+    )
+
     referral_source = fields.Selection(
         [
             ("crm", "CRM"),

@@ -60,8 +60,10 @@
                     <!-- ================= -->
                     <group string="Visit Context">
                         <group>
+                            <field name="type_of_service"/>
+                            <field name="mode_of_service"/>
                             <field name="visit_type"/>
-                            <field name="referral_source"/>
+                            <field name="ref_source"/>
                         </group>
                         <group>
                             <field name="visit_reason"/>
