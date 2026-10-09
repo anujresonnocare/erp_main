@@ -160,30 +160,37 @@ class DailyPrescriptionReportWizard(models.TransientModel):
     def _get_appointment_status_label(self, appointment):
         """
         Determine the status label for the appointment:
-        - If appointment.status == 'draft' -> 'Draft'
-        - Else if an SCM internal stock picking exists
-          (origin = appointment_id or display_name) -> 'Order Process to SCM'
-        - Else -> normal status label
+        - draft                                         -> 'Draft'
+        - scheduled / in_consultation / completed       -> 'Order Process to SCM'
+        - checked_in                                    -> 'Order Process to SCM' if SCM picking exists,
+                                                           otherwise 'Checked In'
+        - other                                         -> normal mapped label
         """
         # Rule 1: Draft
         if appointment.status == 'draft':
             return 'Draft'
 
-        # Rule 2: SCM order check
-        origin_candidates = []
-        if hasattr(appointment, 'appointment_id') and appointment.appointment_id:
-            origin_candidates.append(appointment.appointment_id)
-        if appointment.display_name:
-            origin_candidates.append(appointment.display_name)
+        # Rule 2: Forced labels
+        if appointment.status in ('scheduled', 'in_consultation', 'completed'):
+            return 'Order Process to SCM'
 
-        if origin_candidates:
-            scm_picking = self.env['stock.picking'].search([
-                ('origin', 'in', origin_candidates),
-                ('picking_type_code', '=', 'internal'),
-                ('state', 'not in', ('cancel',)),
-            ], limit=1)
-            if scm_picking:
-                return 'Order Process to SCM'
+        # Rule 3: Checked-in -> check for SCM picking
+        if appointment.status == 'checked_in':
+            origin_candidates = []
+            if hasattr(appointment, 'appointment_id') and appointment.appointment_id:
+                origin_candidates.append(appointment.appointment_id)
+            if appointment.display_name:
+                origin_candidates.append(appointment.display_name)
+
+            if origin_candidates:
+                scm_picking = self.env['stock.picking'].search([
+                    ('origin', 'in', origin_candidates),
+                    ('picking_type_code', '=', 'internal'),
+                    ('state', 'not in', ('cancel',)),
+                ], limit=1)
+                if scm_picking:
+                    return 'Order Process to SCM'
+            return 'Checked In'
 
         # Fallback: normal status label
         status_map = {
@@ -545,7 +552,7 @@ class DailyPrescriptionReportWizard(models.TransientModel):
                             status_format = workbook.add_format({
                                 'border': 1,
                                 'font_size': 10,
-                                'fg_color': '#B0E0E6'  # light blue for SCM
+                                'fg_color': '#B0E0E6'
                             })
                             worksheet.write(row, col, value, status_format)
                         else:
