@@ -9,6 +9,11 @@ _logger = logging.getLogger(__name__)
 class SaleOrder(models.Model):
     _inherit = "sale.order"
 
+
+    appointment_id = fields.Many2one(
+        "resonnocare.appointment", string="Appointment", readonly=True, copy=False
+    )
+    
     patient_id = fields.Many2one(
         "res.partner", string="Patient", domain=[("is_patient", "=", True)]
     )
