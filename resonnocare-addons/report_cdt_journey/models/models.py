@@ -548,19 +548,16 @@ class CdtJourneyReportWizard(models.TransientModel):
             # -----------------------------------------------------
             # BLOCK E: FITTING REVENUE (HA)
             #   Appointment Type = 'Fitting' AND status = completed
+            #   Amount taken from the appointment's sale_order_id
+            #   (ALL lines — no product category filter)
             # -----------------------------------------------------
             if self._is_fitting_type(appt) and is_completed and sale_order:
-                fit_lines = sale_order.order_line.filtered(
-                    lambda l: l.product_id
-                    and l.product_id.product_tmpl_id.item_category == 'Fitting'
-                )
-                if fit_lines:
-                    fit_rev = 0.0
-                    for l in fit_lines:
-                        _, _, gross = self._line_amounts(l)
-                        fit_rev += gross
-                    m['fitt_rev_ha'] += fit_rev
-                    bump('fit', fit_rev)
+                fit_rev = 0.0
+                for l in sale_order.order_line:
+                    _, _, gross = self._line_amounts(l)
+                    fit_rev += gross
+                m['fitt_rev_ha'] += fit_rev
+                bump('fit', fit_rev)
 
         # -----------------------------------------------------------------
         # NET REVENUE ROLLUPS  (computed before ratios)
