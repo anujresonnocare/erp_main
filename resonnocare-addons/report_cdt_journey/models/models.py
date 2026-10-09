@@ -45,6 +45,16 @@ class CdtJourneyReportWizard(models.TransientModel):
     EXCLUDED_OUTCOMES     = ('ANSP', 'FTA')
     SPEECH_TYPES          = ('Speech', 'Voice', 'Swallowing')
 
+    # Appointment types whose sale order total goes into Diagnostics (HA).
+    # Accessories Purchase is intentionally EXCLUDED.
+    DIAG_HA_APPT_TYPES = (
+        'Hearing Test & Trial',
+        'Diagnostics',
+        'Fine Tuning',
+        'Service & Repair',
+        'Tinnitus',
+    )
+
     OUTCOME_NAME_MAP = {
         'FAILED TO ATTEND':                    'FTA',
         'HEARING AID TRIAL SUCCESSFUL':        'HATS',
@@ -223,7 +233,6 @@ class CdtJourneyReportWizard(models.TransientModel):
         return None
 
     def _outcome_codes(self, appointment):
-        """Return a set of UPPERCASE short outcome codes for this appointment."""
         outcomes = appointment.appointment_outcome_ids
         codes = set()
         if not outcomes:
@@ -387,6 +396,11 @@ class CdtJourneyReportWizard(models.TransientModel):
         m = self._empty_metrics(all_keys)
         appointments = self._get_appointments(clinic)
 
+        # Prevent the same sale-order line being counted more than once
+        # per clinic (multiple appointments can share one SO).
+        seen_diag_so_lines = set()
+        seen_fit_so_lines  = set()
+
         for appt in appointments:
             source_key = self._get_source_key_for_appointment(appt, source_map)
             is_fup = self._is_followup(appt)
@@ -516,64 +530,59 @@ class CdtJourneyReportWizard(models.TransientModel):
 
             # -----------------------------------------------------
             # BLOCK D: DIAGNOSTICS REVENUE
-            #   Triggered on ANY completed appointment that has a
-            #   linked sale order. No product category filter.
-            #   Route by PRODUCT type first; fall back to the
-            #   APPOINTMENT type when the product type is ambiguous.
+            #   Bucket chosen purely by APPOINTMENT TYPE.
+            #   Whole sale order total goes into that bucket.
+            #   Dedupe: each SO line counted at most once per clinic.
             # -----------------------------------------------------
             if is_completed and sale_order:
-                for line in sale_order.order_line:
-                    if not line.product_id:
-                        continue
+                diag_bucket = None
 
-                    product = line.product_id.product_tmpl_id
-                    mrp, disc, gross = self._line_amounts(line)
+                if self._appt_type_name(appt) in self.DIAG_HA_APPT_TYPES:
+                    diag_bucket = 'ha'
+                elif self._is_speech_type(appt):
+                    diag_bucket = 'speech'
+                elif self._is_sleep_type(appt):
+                    diag_bucket = 'sleep'
 
-                    prod_item_type = getattr(product, 'item_type', '') or ''
-                    prod_category  = getattr(product, 'item_category', '') or ''
+                if diag_bucket:
+                    so_mrp = so_disc = so_gross = 0.0
+                    for line in sale_order.order_line:
+                        if not line.product_id:
+                            continue
+                        if line.id in seen_diag_so_lines:
+                            continue
+                        seen_diag_so_lines.add(line.id)
 
-                    if prod_item_type == 'ha' or prod_category == 'Hearing Device':
-                        # → HA diagnostics bucket
-                        m['mrp_diag_ha']           += mrp;   bump('mrpgh', mrp)
-                        m['disc_rev_diag_ha']      += disc;  bump('discgh', disc)
-                        m['gross_rev_diag_ha']     += gross; bump('dgha', gross)
+                        a, b, c = self._line_amounts(line)
+                        so_mrp   += a
+                        so_disc  += b
+                        so_gross += c
 
-                    elif prod_item_type in ('speech',) or prod_category in ('Speech', 'Voice', 'Swallowing'):
-                        # → Speech diagnostics bucket
-                        m['mrp_diag_speech']       += mrp;   bump('mrpgp', mrp)
-                        m['disc_rev_diag_speech']  += disc;  bump('discgp', disc)
-                        m['gross_rev_diag_speech'] += gross; bump('dgsp', gross)
-
-                    elif prod_item_type in ('sleep',) or prod_category == 'Sleep':
-                        # → Sleep diagnostics bucket
-                        m['mrp_diag_sleep']        += mrp;   bump('mrpgl', mrp)
-                        m['disc_rev_diag_sleep']   += disc;  bump('discgl', disc)
-                        m['gross_rev_diag_sleep']  += gross; bump('dgsl', gross)
-
-                    else:
-                        # Fall back to APPOINTMENT type
-                        if self._is_hearing_test_type(appt) or self._is_diagnostic_type(appt):
-                            m['mrp_diag_ha']           += mrp;   bump('mrpgh', mrp)
-                            m['disc_rev_diag_ha']      += disc;  bump('discgh', disc)
-                            m['gross_rev_diag_ha']     += gross; bump('dgha', gross)
-                        elif self._is_speech_type(appt):
-                            m['mrp_diag_speech']       += mrp;   bump('mrpgp', mrp)
-                            m['disc_rev_diag_speech']  += disc;  bump('discgp', disc)
-                            m['gross_rev_diag_speech'] += gross; bump('dgsp', gross)
-                        elif self._is_sleep_type(appt):
-                            m['mrp_diag_sleep']        += mrp;   bump('mrpgl', mrp)
-                            m['disc_rev_diag_sleep']   += disc;  bump('discgl', disc)
-                            m['gross_rev_diag_sleep']  += gross; bump('dgsl', gross)
+                    if diag_bucket == 'ha':
+                        m['mrp_diag_ha']       += so_mrp;   bump('mrpgh', so_mrp)
+                        m['disc_rev_diag_ha']  += so_disc;  bump('discgh', so_disc)
+                        m['gross_rev_diag_ha'] += so_gross; bump('dgha', so_gross)
+                    elif diag_bucket == 'speech':
+                        m['mrp_diag_speech']       += so_mrp;   bump('mrpgp', so_mrp)
+                        m['disc_rev_diag_speech']  += so_disc;  bump('discgp', so_disc)
+                        m['gross_rev_diag_speech'] += so_gross; bump('dgsp', so_gross)
+                    elif diag_bucket == 'sleep':
+                        m['mrp_diag_sleep']        += so_mrp;   bump('mrpgl', so_mrp)
+                        m['disc_rev_diag_sleep']   += so_disc;  bump('discgl', so_disc)
+                        m['gross_rev_diag_sleep']  += so_gross; bump('dgsl', so_gross)
 
             # -----------------------------------------------------
             # BLOCK E: FITTING REVENUE (HA)
             #   Appointment Type = 'Fitting' AND status = completed
-            #   Amount from the appointment's sale_order_id
-            #   (ALL lines — no product category filter)
+            #   Amount from the appointment's sale_order_id (total).
+            #   Dedupe: each SO line counted at most once per clinic.
             # -----------------------------------------------------
             if self._is_fitting_type(appt) and is_completed and sale_order:
                 fit_rev = 0.0
                 for l in sale_order.order_line:
+                    if l.id in seen_fit_so_lines:
+                        continue
+                    seen_fit_so_lines.add(l.id)
                     _, _, gross = self._line_amounts(l)
                     fit_rev += gross
                 m['fitt_rev_ha'] += fit_rev
@@ -589,7 +598,11 @@ class CdtJourneyReportWizard(models.TransientModel):
             + m['gross_rev_sleep']
             + m['fitt_rev_ha']
         )
-        m['net_rev_diag']   = m['gross_rev_diag_ha'] + m['gross_rev_diag_speech'] + m['gross_rev_diag_sleep']
+        m['net_rev_diag']   = (
+            m['gross_rev_diag_ha']
+            + m['gross_rev_diag_speech']
+            + m['gross_rev_diag_sleep']
+        )
         m['net_rev_all']    = m['net_rev_device'] + m['net_rev_diag']
 
         # -----------------------------------------------------------------
