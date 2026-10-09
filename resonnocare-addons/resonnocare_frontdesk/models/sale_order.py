@@ -13,7 +13,11 @@ class SaleOrder(models.Model):
     appointment_id = fields.Many2one(
         "resonnocare.appointment", string="Appointment", readonly=True, copy=False
     )
-    
+
+    appointment_type_id = fields.Many2one(
+        "resonnocare.appointment.type", string="Appointment Type", related="appointment_id.appointment_type_id", store=True, readonly=True
+    )
+
     patient_id = fields.Many2one(
         "res.partner", string="Patient", domain=[("is_patient", "=", True)]
     )
