@@ -15,6 +15,7 @@
                 <field name="hearing_aid_color"/>
                 <field name="warranty_months"/>
                 <field name="manufacturer_id"/>
+                <field name="is_binaural"/>
                 <field name="can_number" invisible="item_type != 'ear_mould'"/>
             </xpath>
         </field>

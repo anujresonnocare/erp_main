@@ -80,6 +80,8 @@ class ProductTemplate(models.Model):
         groups="resonnocare_base.group_resonnocare_super_admin",
     )
 
+    is_binaural = fields.Boolean(string="Is Binaural", default=False)
+
     @api.depends("price_history_ids")
     def _compute_price_history_count(self):
         counts = (

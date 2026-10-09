@@ -1866,3 +1866,37 @@ class ResonnocareAppointmentPreBookingExt(models.Model):
 
     pre_booking = fields.Boolean(string="Pre-Booking")
     expected_delivery_date = fields.Date(string="Expected Delivery Date")
+
+
+
+
+class SaleOrderLine(models.Model):
+    _inherit = 'sale.order.line'
+
+    def _apply_binaural_rule(self, vals):
+        """Force qty=2 and price_unit=base/2 for binaural products."""
+        product_id = vals.get('product_id') or (self.product_id.id if self else False)
+        if not product_id:
+            return vals
+
+        product = self.env['product.product'].browse(product_id)
+        if not product.is_binaural:
+            return vals
+
+        # Base price: prefer the explicit value, otherwise the product's list price
+        base_price = vals.get('price_unit') or product.lst_price
+
+        vals['product_uom_qty'] = 2
+        vals['price_unit'] = base_price / 2
+        return vals
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        vals_list = [self._apply_binaural_rule(dict(v)) for v in vals_list]
+        return super().create(vals_list)
+
+    def write(self, vals):
+        # If the product is being changed, or this is a binaural line, reapply
+        if 'product_id' in vals or self.filtered(lambda l: l.product_id.is_binaural):
+            vals = self._apply_binaural_rule(vals)
+        return super().write(vals)

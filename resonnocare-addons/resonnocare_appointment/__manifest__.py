@@ -27,6 +27,7 @@ Explicit exclusions:
     # IMPORTANT: dependency order matters
     "depends": [
         "base",
+        "sale",
         "resonnocare_master",      # appointment types, outcomes, diagnostic items
         "resonnocare_frontdesk",   # appointment creation UI / wizards
         "resonnocare_clinic",
