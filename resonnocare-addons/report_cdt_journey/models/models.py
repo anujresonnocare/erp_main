@@ -749,20 +749,24 @@ class CdtJourneyReportWizard(models.TransientModel):
         # METRIC GROUPS
         #   Order per block: MRP → DISCOUNT → GROSS REVENUE
         # -----------------------------------------------------------------
+        # -----------------------------------------------------------------
+        # METRIC GROUPS
+        #   Order per block: MRP → DISCOUNT → GROSS REVENUE
+        # -----------------------------------------------------------------
         METRIC_GROUPS = [
             # HA Funnel
             ('TOTAL # DIAGNOSTIC APPTS',                 'da',       'number'),
             ('TOTAL # HEARING TEST BOOKED',              'htb',      'number'),
             ('TOTAL # HEARING TEST ATTENDED',            'hta',      'number'),
+            ('NET ATTENDANCE %',                         'na_pct',   'percent'),
             ('TOTAL # HEARING LOSS',                     'hl',       'number'),
+            ('HEARING TEST OPPORTUNITY % (HL)',          'hl_pct',   'percent'),
             ('# CONVERSIONS (Rx) (HA)',                  'cp',       'number'),
+            ('CONVERSION RATE %',                        'conv_pct', 'percent'),
             ('# BINAURAL (Rx)',                          'bin',      'number'),
+            ('BINAURAL RATE %',                          'bin_pct',  'percent'),
             ('HA UNITS',                                 'ha',       'number'),
             ('ASP',                                      'asp',      'currency'),
-            ('NET ATTENDANCE %',                         'na_pct',   'percent'),
-            ('HEARING TEST OPPORTUNITY % (HL)',          'hl_pct',   'percent'),
-            ('CONVERSION RATE %',                        'conv_pct', 'percent'),
-            ('BINAURAL RATE %',                          'bin_pct',  'percent'),
             ('MRP (HA)',                                 'mrp',      'currency'),
             ('DISCOUNT (HA)',                            'disc',     'currency'),
             ('GROSS REVENUE (HA)',                       'gr',       'currency'),
