@@ -1867,7 +1867,10 @@ class ResonnocareAppointmentPreBookingExt(models.Model):
     pre_booking = fields.Boolean(string="Pre-Booking")
     expected_delivery_date = fields.Date(string="Expected Delivery Date")
 
+class SaleOrder(models.Model):
+    _inherit = 'sale.order'
 
+    appointment_id = fields.Many2one('resonnocare.appointment', string='Appointment', readonly=True, copy=False)
 
 
 class SaleOrderLine(models.Model):
