@@ -86,7 +86,7 @@ class CdtJourneyReportWizard(models.TransientModel):
         'sphb', 'spha', 'ther', 'slpb', 'slpa', 'pap',
     )
     FLOAT_PREFIXES = (
-        'asp',
+        'asp', 'na_pct', 'hl_pct', 'conv_pct', 'bin_pct',
         'mrp', 'disc', 'gr',
         'mrpsp', 'discsp', 'sgr',
         'mrpsl', 'discsl', 'slgr',
@@ -94,6 +94,9 @@ class CdtJourneyReportWizard(models.TransientModel):
         'mrpgp', 'discgp', 'dgsp',
         'mrpgl', 'discgl', 'dgsl',
     )
+    # Ratio fields — must NEVER be summed during aggregation; they are
+    # always recomputed from their numerator/denominator.
+    RATIO_PREFIXES = ('asp', 'na_pct', 'hl_pct', 'conv_pct', 'bin_pct')
 
     # =====================================================================
     # ONCHANGE / ACTIONS
@@ -327,6 +330,12 @@ class CdtJourneyReportWizard(models.TransientModel):
         m['disc_rev_ha']             = 0.0
         m['gross_rev_ha']            = 0.0
 
+        # HA ratio KPIs
+        m['na_pct']                  = 0.0
+        m['hl_pct']                  = 0.0
+        m['conv_pct']                = 0.0
+        m['bin_pct']                 = 0.0
+
         # Speech
         m['speech_booked']           = 0
         m['speech_attended']         = 0
@@ -520,7 +529,38 @@ class CdtJourneyReportWizard(models.TransientModel):
                         m['disc_rev_diag_sleep']   += disc;  bump('discgl', disc)
                         m['gross_rev_diag_sleep']  += gross; bump('dgsl', gross)
 
-        m['asp'] = (m['mrp_ha'] / m['ha_units']) if m['ha_units'] else 0.0
+        # -----------------------------------------------------------------
+        # DERIVED METRICS (ratios) — OVERALL
+        # -----------------------------------------------------------------
+        m['asp']      = (m['mrp_ha'] / m['ha_units']) \
+                        if m['ha_units'] else 0.0
+        m['na_pct']   = (m['ht_attended'] / m['ht_booked']) * 100 \
+                        if m['ht_booked'] else 0.0
+        m['hl_pct']   = (m['hearing_loss'] / m['ht_attended']) * 100 \
+                        if m['ht_attended'] else 0.0
+        m['conv_pct'] = (m['conversions_ha'] / m['hearing_loss']) * 100 \
+                        if m['hearing_loss'] else 0.0
+        m['bin_pct']  = (m['binaural'] / m['conversions_ha']) * 100 \
+                        if m['conversions_ha'] else 0.0
+
+        # -----------------------------------------------------------------
+        # DERIVED METRICS (ratios) — PER SOURCE
+        # -----------------------------------------------------------------
+        for key in all_keys:
+            units  = m.get(f'ha_{key}', 0)
+            booked = m.get(f'htb_{key}', 0)
+            att    = m.get(f'hta_{key}', 0)
+            hl     = m.get(f'hl_{key}', 0)
+            conv   = m.get(f'cp_{key}', 0)
+            bin_   = m.get(f'bin_{key}', 0)
+            mrp    = m.get(f'mrp_{key}', 0.0)
+
+            m[f'asp_{key}']      = (mrp / units) if units else 0.0
+            m[f'na_pct_{key}']   = (att / booked) * 100 if booked else 0.0
+            m[f'hl_pct_{key}']   = (hl / att) * 100 if att else 0.0
+            m[f'conv_pct_{key}'] = (conv / hl) * 100 if hl else 0.0
+            m[f'bin_pct_{key}']  = (bin_ / conv) * 100 if conv else 0.0
+
         return m
 
     # =====================================================================
@@ -598,6 +638,10 @@ class CdtJourneyReportWizard(models.TransientModel):
             'bold': True, 'num_format': '#,##0', 'border': 1, 'font_size': 9,
             'align': 'right', 'valign': 'vcenter', 'fg_color': '#E2EFDA'
         })
+        total_percent_format = workbook.add_format({
+            'bold': True, 'num_format': '0.00"%"', 'border': 1, 'font_size': 9,
+            'align': 'center', 'valign': 'vcenter', 'fg_color': '#E2EFDA'
+        })
         region_total_format = workbook.add_format({
             'bold': True, 'border': 1, 'font_size': 9, 'align': 'center',
             'valign': 'vcenter', 'fg_color': '#DAEEF3'
@@ -613,6 +657,10 @@ class CdtJourneyReportWizard(models.TransientModel):
         region_total_currency_format = workbook.add_format({
             'bold': True, 'num_format': '#,##0', 'border': 1, 'font_size': 9,
             'align': 'right', 'valign': 'vcenter', 'fg_color': '#DAEEF3'
+        })
+        region_total_percent_format = workbook.add_format({
+            'bold': True, 'num_format': '0.00"%"', 'border': 1, 'font_size': 9,
+            'align': 'center', 'valign': 'vcenter', 'fg_color': '#DAEEF3'
         })
         india_total_format = workbook.add_format({
             'bold': True, 'border': 1, 'font_size': 9, 'align': 'center',
@@ -630,6 +678,10 @@ class CdtJourneyReportWizard(models.TransientModel):
             'bold': True, 'num_format': '#,##0', 'border': 1, 'font_size': 9,
             'align': 'right', 'valign': 'vcenter', 'fg_color': '#FFC7CE'
         })
+        india_total_percent_format = workbook.add_format({
+            'bold': True, 'num_format': '0.00"%"', 'border': 1, 'font_size': 9,
+            'align': 'center', 'valign': 'vcenter', 'fg_color': '#FFC7CE'
+        })
         date_format = workbook.add_format({
             'border': 1, 'font_size': 9, 'num_format': 'dd-mmm-yyyy',
             'align': 'center', 'valign': 'vcenter'
@@ -645,21 +697,21 @@ class CdtJourneyReportWizard(models.TransientModel):
             'total': {
                 'number': total_number_format,
                 'currency': total_currency_format,
-                'percent': percent_format,
+                'percent': total_percent_format,
                 'text': total_format,
                 'text_left': total_left_format,
             },
             'region': {
                 'number': region_total_number_format,
                 'currency': region_total_currency_format,
-                'percent': percent_format,
+                'percent': region_total_percent_format,
                 'text': region_total_format,
                 'text_left': region_total_left_format,
             },
             'india': {
                 'number': india_total_number_format,
                 'currency': india_total_currency_format,
-                'percent': percent_format,
+                'percent': india_total_percent_format,
                 'text': india_total_format,
                 'text_left': india_total_left_format,
             },
@@ -699,44 +751,48 @@ class CdtJourneyReportWizard(models.TransientModel):
         # -----------------------------------------------------------------
         METRIC_GROUPS = [
             # HA Funnel
-            ('TOTAL # DIAGNOSTIC APPTS',                 'da',     'number'),
-            ('TOTAL # HEARING TEST BOOKED',              'htb',    'number'),
-            ('TOTAL # HEARING TEST ATTENDED',            'hta',    'number'),
-            ('TOTAL # HEARING LOSS',                     'hl',     'number'),
-            ('# CONVERSIONS (Rx) (HA)',                  'cp',     'number'),
-            ('# BINAURAL (Rx)',                          'bin',    'number'),
-            ('HA UNITS',                                 'ha',     'number'),
-            ('ASP',                                      'asp',    'currency'),
-            ('MRP (HA)',                                 'mrp',    'currency'),
-            ('DISCOUNT (HA)',                            'disc',   'currency'),
-            ('GROSS REVENUE (HA)',                       'gr',     'currency'),
+            ('TOTAL # DIAGNOSTIC APPTS',                 'da',       'number'),
+            ('TOTAL # HEARING TEST BOOKED',              'htb',      'number'),
+            ('TOTAL # HEARING TEST ATTENDED',            'hta',      'number'),
+            ('TOTAL # HEARING LOSS',                     'hl',       'number'),
+            ('# CONVERSIONS (Rx) (HA)',                  'cp',       'number'),
+            ('# BINAURAL (Rx)',                          'bin',      'number'),
+            ('HA UNITS',                                 'ha',       'number'),
+            ('ASP',                                      'asp',      'currency'),
+            ('NET ATTENDANCE %',                         'na_pct',   'percent'),
+            ('HEARING TEST OPPORTUNITY % (HL)',          'hl_pct',   'percent'),
+            ('CONVERSION RATE %',                        'conv_pct', 'percent'),
+            ('BINAURAL RATE %',                          'bin_pct',  'percent'),
+            ('MRP (HA)',                                 'mrp',      'currency'),
+            ('DISCOUNT (HA)',                            'disc',     'currency'),
+            ('GROSS REVENUE (HA)',                       'gr',       'currency'),
 
             # Speech
-            ('TOTAL # SPEECH APPT BOOKED',               'sphb',   'number'),
-            ('TOTAL # SPEECH APPT ATTENDED',             'spha',   'number'),
-            ('TOTAL # THERAPY ENROLLS',                  'ther',   'number'),
-            ('MRP (SPEECH)',                             'mrpsp',  'currency'),
-            ('DISCOUNT (SPEECH)',                        'discsp', 'currency'),
-            ('GROSS REVENUE (SPEECH)',                   'sgr',    'currency'),
+            ('TOTAL # SPEECH APPT BOOKED',               'sphb',     'number'),
+            ('TOTAL # SPEECH APPT ATTENDED',             'spha',     'number'),
+            ('TOTAL # THERAPY ENROLLS',                  'ther',     'number'),
+            ('MRP (SPEECH)',                             'mrpsp',    'currency'),
+            ('DISCOUNT (SPEECH)',                        'discsp',   'currency'),
+            ('GROSS REVENUE (SPEECH)',                   'sgr',      'currency'),
 
             # Sleep
-            ('TOTAL # SLEEP APPT BOOKED',                'slpb',   'number'),
-            ('TOTAL # SLEEP APPT ATTENDED',              'slpa',   'number'),
-            ('TOTAL # CONVERSION (Rx) PAP',              'pap',    'number'),
-            ('MRP (SLEEP)',                              'mrpsl',  'currency'),
-            ('DISCOUNT (SLEEP)',                         'discsl', 'currency'),
-            ('GROSS REVENUE (SLEEP)',                    'slgr',   'currency'),
+            ('TOTAL # SLEEP APPT BOOKED',                'slpb',     'number'),
+            ('TOTAL # SLEEP APPT ATTENDED',              'slpa',     'number'),
+            ('TOTAL # CONVERSION (Rx) PAP',              'pap',      'number'),
+            ('MRP (SLEEP)',                              'mrpsl',    'currency'),
+            ('DISCOUNT (SLEEP)',                         'discsl',   'currency'),
+            ('GROSS REVENUE (SLEEP)',                    'slgr',     'currency'),
 
             # Diagnostics Revenue
-            ('MRP (DIAGNOSTICS) (HA)',                   'mrpgh',  'currency'),
-            ('DISCOUNT (DIAGNOSTICS) (HA)',              'discgh', 'currency'),
-            ('GROSS REVENUE (DIAGNOSTICS) (HA)',         'dgha',   'currency'),
-            ('MRP (DIAGNOSTICS) (SPEECH)',               'mrpgp',  'currency'),
-            ('DISCOUNT (DIAGNOSTICS) (SPEECH)',          'discgp', 'currency'),
-            ('GROSS REVENUE (DIAGNOSTICS) (SPEECH)',     'dgsp',   'currency'),
-            ('MRP (DIAGNOSTICS) (SLEEP)',                'mrpgl',  'currency'),
-            ('DISCOUNT (DIAGNOSTICS) (SLEEP)',           'discgl', 'currency'),
-            ('GROSS REVENUE (DIAGNOSTICS) (SLEEP)',      'dgsl',   'currency'),
+            ('MRP (DIAGNOSTICS) (HA)',                   'mrpgh',    'currency'),
+            ('DISCOUNT (DIAGNOSTICS) (HA)',              'discgh',   'currency'),
+            ('GROSS REVENUE (DIAGNOSTICS) (HA)',         'dgha',     'currency'),
+            ('MRP (DIAGNOSTICS) (SPEECH)',               'mrpgp',    'currency'),
+            ('DISCOUNT (DIAGNOSTICS) (SPEECH)',          'discgp',   'currency'),
+            ('GROSS REVENUE (DIAGNOSTICS) (SPEECH)',     'dgsp',     'currency'),
+            ('MRP (DIAGNOSTICS) (SLEEP)',                'mrpgl',    'currency'),
+            ('DISCOUNT (DIAGNOSTICS) (SLEEP)',           'discgl',   'currency'),
+            ('GROSS REVENUE (DIAGNOSTICS) (SLEEP)',      'dgsl',     'currency'),
         ]
 
         col = 9
@@ -815,6 +871,10 @@ class CdtJourneyReportWizard(models.TransientModel):
             'bin':    'binaural',
             'ha':     'ha_units',
             'asp':    'asp',
+            'na_pct':   'na_pct',
+            'hl_pct':   'hl_pct',
+            'conv_pct': 'conv_pct',
+            'bin_pct':  'bin_pct',
 
             'mrp':    'mrp_ha',
             'disc':   'disc_rev_ha',
@@ -845,6 +905,13 @@ class CdtJourneyReportWizard(models.TransientModel):
             'dgsl':   'gross_rev_diag_sleep',
         }
 
+        # Helper to check if a metric key is a ratio (never summed)
+        def _is_ratio(k):
+            return any(
+                k == p or k.startswith(p + '_')
+                for p in self.RATIO_PREFIXES
+            )
+
         # -----------------------------------------------------------------
         # WRITE DATA
         # -----------------------------------------------------------------
@@ -868,12 +935,16 @@ class CdtJourneyReportWizard(models.TransientModel):
             for clinic in group_clinics:
                 raw = self._compute_clinic_metrics(clinic, source_map, all_keys)
 
+                # Aggregate — skip ratio fields (recomputed later)
                 for k, v in raw.items():
-                    if isinstance(v, (int, float)):
-                        if k in am_metrics:
-                            am_metrics[k] += v
-                        if k in grand_overall:
-                            grand_overall[k] += v
+                    if not isinstance(v, (int, float)):
+                        continue
+                    if _is_ratio(k):
+                        continue
+                    if k in am_metrics:
+                        am_metrics[k] += v
+                    if k in grand_overall:
+                        grand_overall[k] += v
 
                 ws.write(row, 0, clinic.name or '', text_left_format)
                 ws.write(row, 1, clinic.clinic_code or '', text_format)
@@ -898,7 +969,7 @@ class CdtJourneyReportWizard(models.TransientModel):
                 row += 1
 
             # AM total row
-            self._recalc_derived(am_metrics)
+            self._recalc_derived(am_metrics, all_keys)
             ws.write(row, 0, f'{am_name} Total', total_left_format)
             for i in range(1, 9):
                 ws.write(row, i, '', total_format)
@@ -911,7 +982,11 @@ class CdtJourneyReportWizard(models.TransientModel):
             if region_name not in region_overall:
                 region_overall[region_name] = self._empty_metrics(all_keys)
             for k, v in am_metrics.items():
-                if isinstance(v, (int, float)) and k in region_overall[region_name]:
+                if not isinstance(v, (int, float)):
+                    continue
+                if _is_ratio(k):
+                    continue
+                if k in region_overall[region_name]:
                     region_overall[region_name][k] += v
 
         # Region totals
@@ -919,7 +994,7 @@ class CdtJourneyReportWizard(models.TransientModel):
         ws.merge_range(row, 0, row, total_cols - 1, 'REGION TOTALS', parent_header_format)
         row += 1
         for region_name, reg_metrics in sorted(region_overall.items()):
-            self._recalc_derived(reg_metrics)
+            self._recalc_derived(reg_metrics, all_keys)
             ws.write(row, 0, f'{region_name} Total', region_total_left_format)
             for i in range(1, 9):
                 ws.write(row, i, '', region_total_format)
@@ -933,7 +1008,7 @@ class CdtJourneyReportWizard(models.TransientModel):
         row += 1
         ws.merge_range(row, 0, row, total_cols - 1, 'INDIA TOTAL', parent_header_format)
         row += 1
-        self._recalc_derived(grand_overall)
+        self._recalc_derived(grand_overall, all_keys)
         ws.write(row, 0, 'India Total', india_total_left_format)
         for i in range(1, 9):
             ws.write(row, i, '', india_total_format)
@@ -969,9 +1044,41 @@ class CdtJourneyReportWizard(models.TransientModel):
     # =====================================================================
     # HELPERS
     # =====================================================================
-    def _recalc_derived(self, m):
-        """Recompute ASP on aggregate rows."""
-        m['asp'] = (m['mrp_ha'] / m['ha_units']) if m.get('ha_units') else 0.0
+    def _recalc_derived(self, m, all_keys=None):
+        """Recompute all ratio metrics on aggregate rows — never sum them.
+
+        Numeric metrics (counts, MRP, discount, gross revenue) are summed
+        upstream. Ratios (ASP and the 4 percentage KPIs) must be recalculated
+        from the summed numerator / denominator.
+        """
+        # ---- overall ratios ----
+        m['asp']      = (m['mrp_ha'] / m['ha_units']) \
+                        if m.get('ha_units') else 0.0
+        m['na_pct']   = (m['ht_attended'] / m['ht_booked']) * 100 \
+                        if m.get('ht_booked') else 0.0
+        m['hl_pct']   = (m['hearing_loss'] / m['ht_attended']) * 100 \
+                        if m.get('ht_attended') else 0.0
+        m['conv_pct'] = (m['conversions_ha'] / m['hearing_loss']) * 100 \
+                        if m.get('hearing_loss') else 0.0
+        m['bin_pct']  = (m['binaural'] / m['conversions_ha']) * 100 \
+                        if m.get('conversions_ha') else 0.0
+
+        # ---- per-source ratios ----
+        if all_keys:
+            for key in all_keys:
+                units  = m.get(f'ha_{key}', 0)
+                booked = m.get(f'htb_{key}', 0)
+                att    = m.get(f'hta_{key}', 0)
+                hl     = m.get(f'hl_{key}', 0)
+                conv   = m.get(f'cp_{key}', 0)
+                bin_   = m.get(f'bin_{key}', 0)
+                mrp    = m.get(f'mrp_{key}', 0.0)
+
+                m[f'asp_{key}']      = (mrp / units) if units else 0.0
+                m[f'na_pct_{key}']   = (att / booked) * 100 if booked else 0.0
+                m[f'hl_pct_{key}']   = (hl / att) * 100 if att else 0.0
+                m[f'conv_pct_{key}'] = (conv / hl) * 100 if hl else 0.0
+                m[f'bin_pct_{key}']  = (bin_ / conv) * 100 if conv else 0.0
 
     def _write_cell(self, ws, row, col, val, fmt_type, formats):
         if fmt_type == 'number':
