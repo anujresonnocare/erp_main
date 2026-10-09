@@ -67,7 +67,7 @@
                             type="object"
                             string="Check-in"
                             class="btn-primary"
-                            invisible="status != 'scheduled'"/>
+                            invisible="balance_due == 0"/>
 
                     <!-- Doctor -->
                     <button name="action_start_consultation"
@@ -202,7 +202,7 @@
                         <field name="diagnostic_item_ids"
                             widget="many2many_tags"
                             readonly="status not in ('draft','scheduled')"
-                            domain="['|', ('id', '=', appointment_type_id), ('name', 'not ilike', 'fitting')]"
+                            domain="[('id', '=', appointment_type_id)]"
                         />
                     </group>
 
