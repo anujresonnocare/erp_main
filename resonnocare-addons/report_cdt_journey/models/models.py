@@ -80,6 +80,9 @@ class CdtJourneyReportWizard(models.TransientModel):
     #   mrpgl  = MRP (Diagnostics Sleep)
     #   discgl = Discount (Diagnostics Sleep)
     #   dgsl   = Gross Revenue (Diagnostics Sleep)
+    #   nr_dev = Net Revenue (Device/Therapy)  = HA + Speech + Sleep gross
+    #   nr_diag= Net Revenue (Diagnostics)     = Diag HA + Diag SP + Diag SL
+    #   nr_all = Net Revenue All Services      = nr_dev + nr_diag
     # =====================================================================
     INT_PREFIXES = (
         'da', 'htb', 'hta', 'hl', 'cp', 'bin', 'ha',
@@ -93,6 +96,8 @@ class CdtJourneyReportWizard(models.TransientModel):
         'mrpgh', 'discgh', 'dgha',
         'mrpgp', 'discgp', 'dgsp',
         'mrpgl', 'discgl', 'dgsl',
+        # Net Revenue rollups
+        'nr_dev', 'nr_diag', 'nr_all',
     )
     # Ratio fields — must NEVER be summed during aggregation; they are
     # always recomputed from their numerator/denominator.
@@ -363,6 +368,11 @@ class CdtJourneyReportWizard(models.TransientModel):
         m['disc_rev_diag_sleep']     = 0.0
         m['gross_rev_diag_sleep']    = 0.0
 
+        # Net Revenue rollups
+        m['net_rev_device']          = 0.0   # HA + Speech + Sleep gross
+        m['net_rev_diag']            = 0.0   # Diag HA + Diag Speech + Diag Sleep
+        m['net_rev_all']             = 0.0   # device + diag
+
         # Dynamic per-source
         for prefix in self.INT_PREFIXES:
             for key in all_keys:
@@ -530,6 +540,13 @@ class CdtJourneyReportWizard(models.TransientModel):
                         m['gross_rev_diag_sleep']  += gross; bump('dgsl', gross)
 
         # -----------------------------------------------------------------
+        # NET REVENUE ROLLUPS  (computed before ratios)
+        # -----------------------------------------------------------------
+        m['net_rev_device'] = m['gross_rev_ha'] + m['gross_rev_speech'] + m['gross_rev_sleep']
+        m['net_rev_diag']   = m['gross_rev_diag_ha'] + m['gross_rev_diag_speech'] + m['gross_rev_diag_sleep']
+        m['net_rev_all']    = m['net_rev_device'] + m['net_rev_diag']
+
+        # -----------------------------------------------------------------
         # DERIVED METRICS (ratios) — OVERALL
         # -----------------------------------------------------------------
         m['asp']      = (m['mrp_ha'] / m['ha_units']) \
@@ -544,7 +561,7 @@ class CdtJourneyReportWizard(models.TransientModel):
                         if m['conversions_ha'] else 0.0
 
         # -----------------------------------------------------------------
-        # DERIVED METRICS (ratios) — PER SOURCE
+        # DERIVED METRICS (ratios + net revenue) — PER SOURCE
         # -----------------------------------------------------------------
         for key in all_keys:
             units  = m.get(f'ha_{key}', 0)
@@ -555,11 +572,25 @@ class CdtJourneyReportWizard(models.TransientModel):
             bin_   = m.get(f'bin_{key}', 0)
             mrp    = m.get(f'mrp_{key}', 0.0)
 
+            # ratios
             m[f'asp_{key}']      = (mrp / units) if units else 0.0
             m[f'na_pct_{key}']   = (att / booked) * 100 if booked else 0.0
             m[f'hl_pct_{key}']   = (hl / att) * 100 if att else 0.0
             m[f'conv_pct_{key}'] = (conv / hl) * 100 if hl else 0.0
             m[f'bin_pct_{key}']  = (bin_ / conv) * 100 if conv else 0.0
+
+            # net revenue rollups (per source)
+            m[f'nr_dev_{key}'] = (
+                m.get(f'gr_{key}', 0.0)
+                + m.get(f'sgr_{key}', 0.0)
+                + m.get(f'slgr_{key}', 0.0)
+            )
+            m[f'nr_diag_{key}'] = (
+                m.get(f'dgha_{key}', 0.0)
+                + m.get(f'dgsp_{key}', 0.0)
+                + m.get(f'dgsl_{key}', 0.0)
+            )
+            m[f'nr_all_{key}'] = m[f'nr_dev_{key}'] + m[f'nr_diag_{key}']
 
         return m
 
@@ -749,10 +780,6 @@ class CdtJourneyReportWizard(models.TransientModel):
         # METRIC GROUPS
         #   Order per block: MRP → DISCOUNT → GROSS REVENUE
         # -----------------------------------------------------------------
-        # -----------------------------------------------------------------
-        # METRIC GROUPS
-        #   Order per block: MRP → DISCOUNT → GROSS REVENUE
-        # -----------------------------------------------------------------
         METRIC_GROUPS = [
             # HA Funnel
             ('TOTAL # DIAGNOSTIC APPTS',                 'da',       'number'),
@@ -797,6 +824,13 @@ class CdtJourneyReportWizard(models.TransientModel):
             ('MRP (DIAGNOSTICS) (SLEEP)',                'mrpgl',    'currency'),
             ('DISCOUNT (DIAGNOSTICS) (SLEEP)',           'discgl',   'currency'),
             ('GROSS REVENUE (DIAGNOSTICS) (SLEEP)',      'dgsl',     'currency'),
+
+            # -----------------------------------------------------------------
+            # Net Revenue Rollups
+            # -----------------------------------------------------------------
+            ('TOTAL NET REVENUE (DEVICE/THERAPY)',       'nr_dev',   'currency'),
+            ('TOTAL NET REVENUE (DIAGNOSTICS)',          'nr_diag',  'currency'),
+            ('TOTAL NET REVENUE ALL SERVICES',           'nr_all',   'currency'),
         ]
 
         col = 9
@@ -907,6 +941,11 @@ class CdtJourneyReportWizard(models.TransientModel):
             'mrpgl':  'mrp_diag_sleep',
             'discgl': 'disc_rev_diag_sleep',
             'dgsl':   'gross_rev_diag_sleep',
+
+            # Net Revenue rollups
+            'nr_dev':  'net_rev_device',
+            'nr_diag': 'net_rev_diag',
+            'nr_all':  'net_rev_all',
         }
 
         # Helper to check if a metric key is a ratio (never summed)
@@ -1083,6 +1122,30 @@ class CdtJourneyReportWizard(models.TransientModel):
                 m[f'hl_pct_{key}']   = (hl / att) * 100 if att else 0.0
                 m[f'conv_pct_{key}'] = (conv / hl) * 100 if hl else 0.0
                 m[f'bin_pct_{key}']  = (bin_ / conv) * 100 if conv else 0.0
+
+        # ---- overall net revenue rollups ----
+        m['net_rev_device'] = m.get('gross_rev_ha', 0.0) \
+                            + m.get('gross_rev_speech', 0.0) \
+                            + m.get('gross_rev_sleep', 0.0)
+        m['net_rev_diag']   = m.get('gross_rev_diag_ha', 0.0) \
+                            + m.get('gross_rev_diag_speech', 0.0) \
+                            + m.get('gross_rev_diag_sleep', 0.0)
+        m['net_rev_all']    = m['net_rev_device'] + m['net_rev_diag']
+
+        # ---- per-source net revenue rollups ----
+        if all_keys:
+            for key in all_keys:
+                m[f'nr_dev_{key}'] = (
+                    m.get(f'gr_{key}', 0.0)
+                    + m.get(f'sgr_{key}', 0.0)
+                    + m.get(f'slgr_{key}', 0.0)
+                )
+                m[f'nr_diag_{key}'] = (
+                    m.get(f'dgha_{key}', 0.0)
+                    + m.get(f'dgsp_{key}', 0.0)
+                    + m.get(f'dgsl_{key}', 0.0)
+                )
+                m[f'nr_all_{key}'] = m[f'nr_dev_{key}'] + m[f'nr_diag_{key}']
 
     def _write_cell(self, ws, row, col, val, fmt_type, formats):
         if fmt_type == 'number':
