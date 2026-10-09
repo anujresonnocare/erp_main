@@ -265,7 +265,6 @@
                             widget="many2many_tags"
                             readonly="status != 'in_consultation'" domain="[('appointment_type_ids','in', appointment_type_id)]"
                             options="{'no_create': True, 'no_quick_create': True}"
-                            readonly="1"
                         />
                     </group>
 
