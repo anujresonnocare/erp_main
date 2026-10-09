@@ -39,6 +39,7 @@ class CdtJourneyReportWizard(models.TransientModel):
     APPT_TYPE_SWALLOWING   = 'Swallowing'
     APPT_TYPE_SLEEP        = 'Sleep'
     APPT_TYPE_DEVICE_SALE  = 'Device Sale'
+    APPT_TYPE_FITTING      = 'Fitting'
 
     HEARING_LOSS_OUTCOMES = ('HATS', 'RX', 'DEF', 'DRREF', 'USER')
     EXCLUDED_OUTCOMES     = ('ANSP', 'FTA')
@@ -65,6 +66,7 @@ class CdtJourneyReportWizard(models.TransientModel):
     #   mrp    = MRP (HA)                    (list amount, no discount)
     #   disc   = Discount (HA)
     #   gr     = Gross Revenue (HA)          (after discount)
+    #   fit    = Fitting Revenue (HA)        (from Fitting appts, completed)
     #   mrpsp  = MRP (Speech)
     #   discsp = Discount (Speech)
     #   sgr    = Gross Revenue (Speech)
@@ -80,9 +82,9 @@ class CdtJourneyReportWizard(models.TransientModel):
     #   mrpgl  = MRP (Diagnostics Sleep)
     #   discgl = Discount (Diagnostics Sleep)
     #   dgsl   = Gross Revenue (Diagnostics Sleep)
-    #   nr_dev = Net Revenue (Device/Therapy)  = HA + Speech + Sleep gross
-    #   nr_diag= Net Revenue (Diagnostics)     = Diag HA + Diag SP + Diag SL
-    #   nr_all = Net Revenue All Services      = nr_dev + nr_diag
+    #   nr_dev = Net Revenue (Device/Therapy) = HA + Speech + Sleep + Fitting gross
+    #   nr_diag= Net Revenue (Diagnostics)    = Diag HA + Diag SP + Diag SL
+    #   nr_all = Net Revenue All Services     = nr_dev + nr_diag
     # =====================================================================
     INT_PREFIXES = (
         'da', 'htb', 'hta', 'hl', 'cp', 'bin', 'ha',
@@ -90,7 +92,7 @@ class CdtJourneyReportWizard(models.TransientModel):
     )
     FLOAT_PREFIXES = (
         'asp', 'na_pct', 'hl_pct', 'conv_pct', 'bin_pct',
-        'mrp', 'disc', 'gr',
+        'mrp', 'disc', 'gr', 'fit',
         'mrpsp', 'discsp', 'sgr',
         'mrpsl', 'discsl', 'slgr',
         'mrpgh', 'discgh', 'dgha',
@@ -263,6 +265,9 @@ class CdtJourneyReportWizard(models.TransientModel):
     def _is_device_sale_type(self, appointment):
         return self._appt_type_name(appointment) == self.APPT_TYPE_DEVICE_SALE
 
+    def _is_fitting_type(self, appointment):
+        return self._appt_type_name(appointment) == self.APPT_TYPE_FITTING
+
     def _is_attended(self, appointment):
         """status = completed AND no outcome is ANSP / FTA."""
         if appointment.status != 'completed':
@@ -334,6 +339,7 @@ class CdtJourneyReportWizard(models.TransientModel):
         m['mrp_ha']                  = 0.0
         m['disc_rev_ha']             = 0.0
         m['gross_rev_ha']            = 0.0
+        m['fitt_rev_ha']             = 0.0
 
         # HA ratio KPIs
         m['na_pct']                  = 0.0
@@ -369,9 +375,9 @@ class CdtJourneyReportWizard(models.TransientModel):
         m['gross_rev_diag_sleep']    = 0.0
 
         # Net Revenue rollups
-        m['net_rev_device']          = 0.0   # HA + Speech + Sleep gross
-        m['net_rev_diag']            = 0.0   # Diag HA + Diag Speech + Diag Sleep
-        m['net_rev_all']             = 0.0   # device + diag
+        m['net_rev_device']          = 0.0
+        m['net_rev_diag']            = 0.0
+        m['net_rev_all']             = 0.0
 
         # Dynamic per-source
         for prefix in self.INT_PREFIXES:
@@ -539,10 +545,33 @@ class CdtJourneyReportWizard(models.TransientModel):
                         m['disc_rev_diag_sleep']   += disc;  bump('discgl', disc)
                         m['gross_rev_diag_sleep']  += gross; bump('dgsl', gross)
 
+            # -----------------------------------------------------
+            # BLOCK E: FITTING REVENUE (HA)
+            #   Appointment Type = 'Fitting' AND status = completed
+            # -----------------------------------------------------
+            if self._is_fitting_type(appt) and is_completed and sale_order:
+                fit_lines = sale_order.order_line.filtered(
+                    lambda l: l.product_id
+                    and l.product_id.product_tmpl_id.item_category == 'Fitting'
+                )
+                if fit_lines:
+                    fit_rev = 0.0
+                    for l in fit_lines:
+                        _, _, gross = self._line_amounts(l)
+                        fit_rev += gross
+                    m['fitt_rev_ha'] += fit_rev
+                    bump('fit', fit_rev)
+
         # -----------------------------------------------------------------
         # NET REVENUE ROLLUPS  (computed before ratios)
+        #   Net Revenue (Device/Therapy) now INCLUDES Fitting Revenue
         # -----------------------------------------------------------------
-        m['net_rev_device'] = m['gross_rev_ha'] + m['gross_rev_speech'] + m['gross_rev_sleep']
+        m['net_rev_device'] = (
+            m['gross_rev_ha']
+            + m['gross_rev_speech']
+            + m['gross_rev_sleep']
+            + m['fitt_rev_ha']
+        )
         m['net_rev_diag']   = m['gross_rev_diag_ha'] + m['gross_rev_diag_speech'] + m['gross_rev_diag_sleep']
         m['net_rev_all']    = m['net_rev_device'] + m['net_rev_diag']
 
@@ -579,11 +608,12 @@ class CdtJourneyReportWizard(models.TransientModel):
             m[f'conv_pct_{key}'] = (conv / hl) * 100 if hl else 0.0
             m[f'bin_pct_{key}']  = (bin_ / conv) * 100 if conv else 0.0
 
-            # net revenue rollups (per source)
+            # net revenue rollups (per source) — includes Fitting
             m[f'nr_dev_{key}'] = (
                 m.get(f'gr_{key}', 0.0)
                 + m.get(f'sgr_{key}', 0.0)
                 + m.get(f'slgr_{key}', 0.0)
+                + m.get(f'fit_{key}', 0.0)
             )
             m[f'nr_diag_{key}'] = (
                 m.get(f'dgha_{key}', 0.0)
@@ -797,6 +827,7 @@ class CdtJourneyReportWizard(models.TransientModel):
             ('MRP (HA)',                                 'mrp',      'currency'),
             ('DISCOUNT (HA)',                            'disc',     'currency'),
             ('GROSS REVENUE (HA)',                       'gr',       'currency'),
+            ('FITTING REVENUE (HA)',                     'fit',      'currency'),
 
             # Speech
             ('TOTAL # SPEECH APPT BOOKED',               'sphb',     'number'),
@@ -917,6 +948,7 @@ class CdtJourneyReportWizard(models.TransientModel):
             'mrp':    'mrp_ha',
             'disc':   'disc_rev_ha',
             'gr':     'gross_rev_ha',
+            'fit':    'fitt_rev_ha',
 
             'sphb':   'speech_booked',
             'spha':   'speech_attended',
@@ -1090,9 +1122,10 @@ class CdtJourneyReportWizard(models.TransientModel):
     def _recalc_derived(self, m, all_keys=None):
         """Recompute all ratio metrics on aggregate rows — never sum them.
 
-        Numeric metrics (counts, MRP, discount, gross revenue) are summed
-        upstream. Ratios (ASP and the 4 percentage KPIs) must be recalculated
-        from the summed numerator / denominator.
+        Numeric metrics (counts, MRP, discount, gross revenue, fitting) are
+        summed upstream. Ratios (ASP + 4 percentage KPIs) are recalculated
+        from the summed numerator / denominator. Net revenue rollups are also
+        recomputed to guarantee exact consistency with components.
         """
         # ---- overall ratios ----
         m['asp']      = (m['mrp_ha'] / m['ha_units']) \
@@ -1123,22 +1156,28 @@ class CdtJourneyReportWizard(models.TransientModel):
                 m[f'conv_pct_{key}'] = (conv / hl) * 100 if hl else 0.0
                 m[f'bin_pct_{key}']  = (bin_ / conv) * 100 if conv else 0.0
 
-        # ---- overall net revenue rollups ----
-        m['net_rev_device'] = m.get('gross_rev_ha', 0.0) \
-                            + m.get('gross_rev_speech', 0.0) \
-                            + m.get('gross_rev_sleep', 0.0)
-        m['net_rev_diag']   = m.get('gross_rev_diag_ha', 0.0) \
-                            + m.get('gross_rev_diag_speech', 0.0) \
-                            + m.get('gross_rev_diag_sleep', 0.0)
+        # ---- overall net revenue rollups (include Fitting) ----
+        m['net_rev_device'] = (
+            m.get('gross_rev_ha', 0.0)
+            + m.get('gross_rev_speech', 0.0)
+            + m.get('gross_rev_sleep', 0.0)
+            + m.get('fitt_rev_ha', 0.0)
+        )
+        m['net_rev_diag']   = (
+            m.get('gross_rev_diag_ha', 0.0)
+            + m.get('gross_rev_diag_speech', 0.0)
+            + m.get('gross_rev_diag_sleep', 0.0)
+        )
         m['net_rev_all']    = m['net_rev_device'] + m['net_rev_diag']
 
-        # ---- per-source net revenue rollups ----
+        # ---- per-source net revenue rollups (include Fitting) ----
         if all_keys:
             for key in all_keys:
                 m[f'nr_dev_{key}'] = (
                     m.get(f'gr_{key}', 0.0)
                     + m.get(f'sgr_{key}', 0.0)
                     + m.get(f'slgr_{key}', 0.0)
+                    + m.get(f'fit_{key}', 0.0)
                 )
                 m[f'nr_diag_{key}'] = (
                     m.get(f'dgha_{key}', 0.0)
