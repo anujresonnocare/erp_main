@@ -155,6 +155,32 @@ class ResonnocareAppointment(models.Model):
     pre_booking = fields.Boolean(string="Pre-Booking")
     expected_delivery_date = fields.Date(string="Expected Delivery Date")
 
+
+    vendor_id = fields.Many2one(
+        "device.vendor",
+        string="Vendor",
+    )
+
+    item_type = fields.Selection(
+        selection=[
+            ("ha", "HA"),
+            ("accessories", "Accessories"),
+            ("battery", "Battery"),
+            ("receiver", "Receiver"),
+            ("v2_receiver", "V2 Receiver"),
+            ("eartips", "Eartips"),
+            ("sleeve", "Sleeve"),
+            ("mould", "Mould"),
+            ("btl_bend", "BTL Bend"),
+            ("dry_kit", "Dry Kit"),
+            ("wax_guard", "Wax Guard"),
+            ("cleaning_kit", "Cleaning Kit"),
+            ("consumable", "Consumable"),
+            ("equipment", "Equipment"),
+        ],
+        string="Item Type",
+    )
+
     parent_appointment_id = fields.Many2one(
         "resonnocare.appointment",
         string="Original Appointment",

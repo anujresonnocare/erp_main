@@ -218,6 +218,9 @@
                         <group>
                             <field name="pre_booking"/>
                             <field name="expected_delivery_date" invisible="not pre_booking"/>
+
+                            <field name="vendor_id"/>
+                            <field name="item_type"/>
                         </group>
                         <field name="device_sale_line_ids"
                             readonly="status not in ('draft','scheduled')"
@@ -225,10 +228,21 @@
                             <list editable="bottom">
                                 <field
                                     name="product_id"
-                                    domain="[('sale_ok','=',True), ('active','=',True), ('type','!=','service'), ('product_tmpl_id.item_type','!=','diagnostic_service')]"
-                                    context="{'tree_view_ref': 'resonnocare_appointment.view_product_product_frontdesk_tree', 'search_view_ref': 'resonnocare_appointment.view_product_product_frontdesk_search'}"
-                                    options="{'no_create': True, 'no_open':True, 'no_quick_create': True, 'no_create_edit': True,'no_edit': True}"
+                                    domain="[
+                                        ('sale_ok','=',True),
+                                        ('active','=',True),
+                                        ('type','!=','service'),
+                                        ('product_tmpl_id.item_type','!=','diagnostic_service'),
+                                        ('product_tmpl_id.item_type','=',item_type) if item_type else ('id','!=',0),
+                                        ('seller_ids.partner_id','=',vendor_id.partner_id) if vendor_id.partner_id else ('id','!=',0),
+                                    ]"
+                                    context="{
+                                        'tree_view_ref': 'resonnocare_appointment.view_product_product_frontdesk_tree',
+                                        'search_view_ref': 'resonnocare_appointment.view_product_product_frontdesk_search',
+                                    }"
+                                    options="{'no_create': True, 'no_open': True, 'no_quick_create': True, 'no_create_edit': True, 'no_edit': True}"
                                 />
+                                
                                 <field name="product_uom_qty"/>
                                 <field name="is_left_ear"/>
                                 <field name="is_right_ear"/>
