@@ -60,7 +60,7 @@ class ResonnocareAppointmentDeviceLine(models.Model):
     )
 
     vendor_id = fields.Many2one(
-        "res.partner",
+        "device.vendor",
         related="appointment_id.vendor_id",
         string="Vendor",
         store=False,
