@@ -67,7 +67,7 @@
                             type="object"
                             string="Check-in"
                             class="btn-primary"
-                            invisible="balance_due == 0"/>
+                            invisible="balance_due > 0 or status != 'scheduled'"/>
 
                     <!-- Doctor -->
                     <button name="action_start_consultation"
@@ -230,6 +230,8 @@
                                     options="{'no_create': True, 'no_open':True, 'no_quick_create': True, 'no_create_edit': True,'no_edit': True}"
                                 />
                                 <field name="product_uom_qty"/>
+                                <field name="is_left_ear"/>
+                                <field name="is_right_ear"/>
                                 <field name="serial_lot_id"/>
                                 <field name="is_ear_mould" readonly="1"/>
                                 <field name="ear_mould_form_id" readonly="1"/>

@@ -49,6 +49,16 @@ class ResonnocareAppointmentDeviceLine(models.Model):
         copy=False,
     )
 
+    is_left_ear = fields.Boolean(
+        string="Left Ear",
+        help="Check if the device is for the left ear (for ear moulds)",
+    )
+
+    is_right_ear = fields.Boolean(
+        string="Right Ear",
+        help="Check if the device is for the right ear (for ear moulds)",
+    )
+
     @api.depends("product_id", "appointment_id", "appointment_id.clinic_id")
     def _compute_available_lot_ids(self):
         quant_model = self.env["stock.quant"]
@@ -82,6 +92,25 @@ class ResonnocareAppointmentDeviceLine(models.Model):
                 line.product_uom_qty = 1.0
             if line.serial_lot_id and line.serial_lot_id not in line.available_lot_ids:
                 line.serial_lot_id = False
+            if line.product_id and line.product_id.product_tmpl_id.is_binaural:
+                line.is_left_ear = True
+                line.is_right_ear = True    
+                line.product_uom_qty = 2.0
+
+
+
+    @api.onchange("is_left_ear", "is_right_ear")
+    def _onchange_ear_selection(self):
+        for line in self:
+            if line.product_id and line.product_id.product_tmpl_id.is_binaural:
+                if line.is_left_ear and line.is_right_ear:
+                    line.product_uom_qty = 2.0
+                elif line.is_left_ear or line.is_right_ear:
+                    line.product_uom_qty = 1.0
+                elif line.is_left_ear and line.is_right_ear:
+                    line.product_uom_qty = 2.0    
+                else:
+                    line.product_uom_qty = 0.0    
 
     @api.constrains("product_id", "product_uom_qty", "serial_lot_id", "appointment_id")
     def _check_serial_and_qty(self):

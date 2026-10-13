@@ -23,14 +23,14 @@
             ]</field>
         </record>
 
-        <record id="discount_approval_request_rule_clinic_admin" model="ir.rule">
+        <!-- <record id="discount_approval_request_rule_clinic_admin" model="ir.rule">
             <field name="name">Discount Approval Request: Clinic Admin Own Clinic</field>
             <field name="model_id" search="[('model', '=', 'resonnocare.discount.approval.request')]"/>
             <field name="groups" eval="[(4, ref('resonnocare_base.group_clinic_admin'))]"/>
             <field name="domain_force">[
                 ('clinic_id', '=', user.employee_id.clinic_id.id)
             ]</field>
-        </record>
+        </record> -->
 
         <record id="advance_approval_request_rule_front_desk" model="ir.rule">
             <field name="name">Min Advance Approval Request: Front Desk Own Clinic</field>
@@ -41,14 +41,14 @@
             ]</field>
         </record>
 
-        <record id="advance_approval_request_rule_clinic_admin" model="ir.rule">
+        <!-- <record id="advance_approval_request_rule_clinic_admin" model="ir.rule">
             <field name="name">Min Advance Approval Request: Clinic Admin Own Clinic</field>
             <field name="model_id" search="[('model', '=', 'resonnocare.advance.approval.request')]"/>
             <field name="groups" eval="[(4, ref('resonnocare_base.group_clinic_admin'))]"/>
             <field name="domain_force">[
                 ('clinic_id', '=', user.employee_id.clinic_id.id)
             ]</field>
-        </record>
+        </record> -->
 
         <record id="final_invoice_rule_front_desk" model="ir.rule">
             <field name="name">Final Invoice: Front Desk Own Clinic</field>
