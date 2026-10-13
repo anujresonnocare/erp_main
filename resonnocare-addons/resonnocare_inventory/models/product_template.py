@@ -82,6 +82,28 @@ class ProductTemplate(models.Model):
 
     is_binaural = fields.Boolean(string="Is Binaural", default=False)
 
+
+    color_id = fields.Many2one(
+        "device.color",
+        string="Color",
+        ondelete="restrict",
+        help="Color of the device",
+    )
+
+    vendor_id = fields.Many2one(
+        "device.vendor",
+        string="Vendor",
+        ondelete="restrict",
+        help="Vendor supplying this device",
+    )
+
+    item_style_id = fields.Many2one(
+        "device.item.style",
+        string="Item Style",
+        ondelete="restrict",
+        help="Style / variant of the device",
+    )
+
     @api.depends("price_history_ids")
     def _compute_price_history_count(self):
         counts = (
@@ -199,3 +221,52 @@ class ProductProduct(models.Model):
             "search_default_product": 1,
         }
         return action
+
+
+
+from odoo import models, fields, api
+
+
+class DeviceColor(models.Model):
+    _name = "device.color"
+    _description = "Device Color"
+    _order = "name"
+
+    name = fields.Char(string="Color Name", required=True)
+    code = fields.Char(string="Color Code", help="Hex or short code e.g. #FFFFFF or BEIGE")
+    active = fields.Boolean(default=True)
+
+    _sql_constraints = [
+        ("name_uniq", "unique(name)", "Color name must be unique!"),
+    ]
+
+
+class DeviceVendor(models.Model):
+    _name = "device.vendor"
+    _description = "Device Vendor"
+    _order = "name"
+
+    name = fields.Char(string="Vendor Name", required=True)
+    partner_id = fields.Many2one("res.partner", string="Linked Contact")
+    email = fields.Char(related="partner_id.email", store=True, readonly=True)
+    phone = fields.Char(related="partner_id.phone", store=True, readonly=True)
+    active = fields.Boolean(default=True)
+
+    _sql_constraints = [
+        ("name_uniq", "unique(name)", "Vendor name must be unique!"),
+    ]
+
+
+class DeviceItemStyle(models.Model):
+    _name = "device.item.style"
+    _description = "Device Item Style"
+    _order = "name"
+
+    name = fields.Char(string="Style Name", required=True)
+    code = fields.Char(string="Style Code")
+    description = fields.Text(string="Description")
+    active = fields.Boolean(default=True)
+
+    _sql_constraints = [
+        ("name_uniq", "unique(name)", "Style name must be unique!"),
+    ]    

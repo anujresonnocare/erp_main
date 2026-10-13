@@ -17,6 +17,9 @@
                 <field name="manufacturer_id"/>
                 <field name="is_binaural"/>
                 <field name="can_number" invisible="item_type != 'ear_mould'"/>
+                <field name="color_id"/>
+                <field name="vendor_id"/>
+                <field name="item_style_id"/>
             </xpath>
         </field>
     </record>
@@ -39,4 +42,87 @@
             </xpath>
         </field>
     </record>
+
+
+       <!-- ===== COLOR ===== -->
+    <record id="view_device_color_list" model="ir.ui.view">
+        <field name="name">device.color.list</field>
+        <field name="model">device.color</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="active" invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_device_color" model="ir.actions.act_window">
+        <field name="name">Colors</field>
+        <field name="res_model">device.color</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- ===== VENDOR ===== -->
+    <record id="view_device_vendor_list" model="ir.ui.view">
+        <field name="name">device.vendor.list</field>
+        <field name="model">device.vendor</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="email"/>
+                <field name="phone"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_device_vendor" model="ir.actions.act_window">
+        <field name="name">Vendors</field>
+        <field name="res_model">device.vendor</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- ===== ITEM STYLE ===== -->
+    <record id="view_device_item_style_list" model="ir.ui.view">
+        <field name="name">device.item.style.list</field>
+        <field name="model">device.item.style</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="description"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_device_item_style" model="ir.actions.act_window">
+        <field name="name">Item Styles</field>
+        <field name="res_model">device.item.style</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- ===== MENU ===== -->
+    <menuitem id="menu_device_config"
+              name="Device Configuration"
+              parent="base.menu_custom"
+              sequence="90"/>
+
+    <menuitem id="menu_device_color"
+              name="Colors"
+              parent="menu_device_config"
+              action="action_device_color"
+              sequence="10"/>
+
+    <menuitem id="menu_device_vendor"
+              name="Vendors"
+              parent="menu_device_config"
+              action="action_device_vendor"
+              sequence="20"/>
+
+    <menuitem id="menu_device_item_style"
+              name="Item Styles"
+              parent="menu_device_config"
+              action="action_device_item_style"
+              sequence="30"/>
 </odoo>

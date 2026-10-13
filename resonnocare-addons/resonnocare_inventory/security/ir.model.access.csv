@@ -5,3 +5,6 @@ access_device_super_admin,resonnocare.device.super.admin,model_resonnocare_devic
 access_device_clinic_admin,resonnocare.device.clinic.admin,model_resonnocare_device,resonnocare_base.group_clinic_admin,1,1,1,0
 access_device_front_desk,resonnocare.device.front.desk,model_resonnocare_device,resonnocare_base.group_front_desk,1,0,0,0
 access_device_internal,resonnocare.device.internal,model_resonnocare_device,base.group_user,1,0,0,0
+access_device_color_user,device.color.user,model_device_color,base.group_user,1,1,1,1
+access_device_vendor_user,device.vendor.user,model_device_vendor,base.group_user,1,1,1,1
+access_device_item_style_user,device.item.style.user,model_device_item_style,base.group_user,1,1,1,1
