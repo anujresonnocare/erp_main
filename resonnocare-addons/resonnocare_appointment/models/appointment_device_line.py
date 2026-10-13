@@ -107,8 +107,6 @@ class ResonnocareAppointmentDeviceLine(models.Model):
                     line.product_uom_qty = 2.0
                 elif line.is_left_ear or line.is_right_ear:
                     line.product_uom_qty = 1.0
-                elif line.is_left_ear and line.is_right_ear:
-                    line.product_uom_qty = 2.0    
                 else:
                     line.product_uom_qty = 0.0    
 
