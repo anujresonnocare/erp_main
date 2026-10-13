@@ -119,10 +119,10 @@ class ResonnocareAppointmentDeviceLine(models.Model):
                 raise UserError("Selected serial number does not belong to the selected device.")
 
             if line.product_id.tracking == "serial":
-                if line.product_uom_qty != 1:
-                    raise UserError(
-                        f"Quantity must be 1 for serial-tracked device '{line.product_id.display_name}'."
-                    )
+                # if line.product_uom_qty != 1:
+                #     raise UserError(
+                #         f"Quantity must be 1 for serial-tracked device '{line.product_id.display_name}'."
+                #     )
                 if not line.serial_lot_id and not (line.appointment_id and line.appointment_id.pre_booking):
                     raise UserError(
                         f"Please select serial number for device '{line.product_id.display_name}'."
