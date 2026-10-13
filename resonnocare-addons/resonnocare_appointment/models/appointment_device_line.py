@@ -59,6 +59,43 @@ class ResonnocareAppointmentDeviceLine(models.Model):
         help="Check if the device is for the right ear (for ear moulds)",
     )
 
+    vendor_id = fields.Many2one("device.vendor", string="Vendor")
+
+    item_type = fields.Selection(
+        selection=[
+            ("ha", "HA"),
+            ("accessories", "Accessories"),
+            ("battery", "Battery"),
+            ("receiver", "Receiver"),
+            ("v2_receiver", "V2 Receiver"),
+            ("eartips", "Eartips"),
+            ("sleeve", "Sleeve"),
+            ("mould", "Mould"),
+            ("btl_bend", "BTL Bend"),
+            ("dry_kit", "Dry Kit"),
+            ("wax_guard", "Wax Guard"),
+            ("cleaning_kit", "Cleaning Kit"),
+            ("consumable", "Consumable"),
+            ("equipment", "Equipment"),
+        ],
+        string="Item Type",
+    )
+
+    @api.model
+    def _get_product_domain(self, item_type, vendor_partner_id):
+        """Build the domain for the product_id field dynamically."""
+        domain = [
+            ("sale_ok", "=", True),
+            ("active", "=", True),
+            ("type", "!=", "service"),
+            ("product_tmpl_id.item_type", "!=", "diagnostic_service"),
+        ]
+        if item_type:
+            domain.append(("product_tmpl_id.item_type", "=", item_type))
+        if vendor_partner_id:
+            domain.append(("seller_ids.partner_id", "=", vendor_partner_id))
+        return domain
+
     @api.depends("product_id", "appointment_id", "appointment_id.clinic_id")
     def _compute_available_lot_ids(self):
         quant_model = self.env["stock.quant"]

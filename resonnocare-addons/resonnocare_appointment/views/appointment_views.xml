@@ -232,9 +232,8 @@
                                         ('sale_ok','=',True),
                                         ('active','=',True),
                                         ('type','!=','service'),
-                                        ('product_tmpl_id.item_type','!=','diagnostic_service'),
-                                        ('product_tmpl_id.item_type','=',item_type) if item_type else ('id','!=',0),
-                                        ('seller_ids.partner_id','=',vendor_id.partner_id) if vendor_id.partner_id else ('id','!=',0),
+                                        ('item_type','=',appointment_id.item_type),
+                                        ('vendor_id','=',appointment_id.vendor_id)
                                     ]"
                                     context="{
                                         'tree_view_ref': 'resonnocare_appointment.view_product_product_frontdesk_tree',
