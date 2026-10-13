@@ -105,7 +105,7 @@
     <!-- ===== MENU ===== -->
     <menuitem id="menu_device_config"
               name="Device Configuration"
-              parent="base.menu_custom"
+              parent="resonnocare_master.menu_resonnocare_masters"
               sequence="90"/>
 
     <menuitem id="menu_device_color"
