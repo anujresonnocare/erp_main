@@ -232,8 +232,8 @@
                                         ('sale_ok','=',True),
                                         ('active','=',True),
                                         ('type','!=','service'),
-                                        ('item_type','=',appointment_id.item_type),
-                                        ('vendor_id','=',appointment_id.vendor_id)
+                                        ('product_tmpl_id.item_type','=',appointment_id.item_type),
+                                        ('product_tmpl_id.vendor_id','=',appointment_id.vendor_id)
                                     ]"
                                     context="{
                                         'tree_view_ref': 'resonnocare_appointment.view_product_product_frontdesk_tree',
