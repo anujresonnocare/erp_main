@@ -102,13 +102,12 @@ class ResonnocareAppointmentDeviceLine(models.Model):
     @api.onchange("is_left_ear", "is_right_ear")
     def _onchange_ear_selection(self):
         for line in self:
-            if line.product_id and line.product_id.product_tmpl_id.is_binaural:
-                if line.is_left_ear and line.is_right_ear:
-                    line.product_uom_qty = 2.0
-                elif line.is_left_ear or line.is_right_ear:
-                    line.product_uom_qty = 1.0
-                else:
-                    line.product_uom_qty = 0.0    
+            if line.is_left_ear and line.is_right_ear:
+                line.product_uom_qty = 2.0
+            elif line.is_left_ear or line.is_right_ear:
+                line.product_uom_qty = 1.0
+            else:
+                line.product_uom_qty = 0.0    
 
     @api.constrains("product_id", "product_uom_qty", "serial_lot_id", "appointment_id")
     def _check_serial_and_qty(self):
