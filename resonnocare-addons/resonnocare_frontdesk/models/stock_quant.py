@@ -1,4 +1,4 @@
-from odoo import models
+from odoo import models , fields
 from odoo.exceptions import UserError
 
 
@@ -25,12 +25,12 @@ class StockQuant(models.Model):
 class StockLot(models.Model):
     _inherit = "stock.lot"
 
-    is_left_ear = models.Boolean(
+    is_left_ear = fields.Boolean(
         string="Left Ear",
         help="Indicates if the device is for the left ear (for ear moulds)",
     )
 
-    is_right_ear = models.Boolean(
+    is_right_ear = fields.Boolean(
         string="Right Ear",
         help="Indicates if the device is for the right ear (for ear moulds)",
     )
