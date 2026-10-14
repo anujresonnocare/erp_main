@@ -21,3 +21,18 @@ class StockQuant(models.Model):
                 "search_default_location_id": clinic.stock_location_id.id,
             },
         }
+
+class StockLot(models.Model):
+    _inherit = "stock.lot"
+
+    is_left_ear = models.Boolean(
+        string="Left Ear",
+        help="Indicates if the device is for the left ear (for ear moulds)",
+    )
+
+    is_right_ear = models.Boolean(
+        string="Right Ear",
+        help="Indicates if the device is for the right ear (for ear moulds)",
+    )
+
+    

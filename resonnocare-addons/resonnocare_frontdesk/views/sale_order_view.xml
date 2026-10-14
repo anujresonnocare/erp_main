@@ -52,6 +52,8 @@
                 <field name="clinic_id" readonly="1"/>
             </xpath>
             <xpath expr="//field[@name='order_line']/list/field[@name='discount']" position="replace">
+                <field name="is_left_ear"/>
+                <field name="is_right_ear"/>
                 <field name="discount_type" optional="show"/>
                 <field name="discount" string="Disc.%" optional="show" readonly="discount_type == 'fixed'" force_save="1"/>
                 <field name="discount_fixed" string="Disc. ₹" optional="show" readonly="discount_type == 'percent'" force_save="1"/>
@@ -86,4 +88,8 @@
             </xpath>
         </field>
     </record>
+
+
+    
+
 </odoo>

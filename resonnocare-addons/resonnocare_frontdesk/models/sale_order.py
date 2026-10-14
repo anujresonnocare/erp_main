@@ -767,6 +767,18 @@ class SaleOrderLine(models.Model):
         help="Fixed discount amount per unit in currency.",
     )
 
+
+    is_left_ear = fields.Boolean(
+        string="Left Ear",
+        help="Check if the device is for the left ear (for ear moulds)",
+    )
+
+    is_right_ear = fields.Boolean(
+        string="Right Ear",
+        help="Check if the device is for the right ear (for ear moulds)",
+    )
+
+
     @api.onchange("discount_type", "discount_fixed")
     def _onchange_discount_fixed_to_pct(self):
         """When user enters a fixed discount amount, convert to percentage."""

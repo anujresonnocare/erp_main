@@ -28,6 +28,7 @@
                                         <div>
                                             <div style="font-size:30px;font-weight:700;letter-spacing:0.4px;line-height:1;">RESONNOCARE</div>
                                             <div style="font-size:18px;line-height:1.05;">Health-tech Private limited</div>
+                                           <t t-if="not clinic.state_gst">
                                             <div t-if="clinic and clinic.street" t-out="clinic.street"/>
                                             <div t-if="clinic and clinic.street2" t-out="clinic.street2"/>
                                             <div t-if="(not clinic or (not clinic.street and not clinic.street2)) and o.company_id.street" t-out="o.company_id.street"/>
@@ -37,8 +38,15 @@
                                                 <span t-if="clinic and clinic.state_id">, <span t-out="clinic.state_id.name"/></span>
                                                 <span t-if="clinic and clinic.zip"> - <span t-out="clinic.zip"/></span>
                                             </div>
+                                            </t>
+                                            
+                                            <t t-if="clinic.state_gst">
+                                            <div t-out="clinic.state_hq_address"/>
+                                            <div>GSTIN: <span t-out="clinic.state_gst"/></div>
+                                            </t>
+
                                             <div t-if="(clinic and clinic.company_id and clinic.company_id.phone) or o.company_id.phone">Phone: <span t-out="(clinic and clinic.company_id and clinic.company_id.phone) or o.company_id.phone"/></div>
-                                            <div>GSTIN: <span t-out="o.company_id.vat or o.company_id.partner_id.vat or 'N/A'"/></div>
+                                            
                                         </div>
                                     </div>
                                     </td>
@@ -48,7 +56,9 @@
                                         <div><strong>Customer Contact No.</strong>: <span t-out="o.partner_id.mobile or o.partner_id.phone or ''"/></div>
                                     </td>
                                     <td style="width:25%;vertical-align:top;border:1px solid #2a2a2a;padding:6px 8px;">
-                                        <div><strong>GST Treatment</strong>: <span t-out="o.gst_treatment or ''"/></div>
+                                        <div><strong>Place Of Supply</strong>: <br/>
+                                        State :- <span t-out="clinic.state_hq_name or ''"/><br/>
+                                        State Code:- <span t-out="clinic.state_id.code or ''"/><br/></div>
                                     </td>
                                 </tr>
                                 <tr>
@@ -259,6 +269,7 @@
                                         <div>
                                             <div style="font-size:30px;font-weight:700;letter-spacing:0.4px;line-height:1;">RESONNOCARE</div>
                                             <div style="font-size:18px;line-height:1.05;">Health-tech Private limited</div>
+                                            <t t-if="not clinic.state_gst">
                                             <div t-if="clinic and clinic.street" t-out="clinic.street"/>
                                             <div t-if="clinic and clinic.street2" t-out="clinic.street2"/>
                                             <div t-if="(not clinic or (not clinic.street and not clinic.street2)) and o.company_id.street" t-out="o.company_id.street"/>
@@ -268,8 +279,13 @@
                                                 <span t-if="clinic and clinic.state_id">, <span t-out="clinic.state_id.name"/></span>
                                                 <span t-if="clinic and clinic.zip"> - <span t-out="clinic.zip"/></span>
                                             </div>
+                                            </t>
+                                            
+                                            <t t-if="clinic.state_gst">
+                                            <div t-out="clinic.state_hq_address"/>
+                                            <div>GSTIN: <span t-out="clinic.state_gst"/></div>
+                                            </t>
                                             <div t-if="(clinic and clinic.company_id and clinic.company_id.phone) or o.company_id.phone">Phone: <span t-out="(clinic and clinic.company_id and clinic.company_id.phone) or o.company_id.phone"/></div>
-                                            <div>GSTIN: <span t-out="o.company_id.vat or o.company_id.partner_id.vat or 'N/A'"/></div>
                                         </div>
                                     </div>
                                     </td>
@@ -279,7 +295,9 @@
                                         <div><strong>Customer Contact No.</strong>: <span t-out="o.partner_id.mobile or o.partner_id.phone or ''"/></div>
                                     </td>
                                     <td style="width:25%;vertical-align:top;border:1px solid #2a2a2a;padding:6px 8px;">
-                                        <div><strong>GST Treatment</strong>: <span t-out="o.gst_treatment or ''"/></div>
+                                        <div><strong>Place Of Supply</strong>: <br/>
+                                        State :- <span t-out="clinic.state_hq_name or ''"/><br/>
+                                        State Code:- <span t-out="clinic.state_id.code or ''"/><br/></div>
                                     </td>
                                 </tr>
                                 <tr>

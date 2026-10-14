@@ -645,6 +645,8 @@ class ResonnocareAppointment(models.Model):
                         "product_uom_qty": 1,
                         "price_unit": pricing_by_diag[test.id],
                         "name": test.product_id.name,
+                        "is_left_ear": test.is_left_ear,
+                        "is_right_ear": test.is_right_ear
                     })
                 )
 
@@ -1843,20 +1845,20 @@ class ResonnocareAppointment(models.Model):
                 raise UserError("Consultation can start only after check-in.")
             rec.status = "in_consultation"
 
-    def action_complete(self):
-        self.ensure_one()
-        if self.status != "in_consultation":
-            raise UserError("Only appointments in consultation can be completed.")
-        if self.parent_appointment_id and (self.balance_due or 0.0) > 0:
-            raise UserError(
-                _(
-                    "Fitting appointment cannot be completed while balance due is greater than 0."
-                )
-            )
-        if not self.appointment_outcome_ids:
-            raise UserError("An appointment outcome must be selected to complete the appointment.")
-        else:
-            self.status = "completed"
+    # def action_complete(self):
+    #     self.ensure_one()
+    #     if self.status != "in_consultation":
+    #         raise UserError("Only appointments in consultation can be completed.")
+    #     if self.parent_appointment_id and (self.balance_due or 0.0) > 0:
+    #         raise UserError(
+    #             _(
+    #                 "Fitting appointment cannot be completed while balance due is greater than 0."
+    #             )
+    #         )
+    #     if not self.appointment_outcome_ids:
+    #         raise UserError("An appointment outcome must be selected to complete the appointment.")
+    #     else:
+    #         self.status = "completed"
         # wizard = self.env["resonnocare.appointment.complete.wizard"].create(
         #     {"appointment_id": self.id}
         # )
@@ -1871,6 +1873,133 @@ class ResonnocareAppointment(models.Model):
         #     "res_id": wizard.id,
         #     "target": "new",
         # }
+        
+    def action_complete(self):
+        self.ensure_one()
+
+        # ---- Existing validations ----
+        if self.status != "in_consultation":
+            raise UserError(_("Only appointments in consultation can be completed."))
+
+        if self.parent_appointment_id and (self.balance_due or 0.0) > 0:
+            raise UserError(_(
+                "Fitting appointment cannot be completed while balance due is greater than 0."
+            ))
+
+        if not self.appointment_outcome_ids:
+            raise UserError(_(
+                "An appointment outcome must be selected to complete the appointment."
+            ))
+
+        # ---- NEW: Sale Order validations ----
+        self._check_linked_sale_order()
+
+        # ---- All good ----
+        self.status = "completed"
+
+    # ------------------------------------------------------------------
+    # Sale Order / Delivery / Invoice / Payment validations
+    # ------------------------------------------------------------------
+    def _check_linked_sale_order(self):
+        """Validate the linked sale order, its delivery, invoice and payment."""
+        self.ensure_one()
+
+        sale_order = self.sale_order_id
+        if not sale_order:
+            raise UserError(_(
+                "No Sale Order is linked to this appointment. "
+                "Please create/confirm a Sale Order before completing."
+            ))
+
+        # 1. Sale Order must be fully confirmed / locked (not draft, not cancelled)
+        if sale_order.state in ('draft', 'cancel'):
+            raise UserError(_(
+                "Sale Order %(so)s must be confirmed before completing the appointment. "
+                "Current state: %(state)s."
+            ) % {'so': sale_order.name, 'state': sale_order.state})
+
+        # 2. Delivery (Stock Picking) must be done
+        self._check_delivery_done(sale_order)
+
+        # 3. Invoice must be posted (and fully invoiced)
+        invoices = self._check_invoices_posted(sale_order)
+
+        # 4. Invoice(s) must be fully paid
+        self._check_invoices_paid(sale_order, invoices)
+
+    # ------------------------------------------------------------------
+    def _check_delivery_done(self, sale_order):
+        """Ensure all outgoing deliveries are in 'done' state."""
+        pickings = sale_order.picking_ids.filtered(
+            lambda p: p.state not in ('cancel',)
+        )
+
+        if not pickings:
+            # If your business requires delivery, raise. Otherwise skip.
+            raise UserError(_(
+                "No delivery order found for Sale Order %s. "
+                "Please validate the delivery before completing."
+            ) % sale_order.name)
+
+        pending = pickings.filtered(lambda p: p.state != 'done')
+        if pending:
+            raise UserError(_(
+                "Delivery for Sale Order %(so)s is not completed.\n"
+                "Pending pickings: %(names)s (State: %(states)s)"
+            ) % {
+                'so': sale_order.name,
+                'names': ", ".join(pending.mapped('name')),
+                'states': ", ".join(pending.mapped('state')),
+            })
+
+    # ------------------------------------------------------------------
+    def _check_invoices_posted(self, sale_order):
+        """Ensure the sale order is fully invoiced and invoices are posted."""
+        invoices = sale_order.invoice_ids.filtered(
+            lambda m: m.state != 'cancel' and m.move_type == 'out_invoice'
+        )
+
+        if not invoices:
+            raise UserError(_(
+                "No customer invoice found for Sale Order %s. "
+                "Please create and post the invoice before completing."
+            ) % sale_order.name)
+
+        # Invoice status must not be 'to invoice' (i.e. fully invoiced)
+        if sale_order.invoice_status == 'to invoice':
+            raise UserError(_(
+                "Sale Order %s is not fully invoiced. "
+                "Please create the remaining invoice(s) first."
+            ) % sale_order.name)
+
+        draft_invoices = invoices.filtered(lambda m: m.state == 'draft')
+        if draft_invoices:
+            raise UserError(_(
+                "The following invoices are still in Draft state and must be posted:\n%s"
+            ) % ", ".join(draft_invoices.mapped('name')))
+
+        return invoices
+
+    # ------------------------------------------------------------------
+    def _check_invoices_paid(self, sale_order, invoices):
+        """Ensure all posted invoices are fully paid."""
+        unpaid = invoices.filtered(
+            lambda m: m.state == 'posted' and m.payment_state not in ('paid', 'in_payment')
+        )
+
+        if unpaid:
+            details = "\n".join(
+                "%s — Amount Due: %s %s (State: %s)" % (
+                    inv.name,
+                    inv.amount_residual,
+                    inv.currency_id.name,
+                    inv.payment_state,
+                )
+                for inv in unpaid
+            )
+            raise UserError(_(
+                "The following invoice(s) for Sale Order %(so)s are not fully paid:\n\n%(details)s"
+            ) % {'so': sale_order.name, 'details': details})    
 
     def action_no_show(self):
         for rec in self:
@@ -1902,6 +2031,8 @@ class SaleOrder(models.Model):
 class SaleOrderLine(models.Model):
     _inherit = 'sale.order.line'
 
+
+    
     def _apply_binaural_rule(self, vals):
         """Force qty=2 and price_unit=base/2 for binaural products."""
         product_id = vals.get('product_id') or (self.product_id.id if self else False)
