@@ -1873,11 +1873,15 @@ class ResonnocareAppointment(models.Model):
         #     "res_id": wizard.id,
         #     "target": "new",
         # }
-        
+
+
+    # ----------------------------------------------------------------
+    # MAIN ENTRY POINT
+    # ----------------------------------------------------------------
     def action_complete(self):
         self.ensure_one()
 
-        # ---- Existing validations ----
+        # ---- Basic validations ----
         if self.status != "in_consultation":
             raise UserError(_("Only appointments in consultation can be completed."))
 
@@ -1891,19 +1895,7 @@ class ResonnocareAppointment(models.Model):
                 "An appointment outcome must be selected to complete the appointment."
             ))
 
-        # ---- NEW: Sale Order validations ----
-        self._check_linked_sale_order()
-
-        # ---- All good ----
-        self.status = "completed"
-
-    # ------------------------------------------------------------------
-    # Sale Order / Delivery / Invoice / Payment validations
-    # ------------------------------------------------------------------
-    def _check_linked_sale_order(self):
-        """Validate the linked sale order, its delivery, invoice and payment."""
-        self.ensure_one()
-
+        # ---- Sale Order presence ----
         sale_order = self.sale_order_id
         if not sale_order:
             raise UserError(_(
@@ -1911,31 +1903,118 @@ class ResonnocareAppointment(models.Model):
                 "Please create/confirm a Sale Order before completing."
             ))
 
-        # 1. Sale Order must be fully confirmed / locked (not draft, not cancelled)
         if sale_order.state in ('draft', 'cancel'):
             raise UserError(_(
-                "Sale Order %(so)s must be confirmed before completing the appointment. "
-                "Current state: %(state)s."
+                "Sale Order %(so)s must be confirmed before completing. Current state: %(state)s."
             ) % {'so': sale_order.name, 'state': sale_order.state})
 
-        # 2. Delivery (Stock Picking) must be done
+        # ---- Decide which path to take ----
+        if self._is_fitting_appointment():
+            self._validate_fitting_appointment(sale_order)
+        else:
+            self._validate_regular_appointment(sale_order)
+
+        # ---- All good ----
+        self.status = "completed"
+
+    # ----------------------------------------------------------------
+    # HELPERS
+    # ----------------------------------------------------------------
+    def _is_fitting_appointment(self):
+        """Returns True if this is a fitting appointment."""
+        self.ensure_one()
+        return bool(self.parent_appointment_id) or self.appointment_type == 'fitting'
+
+    # ----------------------------------------------------------------
+    # REGULAR APPOINTMENT
+    # Invoice must be fully paid. Delivery must be done.
+    # ----------------------------------------------------------------
+    def _validate_regular_appointment(self, sale_order):
         self._check_delivery_done(sale_order)
-
-        # 3. Invoice must be posted (and fully invoiced)
         invoices = self._check_invoices_posted(sale_order)
-
-        # 4. Invoice(s) must be fully paid
         self._check_invoices_paid(sale_order, invoices)
 
-    # ------------------------------------------------------------------
-    def _check_delivery_done(self, sale_order):
-        """Ensure all outgoing deliveries are in 'done' state."""
-        pickings = sale_order.picking_ids.filtered(
-            lambda p: p.state not in ('cancel',)
+    # ----------------------------------------------------------------
+    # FITTING APPOINTMENT
+    # Allowed to complete if:
+    #   (a) min advance (30%) has been paid, OR
+    #   (b) an approved advance approval request exists,
+    #   AND THEN still validate invoice is posted + paid + delivery done.
+    # ----------------------------------------------------------------
+    def _validate_fitting_appointment(self, sale_order):
+        self.ensure_one()
+
+        has_min_advance = self._has_min_advance_paid(sale_order)
+        has_approved_request = self._has_approved_advance_request(sale_order)
+
+        if not (has_min_advance or has_approved_request):
+            raise UserError(_(
+                "Fitting appointment cannot be completed.\n\n"
+                "Either:\n"
+                "  • A minimum advance of 30%% must be paid on Sale Order %(so)s, OR\n"
+                "  • An approved Advance Approval Request must exist for Sale Order %(so)s."
+            ) % {'so': sale_order.name})
+
+        # Even with advance/approval, the rest must still hold when completing
+        self._check_delivery_done(sale_order)
+        invoices = self._check_invoices_posted(sale_order)
+
+        # If min advance paid but no approval → invoice may still be unpaid;
+        # but per your requirement, invoice must be posted AND paid at completion.
+        self._check_invoices_paid(sale_order, invoices)
+
+    # ----------------------------------------------------------------
+    # MIN ADVANCE CHECK (30%)
+    # ----------------------------------------------------------------
+    def _has_min_advance_paid(self, sale_order):
+        """
+        Returns True if at least 30% of the sale order total has been paid.
+        Uses posted customer invoices and their payment state.
+        """
+        sale_order.ensure_one()
+
+        # Optional shortcut: if you maintain a boolean field on SO
+        if 'min_advance_paid' in sale_order._fields and sale_order.min_advance_paid:
+            return True
+
+        total = sale_order.amount_total or 0.0
+        if total <= 0:
+            return False
+
+        # Sum of paid amount across posted customer invoices
+        posted_invoices = sale_order.invoice_ids.filtered(
+            lambda m: m.state == 'posted'
+            and m.move_type == 'out_invoice'
+            and m.payment_state in ('paid', 'in_payment', 'partial')
         )
 
+        paid_amount = sum(
+            inv.amount_total - inv.amount_residual for inv in posted_invoices
+        )
+
+        return paid_amount >= (total * 0.30)
+
+    # ----------------------------------------------------------------
+    # ADVANCE APPROVAL REQUEST CHECK
+    # ----------------------------------------------------------------
+    def _has_approved_advance_request(self, sale_order):
+        """Returns True if any linked advance approval request is approved."""
+        sale_order.ensure_one()
+
+        if 'advance_approval_request_ids' not in sale_order._fields:
+            return False
+
+        return bool(sale_order.advance_approval_request_ids.filtered(
+            lambda r: r.state == 'approved'
+        ))
+
+    # ----------------------------------------------------------------
+    # DELIVERY CHECK
+    # ----------------------------------------------------------------
+    def _check_delivery_done(self, sale_order):
+        pickings = sale_order.picking_ids.filtered(lambda p: p.state != 'cancel')
+
         if not pickings:
-            # If your business requires delivery, raise. Otherwise skip.
             raise UserError(_(
                 "No delivery order found for Sale Order %s. "
                 "Please validate the delivery before completing."
@@ -1945,16 +2024,17 @@ class ResonnocareAppointment(models.Model):
         if pending:
             raise UserError(_(
                 "Delivery for Sale Order %(so)s is not completed.\n"
-                "Pending pickings: %(names)s (State: %(states)s)"
+                "Pending: %(names)s (State: %(states)s)"
             ) % {
                 'so': sale_order.name,
                 'names': ", ".join(pending.mapped('name')),
                 'states': ", ".join(pending.mapped('state')),
             })
 
-    # ------------------------------------------------------------------
+    # ----------------------------------------------------------------
+    # INVOICE POSTED CHECK
+    # ----------------------------------------------------------------
     def _check_invoices_posted(self, sale_order):
-        """Ensure the sale order is fully invoiced and invoices are posted."""
         invoices = sale_order.invoice_ids.filtered(
             lambda m: m.state != 'cancel' and m.move_type == 'out_invoice'
         )
@@ -1965,31 +2045,31 @@ class ResonnocareAppointment(models.Model):
                 "Please create and post the invoice before completing."
             ) % sale_order.name)
 
-        # Invoice status must not be 'to invoice' (i.e. fully invoiced)
         if sale_order.invoice_status == 'to invoice':
             raise UserError(_(
-                "Sale Order %s is not fully invoiced. "
-                "Please create the remaining invoice(s) first."
+                "Sale Order %s is not fully invoiced. Create the remaining invoice(s) first."
             ) % sale_order.name)
 
         draft_invoices = invoices.filtered(lambda m: m.state == 'draft')
         if draft_invoices:
             raise UserError(_(
-                "The following invoices are still in Draft state and must be posted:\n%s"
+                "The following invoices are still in Draft and must be posted:\n%s"
             ) % ", ".join(draft_invoices.mapped('name')))
 
         return invoices
 
-    # ------------------------------------------------------------------
+    # ----------------------------------------------------------------
+    # INVOICE PAID CHECK
+    # ----------------------------------------------------------------
     def _check_invoices_paid(self, sale_order, invoices):
-        """Ensure all posted invoices are fully paid."""
         unpaid = invoices.filtered(
-            lambda m: m.state == 'posted' and m.payment_state not in ('paid', 'in_payment')
+            lambda m: m.state == 'posted'
+            and m.payment_state not in ('paid', 'in_payment')
         )
 
         if unpaid:
             details = "\n".join(
-                "%s — Amount Due: %s %s (State: %s)" % (
+                "%s — Due: %s %s (State: %s)" % (
                     inv.name,
                     inv.amount_residual,
                     inv.currency_id.name,
@@ -1999,7 +2079,7 @@ class ResonnocareAppointment(models.Model):
             )
             raise UserError(_(
                 "The following invoice(s) for Sale Order %(so)s are not fully paid:\n\n%(details)s"
-            ) % {'so': sale_order.name, 'details': details})    
+            ) % {'so': sale_order.name, 'details': details})
 
     def action_no_show(self):
         for rec in self:
