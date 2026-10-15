@@ -1873,8 +1873,6 @@ class ResonnocareAppointment(models.Model):
         #     "res_id": wizard.id,
         #     "target": "new",
         # }
-
-
     # ----------------------------------------------------------------
     # MAIN ENTRY POINT
     # ----------------------------------------------------------------
@@ -1921,9 +1919,19 @@ class ResonnocareAppointment(models.Model):
     # HELPERS
     # ----------------------------------------------------------------
     def _is_fitting_appointment(self):
-        """Returns True if this is a fitting appointment."""
+        """
+        Returns True if the appointment type name contains 'fitting'
+        (case-insensitive), OR if it has a parent appointment.
+        """
         self.ensure_one()
-        return bool(self.parent_appointment_id) or self.appointment_type == 'fitting'
+
+        if self.parent_appointment_id:
+            return True
+
+        if self.appointment_type_id and self.appointment_type_id.name:
+            return 'fitting' in self.appointment_type_id.name.lower()
+
+        return False
 
     # ----------------------------------------------------------------
     # REGULAR APPOINTMENT
@@ -1939,7 +1947,7 @@ class ResonnocareAppointment(models.Model):
     # Allowed to complete if:
     #   (a) min advance (30%) has been paid, OR
     #   (b) an approved advance approval request exists,
-    #   AND THEN still validate invoice is posted + paid + delivery done.
+    # AND THEN still validate delivery done + invoice posted + paid.
     # ----------------------------------------------------------------
     def _validate_fitting_appointment(self, sale_order):
         self.ensure_one()
@@ -1955,25 +1963,19 @@ class ResonnocareAppointment(models.Model):
                 "  • An approved Advance Approval Request must exist for Sale Order %(so)s."
             ) % {'so': sale_order.name})
 
-        # Even with advance/approval, the rest must still hold when completing
+        # Even with advance / approval, the remaining checks must pass
         self._check_delivery_done(sale_order)
         invoices = self._check_invoices_posted(sale_order)
-
-        # If min advance paid but no approval → invoice may still be unpaid;
-        # but per your requirement, invoice must be posted AND paid at completion.
         self._check_invoices_paid(sale_order, invoices)
 
     # ----------------------------------------------------------------
     # MIN ADVANCE CHECK (30%)
     # ----------------------------------------------------------------
     def _has_min_advance_paid(self, sale_order):
-        """
-        Returns True if at least 30% of the sale order total has been paid.
-        Uses posted customer invoices and their payment state.
-        """
+        """Returns True if at least 30% of SO total is paid (via posted invoices)."""
         sale_order.ensure_one()
 
-        # Optional shortcut: if you maintain a boolean field on SO
+        # Optional shortcut: your SO boolean field
         if 'min_advance_paid' in sale_order._fields and sale_order.min_advance_paid:
             return True
 
@@ -1981,7 +1983,6 @@ class ResonnocareAppointment(models.Model):
         if total <= 0:
             return False
 
-        # Sum of paid amount across posted customer invoices
         posted_invoices = sale_order.invoice_ids.filtered(
             lambda m: m.state == 'posted'
             and m.move_type == 'out_invoice'
