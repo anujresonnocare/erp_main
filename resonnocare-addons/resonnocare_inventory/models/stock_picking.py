@@ -64,6 +64,66 @@ class StockPicking(models.Model):
     docket_file = fields.Binary(string="Docket File", attachment=True, copy=False)
     docket_file_name = fields.Char(string="Docket Filename", copy=False)
 
+
+    auto_po_ids = fields.One2many(
+        'purchase.order', 'origin_picking_id', string="Auto-Created POs"
+    )
+
+    def action_confirm(self):
+        res = super().action_confirm()
+        for picking in self:
+            if picking.picking_type_id.code == 'internal':
+                picking._check_stock_and_create_po()
+        return res
+
+    def _check_stock_and_create_po(self):
+        self.ensure_one()
+        shortage_moves = self.env['stock.move']
+        for move in self.move_ids:
+            if move.state in ('done', 'cancel'):
+                continue
+            # Calculate available quantity in source location
+            available_qty = self.env['stock.quant']._get_available_quantity(
+                move.product_id, move.location_id
+            )
+            if available_qty < move.product_uom_qty:
+                shortage_moves |= move
+        if shortage_moves:
+            self._create_po_for_shortage(shortage_moves)
+
+    def _create_po_for_shortage(self, moves):
+        self.ensure_one()
+        po_lines = []
+        for move in moves:
+            # Find vendor from product's vendor pricelist
+            seller = move.product_id._select_seller(
+                quantity=move.product_uom_qty,
+                uom_id=move.product_uom,
+            )
+            if not seller:
+                raise UserError(_(
+                    "No vendor found for product %s. Please configure vendor pricelist first."
+                ) % move.product_id.display_name)
+            po_lines.append((0, 0, {
+                'product_id': move.product_id.id,
+                'product_qty': move.product_uom_qty,
+                'price_unit': seller.price,
+                'date_planned': fields.Datetime.now(),
+            }))
+
+        vendor = moves[0].product_id._select_seller().partner_id
+        po_vals = {
+            'partner_id': vendor.id,
+            'origin': self.name,
+            'order_line': po_lines,
+            'origin_picking_id': self.id,
+        }
+        po = self.env['purchase.order'].create(po_vals)
+        self.message_post(body=_(
+            "Purchase Order %s has been automatically created for the shortage products."
+        ) % po.name)
+
+
     @api.depends("picking_type_code", "location_dest_id")
     def _compute_supply_clinic_id(self):
         clinic_model = self.env["resonnocare.clinic"].sudo()
@@ -584,3 +644,11 @@ class StockPicking(models.Model):
             "view_mode": "form",
             "target": "new",
         }
+
+
+class PurchaseOrder(models.Model):
+    _inherit = 'purchase.order'
+
+    origin_picking_id = fields.Many2one(
+        'stock.picking', string="Origin Internal Transfer", readonly=True
+    )
