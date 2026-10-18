@@ -28,6 +28,7 @@ class PaymentApproval(models.Model):
             # 1. Post the payment if it's still draft
             if payment.state == 'draft' or payment.state == 'in_process':
                 payment.action_post()
+                payment.state = 'posted'  # Ensure the payment is marked as posted
             
             # 2. Find the invoices related to this payment.
             # We look at the payment's context or the linked move lines.
