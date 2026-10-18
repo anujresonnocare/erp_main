@@ -1,0 +1,84 @@
+<odoo>
+    <!-- list View -->
+    <record id="view_payment_approval_list" model="ir.ui.view">
+        <field name="name">payment.approval.list</field>
+        <field name="model">payment.approval</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="amount" widget="monetary"/>
+                <field name="journal_id"/>
+                <field name="state" widget="badge" decoration-warning="state == 'pending'" decoration-success="state == 'approved'" decoration-danger="state == 'rejected'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_payment_approval_form" model="ir.ui.view">
+        <field name="name">payment.approval.form</field>
+        <field name="model">payment.approval</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_approve" string="Approve" type="object" class="btn-primary" invisible="state != 'pending'"/>
+                    <button name="action_reject" string="Reject" type="object" class="btn-danger" invisible="state != 'pending'"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="partner_id"/>
+                            <field name="journal_id"/>
+                        </group>
+                        <group>
+                            <field name="amount" widget="monetary"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                    <group string="Invoices">
+                        <field name="invoice_ids" nolabel="1">
+                            <list>
+                                <field name="name"/>
+                                <field name="amount_total"/>
+                                <field name="payment_state"/>
+                            </list>
+                        </field>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_payment_approval" model="ir.actions.act_window">
+        <field name="name">Payment Approvals</field>
+        <field name="res_model">payment.approval</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[]</field>
+        <field name="context">{'search_default_pending': 1}</field>
+    </record>
+
+    <!-- Search View -->
+    <record id="view_payment_approval_search" model="ir.ui.view">
+        <field name="name">payment.approval.search</field>
+        <field name="model">payment.approval</field>
+        <field name="arch" type="xml">
+            <search>
+                <filter name="pending" string="Pending Approval" domain="[('state', '=', 'pending')]" default="1"/>
+                <filter name="approved" string="Approved" domain="[('state', '=', 'approved')]"/>
+                <filter name="rejected" string="Rejected" domain="[('state', '=', 'rejected')]"/>
+                <field name="partner_id"/>
+                <field name="payment_id"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- Menu Item (Placed under Invoicing / Accounting) -->
+    <menuitem id="menu_payment_approval" 
+              name="Payment Approvals" 
+              parent="account.menu_finance_receivables" 
+              action="action_payment_approval" 
+              sequence="10"/>
+</odoo>
