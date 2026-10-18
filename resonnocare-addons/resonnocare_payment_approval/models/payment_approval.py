@@ -26,7 +26,7 @@ class PaymentApproval(models.Model):
             payment = record.payment_id
             
             # 1. Post the payment if it's still draft
-            if payment.state == 'draft':
+            if payment.state == 'draft' or payment.state == 'in_process':
                 payment.action_post()
             
             # 2. Find the invoices related to this payment.
