@@ -61,7 +61,7 @@
     </record>
 
     <!-- Search View -->
-    <record id="view_payment_approval_search" model="ir.ui.view">
+    <!-- <record id="view_payment_approval_search" model="ir.ui.view">
         <field name="name">payment.approval.search</field>
         <field name="model">payment.approval</field>
         <field name="arch" type="xml">
@@ -73,7 +73,7 @@
                 <field name="payment_id"/>
             </search>
         </field>
-    </record>
+    </record> -->
 
     <!-- Menu Item (Placed under Invoicing / Accounting) -->
     <menuitem id="menu_payment_approval" 
