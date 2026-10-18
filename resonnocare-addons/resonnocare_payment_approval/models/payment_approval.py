@@ -28,6 +28,7 @@ class PaymentApproval(models.Model):
             # 1. Post the payment if it's still draft
             if payment.state == 'draft' or payment.state == 'in_process':
                 payment.state = 'paid'  # Ensure the payment is marked as posted
+                payment.action_validate()  # This will post the payment and trigger reconciliation if applicable
                 payment.action_post()
                 
             
