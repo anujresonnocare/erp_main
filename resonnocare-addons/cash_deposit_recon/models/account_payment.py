@@ -53,3 +53,39 @@ class AccountPayment(models.Model):
             'target': 'new',
             'context': {'default_payment_ids': [(6, 0, valid.ids)]},
         }
+
+
+    def open_payment_matching_screen(self):
+        self.ensure_one()
+
+        if not self.partner_id:
+            raise UserError(_("Payments without a customer or vendor can't be matched."))
+
+        # 1. Fetch the un-reconciled line that belongs to a receivable/payable account
+        move_line = self.move_id.line_ids.filtered(
+            lambda l: l.account_id.reconcile and not l.reconciled
+        )[:1]
+
+        # 2. Build the standard modern window action pointing to the account.move.line model
+        action = {
+            'name': _('Payment Matching'),
+            'type': 'ir.actions.act_window',
+            'res_model': 'account.move.line',
+            'view_mode': 'list',
+            'target': 'current',
+            'domain': [
+                ('partner_id', '=', self.partner_id.commercial_partner_id.id),
+                ('account_id.reconcile', '=', True),
+                ('reconciled', '=', False),
+            ],
+            'context': {
+                'company_ids': [self.company_id.id],
+                'search_default_partner_id': self.partner_id.commercial_partner_id.id,
+            }
+        }
+
+        # 3. Focus the view onto the exact payment move line if one exists
+        if move_line:
+            action['context']['search_default_id'] = move_line.id
+
+        return action
