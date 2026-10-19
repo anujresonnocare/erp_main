@@ -10,7 +10,7 @@
                     
                     <field name="cash_note_ids" nolabel="1">
                         <!-- create="false" and delete="false" prevent adding/removing rows -->
-                        <tree editable="bottom" default_order="id asc" create="false" delete="false" class="table-bordered">
+                        <list editable="bottom" default_order="id asc" create="false" delete="false" class="table-bordered">
                             <field name="currency_id" invisible="1"/>
                             
                             <!-- The Bill Type is locked and cannot be changed -->
@@ -21,7 +21,7 @@
                             
                             <!-- Total calculates automatically -->
                             <field name="subtotal" readonly="1" sum="TOTAL CASH" string="TOTAL"/>
-                        </tree>
+                        </list>
                     </field>
                     
                     <group>
