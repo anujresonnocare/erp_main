@@ -40,16 +40,27 @@
     </record>
 
 
-    <record id="action_deposit_wizard" model="ir.actions.act_window">
+    <!-- <record id="action_deposit_wizard" model="ir.actions.act_window">
         <field name="name">Deposit to Bank</field>
         <field name="res_model">deposit.wizard</field>
         <field name="view_mode">form</field>
         <field name="target">new</field>
-        <!-- Binding to the payment model makes it appear in the Actions menu -->
         <field name="binding_model_id" ref="account.model_account_payment"/>
         <field name="binding_view_types">list</field>
-        <!-- Pass the selected rows to the wizard -->
         <field name="context">{'default_payment_ids': [('id', 'in', active_ids)]}</field>
-    </record>
+    </record> -->
 
+        <!-- 1. The Server Action that calls the Python method -->
+    <record id="action_server_open_deposit_wizard" model="ir.actions.server">
+        <field name="name">Deposit to Bank</field>
+        <field name="model_id" ref="account.model_account_payment"/>
+        <field name="binding_model_id" ref="account.model_account_payment"/>
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">
+            # 'records' is automatically populated with the selected rows
+            action = records.action_open_deposit_wizard()
+        </field>
+    </record>
+    
 </odoo>
