@@ -9,4 +9,13 @@ class AccountPayment(models.Model):
         string="Cash Notes"
     )
 
-    note_value = fields.Monetary(string="Bill Type", required=True, currency_field='currency_id')
+
+    is_cash_payment = fields.Boolean(
+        string="Is Cash Payment", 
+        compute="_compute_is_cash_payment"
+    )
+
+    @api.depends('journal_id', 'journal_id.type')
+    def _compute_is_cash_payment(self):
+        for payment in self:
+            payment.is_cash_payment = payment.journal_id.type == 'cash'
