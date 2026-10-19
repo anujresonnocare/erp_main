@@ -5,9 +5,10 @@
     'summary': 'Cash denomination validation for Cash journals',
     'depends': ['account'],
     'data': [
-        'security/ir.model.access.csv',
+        # Put the views first so Odoo knows the models exist, then the security
         'views/account_payment_views.xml',
         'views/account_payment_register_views.xml',
+        'security/ir.model.access.csv',
     ],
     'installable': True,
     'application': False,
