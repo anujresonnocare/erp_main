@@ -9,13 +9,11 @@
                   decoration-warning="state == 'pending'"
                   decoration-success="state == 'reconciled'"
                   create="1" edit="1">
-                <header>
                     <button name="%(cash_deposit_recon.action_deposit_wizard)d"
                             type="action"
                             string="Deposit to Bank"
                             class="btn-primary"
                             invisible="not context.get('active_ids')"/>
-                </header>
                 <field name="date"/>
                 <field name="name"/>
                 <field name="partner_id"/>
