@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_payment_cash_denomination,payment.cash.denomination,model_payment_cash_denomination,account.group_account_invoice,1,1,1,1
+access_cash_note_wizard,cash.note.wizard,model_cash_note_wizard,account.group_account_invoice,1,1,1,1
