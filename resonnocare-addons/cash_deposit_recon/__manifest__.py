@@ -10,9 +10,9 @@
         'security/security_groups.xml',
         'security/ir.model.access.csv',
         'security/security_rules.xml',
-        'views/cash_entry_views.xml',
+        'views/deposit_wizard_views.xml',   # ← MOVED UP: defines action_deposit_wizard
+        'views/cash_entry_views.xml',       # ← now the reference resolves
         'views/bank_deposit_views.xml',
-        'views/deposit_wizard_views.xml',
         'views/menus.xml',
     ],
     'installable': True,
