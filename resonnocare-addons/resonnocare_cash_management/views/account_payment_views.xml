@@ -7,12 +7,12 @@
             <xpath expr="//notebook" position="inside">
                 <page string="Cash Breakdown" invisible="journal_id.type != 'cash'">
                     <field name="cash_denomination_ids">
-                        <tree editable="bottom" create="false" delete="false">
+                        <list editable="bottom" create="false" delete="false">
                             <field name="currency_id" invisible="1"/>
                             <field name="note_value" readonly="1" force_save="1" string="BILL TYPE"/>
                             <field name="quantity" string="QUANTITY"/>
                             <field name="subtotal" sum="TOTAL CASH" string="TOTAL"/>
-                        </tree>
+                        </list>
                     </field>
                 </page>
             </xpath>
