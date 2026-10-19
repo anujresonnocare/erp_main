@@ -13,9 +13,13 @@
     'author': 'Your Company',
     'depends': ['sale', 'account', 'stock', 'resonnocare_appointment'],
     'data': [
+        'security/security_groups.xml',
         'security/ir.model.access.csv',
-        'views/appointment_views.xml',
-        'data/appointment_data.xml',
+        'security/security_rules.xml',
+        'views/deposit_wizard_views.xml',   # ← move UP (defines action_deposit_wizard)
+        'views/cash_entry_views.xml',       # ← can now reference it
+        'views/bank_deposit_views.xml',
+        'views/menus.xml',
     ],
     'installable': True,
     'application': False,
