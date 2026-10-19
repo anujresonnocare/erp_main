@@ -9,32 +9,29 @@ class BankDeposit(models.Model):
 
     name = fields.Char(default='New', readonly=True, copy=False)
     deposit_date = fields.Date(
-        string='Deposit Date',
-        default=fields.Date.context_today,
-        required=True,
+        string='Deposit Date', default=fields.Date.context_today, required=True,
     )
     bank_account_id = fields.Many2one(
-        'account.account',
-        string='Bank Account',
-        required=True,
+        'account.account', string='Bank Account', required=True,
         domain="[('account_type', '=', 'asset_cash')]",
     )
     reference = fields.Char(string='Deposit Reference')
 
-    cash_entry_ids = fields.One2many(
-        'cash.entry', 'deposit_id', string='Cash Entries',
+    payment_ids = fields.One2many(
+        'account.payment', 'bank_deposit_id', string='Cash Payments',
     )
 
     currency_id = fields.Many2one(
-        'res.currency',
-        default=lambda self: self.env.company.currency_id,
+        'res.currency', default=lambda self: self.env.company.currency_id,
     )
     total_amount = fields.Monetary(
         compute='_compute_total', store=True, currency_field='currency_id',
     )
     entry_count = fields.Integer(compute='_compute_total')
 
-    slip_attachment = fields.Binary(string='Deposit Slip', attachment=True, required=True)
+    slip_attachment = fields.Binary(
+        string='Deposit Slip', attachment=True, required=True,
+    )
     slip_filename = fields.Char()
 
     state = fields.Selection([
@@ -51,11 +48,11 @@ class BankDeposit(models.Model):
     verified_date = fields.Datetime(readonly=True, copy=False)
     reject_reason = fields.Text(copy=False)
 
-    @api.depends('cash_entry_ids.amount')
+    @api.depends('payment_ids.amount')
     def _compute_total(self):
         for rec in self:
-            rec.total_amount = sum(rec.cash_entry_ids.mapped('amount'))
-            rec.entry_count = len(rec.cash_entry_ids)
+            rec.total_amount = sum(rec.payment_ids.mapped('amount'))
+            rec.entry_count = len(rec.payment_ids)
 
     @api.model_create_multi
     def create(self, vals_list):
@@ -73,9 +70,7 @@ class BankDeposit(models.Model):
                 'verified_by': self.env.user.id,
                 'verified_date': fields.Datetime.now(),
             })
-            rec.cash_entry_ids.with_context(from_deposit_workflow=True).write({
-                'state': 'reconciled',
-            })
+            rec.payment_ids.write({'cash_deposit_state': 'reconciled'})
 
     def action_reject(self):
         for rec in self:
@@ -83,8 +78,8 @@ class BankDeposit(models.Model):
                 raise UserError("Only submitted deposits can be rejected.")
             if not rec.reject_reason:
                 raise UserError("Please fill in the reject reason before rejecting.")
-            rec.cash_entry_ids.with_context(from_deposit_workflow=True).write({
-                'state': 'unreconciled',
-                'deposit_id': False,
+            rec.payment_ids.write({
+                'cash_deposit_state': 'unreconciled',
+                'bank_deposit_id': False,
             })
             rec.write({'state': 'rejected'})

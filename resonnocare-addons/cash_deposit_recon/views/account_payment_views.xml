@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Dedicated list view for the Cash Entries menu -->
+    <record id="view_account_payment_cash_entries_list" model="ir.ui.view">
+        <field name="name">account.payment.cash.entries.list</field>
+        <field name="model">account.payment</field>
+        <field name="priority">99</field>
+        <field name="arch" type="xml">
+            <list decoration-danger="is_cash_payment and cash_deposit_state == 'unreconciled'"
+                  decoration-warning="is_cash_payment and cash_deposit_state == 'pending'"
+                  decoration-success="is_cash_payment and cash_deposit_state == 'reconciled'"
+                  create="1" edit="0">
+                <button name="action_open_deposit_wizard"
+                        type="object"
+                        string="Deposit to Bank"
+                        class="btn-primary"/>
+                <field name="date"/>
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="amount" sum="Total"/>
+                <field name="journal_id"/>
+                <field name="cash_deposit_state" widget="badge"
+                       decoration-danger="cash_deposit_state == 'unreconciled'"
+                       decoration-warning="cash_deposit_state == 'pending'"
+                       decoration-success="cash_deposit_state == 'reconciled'"/>
+                <field name="bank_deposit_id" optional="show"/>
+                <field name="is_cash_payment" invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Extend the standard payment form to show deposit info -->
+    <record id="view_account_payment_form_cash_deposit" model="ir.ui.view">
+        <field name="name">account.payment.form.cash.deposit</field>
+        <field name="model">account.payment</field>
+        <field name="inherit_id" ref="account.view_account_payment_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet/group" position="inside">
+                <group string="Cash Deposit" invisible="not is_cash_payment">
+                    <field name="is_cash_payment" invisible="1"/>
+                    <field name="cash_deposit_state" readonly="1"/>
+                    <field name="bank_deposit_id" readonly="1"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Dedicated action for the Cash Entries menu -->
+    <record id="action_cash_payment_entries" model="ir.actions.act_window">
+        <field name="name">Cash Entries</field>
+        <field name="res_model">account.payment</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_id" ref="view_account_payment_cash_entries_list"/>
+        <field name="domain">[('journal_id.type', '=', 'cash'), ('state', '=', 'posted')]</field>
+        <field name="context">{'search_default_group_by_state': 0}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No cash entries found</p>
+            <p>Create a payment with a cash journal — it will appear here and stay red until finance verifies your bank deposit.</p>
+        </field>
+    </record>
+</odoo>

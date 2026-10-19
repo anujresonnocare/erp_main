@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- Sequence for deposit reference -->
     <record id="seq_bank_deposit" model="ir.sequence">
         <field name="name">Bank Deposit</field>
         <field name="code">bank.deposit</field>
@@ -9,24 +8,24 @@
         <field name="company_id" eval="False"/>
     </record>
 
-    <!-- USER ROOT -->
+    <!-- USER: separate root menu -->
     <menuitem id="menu_cash_root"
               name="My Cash"
               sequence="10"/>
 
-    <menuitem id="menu_cash_entry_list"
+    <menuitem id="menu_cash_entries"
               name="Cash Entries"
               parent="menu_cash_root"
-              action="action_cash_entry_user"
-              groups="base.group_user"
+              action="action_cash_payment_entries"
+              groups="account.group_account_invoice"
               sequence="10"/>
 
-    <!-- FINANCE ROOT -->
+    <!-- FINANCE: separate root menu -->
     <menuitem id="menu_finance_root"
               name="Finance"
               sequence="20"/>
 
-    <menuitem id="menu_bank_deposit_list"
+    <menuitem id="menu_bank_deposits"
               name="Bank Deposits"
               parent="menu_finance_root"
               action="action_bank_deposit_finance"

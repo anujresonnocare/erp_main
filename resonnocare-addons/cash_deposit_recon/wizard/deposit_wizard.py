@@ -13,40 +13,30 @@ class DepositWizard(models.TransientModel):
     deposit_date = fields.Date(default=fields.Date.context_today, required=True)
     reference = fields.Char(string='Deposit Reference')
 
-    slip_attachment = fields.Binary(string='Deposit Slip', required=True, attachment=True)
+    slip_attachment = fields.Binary(
+        string='Deposit Slip', required=True, attachment=True,
+    )
     slip_filename = fields.Char()
 
-    cash_entry_ids = fields.Many2many('cash.entry', string='Selected Entries', readonly=True)
+    payment_ids = fields.Many2many(
+        'account.payment', string='Selected Payments', readonly=True,
+    )
     currency_id = fields.Many2one(
-        'res.currency',
-        default=lambda self: self.env.company.currency_id,
+        'res.currency', default=lambda self: self.env.company.currency_id,
     )
     total_amount = fields.Monetary(
         compute='_compute_total', currency_field='currency_id',
     )
 
-    @api.depends('cash_entry_ids')
+    @api.depends('payment_ids')
     def _compute_total(self):
         for rec in self:
-            rec.total_amount = sum(rec.cash_entry_ids.mapped('amount'))
-
-    @api.model
-    def default_get(self, fields_list):
-        res = super().default_get(fields_list)
-        active_ids = self.env.context.get('active_ids', [])
-        if active_ids:
-            entries = self.env['cash.entry'].browse(active_ids)
-            # Only unreconciled entries with no deposit
-            valid = entries.filtered(
-                lambda e: e.state == 'unreconciled' and not e.deposit_id
-            )
-            res['cash_entry_ids'] = [(6, 0, valid.ids)]
-        return res
+            rec.total_amount = sum(rec.payment_ids.mapped('amount'))
 
     def action_create_deposit(self):
         self.ensure_one()
-        if not self.cash_entry_ids:
-            raise UserError("No valid cash entries selected.")
+        if not self.payment_ids:
+            raise UserError("No valid cash payments selected.")
         if not self.slip_attachment:
             raise UserError("Deposit slip attachment is required.")
 
@@ -58,9 +48,9 @@ class DepositWizard(models.TransientModel):
             'slip_filename': self.slip_filename,
         })
 
-        self.cash_entry_ids.with_context(from_deposit_workflow=True).write({
-            'deposit_id': deposit.id,
-            'state': 'pending',
+        self.payment_ids.write({
+            'bank_deposit_id': deposit.id,
+            'cash_deposit_state': 'pending',
         })
 
         return {

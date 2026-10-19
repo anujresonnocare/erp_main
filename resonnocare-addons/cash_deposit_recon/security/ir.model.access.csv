@@ -1,6 +1,4 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_cash_entry_user,cash.entry.user,model_cash_entry,base.group_user,1,1,1,1
-access_cash_entry_finance,cash.entry.finance,model_cash_entry,cash_deposit_recon.group_finance,1,1,0,0
-access_bank_deposit_user,bank.deposit.user,model_bank_deposit,base.group_user,1,1,1,0
+access_bank_deposit_user,bank.deposit.user,model_bank_deposit,account.group_account_invoice,1,1,1,0
 access_bank_deposit_finance,bank.deposit.finance,model_bank_deposit,cash_deposit_recon.group_finance,1,1,0,0
-access_deposit_wizard_user,deposit.wizard.user,model_deposit_wizard,base.group_user,1,1,1,1
+access_deposit_wizard_user,deposit.wizard.user,model_deposit_wizard,account.group_account_invoice,1,1,1,1
