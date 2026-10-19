@@ -8,3 +8,5 @@ class AccountPayment(models.Model):
         'payment_id', 
         string="Cash Notes"
     )
+
+    note_value = fields.Monetary(string="Bill Type", required=True, currency_field='currency_id')
