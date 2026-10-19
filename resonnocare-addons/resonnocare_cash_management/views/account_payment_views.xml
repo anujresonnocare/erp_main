@@ -5,7 +5,7 @@
         <field name="inherit_id" ref="account.view_account_payment_form"/>
         <field name="arch" type="xml">
             <xpath expr="//notebook" position="inside">
-                <page string="Cash Breakdown" invisible="journal_id.type != 'cash'">
+                <page string="Cash Breakdown" invisible="not is_cash_payment">
                     <field name="cash_denomination_ids">
                         <list editable="bottom" create="false" delete="false">
                             <field name="currency_id" invisible="1"/>

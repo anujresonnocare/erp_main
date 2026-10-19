@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_deposit_wizard_form" model="ir.ui.view">
+        <field name="name">deposit.wizard.form</field>
+        <field name="model">deposit.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Deposit to Bank">
+                <group>
+                    <group>
+                        <field name="bank_account_id"/>
+                        <field name="deposit_date"/>
+                        <field name="reference"/>
+                    </group>
+                    <group>
+                        <field name="total_amount"/>
+                        <field name="currency_id" invisible="1"/>
+                    </group>
+                </group>
+                <group string="Deposit Slip">
+                    <field name="slip_attachment" widget="binary"
+                           filename="slip_filename" required="1"/>
+                    <field name="slip_filename" invisible="1"/>
+                </group>
+                <separator string="Selected Cash Entries"/>
+                <field name="cash_entry_ids" readonly="1" nolabel="1">
+                    <list>
+                        <field name="date"/>
+                        <field name="name"/>
+                        <field name="amount" sum="Total"/>
+                    </list>
+                </field>
+                <footer>
+                    <button name="action_create_deposit" type="object"
+                            string="Create Deposit" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_deposit_wizard" model="ir.actions.act_window">
+        <field name="name">Deposit to Bank</field>
+        <field name="res_model">deposit.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="context">{'active_ids': []}</field>
+    </record>
+</odoo>

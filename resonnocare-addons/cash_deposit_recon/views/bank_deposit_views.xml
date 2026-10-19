@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- FINANCE LIST VIEW: one row per deposit -->
+    <record id="view_bank_deposit_finance_list" model="ir.ui.view">
+        <field name="name">bank.deposit.finance.list</field>
+        <field name="model">bank.deposit</field>
+        <field name="arch" type="xml">
+            <list decoration-warning="state == 'submitted'"
+                  decoration-success="state == 'verified'"
+                  decoration-danger="state == 'rejected'"
+                  create="0">
+                <field name="name"/>
+                <field name="deposit_date"/>
+                <field name="bank_account_id"/>
+                <field name="reference"/>
+                <field name="entry_count" string="# Entries"/>
+                <field name="total_amount" sum="Total"/>
+                <field name="submitted_by"/>
+                <field name="state" widget="badge"
+                       decoration-warning="state == 'submitted'"
+                       decoration-success="state == 'verified'"
+                       decoration-danger="state == 'rejected'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- FINANCE FORM VIEW -->
+    <record id="view_bank_deposit_finance_form" model="ir.ui.view">
+        <field name="name">bank.deposit.finance.form</field>
+        <field name="model">bank.deposit</field>
+        <field name="arch" type="xml">
+            <form create="0">
+                <header>
+                    <button name="action_verify" type="object" string="Verify"
+                            class="btn-primary"
+                            invisible="state != 'submitted'"
+                            confirm="Confirm verification? Linked cash entries will be marked Reconciled."/>
+                    <button name="action_reject" type="object" string="Reject"
+                            invisible="state != 'submitted'"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="submitted,verified,rejected"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="deposit_date"/>
+                            <field name="bank_account_id"/>
+                            <field name="reference"/>
+                        </group>
+                        <group>
+                            <field name="total_amount"/>
+                            <field name="currency_id" invisible="1"/>
+                            <field name="entry_count"/>
+                            <field name="submitted_by"/>
+                            <field name="submitted_date"/>
+                            <field name="verified_by" invisible="state == 'submitted'"/>
+                            <field name="verified_date" invisible="state == 'submitted'"/>
+                        </group>
+                    </group>
+                    <group string="Deposit Slip">
+                        <field name="slip_attachment" widget="binary"
+                               filename="slip_filename" readonly="1"/>
+                        <field name="slip_filename" invisible="1"/>
+                    </group>
+                    <notebook>
+                        <page string="Cash Entries">
+                            <field name="cash_entry_ids" readonly="1">
+                                <list>
+                                    <field name="date"/>
+                                    <field name="name"/>
+                                    <field name="partner_id"/>
+                                    <field name="amount" sum="Total"/>
+                                    <field name="state"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Rejection" invisible="state != 'rejected'">
+                            <field name="reject_reason"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- FINANCE ACTION -->
+    <record id="action_bank_deposit_finance" model="ir.actions.act_window">
+        <field name="name">Bank Deposits</field>
+        <field name="res_model">bank.deposit</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('state', 'in', ['submitted','verified','rejected'])]</field>
+        <field name="context">{'default_state': 'submitted'}</field>
+    </record>
+</odoo>

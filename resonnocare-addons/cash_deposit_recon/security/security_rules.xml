@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Regular users: only their own cash entries -->
+    <record id="rule_cash_entry_user" model="ir.rule">
+        <field name="name">Cash Entry: user sees own records</field>
+        <field name="model_id" ref="model_cash_entry"/>
+        <field name="domain_force">[('create_uid', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+
+    <!-- Finance: all cash entries -->
+    <record id="rule_cash_entry_finance" model="ir.rule">
+        <field name="name">Cash Entry: finance sees all</field>
+        <field name="model_id" ref="model_cash_entry"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('cash_deposit_recon.group_finance'))]"/>
+    </record>
+
+    <!-- Regular users: only deposits they submitted -->
+    <record id="rule_bank_deposit_user" model="ir.rule">
+        <field name="name">Bank Deposit: user sees own submissions</field>
+        <field name="model_id" ref="model_bank_deposit"/>
+        <field name="domain_force">[('submitted_by', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+
+    <!-- Finance: all deposits -->
+    <record id="rule_bank_deposit_finance" model="ir.rule">
+        <field name="name">Bank Deposit: finance sees all</field>
+        <field name="model_id" ref="model_bank_deposit"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('cash_deposit_recon.group_finance'))]"/>
+    </record>
+</odoo>
