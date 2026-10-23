@@ -789,6 +789,7 @@ class SaleOrderLine(models.Model):
     line_appointment_sale_type = fields.Selection(
         related='order_id.appointment_sale_type',
         string="Appointment Sale Type (Line)",
+        store=True,
         readonly=True
     )
 
