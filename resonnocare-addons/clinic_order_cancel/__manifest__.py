@@ -14,10 +14,8 @@
     'depends': ['sale', 'account', 'stock', 'resonnocare_appointment'],
     'data': [
         'security/ir.model.access.csv',
-        'views/deposit_wizard_views.xml',   # ← move UP (defines action_deposit_wizard)
-        'views/cash_entry_views.xml',       # ← can now reference it
-        'views/bank_deposit_views.xml',
-        'views/menus.xml',
+        'views/appointment_views.xml',
+        'data/appointment_data.xml',
     ],
     'installable': True,
     'application': False,
