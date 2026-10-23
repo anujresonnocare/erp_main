@@ -63,6 +63,7 @@ class SaleOrder(models.Model):
     appointment_sale_type = fields.Selection(
         related='appointment_type_id.sale_type',
         string="Appointment Sale Type",
+        store=True,
         readonly=True
     )
 
