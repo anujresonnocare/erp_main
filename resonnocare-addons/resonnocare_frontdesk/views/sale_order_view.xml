@@ -55,7 +55,7 @@
                 <field name="is_left_ear"  invisible="line_appointment_sale_type == 'service'"/>
                 <field name="is_right_ear"  invisible="line_appointment_sale_type == 'service'"/>
                 <field name="discount_type" optional="show"  invisible="line_appointment_sale_type == 'service'"/>
-                <field name="discount" string="Disc.%" optional="show" readonly="discount_type == 'fixed'" force_save="1"/  invisible="line_appointment_sale_type == 'service'">
+                <field name="discount" string="Disc.%" optional="show" readonly="discount_type == 'fixed'" force_save="1" invisible="line_appointment_sale_type == 'service'"/>
                 <field name="discount_fixed" string="Disc. ₹" optional="show" readonly="discount_type == 'percent'" force_save="1"  invisible="line_appointment_sale_type == 'service'"/>
             </xpath>
             <xpath expr="//field[@name='order_line']/list/field[@name='discount_fixed']" position="after">
