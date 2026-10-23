@@ -52,16 +52,16 @@
                 <field name="clinic_id" readonly="1"/>
             </xpath>
             <xpath expr="//field[@name='order_line']/list/field[@name='discount']" position="replace">
-                <field name="is_left_ear"  invisible="line_appointment_sale_type == 'service'"/>
-                <field name="is_right_ear"  invisible="line_appointment_sale_type == 'service'"/>
-                <field name="discount_type" optional="show"  invisible="line_appointment_sale_type == 'service'"/>
-                <field name="discount" string="Disc.%" optional="show" readonly="discount_type == 'fixed'" force_save="1" invisible="line_appointment_sale_type == 'service'"/>
-                <field name="discount_fixed" string="Disc. ₹" optional="show" readonly="discount_type == 'percent'" force_save="1"  invisible="line_appointment_sale_type == 'service'"/>
+                <field name="is_left_ear"  column_invisible="line_appointment_sale_type == 'service'"/>
+                <field name="is_right_ear"  column_invisible="line_appointment_sale_type == 'service'"/>
+                <field name="discount_type" optional="show"  column_invisible="line_appointment_sale_type == 'service'"/>
+                <field name="discount" string="Disc.%" optional="show" readonly="discount_type == 'fixed'" force_save="1" column_invisible="line_appointment_sale_type == 'service'"/>
+                <field name="discount_fixed" string="Disc. ₹" optional="show" readonly="discount_type == 'percent'" force_save="1"  column_invisible="line_appointment_sale_type == 'service'"/>
             </xpath>
             <xpath expr="//field[@name='order_line']/list/field[@name='discount_fixed']" position="after">
-                <field name="discount_base_mrp" readonly="1" optional="show"  invisible="line_appointment_sale_type == 'service'"/>
-                <field name="discount_channel" readonly="1" optional="show"  invisible="line_appointment_sale_type == 'service'"/>
-                <field name="discount_slab" readonly="1" optional="show"  invisible="line_appointment_sale_type == 'service'"/>
+                <field name="discount_base_mrp" readonly="1" optional="show"  column_invisible="line_appointment_sale_type == 'service'"/>
+                <field name="discount_channel" readonly="1" optional="show"  column_invisible="line_appointment_sale_type == 'service'"/>
+                <field name="discount_slab" readonly="1" optional="show"  column_invisible="line_appointment_sale_type == 'service'"/>
             </xpath>
             <xpath expr="//field[@name='order_line']/list/field[@name='price_unit']" position="attributes">
                 <attribute name="readonly">1</attribute>
@@ -70,15 +70,15 @@
                 <attribute name="readonly">1</attribute>
             </xpath>
             <xpath expr="//field[@name='order_line']/form//field[@name='discount']" position="replace">
-                <field name="discount_type"  invisible="line_appointment_sale_type == 'service'"/>
-                <field name="discount" string="Disc.%" readonly="discount_type == 'fixed'" force_save="1"  invisible="line_appointment_sale_type == 'service'"/>
-                <field name="discount_fixed" string="Disc. ₹" readonly="discount_type == 'percent'" force_save="1"  invisible="line_appointment_sale_type == 'service'"/>
+                <field name="discount_type"  column_invisible="line_appointment_sale_type == 'service'"/>
+                <field name="discount" string="Disc.%" readonly="discount_type == 'fixed'" force_save="1"  column_invisible="line_appointment_sale_type == 'service'"/>
+                <field name="discount_fixed" string="Disc. ₹" readonly="discount_type == 'percent'" force_save="1"  column_invisible="line_appointment_sale_type == 'service'"/>
             </xpath>
             <xpath expr="//field[@name='order_line']/form//field[@name='discount_fixed']" position="after">
-                <field name="discount_base_mrp" readonly="1"  invisible="line_appointment_sale_type == 'service'"/>
-                <field name="discount_channel" readonly="1"  invisible="line_appointment_sale_type == 'service'"/>
-                <field name="discount_grid_id" readonly="1"  invisible="line_appointment_sale_type == 'service'"/>
-                <field name="discount_slab" readonly="1"  invisible="line_appointment_sale_type == 'service'"/>
+                <field name="discount_base_mrp" readonly="1"  column_invisible="line_appointment_sale_type == 'service'"/>
+                <field name="discount_channel" readonly="1"  column_invisible="line_appointment_sale_type == 'service'"/>
+                <field name="discount_grid_id" readonly="1"  column_invisible="line_appointment_sale_type == 'service'"/>
+                <field name="discount_slab" readonly="1"  column_invisible="line_appointment_sale_type == 'service'"/>
             </xpath>
             <xpath expr="//field[@name='order_line']/form//field[@name='price_unit']" position="attributes">
                 <attribute name="readonly">1</attribute>
