@@ -767,6 +767,11 @@ class SaleOrderLine(models.Model):
         help="Fixed discount amount per unit in currency.",
     )
 
+    appointment_sale_type = fields.Selection(
+        related='appointment_type_id.sale_type',
+        string="Appointment Sale Type",
+        readonly=True
+    )
 
     is_left_ear = fields.Boolean(
         string="Left Ear",
@@ -776,6 +781,13 @@ class SaleOrderLine(models.Model):
     is_right_ear = fields.Boolean(
         string="Right Ear",
         help="Check if the device is for the right ear (for ear moulds)",
+    )
+
+
+    line_appointment_sale_type = fields.Selection(
+        related='order_id.appointment_type_id.sale_type',
+        string="Appointment Sale Type (Line)",
+        readonly=True
     )
 
 
