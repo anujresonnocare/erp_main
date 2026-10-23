@@ -67,7 +67,7 @@
                             type="object"
                             string="Check-in"
                             class="btn-primary"
-                            invisible="balance_due > 0 or status != 'scheduled'"/>
+                            invisible="status != 'scheduled' or not can_check_in"/>
 
                     <!-- Doctor -->
                     <button name="action_start_consultation"

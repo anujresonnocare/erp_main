@@ -1844,6 +1844,178 @@ class ResonnocareAppointment(models.Model):
                 raise UserError("Only scheduled appointments can be checked in.")
             rec.status = "checked_in"
 
+    # ------------------------------------------------------------------
+    # Computed visibility flag for the Check-in button
+    # ------------------------------------------------------------------
+    can_check_in = fields.Boolean(
+        string="Can Check In",
+        compute='_compute_can_check_in',
+        store=False,
+    )
+
+    @api.depends(
+        'status',
+        'sale_order_id',
+        'sale_type',
+        'parent_appointment_id',
+        'appointment_type_id',
+        'sale_order_id.state',
+        'sale_order_id.invoice_status',
+        'sale_order_id.invoice_ids.state',
+        'sale_order_id.invoice_ids.move_type',
+        'sale_order_id.invoice_ids.payment_state',
+        'sale_order_id.invoice_ids.amount_total',
+        'sale_order_id.invoice_ids.amount_residual',
+        'sale_order_id.picking_ids.state',
+        'sale_order_id.advance_approval_request_ids.state',
+    )
+    def _compute_can_check_in(self):
+        for appt in self:
+            appt.can_check_in = appt._evaluate_can_check_in()
+
+    # ==================================================================
+    # DISPATCHER — mutually exclusive branches
+    # ==================================================================
+    def _evaluate_can_check_in(self):
+        """Single source of truth for the Check-in button visibility."""
+        self.ensure_one()
+
+        # 1) Lifecycle gate — only a scheduled appointment can check in
+        if self.status != 'scheduled':
+            return False
+
+        so = self.sale_order_id
+        if not so:
+            return False
+
+        # 2) Fitting takes precedence — a fitting appointment may also
+        #    carry sale_type == 'device', but its prerequisites are
+        #    stricter, so it must never be evaluated as a plain device sale.
+        if self._is_fitting_appointment():
+            return self._can_check_in_fitting(so)
+
+        # 3) Standalone device sale (NOT a fitting)
+        if self._is_device_sale():
+            return self._can_check_in_device_sale(so)
+
+        # 4) Everything else → diagnostic
+        return self._can_check_in_diagnostic(so)
+
+    # ------------------------------------------------------------------
+    # TYPE DETECTION
+    # ------------------------------------------------------------------
+    def _is_device_sale(self):
+        """Standalone device sale — explicitly excludes fitting
+        appointments, which also carry sale_type == 'device'."""
+        self.ensure_one()
+        return self.sale_type == 'device' and not self._is_fitting_appointment()
+
+    # (_is_fitting_appointment already exists in your code)
+
+    # ==================================================================
+    # BRANCH 1 — DIAGNOSTIC
+    #   SO confirmed  •  fully invoiced  •  fully paid (balance_due <= 0)
+    # ==================================================================
+    def _can_check_in_diagnostic(self, so):
+        if so.state not in ('sale', 'done'):
+            return False
+        try:
+            invoices = self._check_invoices_posted(so)
+            self._check_invoices_paid(so, invoices)
+        except UserError:
+            return False
+        return True
+
+    # ==================================================================
+    # BRANCH 2 — FITTING
+    #   SO confirmed  •  delivery DONE  •  invoices posted  •  fully paid
+    # ==================================================================
+    def _can_check_in_fitting(self, so):
+        if so.state not in ('sale', 'done'):
+            return False
+
+        # Delivery is REQUIRED and must be fully done
+        pickings = so.picking_ids.filtered(lambda p: p.state != 'cancel')
+        if not pickings:
+            return False
+        if any(p.state != 'done' for p in pickings):
+            return False
+
+        try:
+            invoices = self._check_invoices_posted(so)
+            self._check_invoices_paid(so, invoices)
+        except UserError:
+            return False
+        return True
+
+    # ==================================================================
+    # BRANCH 3 — DEVICE SALE
+    #   SO confirmed
+    #   • delivery CREATED (exists, not necessarily done)
+    #   • approved advance request  OR  >= 30% paid
+    #   • payment recorded against the down-payment invoice
+    # ==================================================================
+    def _can_check_in_device_sale(self, so):
+        if so.state not in ('sale', 'done'):
+            return False
+
+        # a) Delivery must be CREATED
+        pickings = so.picking_ids.filtered(lambda p: p.state != 'cancel')
+        if not pickings:
+            return False
+
+        # b) Advance gate — approved request OR >= 30% of SO total
+        approved = self._get_approved_advance_request(so)
+        amount_paid = self._get_total_paid_for_sale(so)
+        sale_total = so.amount_total or 0.0
+
+        if approved:
+            required = approved.requested_min_advance or 0.0
+        else:
+            required = sale_total * 0.30
+
+        if required > 0 and amount_paid < required:
+            return False
+
+        # c) Payment recorded against the down-payment invoice
+        if not self._has_paid_downpayment_invoice(so):
+            return False
+
+        return True
+
+    # ------------------------------------------------------------------
+    # Helpers — device sale
+    # ------------------------------------------------------------------
+    def _has_paid_downpayment_invoice(self, so):
+        """True if at least one posted customer invoice on the SO has
+        a recorded payment.
+
+        Narrow this filter if your down-payment invoice is tagged
+        (e.g. by journal, invoice_origin, or a boolean flag).
+        """
+        so.ensure_one()
+        invoices = so.invoice_ids.filtered(
+            lambda m: m.move_type == 'out_invoice' and m.state == 'posted'
+        )
+        return any(
+            ((inv.amount_total or 0.0) - (inv.amount_residual or 0.0)) > 0.0
+            for inv in invoices
+        )
+
+    # ==================================================================
+    # ACTION — enforce the same rule server-side (defense in depth)
+    # ==================================================================
+    def action_check_in(self):
+        for appt in self:
+            if not appt._evaluate_can_check_in():
+                raise UserError(_(
+                    "This appointment cannot be checked in yet.\n"
+                    "Please complete the required prerequisites "
+                    "(confirmed sale order, delivery, invoicing and payment)."
+                ))
+            # ... keep your existing check-in logic here ...
+        return True        
+
     def action_start_consultation(self):
         for rec in self:
             if rec.status != "checked_in":
@@ -1878,6 +2050,7 @@ class ResonnocareAppointment(models.Model):
         #     "res_id": wizard.id,
         #     "target": "new",
         # }
+        
 
     # ================================================================
     # MAIN ENTRY POINT
