@@ -639,7 +639,7 @@ class ResonnocareAppointment(models.Model):
                         f"in clinic '{rec.clinic_id.name}'."
                     )
 
-                if test == "resonnocare.diagnostic.item":
+                if self.diagnostic_item_ids:
                     order_lines.append(
                         (0, 0, {
                             "product_id": test.product_id.id,
@@ -649,7 +649,7 @@ class ResonnocareAppointment(models.Model):
                         })
                     )
 
-                if test != "resonnocare.diagnostic.item":
+                if not self.diagnostic_item_ids:
                     order_lines.append(
                         (0, 0, {
                             "product_id": test.product_id.id,
