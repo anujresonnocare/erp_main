@@ -37,6 +37,12 @@ class SaleOrder(models.Model):
         "resonnocare.appointment.type", string="Appointment Type", related="appointment_id.appointment_type_id", store=True, readonly=True
     )
 
+    appointment_sale_type = fields.Selection(
+        related='appointment_type_id.sale_type',
+        string="Appointment Sale Type",
+        readonly=True
+    )
+
 class AccountMove(models.Model):
     _inherit = 'account.move'
     
