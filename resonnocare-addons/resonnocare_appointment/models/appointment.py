@@ -639,16 +639,27 @@ class ResonnocareAppointment(models.Model):
                         f"in clinic '{rec.clinic_id.name}'."
                     )
 
-                order_lines.append(
-                    (0, 0, {
-                        "product_id": test.product_id.id,
-                        "product_uom_qty": 1,
-                        "price_unit": pricing_by_diag[test.id],
-                        "name": test.product_id.name,
-                        "is_left_ear": test.is_left_ear or False,
-                        "is_right_ear": test.is_right_ear or False
-                    })
-                )
+                if test == "resonnocare.diagnostic.item":
+                    order_lines.append(
+                        (0, 0, {
+                            "product_id": test.product_id.id,
+                            "product_uom_qty": 1,
+                            "price_unit": pricing_by_diag[test.id],
+                            "name": test.product_id.name,
+                        })
+                    )
+
+                if test != "resonnocare.diagnostic.item":
+                    order_lines.append(
+                        (0, 0, {
+                            "product_id": test.product_id.id,
+                            "product_uom_qty": 1,
+                            "price_unit": pricing_by_diag[test.id],
+                            "name": test.product_id.name,
+                            "is_left_ear": test.is_left_ear or False,
+                            "is_right_ear": test.is_right_ear or False
+                        })
+                    )    
 
             sale = self.env["sale.order"].create({
                 "partner_id": rec.patient_id.id,
