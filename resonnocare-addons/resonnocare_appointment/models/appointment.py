@@ -1040,6 +1040,10 @@ class ResonnocareAppointment(models.Model):
                     },
                 )
             )
+            logger.info(
+                "Calculating total paid for sale 191919191919191919191919191%s: Found %d related posted invoices.",
+                move_vals , qty
+            )
         
         supply_picking = self.env["stock.picking"].create(
             {
@@ -1051,6 +1055,7 @@ class ResonnocareAppointment(models.Model):
                 "move_ids_without_package": move_vals,
             }
         )
+        
         supply_picking.action_confirm()
         return supply_picking
 
