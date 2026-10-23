@@ -60,6 +60,13 @@ class SaleOrder(models.Model):
         store=False,
     )
 
+    appointment_sale_type = fields.Selection(
+        related='appointment_type_id.sale_type',
+        string="Appointment Sale Type",
+        readonly=True
+    )
+
+
     def _compute_discount_approval_request_count(self):
         grouped = self.env["resonnocare.discount.approval.request"].read_group(
             [("sale_order_id", "in", self.ids)],
@@ -767,12 +774,7 @@ class SaleOrderLine(models.Model):
         help="Fixed discount amount per unit in currency.",
     )
 
-    appointment_sale_type = fields.Selection(
-        related='appointment_type_id.sale_type',
-        string="Appointment Sale Type",
-        readonly=True
-    )
-
+    
     is_left_ear = fields.Boolean(
         string="Left Ear",
         help="Check if the device is for the left ear (for ear moulds)",
