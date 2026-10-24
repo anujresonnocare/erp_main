@@ -45,7 +45,6 @@ class SaleAdvancePaymentInv(models.TransientModel):
         # Check strictly on the appointment_sale_type field of the sale.order
         return any(order.appointment_sale_type == 'service' for order in orders)
 
-    @api.depends_context("active_model", "active_ids")
     def _compute_is_service_only_flow(self):
         flag = self._is_service_appointment()
         for rec in self:
