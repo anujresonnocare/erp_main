@@ -377,7 +377,7 @@ class ResonnocareAppointment(models.Model):
         # Map appointment type key to actual appointment type
         type_mapping = {
             'hearing_test': ['Hearing Test', 'Test', 'Trial'],
-            'device_sale': ['Device Sale', 'Device', 'Sale'],
+            'device_sale': ['Device', 'Sale'],
             'fitting': ['Fitting'],
             'followup': ['Follow-up', 'Followup', 'Follow'],
         }
