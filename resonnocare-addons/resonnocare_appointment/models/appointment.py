@@ -1306,8 +1306,12 @@ class ResonnocareAppointment(models.Model):
 
     def action_create_device_sale_appointment(self):
         self.ensure_one()
-        device_sale_type = self.env["resonnocare.appointment.type"].search(
-            [("name", "ilike", "device sale"), ("active", "=", True)],
+        domain = [
+            '|', 
+            ('name', 'ilike', 'Device'), 
+            ('name', 'ilike', 'Sale')
+        ]
+        device_sale_type = self.env["resonnocare.appointment.type"].search(domain,
             limit=1,
         )
         if not device_sale_type:
