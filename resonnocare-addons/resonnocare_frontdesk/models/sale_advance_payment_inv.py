@@ -1,6 +1,9 @@
 from odoo import api, fields, models
 from odoo.exceptions import UserError
 
+import logging
+_logger = logging.getLogger(__name__)
+
 
 class SaleAdvancePaymentInv(models.TransientModel):
     _inherit = "sale.advance.payment.inv"
@@ -26,6 +29,7 @@ class SaleAdvancePaymentInv(models.TransientModel):
         if self.env.context.get("active_model") != "sale.order":
             return self.env["sale.order"]
         active_ids = self.env.context.get("active_ids") or []
+        _logger.debug(f"Active sale order IDs: {active_ids}")
         return self.env["sale.order"].browse(active_ids).exists()
 
     @api.model
@@ -34,7 +38,7 @@ class SaleAdvancePaymentInv(models.TransientModel):
         orders = self._get_active_sale_orders()
         if not orders:
             return False
-        
+        _logger.debug(f"Checking service appointment for orders: {orders.ids}")
         # Check strictly on the appointment_sale_type field of the sale.order
         return any(order.appointment_sale_type == 'service' for order in orders)
 
