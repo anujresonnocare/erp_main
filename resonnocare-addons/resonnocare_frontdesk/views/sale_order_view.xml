@@ -44,7 +44,7 @@
                     type="object"
                     string="Print Final Invoice"
                     class="btn-secondary"
-                    invisible="state not in ('sale','done')"
+                    invisible="state not in ('sale','done') or delivery_count == 0"
                 />
             </xpath>
             <xpath expr="//field[@name='partner_id']" position="after">
