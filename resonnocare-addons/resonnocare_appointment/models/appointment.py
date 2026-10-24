@@ -1849,11 +1849,11 @@ class ResonnocareAppointment(models.Model):
         ]
         return bool(self.env["resonnocare.appointment"].search_count(domain))
 
-    def action_check_in(self):
-        for rec in self:
-            if rec.status != "scheduled":
-                raise UserError("Only scheduled appointments can be checked in.")
-            rec.status = "checked_in"
+    # def action_check_in(self):
+    #     for rec in self:
+    #         if rec.status != "scheduled":
+    #             raise UserError("Only scheduled appointments can be checked in.")
+    #         rec.status = "checked_in"
 
     # ------------------------------------------------------------------
     # Computed visibility flag for the Check-in button
@@ -2025,6 +2025,7 @@ class ResonnocareAppointment(models.Model):
                     "(confirmed sale order, delivery, invoicing and payment)."
                 ))
             # ... keep your existing check-in logic here ...
+            appt.status = "checked_in"
         return True        
 
     def action_start_consultation(self):
