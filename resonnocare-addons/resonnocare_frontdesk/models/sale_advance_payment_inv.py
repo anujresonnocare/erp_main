@@ -39,6 +39,8 @@ class SaleAdvancePaymentInv(models.TransientModel):
         if not orders:
             return False
         _logger.debug(f"Checking service appointment for orders: {orders.ids}")
+        aat = any(order.appointment_sale_type == 'service' for order in orders)
+        _logger.debug(f"Is service appointment: 44444444444444444444{aat}")
         # Check strictly on the appointment_sale_type field of the sale.order
         return any(order.appointment_sale_type == 'service' for order in orders)
 
@@ -46,7 +48,10 @@ class SaleAdvancePaymentInv(models.TransientModel):
     def _compute_is_service_only_flow(self):
         flag = self._is_service_appointment()
         for rec in self:
+            _logger.debug(f"Setting is_service_only_flow for record 11111111111{rec.id} to {flag}")
             rec.is_service_only_flow = flag
+            _logger.debug(f"Record {rec.id} is_service_only_flow set to 2222222222222{rec.is_service_only_flow}")
+
 
     @api.model
     def default_get(self, fields_list):
