@@ -360,10 +360,10 @@ class ResonnocareAppointment(models.Model):
         self.ensure_one()
         return self._create_child_appointment('hearing_test')
 
-    def action_create_device_sale_appointment(self):
-        """Create a Device Sale appointment"""
-        self.ensure_one()
-        return self._create_child_appointment('device_sale')
+    # def action_create_device_sale_appointment(self):
+    #     """Create a Device Sale appointment"""
+    #     self.ensure_one()
+    #     return self._create_child_appointment('device_sale')
 
     def action_create_followup_appointment(self):
         """Create a Follow-up appointment"""
