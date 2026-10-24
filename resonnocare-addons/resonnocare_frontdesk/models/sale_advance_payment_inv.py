@@ -14,6 +14,31 @@ class SaleAdvancePaymentInv(models.TransientModel):
         store=True,
     )
 
+    appointment_sale_type = fields.Selection(
+        selection=[
+            ('service', 'Service'),
+            ('device', 'Device'),
+        ],
+        string="Appointment Sale Type",
+        compute="_compute_appointment_sale_type",
+    )
+
+    @api.depends_context("active_model", "active_ids")
+    def _compute_appointment_sale_type(self):
+        for rec in self:
+            orders = rec._get_active_sale_orders()
+            if orders:
+                # If multiple orders are selected, we take the first one's type
+                rec.appointment_sale_type = orders[0].appointment_sale_type
+            else:
+                rec.appointment_sale_type = False
+
+
+    @api.depends("appointment_sale_type")
+    def _compute_is_service_only_flow(self):
+        for rec in self:
+            rec.is_service_only_flow = (rec.appointment_sale_type == 'service')            
+
     advance_payment_method = fields.Selection(
         selection=[
             ("delivered", "Regular invoice (Full payment)"),
