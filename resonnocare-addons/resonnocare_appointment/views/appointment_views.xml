@@ -125,6 +125,15 @@
                         class="btn-primary"
                         invisible="parent_appointment_id == False or balance_due &lt;= 0"
                     />
+                    <button
+                        name="action_create_device_sale_appointment"
+                        type="object"
+                        string="Create Device Sale Appointment"
+                        class="btn-secondary"
+                        invisible="appointment_outcome_ids.code != 'Rx'"
+                    />
+
+                    
 
                     <button
                         name="action_create_fitting_appointment"

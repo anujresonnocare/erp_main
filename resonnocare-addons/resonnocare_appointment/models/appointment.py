@@ -1304,6 +1304,59 @@ class ResonnocareAppointment(models.Model):
             },
         }
 
+    def action_create_device_sale_appointment(self):
+        self.ensure_one()
+        device_sale_type = self.env["resonnocare.appointment.type"].search(
+            [("name", "ilike", "device sale"), ("active", "=", True)],
+            limit=1,
+        )
+        if not device_sale_type:
+            raise UserError(
+                "Appointment Type 'Device Sale' is not configured. Please create/activate it in Masters."
+            )
+        
+        
+        # Get the audiologist from the original appointment if available
+        audiologist_id = self.audiologist_id.id if self.audiologist_id else False
+        technician_id = self.technician_id.id if self.technician_id else False
+        
+        # Create the fitting appointment with proper link
+        fitting_appointment = self.env["resonnocare.appointment"].create({
+            # 'parent_appointment_id': self.id,  # Link to original appointment
+            'patient_id': self.patient_id.id,
+            'clinic_id': self.clinic_id.id,
+            'appointment_type_id': device_sale_type.id,
+            'sale_type': 'device',
+            'appointment_date': fields.Date.today(),
+            'appointment_start_time': self.appointment_start_time,  # Copy start time
+            'audiologist_id': audiologist_id,  # Copy audiologist
+            'technician_id': technician_id,  # Copy technician
+            'ref_source': self.ref_source.id if self.ref_source else False,
+            'status': 'draft',
+            'root_appointment_id' : self.id,
+            'notes': f"Device Sale appointment created from {self.appointment_id or self.name}",
+        })
+        
+        # Return to open the newly created fitting appointment
+        return {
+            "type": "ir.actions.act_window",
+            "name": "Device Sale Appointment",
+            "res_model": "resonnocare.appointment",
+            "view_mode": "form",
+            "res_id": fitting_appointment.id,
+            "target": "current",
+            "context": {
+                "default_root_appointment_id": self.id,
+                "default_patient_id": self.patient_id.id,
+                "default_clinic_id": self.clinic_id.id,
+                "default_appointment_type_id": device_sale_type.id,
+                "default_sale_type": "device",
+                "default_audiologist_id": audiologist_id,
+                "default_technician_id": technician_id,
+                "default_ref_source": self.ref_source.id if self.ref_source else False,
+            },
+        }
+
     def action_create_fitting_appointment(self):
         self.ensure_one()
         fitting_type = self.env["resonnocare.appointment.type"].search(
