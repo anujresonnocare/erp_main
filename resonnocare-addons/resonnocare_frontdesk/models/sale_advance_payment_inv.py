@@ -8,12 +8,7 @@ _logger = logging.getLogger(__name__)
 class SaleAdvancePaymentInv(models.TransientModel):
     _inherit = "sale.advance.payment.inv"
 
-    is_service_only_flow = fields.Boolean(
-        string="Service-only flow",
-        compute="_compute_is_service_only_flow",
-        store=True,
-    )
-
+    # 1. Only ONE definition of the field
     appointment_sale_type = fields.Selection(
         selection=[
             ('service', 'Service'),
@@ -23,21 +18,10 @@ class SaleAdvancePaymentInv(models.TransientModel):
         compute="_compute_appointment_sale_type",
     )
 
-    @api.depends_context("active_model", "active_ids")
-    def _compute_appointment_sale_type(self):
-        for rec in self:
-            orders = rec._get_active_sale_orders()
-            if orders:
-                # If multiple orders are selected, we take the first one's type
-                rec.appointment_sale_type = orders[0].appointment_sale_type
-            else:
-                rec.appointment_sale_type = False
-
-
-    @api.depends("appointment_sale_type")
-    def _compute_is_service_only_flow(self):
-        for rec in self:
-            rec.is_service_only_flow = (rec.appointment_sale_type == 'service')            
+    is_service_only_flow = fields.Boolean(
+        string="Service-only flow",
+        compute="_compute_is_service_only_flow",
+    )
 
     advance_payment_method = fields.Selection(
         selection=[
@@ -50,57 +34,61 @@ class SaleAdvancePaymentInv(models.TransientModel):
         required=True,
     )
 
+    # 2. Helper to get active orders
     @api.model
     def _get_active_sale_orders(self):
         if self.env.context.get("active_model") != "sale.order":
             return self.env["sale.order"]
         active_ids = self.env.context.get("active_ids") or []
-        _logger.debug(f"Active sale order IDs: {active_ids}")
+        _logger.warning(f"🔥 Active sale order IDs: {active_ids}")
         return self.env["sale.order"].browse(active_ids).exists()
 
-    @api.model
-    def _is_service_appointment(self):
-        """Check if any active sale order has appointment_sale_type == 'service'"""
-        orders = self._get_active_sale_orders()
-        if not orders:
-            return False
-        _logger.debug(f"Checking service appointment for orders: {orders.ids}")
-        aat = any(order.appointment_sale_type == 'service' for order in orders)
-        _logger.debug(f"Is service appointment: 44444444444444444444{aat}")
-        self.is_service_only_flow = aat
-        # Check strictly on the appointment_sale_type field of the sale.order
-        return any(order.appointment_sale_type == 'service' for order in orders)
-
+    # 3. Compute appointment_sale_type
     @api.depends_context("active_model", "active_ids")
-    def _compute_is_service_only_flow(self):
-        flag = self._is_service_appointment()
+    def _compute_appointment_sale_type(self):
         for rec in self:
-            _logger.debug(f"Setting is_service_only_flow for record 11111111111{rec.id} to {flag}")
-            rec.is_service_only_flow = flag
-            _logger.debug(f"Record {rec.id} is_service_only_flow set to 2222222222222{rec.is_service_only_flow}")
+            orders = rec._get_active_sale_orders()
+            if orders:
+                rec.appointment_sale_type = orders[0].appointment_sale_type
+            else:
+                rec.appointment_sale_type = False
+            _logger.warning(f"🔥 Computed appointment_sale_type for wizard {rec.id}: {rec.appointment_sale_type}")
 
+    # 4. Compute is_service_only_flow (depends on the previous field)
+    @api.depends("appointment_sale_type")
+    def _compute_is_service_only_flow(self):
+        for rec in self:
+            rec.is_service_only_flow = (rec.appointment_sale_type == 'service')
+            _logger.warning(f"🔥 Computed is_service_only_flow for wizard {rec.id}: {rec.is_service_only_flow}")
 
+    # 5. default_get (always runs when wizard opens)
     @api.model
     def default_get(self, fields_list):
         vals = super().default_get(fields_list)
-        if self._is_service_appointment():
+        orders = self._get_active_sale_orders()
+        if orders and orders[0].appointment_sale_type == 'service':
             vals["advance_payment_method"] = "delivered"
         return vals
 
+    # 6. fields_get (controls dropdown selection)
     @api.model
     def fields_get(self, allfields=None, attributes=None):
         result = super().fields_get(allfields=allfields, attributes=attributes)
-        if "advance_payment_method" in result and self._is_service_appointment():
+        orders = self._get_active_sale_orders()
+        if "advance_payment_method" in result and orders and orders[0].appointment_sale_type == 'service':
             result["advance_payment_method"]["selection"] = [
                 ("delivered", "Regular invoice (Full payment)")
             ]
         return result
 
+    # 7. Validation on confirm
     def create_invoices(self):
         for wizard in self:
-            if wizard._is_service_appointment() and wizard.advance_payment_method != "delivered":
-                raise UserError(
-                    "Down payment options are not allowed for service appointments. "
-                    "Please use Regular invoice (Full payment)."
-                )
+            orders = wizard._get_active_sale_orders()
+            if orders and orders[0].appointment_sale_type == 'service':
+                if wizard.advance_payment_method != "delivered":
+                    raise UserError(
+                        "Down payment options are not allowed for service appointments. "
+                        "Please use Regular invoice (Full payment)."
+                    )
         return super().create_invoices()
