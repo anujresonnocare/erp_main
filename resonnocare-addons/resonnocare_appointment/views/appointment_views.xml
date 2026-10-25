@@ -147,7 +147,7 @@
                         type="object"
                         string="Create SCM Order"
                         class="btn-secondary"
-                        invisible="sale_type != 'device' or sale_order_id == False or parent_appointment_id != False"
+                        invisible="sale_type != 'device' or sale_order_id == False or parent_appointment_id != False or not scm_order_id"
                     />
                     <button
                         name="action_open_min_advance_request"
