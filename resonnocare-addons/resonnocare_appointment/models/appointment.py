@@ -1332,7 +1332,6 @@ class ResonnocareAppointment(models.Model):
             'appointment_type_id': device_sale_type.id,
             'sale_type': 'device',
             'appointment_date': fields.Date.today(),
-            'appointment_start_time': self.appointment_start_time,  # Copy start time
             'audiologist_id': audiologist_id,  # Copy audiologist
             'technician_id': technician_id,  # Copy technician
             'ref_source': self.ref_source.id if self.ref_source else False,
