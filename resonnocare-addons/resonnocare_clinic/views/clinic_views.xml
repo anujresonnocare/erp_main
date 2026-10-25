@@ -54,7 +54,7 @@
                             <field name="go_live_date"/>
                             <field name="external_billing"/>
                             <field name="warehouse_id" readonly="1"/>
-                            <field name="cbo_ids" widget="many2many_tags" options="{'no_create': True}" placeholder="Add CBOs" domain="[('groups_id', 'in', ref('resonnocare_base.group_cbo'))]" help="Users assigned as CBO for this clinic."/>
+                            <field name="cbo_ids" widget="many2many_tags" options="{'no_create': True}" placeholder="Add CBOs" domain="[('groups_id', '=', %(resonnocare_base.group_cbo)d)]"  help="Users assigned as CBO for this clinic."/>
                             <field name="area_manager_id"/>
                             <field name="region"/>
                             <field name="clinic_version"/>
