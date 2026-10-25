@@ -33,7 +33,20 @@ class ResonnocareAppointment(models.Model):
     name = fields.Char(string="Title", compute="_compute_name", store=True)
     name = fields.Char(string="Title", compute="_compute_name", store=True)
 
-    
+    scm_order_id = fields.Many2one("stock.picking", string="SCM Order", readonly=True, copy=False)
+
+    def action_view_scm_order(self):
+        self.ensure_one()
+        if not self.scm_order_id:
+            raise UserError("No SCM order associated with this appointment.")
+        return {
+            "type": "ir.actions.act_window",
+            "name": "SCM Order",
+            "res_model": "stock.picking",
+            "view_mode": "form",
+            "res_id": self.scm_order_id.id,
+            "target": "current",
+        }
 
     clinic_id = fields.Many2one(
         "resonnocare.clinic",
@@ -1213,6 +1226,8 @@ class ResonnocareAppointment(models.Model):
             raise UserError(
                 "Cannot create SCM Order. Please ensure all required steps are completed before generating the order."
             )
+
+        self.scm_order_id = result.id 
 
        
         return {

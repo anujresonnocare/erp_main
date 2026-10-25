@@ -107,7 +107,7 @@
                         type="object"
                         string="Generate Device Sale"
                         class="btn-primary"
-                        invisible="sale_type != 'device' or parent_appointment_id != False or sale_order_id != False or status in ('cancelled','no_show')"
+                        invisible="sale_type != 'device' or parent_appointment_id != False or sale_order_id != False or status !='scheduled'"
                     />
 
                     <button
@@ -140,7 +140,7 @@
                         type="object"
                         string="Create Fitting Appointment"
                         class="btn-secondary"
-                        invisible="sale_type != 'device' or parent_appointment_id != False"
+                        invisible="sale_type != 'device' or parent_appointment_id != False or status != 'completed' or fitting_appointment_ids"
                     />
                     <button
                         name="action_open_patient_reports"
@@ -160,6 +160,11 @@
 
                 <!-- ================= BODY ================= -->
                 <sheet readonly="status != 'draft'">
+                <div class="oe_button_box" name="button_box">
+                    <button name="action_view_scm_order" string="Scm Order" 
+                    type="object" class="oe_stat_button" icon="fa-level-up" 
+                    invisible="not scm_order_id" help="Go to SCM order"/>
+                </div>
 
                     <!-- PATIENT INFO -->
                     <group string="Patient Information">
