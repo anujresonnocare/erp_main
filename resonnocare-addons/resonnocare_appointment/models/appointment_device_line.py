@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 from odoo import api, fields, models
 from odoo.exceptions import UserError
+import logging
+
+_logger = logging.getLogger(__name__)
 
 
 class ResonnocareAppointmentDeviceLine(models.Model):
@@ -120,6 +123,7 @@ class ResonnocareAppointmentDeviceLine(models.Model):
             #     line.product_uom_qty = 1.0
             # if line.serial_lot_id and line.serial_lot_id not in line.available_lot_ids:
             #     line.serial_lot_id = False
+            _logger.info(f"Onchange triggered for product_id: {line.product_id}, appointment_idssssssssss: {line.product_id.product_tmpl_id.is_binaural}")
             if line.product_id and line.product_id.product_tmpl_id.is_binaural:
                 line.is_left_ear = True
                 line.is_right_ear = True    
