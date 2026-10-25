@@ -1326,7 +1326,7 @@ class ResonnocareAppointment(models.Model):
         
         # Create the fitting appointment with proper link
         fitting_appointment = self.env["resonnocare.appointment"].create({
-            # 'parent_appointment_id': self.id,  # Link to original appointment
+            'parent_appointment_id': self.id,  # Link to original appointment
             'patient_id': self.patient_id.id,
             'clinic_id': self.clinic_id.id,
             'appointment_type_id': device_sale_type.id,
@@ -1340,6 +1340,9 @@ class ResonnocareAppointment(models.Model):
             'root_appointment_id' : self.id,
             'notes': f"Device Sale appointment created from {self.appointment_id or self.name}",
         })
+
+        self.next_appointment_id = fitting_appointment.id
+
         
         # Return to open the newly created fitting appointment
         return {

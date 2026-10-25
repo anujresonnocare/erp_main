@@ -116,10 +116,10 @@ class ResonnocareAppointmentDeviceLine(models.Model):
     @api.onchange("product_id", "appointment_id")
     def _onchange_product_or_appointment(self):
         for line in self:
-            if line.product_id and line.product_id.tracking == "serial":
-                line.product_uom_qty = 1.0
-            if line.serial_lot_id and line.serial_lot_id not in line.available_lot_ids:
-                line.serial_lot_id = False
+            # if line.product_id and line.product_id.tracking == "serial":
+            #     line.product_uom_qty = 1.0
+            # if line.serial_lot_id and line.serial_lot_id not in line.available_lot_ids:
+            #     line.serial_lot_id = False
             if line.product_id and line.product_id.product_tmpl_id.is_binaural:
                 line.is_left_ear = True
                 line.is_right_ear = True    
