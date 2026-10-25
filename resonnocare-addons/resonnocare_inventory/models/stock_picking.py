@@ -69,6 +69,19 @@ class StockPicking(models.Model):
         'purchase.order', 'origin_picking_id', string="Auto-Created POs"
     )
 
+    def purchase_order_view_action(self):
+        self.ensure_one()
+        action = self.env.ref('purchase.purchase_form_action').read()[0]
+        po_ids = self.auto_po_ids.ids
+        if len(po_ids) > 1:
+            action['domain'] = [('id', 'in', po_ids)]
+        elif po_ids:
+            action['views'] = [(self.env.ref('purchase.purchase_order_form').id, 'form')]
+            action['res_id'] = po_ids[0]
+        else:
+            action = {'type': 'ir.actions.act_window_close'}
+        return action
+
     def action_confirm(self):
         res = super().action_confirm()
         for picking in self:
