@@ -20,6 +20,16 @@ class ResonnocareClinic(models.Model):
         help="Area Manager responsible for this clinic"
     )
 
+    cbo_ids = fields.Many2many(
+        'res.users',
+        'resonnocare_clinic_cbo_rel',   # relation table
+        'clinic_id',                    # column for this model
+        'user_id',                      # column for res.users
+        string="CBOs",
+        domain="[('groups_id', 'in', %s)]" % 'ref("resonnocare_base.group_cbo")',
+        help="Users assigned as CBO for this clinic.",
+    )
+
     region = fields.Char(
         string='Region',
         help="Geographic region (North, South, East, West, etc.)"

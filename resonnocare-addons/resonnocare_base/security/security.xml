@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
-    <data noupdate="1">
+    <data>
 
         <!-- ========================= -->
         <!-- MODULE CATEGORY (MUST BE FIRST) -->
@@ -29,6 +29,12 @@
         (4, ref('base.group_user')),
         (4, ref('hr.group_hr_user'))
     ]"/>
+        </record>
+
+        <record id="group_cbo" model="res.groups">
+            <field name="name">CBO</field>
+            <field name="category_id" ref="module_category_resonnocare"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
         </record>
 
 
