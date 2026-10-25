@@ -1127,7 +1127,7 @@ class ResonnocareAppointment(models.Model):
                     )
 
                 if product.tracking == "serial":
-                    if line.product_uom_qty != 1:
+                    if line.product_uom_qty < 1:
                         raise UserError(
                             f"Quantity must be 1 for serial-tracked device '{product.display_name}'."
                         )
