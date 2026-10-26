@@ -801,7 +801,7 @@ class SaleOrderLine(models.Model):
         for line in self:
             if line.discount_type != "fixed":
                 continue
-            price = line.price_unit or 0.0
+            price = line.product_id.list_price or 0.0
             if price > 0:
                 line.discount = (line.discount_fixed / price) * 100.0
             else:
@@ -813,7 +813,7 @@ class SaleOrderLine(models.Model):
         for line in self:
             if line.discount_type != "percent":
                 continue
-            price = line.price_unit or 0.0
+            price = line.product_id.list_price or 0.0
             line.discount_fixed = price * (line.discount or 0.0) / 100.0
 
     def _normalize_hsn_sac(self, code):
