@@ -200,19 +200,21 @@ class SaleOrder(models.Model):
                 line.discount_slab,
             )
 
-            if line.discount_slab == "slab3":
-                _logger.info(
-                    "Line ID %s has slab3. Required approval level: admin",
-                    line.id,
-                )
-                return "admin"
+            if line.product_id.item_type == "ha":
 
-            if line.discount_slab == "slab2":
-                _logger.info(
-                    "Line ID %s has slab2. Setting required_level to manager",
-                    line.id,
-                )
-                required_level = "manager"
+                if line.discount_slab == "slab3":
+                    _logger.info(
+                        "Line ID %s has slab3. Required approval level: admin",
+                        line.id,
+                    )
+                    return "admin"
+
+                if line.discount_slab == "slab2":
+                    _logger.info(
+                        "Line ID %s has slab2. Setting required_level to manager",
+                        line.id,
+                    )
+                    required_level = "manager"
 
         _logger.info(
             "After precomputed slab check, required_level: %s",
@@ -378,39 +380,41 @@ class SaleOrder(models.Model):
                 slab2_max,
             )
 
-            if discount > slab2_max:
-                _logger.info(
-                    "Line ID %s discount %s > slab2_max %s. "
-                    "Required approval level: admin",
-                    line.id,
-                    discount,
-                    slab2_max,
-                )
-                required_level = "admin"
-                break
+            if line.product_id.item_type == "ha":
 
-            slab1_max = grid.slab1_max or 0.0
-            _logger.info(
-                "Line ID %s grid slab1_max: %s",
-                line.id,
-                slab1_max,
-            )
+                if discount > slab2_max:
+                    _logger.info(
+                        "Line ID %s discount %s > slab2_max %s. "
+                        "Required approval level: admin",
+                        line.id,
+                        discount,
+                        slab2_max,
+                    )
+                    required_level = "admin"
+                    break
 
-            if discount > slab1_max:
+                slab1_max = grid.slab1_max or 0.0
                 _logger.info(
-                    "Line ID %s discount %s > slab1_max %s. "
-                    "Setting required_level to manager",
+                    "Line ID %s grid slab1_max: %s",
                     line.id,
-                    discount,
                     slab1_max,
                 )
-                required_level = "manager"
 
-            _logger.info(
-                "Completed processing line ID %s. Current required_level: %s",
-                line.id,
-                required_level,
-            )
+                if discount > slab1_max:
+                    _logger.info(
+                        "Line ID %s discount %s > slab1_max %s. "
+                        "Setting required_level to manager",
+                        line.id,
+                        discount,
+                        slab1_max,
+                    )
+                    required_level = "manager"
+
+                _logger.info(
+                    "Completed processing line ID %s. Current required_level: %s",
+                    line.id,
+                    required_level,
+                )
 
         _logger.info(
             "Completed _get_required_discount_approval_level() for sale order ID %s. "
@@ -741,7 +745,7 @@ class SaleOrderLine(models.Model):
             readonly=True,
             store=True,
     )
-    
+
     discount_channel = fields.Selection(
         [("corporate", "Corporate"), ("hsis", "H / SIS")],
         string="Discount Channel",
