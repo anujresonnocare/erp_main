@@ -63,8 +63,9 @@
                 <field name="discount_channel" readonly="1" optional="show"  invisible="line_appointment_sale_type == 'service'"/>
                 <field name="discount_slab" readonly="1" optional="show"  invisible="line_appointment_sale_type == 'service'"/>
             </xpath>
-            <xpath expr="//field[@name='order_line']/list/field[@name='price_unit']" position="attributes">
-                <attribute name="readonly">1</attribute>
+            <xpath expr="//field[@name='order_line']/list/field[@name='price_unit']" position="replace">
+                <!-- <attribute name="readonly">1</attribute> -->
+                <field name="list_price" readonly="1" optional="show"/>
             </xpath>
             <xpath expr="//field[@name='order_line']/list/field[@name='tax_id']" position="attributes">
                 <attribute name="readonly">1</attribute>

@@ -734,6 +734,14 @@ class SaleOrder(models.Model):
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
 
+
+    list_price = fields.Float(
+        related="product_id.list_price",
+        string="List Price",
+        readonly=True,
+        store=True,
+    )
+    
     discount_channel = fields.Selection(
         [("corporate", "Corporate"), ("hsis", "H / SIS")],
         string="Discount Channel",
@@ -794,6 +802,8 @@ class SaleOrderLine(models.Model):
         readonly=True
     )
 
+    
+
 
     @api.onchange("discount_type", "discount_fixed")
     def _onchange_discount_fixed_to_pct(self):
@@ -804,7 +814,6 @@ class SaleOrderLine(models.Model):
             price = line.product_id.list_price or 0.0
             if price > 0:
                 line.discount = (line.discount_fixed / price) * 100.0
-                line.price_subtotal = (line.price_unit * line.product_uom_qty) - line.discount_fixed
             else:
                 line.discount = 0.0
 
