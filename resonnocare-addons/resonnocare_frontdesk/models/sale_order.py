@@ -741,7 +741,7 @@ class SaleOrderLine(models.Model):
         readonly=True,
         store=True,
     )
-
+    
     discount_channel = fields.Selection(
         [("corporate", "Corporate"), ("hsis", "H / SIS")],
         string="Discount Channel",
@@ -1202,13 +1202,13 @@ class SaleOrderLine(models.Model):
 
     def _prepare_base_line_for_taxes_computation(self, **kwargs):
         if self.discount_type == "fixed" and self.discount_fixed:
-            kwargs["price_unit"] = self.product_id.list_price - self.discount_fixed
+            kwargs["price_unit"] = self.price_unit - (self.discount_fixed / 2)
             kwargs["discount"] = 0.0
         return super()._prepare_base_line_for_taxes_computation(**kwargs)
 
     def _prepare_invoice_line(self, **optional_values):
         res = super()._prepare_invoice_line(**optional_values)
         if self.discount_type == "fixed" and self.discount_fixed:
-            res["price_unit"] = self.product_id.list_price - self.discount_fixed
+            res["price_unit"] = self.price_unit - (self.discount_fixed / 2)
             res["discount"] = 0.0
         return res
