@@ -1241,6 +1241,39 @@ class ResonnocareAppointment(models.Model):
             },
         }
 
+
+    @api.constrains('device_sale_line_ids')
+    def _check_charger_and_battery_required(self):
+        for appointment in self:
+            lines = appointment.device_sale_line_ids
+            if not lines:
+                continue
+
+            # Collect style names present on the lines
+            styles = set()
+            for line in lines:
+                product = line.product_id
+                if product and product.product_tmpl_id.item_style_id:
+                    styles.add(product.product_tmpl_id.item_style_id.name)
+
+            # Rule 1: Charger required for these styles
+            charger_required_styles = {'BTECH', 'BTECHS', 'ITECH', 'RITECH', 'RITECHS'}
+            if styles & charger_required_styles:
+                if 'Charger' not in styles:
+                    raise ValidationError(_(
+                        "A Charger product is required when the appointment contains "
+                        "products with styles: %s. Please add a line with a Charger product."
+                    ) % ', '.join(charger_required_styles & styles))
+
+            # Rule 2: Battery required for these styles
+            battery_required_styles = {'BTE', 'CIC', 'IIC', 'ITE', 'RIC'}
+            if styles & battery_required_styles:
+                if 'Battery' not in styles:
+                    raise ValidationError(_(
+                        "A Battery product is required when the appointment contains "
+                        "products with styles: %s. Please add a line with a Battery product."
+                    ) % ', '.join(battery_required_styles & styles))
+                
     @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:
@@ -1250,7 +1283,11 @@ class ResonnocareAppointment(models.Model):
                 source = patient.ref_source
                 if source:
                     vals["ref_source"] = source.id
+            if vals.get("device_sale_line_ids"):
+                for line in vals["device_sale_line_ids"]:
+                    self._check_charger_and_battery_required()
         return super().create(vals_list)
+
 
     @api.model
     def default_get(self, fields_list):
@@ -1287,6 +1324,9 @@ class ResonnocareAppointment(models.Model):
                 source = rec.patient_id.ref_source
                 if source and rec.ref_source.id != source.id:
                     rec.ref_source = source.id
+
+        if 'device_sale_line_ids' in vals:
+            self._check_charger_and_battery_required()            
         return res
 
     def action_view_bill(self):
