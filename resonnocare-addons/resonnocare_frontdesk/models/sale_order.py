@@ -736,10 +736,10 @@ class SaleOrderLine(models.Model):
 
 
     list_price = fields.Float(
-        related="product_id.list_price",
-        string="List Price",
-        readonly=True,
-        store=True,
+            related="product_id.list_price",
+            string="List Price",
+            readonly=True,
+            store=True,
     )
     
     discount_channel = fields.Selection(
@@ -802,8 +802,6 @@ class SaleOrderLine(models.Model):
         readonly=True
     )
 
-    
-
 
     @api.onchange("discount_type", "discount_fixed")
     def _onchange_discount_fixed_to_pct(self):
@@ -811,12 +809,11 @@ class SaleOrderLine(models.Model):
         for line in self:
             if line.discount_type != "fixed":
                 continue
-            price = line.product_id.list_price or 0.0
+            price = line.price_unit or 0.0
             if price > 0:
                 line.discount = (line.discount_fixed / price) * 100.0
             else:
                 line.discount = 0.0
-
 
     @api.onchange("discount", "discount_type", "price_unit")
     def _onchange_discount_pct_to_fixed(self):
@@ -824,7 +821,7 @@ class SaleOrderLine(models.Model):
         for line in self:
             if line.discount_type != "percent":
                 continue
-            price = line.product_id.list_price or 0.0
+            price = line.price_unit or 0.0
             line.discount_fixed = price * (line.discount or 0.0) / 100.0
 
     def _normalize_hsn_sac(self, code):
@@ -1202,13 +1199,13 @@ class SaleOrderLine(models.Model):
 
     def _prepare_base_line_for_taxes_computation(self, **kwargs):
         if self.discount_type == "fixed" and self.discount_fixed:
-            kwargs["price_unit"] = self.price_unit - (self.discount_fixed / 2)
+            kwargs["price_unit"] = self.price_unit - self.discount_fixed
             kwargs["discount"] = 0.0
         return super()._prepare_base_line_for_taxes_computation(**kwargs)
 
     def _prepare_invoice_line(self, **optional_values):
         res = super()._prepare_invoice_line(**optional_values)
         if self.discount_type == "fixed" and self.discount_fixed:
-            res["price_unit"] = self.price_unit - (self.discount_fixed / 2)
+            res["price_unit"] = self.price_unit - self.discount_fixed
             res["discount"] = 0.0
         return res
