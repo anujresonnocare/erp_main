@@ -804,8 +804,10 @@ class SaleOrderLine(models.Model):
             price = line.product_id.list_price or 0.0
             if price > 0:
                 line.discount = (line.discount_fixed / price) * 100.0
+                line.price_subtotal = (line.price_unit * line.product_uom_qty) - line.discount_fixed
             else:
                 line.discount = 0.0
+
 
     @api.onchange("discount", "discount_type", "price_unit")
     def _onchange_discount_pct_to_fixed(self):
