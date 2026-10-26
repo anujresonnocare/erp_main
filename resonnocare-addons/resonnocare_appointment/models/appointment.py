@@ -669,8 +669,8 @@ class ResonnocareAppointment(models.Model):
                             "product_uom_qty": 1,
                             "price_unit": pricing_by_diag[test.id],
                             "name": test.product_id.name,
-                            "is_left_ear": test.is_left_ear or False,
-                            "is_right_ear": test.is_right_ear or False
+                            "is_left_ear": test.is_left_ear,
+                            "is_right_ear": test.is_right_ear
                         })
                     )    
 
