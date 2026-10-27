@@ -10,6 +10,16 @@
             <field name="domain_force">[(1,'=',1)]</field>
         </record>
 
+
+        
+        <record id="resonnocare_appointment_rule_cbo" model="ir.rule">
+            <field name="name">Appointments: CBO - All</field>
+            <field name="model_id" ref="model_resonnocare_appointment"/>
+            <field name="groups" eval="[(4, ref('resonnocare_base.group_cbo'))]"/>
+            <field name="domain_force">[(1,'=',1)]</field>
+        </record>
+
+
         <!-- System Admin: All Appointments -->
         <record id="resonnocare_appointment_rule_system_admin" model="ir.rule">
             <field name="name">Appointments: System Admin - All</field>

@@ -11,6 +11,7 @@
             <!-- Add Assigned Clinic under Preferences -->
             <xpath expr="//group[@name='preferences']" position="inside">
                 <field name="clinic_id" groups="resonnocare_base.group_resonnocare_hr,resonnocare_base.group_resonnocare_super_admin"/>
+                <field name="cbo_clinic_ids" groups="resonnocare_base.group_cbo,resonnocare_base.group_resonnocare_super_admin"/>
             </xpath>
 
         </field>

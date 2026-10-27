@@ -1,4 +1,4 @@
-from odoo import _, fields, models
+from odoo import _, fields, models , api
 from odoo.exceptions import AccessDenied
 
 
@@ -10,6 +10,23 @@ class ResUsers(models.Model):
         string="Assigned Clinic",
         help="The clinic this user is assigned to for operational purposes",
     )
+
+    cbo_clinic_ids = fields.Many2many(
+        'resonnocare.clinic',
+        'resonnocare_clinic_cbo_rel',
+        'user_id',
+        'clinic_id',
+        string="CBO Clinics",
+        compute='_compute_cbo_clinic_ids',
+        store=False,
+    )
+
+    @api.depends('groups_id')
+    def _compute_cbo_clinic_ids(self):
+        Clinic = self.env['resonnocare.clinic']
+        for user in self:
+            user.cbo_clinic_ids = Clinic.search([('cbo_ids', 'in', user.id)])
+
 
     def _get_operational_group_ids(self):
         xmlids = (
