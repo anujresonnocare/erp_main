@@ -28,3 +28,6 @@ access_final_invoice_line_super_admin,resonnocare.final.invoice.line.super_admin
 
 access_resonnocare_sale_return_request,resonnocare.sale.return.request,model_resonnocare_sale_return_request,base.group_user,1,1,1,1
 access_resonnocare_sale_return_wizard,resonnocare.sale.return.wizard,model_resonnocare_sale_return_wizard,base.group_user,1,1,1,1
+
+
+access_discount_approval_request_cbo,resonnocare.discount.approval.request.cbo,model_resonnocare_discount_approval_request,resonnocare_base.group_cbo,1,1,1,0
