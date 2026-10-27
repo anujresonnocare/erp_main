@@ -31,3 +31,4 @@ access_resonnocare_sale_return_wizard,resonnocare.sale.return.wizard,model_reson
 
 
 access_discount_approval_request_cbo,resonnocare.discount.approval.request.cbo,model_resonnocare_discount_approval_request,resonnocare_base.group_cbo,1,1,1,0
+access_advance_approval_request_cbo,resonnocare.advance.approval.request.cbo,model_resonnocare_advance_approval_request,resonnocare_base.group_cbo,1,1,1,0
