@@ -58,7 +58,7 @@ action]]></field>
         parent="menu_frontdesk_appointments"
         action="action_resonnocare_appointment"
         sequence="1"
-        groups="resonnocare_base.group_front_desk,resonnocare_base.group_resonnocare_super_admin"
+        groups="resonnocare_base.group_front_desk,resonnocare_base.group_resonnocare_super_admin,resonnocare_base.group_clinic_admin,resonnocare_base.group_cbo"
     />
 
     <menuitem
@@ -67,7 +67,7 @@ action]]></field>
         parent="menu_frontdesk_appointments"
         action="action_frontdesk_expected_walkins_server"
         sequence="2"
-        groups="resonnocare_base.group_front_desk,resonnocare_base.group_clinic_admin"
+        groups="resonnocare_base.group_front_desk,resonnocare_base.group_clinic_admin,resonnocare_base.group_cbo,resonnocare_base.group_resonnocare_super_admin"
     />
 
 </odoo>
