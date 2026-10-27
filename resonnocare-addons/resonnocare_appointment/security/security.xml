@@ -16,7 +16,7 @@
             <field name="name">Appointments: CBO - All</field>
             <field name="model_id" ref="model_resonnocare_appointment"/>
             <field name="groups" eval="[(4, ref('resonnocare_base.group_cbo'))]"/>
-            <field name="domain_force">[(1,'=',1)]</field>
+            <field name="domain_force">[('clinic_id','in',user.cbo_clinic_ids.ids)]</field>
         </record>
 
 
