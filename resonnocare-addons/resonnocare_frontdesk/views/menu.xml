@@ -11,7 +11,7 @@
 
     <!-- Root: Front Desk -->
     <!-- Using a generic icon or a custom one if available. For now relying on default or text. -->
-    <menuitem id="menu_front_desk_root" name="Front Desk" sequence="-200" groups="resonnocare_base.group_front_desk,resonnocare_base.group_clinic_admin,resonnocare_base.group_resonnocare_super_admin" web_icon="resonnocare_frontdesk,static/description/icon.png"/>
+    <menuitem id="menu_front_desk_root" name="Front Desk" sequence="-200" groups="resonnocare_base.group_front_desk,resonnocare_base.group_cbo,resonnocare_base.group_clinic_admin,resonnocare_base.group_resonnocare_super_admin" web_icon="resonnocare_frontdesk,static/description/icon.png"/>
 
     <!-- Dashboard (Home) -->
     <menuitem id="menu_front_desk_dashboard" name="Dashboard" parent="menu_front_desk_root" action="action_open_front_desk_dashboard_server" sequence="1" groups="resonnocare_base.group_front_desk,resonnocare_base.group_cbo"/>
