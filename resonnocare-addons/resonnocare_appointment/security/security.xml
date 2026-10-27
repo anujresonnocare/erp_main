@@ -57,5 +57,13 @@
             <field name="domain_force">[('appointment_id.clinic_id','=',user.employee_id.clinic_id.id)]</field>
         </record>
 
+
+        <record id="resonnocare_ear_mould_form_rule_cbo" model="ir.rule">
+            <field name="name">Ear Mould Form: CBO - Own Clinic</field>
+            <field name="model_id" ref="model_resonnocare_ear_mould_form"/>
+            <field name="groups" eval="[(4, ref('resonnocare_base.group_cbo'))]"/>
+            <field name="domain_force">[('appointment_id.clinic_id','in',user.cbo_clinic_ids.ids)]</field>
+        </record>
+
     </data>
 </odoo>
