@@ -943,7 +943,7 @@ class ResonnocareAppointment(models.Model):
             )
             raise UserError(error_msg)
         
-        source_location = company.ho_hearing_aid_sale_location_id or ho_warehouse.lot_stock_id
+        source_location = ho_warehouse.lot_stock_id
         if not source_location:
             error_msg = (
                 "❌ SCM Order cannot be created: Source location not configured.\n\n"
@@ -960,7 +960,7 @@ class ResonnocareAppointment(models.Model):
             )
             raise UserError(error_msg)
         
-        destination_location = clinic.hearing_aid_sale_location_id or clinic.stock_location_id
+        destination_location = clinic.stock_location_id
         if not destination_location:
             error_msg = (
                 "❌ SCM Order cannot be created: Destination location not configured.\n\n"
@@ -1173,7 +1173,7 @@ class ResonnocareAppointment(models.Model):
 
             sale.action_confirm()
             self._apply_device_sale_picking_locations(
-                sale, rec.clinic_id.hearing_aid_sale_location_id
+                sale, rec.clinic_id.stock_location_id
             )
 
             # Reserve only user-selected serials for serial-tracked devices.
