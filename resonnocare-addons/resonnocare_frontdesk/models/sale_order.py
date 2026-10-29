@@ -67,30 +67,7 @@ class SaleOrder(models.Model):
         readonly=True
     )
 
-    @api.depends('product_id', 'product_uom_qty', 'price_unit', 'discount', 'discount_fixed', 'discount_type', 'tax_id')
-    def _compute_amount(self):
-        for line in self:
-            if line.discount_type == "fixed" and line.discount_fixed:
-                # We temporarily set the price_unit to (price_unit - per_unit_discount)
-                # so Odoo's native tax engine calculates it correctly on the UI.
-                qty = line.product_uom_qty or 1.0
-                per_unit_discount = line.discount_fixed / qty
-                
-                # Save original values
-                original_price_unit = line.price_unit
-                original_discount = line.discount
-                
-                # Trick Odoo into calculating the right amount
-                line.price_unit = max(0.0, original_price_unit - per_unit_discount)
-                line.discount = 0.0
-                
-                super(SaleOrderLine, line)._compute_amount()
-                
-                # Restore original values so the user sees their actual inputs
-                line.price_unit = original_price_unit
-                line.discount = original_discount
-            else:
-                super(SaleOrderLine, line)._compute_amount()
+    
 
     def _compute_discount_approval_request_count(self):
         grouped = self.env["resonnocare.discount.approval.request"].read_group(
@@ -830,6 +807,31 @@ class SaleOrderLine(models.Model):
         readonly=True
     )
 
+    @api.depends('product_id', 'product_uom_qty', 'price_unit', 'discount', 'discount_fixed', 'discount_type', 'tax_id')
+    def _compute_amount(self):
+        for line in self:
+            if line.discount_type == "fixed" and line.discount_fixed:
+                qty = line.product_uom_qty or 1.0
+                # Calculate how much discount to apply per unit
+                per_unit_discount = line.discount_fixed / qty
+                
+                # Save original values
+                original_price_unit = line.price_unit
+                original_discount = line.discount
+                
+                # Temporarily trick Odoo's tax engine
+                line.price_unit = max(0.0, original_price_unit - per_unit_discount)
+                line.discount = 0.0
+                
+                # Let Odoo do its standard math (qty * new_price_unit)
+                super(SaleOrderLine, line)._compute_amount()
+                
+                # Restore the values so the UI looks correct
+                line.price_unit = original_price_unit
+                line.discount = original_discount
+            else:
+                super(SaleOrderLine, line)._compute_amount()
+
 
     # @api.onchange("discount_type", "discount_fixed")
     # def _onchange_discount_fixed_to_pct(self):
@@ -852,37 +854,33 @@ class SaleOrderLine(models.Model):
     #         price = line.price_unit or 0.0
     #         line.discount_fixed = price * (line.discount or 0.0) / 100.0
 
-    @api.onchange("discount_fixed", "product_id")
+    @api.onchange("discount_fixed", "product_id", "product_uom_qty")
     def _onchange_discount_fixed_to_pct(self):
-        """Convert fixed amount (line-total deduction) to a % discount
-        against the product's LIST PRICE, per unit basis."""
         for line in self:
             if line.discount_type != "fixed":
                 continue
+            
+            # Base MRP (List Price)
             list_price = line.product_id.list_price or 0.0
-            qty = line.product_uom_qty or 0.0
-            # line-level fixed discount → per unit
-            per_unit_discount = (line.discount_fixed / qty) if qty else 0.0
+            qty = line.product_uom_qty or 1.0
+            
             if list_price > 0:
+                per_unit_discount = line.discount_fixed / qty
                 pct = (per_unit_discount / list_price) * 100.0
-                # cap so it never exceeds list_price
                 line.discount = min(max(pct, 0.0), 100.0)
             else:
                 line.discount = 0.0
 
-
     @api.onchange("discount", "discount_type", "product_id", "product_uom_qty")
     def _onchange_discount_pct_to_fixed(self):
-        """Reverse: percentage discount (against list price) → fixed total amount."""
         for line in self:
             if line.discount_type != "percent":
                 continue
             list_price = line.product_id.list_price or 0.0
-            qty = line.product_uom_qty or 0.0
-            line.discount_fixed = list_price * (line.discount or 0.0) / 100.0 * qty
-
-    def _normalize_hsn_sac(self, code):
-        return re.sub(r"[^0-9A-Za-z]", "", (code or "")).upper()
+            qty = line.product_uom_qty or 1.0
+            
+            # Total fixed discount = (List Price * Qty) * (Discount % / 100)
+            line.discount_fixed = (list_price * qty) * ((line.discount or 0.0) / 100.0)
 
     @api.onchange("order_id")
     def _onchange_order_id_product_domain_by_flow(self):
