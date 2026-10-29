@@ -67,6 +67,30 @@ class SaleOrder(models.Model):
         readonly=True
     )
 
+    @api.depends('product_id', 'product_uom_qty', 'price_unit', 'discount', 'discount_fixed', 'discount_type', 'tax_id')
+    def _compute_amount(self):
+        for line in self:
+            if line.discount_type == "fixed" and line.discount_fixed:
+                # We temporarily set the price_unit to (price_unit - per_unit_discount)
+                # so Odoo's native tax engine calculates it correctly on the UI.
+                qty = line.product_uom_qty or 1.0
+                per_unit_discount = line.discount_fixed / qty
+                
+                # Save original values
+                original_price_unit = line.price_unit
+                original_discount = line.discount
+                
+                # Trick Odoo into calculating the right amount
+                line.price_unit = max(0.0, original_price_unit - per_unit_discount)
+                line.discount = 0.0
+                
+                super(SaleOrderLine, line)._compute_amount()
+                
+                # Restore original values so the user sees their actual inputs
+                line.price_unit = original_price_unit
+                line.discount = original_discount
+            else:
+                super(SaleOrderLine, line)._compute_amount()
 
     def _compute_discount_approval_request_count(self):
         grouped = self.env["resonnocare.discount.approval.request"].read_group(
