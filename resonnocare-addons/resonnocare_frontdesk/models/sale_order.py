@@ -1213,7 +1213,7 @@ class SaleOrderLine(models.Model):
 
     def _prepare_base_line_for_taxes_computation(self, **kwargs):
         if self.discount_type == "fixed" and self.discount_fixed:
-            kwargs["price_unit"] = self.price_unit - self.discount_fixed
+            kwargs["price_unit"] = self.price_unit - (self.discount_fixed / 2)
             kwargs["discount"] = 0.0
         return super()._prepare_base_line_for_taxes_computation(**kwargs)
 
