@@ -1180,7 +1180,7 @@ class SaleOrderLine(models.Model):
             # Keep reference MRP for internal metrics/approval logic.
             line.discount_reference_mrp = mrp
             # Display discount value in currency (how much amount is reduced).
-            discount_value = (mrp * (line.product_uom_qty or 0.0)) * (
+            discount_value = mrp * (
                 (line.discount or 0.0) / 100.0
             )
             line.discount_base_mrp = discount_value
