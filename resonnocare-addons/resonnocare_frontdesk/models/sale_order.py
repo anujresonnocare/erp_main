@@ -815,6 +815,7 @@ class SaleOrderLine(models.Model):
                 continue
             price = line.price_unit or 0.0
             if price > 0:
+                _logger.info("Converting fixed discount to percentage for line ID 11111111111111%s: price_unit=%s, discount_fixed=%s", line.id, price, line.discount_fixed)
                 line.discount = (line.discount_fixed / price) * 100.0
             else:
                 line.discount = 0.0
@@ -826,6 +827,7 @@ class SaleOrderLine(models.Model):
             if line.discount_type != "percent":
                 continue
             price = line.price_unit or 0.0
+            _logger.info("Converting percentage discount to fixed for line ID 333333333333333333333%s: price_unit=%s, discount=%s", line.id, price, line.discount)
             line.discount_fixed = price * (line.discount or 0.0) / 100.0
 
     def _normalize_hsn_sac(self, code):
