@@ -816,7 +816,7 @@ class SaleOrderLine(models.Model):
             price = line.price_unit or 0.0
             if price > 0:
                 _logger.info("Converting fixed discount to percentage for line ID 11111111111111%s: price_unit=%s, discount_fixed=%s", line.id, price, line.discount_fixed)
-                line.discount = (line.discount_fixed / price) * 100.0
+                line.discount = ((line.discount_fixed / 2) / price) * 100.0
             else:
                 line.discount = 0.0
 
