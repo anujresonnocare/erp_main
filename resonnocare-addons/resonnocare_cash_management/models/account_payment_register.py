@@ -23,5 +23,5 @@ class AccountPaymentRegister(models.TransientModel):
                             'note_value': note.note_value,
                             'quantity': note.quantity,
                         })
-                
+            payment.action_validate()  # Validate the payment after attaching cash notes
         return result
