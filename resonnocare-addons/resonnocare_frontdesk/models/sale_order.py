@@ -1129,6 +1129,13 @@ class SaleOrderLine(models.Model):
         Diag = self.env["resonnocare.diagnostic.item"]
         ClinicDiag = self.env["resonnocare.clinic.diagnostic"]
         for line in self:
+            _logger.info(
+                "Computing discount grid meta for line ID3333333333335555555555555 %s: product_id=%s, price_unit=%s, discount=%s",
+                line.id,
+                line.product_id.id if line.product_id else None,
+                line.price_unit,
+                line.discount,
+            )
             if not line.product_id:
                 line.discount_channel = False
                 line.discount_grid_id = False
