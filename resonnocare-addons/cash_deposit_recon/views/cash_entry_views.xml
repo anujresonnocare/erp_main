@@ -8,6 +8,7 @@
             <list decoration-danger="state == 'unreconciled'"
                   decoration-warning="state == 'pending'"
                   decoration-success="state == 'reconciled'"
+                  default_order="state, date desc"
                   create="1" edit="1">
                     <button name="%(cash_deposit_recon.action_deposit_wizard)d"
                             type="action"

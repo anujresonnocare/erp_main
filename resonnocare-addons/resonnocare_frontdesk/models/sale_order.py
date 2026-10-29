@@ -807,26 +807,55 @@ class SaleOrderLine(models.Model):
     )
 
 
-    @api.onchange("discount_type", "discount_fixed")
+    # @api.onchange("discount_type", "discount_fixed")
+    # def _onchange_discount_fixed_to_pct(self):
+    #     """When user enters a fixed discount amount, convert to percentage."""
+    #     for line in self:
+    #         if line.discount_type != "fixed":
+    #             continue
+    #         price = line.price_unit or 0.0
+    #         if price > 0:
+    #             line.discount = (line.discount_fixed / price) * 100.0
+    #         else:
+    #             line.discount = 0.0
+
+    # @api.onchange("discount", "discount_type", "price_unit")
+    # def _onchange_discount_pct_to_fixed(self):
+    #     """When user enters a percentage discount, compute the fixed amount."""
+    #     for line in self:
+    #         if line.discount_type != "percent":
+    #             continue
+    #         price = line.price_unit or 0.0
+    #         line.discount_fixed = price * (line.discount or 0.0) / 100.0
+
+    @api.onchange("discount_fixed", "product_id")
     def _onchange_discount_fixed_to_pct(self):
-        """When user enters a fixed discount amount, convert to percentage."""
+        """Convert fixed amount (line-total deduction) to a % discount
+        against the product's LIST PRICE, per unit basis."""
         for line in self:
             if line.discount_type != "fixed":
                 continue
-            price = line.price_unit or 0.0
-            if price > 0:
-                line.discount = (line.discount_fixed / price) * 100.0
+            list_price = line.product_id.list_price or 0.0
+            qty = line.product_uom_qty or 0.0
+            # line-level fixed discount → per unit
+            per_unit_discount = (line.discount_fixed / qty) if qty else 0.0
+            if list_price > 0:
+                pct = (per_unit_discount / list_price) * 100.0
+                # cap so it never exceeds list_price
+                line.discount = min(max(pct, 0.0), 100.0)
             else:
                 line.discount = 0.0
 
-    @api.onchange("discount", "discount_type", "price_unit")
+
+    @api.onchange("discount", "discount_type", "product_id", "product_uom_qty")
     def _onchange_discount_pct_to_fixed(self):
-        """When user enters a percentage discount, compute the fixed amount."""
+        """Reverse: percentage discount (against list price) → fixed total amount."""
         for line in self:
             if line.discount_type != "percent":
                 continue
-            price = line.price_unit or 0.0
-            line.discount_fixed = price * (line.discount or 0.0) / 100.0
+            list_price = line.product_id.list_price or 0.0
+            qty = line.product_uom_qty or 0.0
+            line.discount_fixed = list_price * (line.discount or 0.0) / 100.0 * qty
 
     def _normalize_hsn_sac(self, code):
         return re.sub(r"[^0-9A-Za-z]", "", (code or "")).upper()
