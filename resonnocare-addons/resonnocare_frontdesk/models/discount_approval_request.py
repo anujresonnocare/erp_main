@@ -297,69 +297,71 @@ class ResonnocareDiscountApprovalRequest(models.Model):
             lambda l: l.product_id and not l.display_type and not l.is_downpayment
         )
 
-        # ---- HA-only lines ----
+        # ---- HA-only lines: EVERYTHING is derived from these ----
         ha_lines = lines.filtered(
             lambda l: getattr(l.product_id.product_tmpl_id, "item_type", "") == "ha"
         )
 
-        # ---- All device lines (for the "all products" gross) ----
-        device_lines = lines.filtered(
-            lambda l: getattr(l.product_id, "type", "") in ("product", "consu")
-        )
-
-        gross = 0.0            # gross for ALL lines (used for discount_pct_requested)
-        discount_value = 0.0   # discount value for ALL lines
-        ha_gross = 0.0         # gross only for HA lines
+        ha_gross = 0.0
         ha_discount_value = 0.0
 
-        for line in lines:
+        for line in ha_lines:
             qty = line.product_uom_qty or 0.0
             unit_price = line.product_id.list_price or 0.0
             base_mrp = getattr(line, "discount_reference_mrp", 0.0) or 0.0
 
             line_base_mrp = base_mrp if base_mrp > 0.0 else unit_price
-            gross += line_base_mrp
+            ha_gross += line_base_mrp
 
             if line.price_subtotal:
                 line_subtotal = line.price_subtotal
             else:
-                line_subtotal = unit_price * qty * (1.0 - (line.discount or 0.0) / 100.0)
+                line_subtotal = unit_price * qty * (
+                    1.0 - (line.discount or 0.0) / 100.0
+                )
 
             line_discount_value = max(line_base_mrp - line_subtotal, 0.0)
-            discount_value += line_discount_value
-            _logger.info("Line 1111111111111111ID %s: base_mrp=%s, subtotal=%s, discount_value=%s", line.id, line_base_mrp, line_subtotal, line_discount_value)
+            ha_discount_value += line_discount_value
 
+            _logger.info(
+                "HA line ID %s: base_mrp=%s, subtotal=%s, discount_value=%s",
+                line.id, line_base_mrp, line_subtotal, line_discount_value,
+            )
 
-
-            # HA-only aggregation
-            if getattr(line.product_id.product_tmpl_id, "item_type", "") == "ha":
-                ha_gross += line_base_mrp
-                ha_discount_value += line_discount_value
-
-        # Max allowed discount % from grid (keep original behavior)
+        # Max allowed discount % from grid — HA lines only
         max_pct = 0.0
-        grid_lines = lines.filtered(lambda l: l.discount_grid_id)
-        if grid_lines:
-            max_pct = max((l.discount_grid_id.slab2_max or 0.0) for l in grid_lines)
+        grid_ha_lines = ha_lines.filtered(lambda l: l.discount_grid_id)
+        if grid_ha_lines:
+            max_pct = max(
+                (l.discount_grid_id.slab2_max or 0.0) for l in grid_ha_lines
+            )
 
-        _logger.info("Computed metrics for Sale Order 2222222222222222222ID %s: gross=%s, discount_value=%s, ha_gross=%s, ha_discount_value=%s, max_pct=%s", sale.id, gross, discount_value, ha_gross, ha_discount_value, max_pct)
-        # no_of_ha -> sum qty of HA lines only
         no_of_ha = int(sum(l.product_uom_qty or 0.0 for l in ha_lines))
-        _logger.info("Number of HA units in Sale Order3333333333333333 ID %s: %s", sale.id, no_of_ha)
-        # HA discount %
-        ha_discount_pct = (ha_discount_value / ha_gross * 100.0) if ha_gross else 0.0
-        # _logger.info("HA Discount for Sale Order44444444444444444444 ID %s: %s", sale.id, ha_discount_pct)
+        ha_discount_pct = (
+            (ha_discount_value / ha_gross * 100.0) if ha_gross else 0.0
+        )
+
+        _logger.info(
+            "HA metrics for SO ID %s: ha_lines=%s, no_of_ha=%s, "
+            "ha_gross=%s, ha_discount_value=%s, max_pct=%s, ha_discount_pct=%s",
+            sale.id, len(ha_lines), no_of_ha, ha_gross,
+            ha_discount_value, max_pct, ha_discount_pct,
+        )
 
         return {
+            # HA-only metrics
             "no_of_ha": no_of_ha,
             "total_ha_mrp": ha_gross,
             "max_discount_pct_allowed": max_pct,
-            "max_discount_value_allowed": ha_gross * (max_pct / 100.0) if ha_gross else 0.0,
-            "discount_value_requested": discount_value,
-            "discount_pct_requested": (discount_value / gross * 100.0) if gross else 0.0,
-            "min_advance_required": (sale.amount_total or 0.0) * 0.30,
+            "max_discount_value_allowed": (
+                ha_gross * (max_pct / 100.0) if ha_gross else 0.0
+            ),
+            "discount_value_requested": ha_discount_value,
+            "discount_pct_requested": ha_discount_pct,
             "ha_discount_pct": ha_discount_pct,
             "ha_discount_value": ha_discount_value,
+            # Still derived from the full order (advance is a payment concept)
+            "min_advance_required": (sale.amount_total or 0.0) * 0.30,
         }
 
     @api.onchange("sale_order_id")
