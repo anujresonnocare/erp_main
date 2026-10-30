@@ -243,11 +243,11 @@ class ResonnocareDiscountApprovalRequest(models.Model):
         discount_value = 0.0
         for line in lines:
             qty = line.product_uom_qty or 0.0
-            unit_price = line.price_unit or 0.0
+            unit_price = line.product_id.list_price or 0.0
             base_mrp = getattr(line, "discount_reference_mrp", 0.0) or 0.0
             
             # Calculate base MRP (pre-tax amount before discount)
-            line_base_mrp = (base_mrp if base_mrp > 0.0 else unit_price) * qty
+            line_base_mrp = (base_mrp if base_mrp > 0.0 else unit_price)
             gross += line_base_mrp
 
             # Get the pre-tax subtotal (after discount)

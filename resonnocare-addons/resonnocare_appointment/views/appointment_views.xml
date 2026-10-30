@@ -113,7 +113,7 @@
                     <button
                         name="action_view_bill"
                         type="object"
-                        string="View Bill"
+                        string="View Order"
                         class="btn-secondary"
                         invisible="sale_order_id == False"
                     />
@@ -134,7 +134,6 @@
                     />
 
                     
-
                     <button
                         name="action_create_fitting_appointment"
                         type="object"
@@ -145,7 +144,7 @@
                     <button
                         name="action_open_patient_reports"
                         type="object"
-                        string="Create SCM Order"
+                        string="Release Order"
                         class="btn-secondary"
                         invisible="sale_type != 'device' or sale_order_id == False or parent_appointment_id != False or  scm_order_id"
                     />
@@ -170,7 +169,7 @@
                     <group string="Patient Information">
                         <group>
                             <field name="can_edit_clinic" invisible="1"/>
-                            <field name="patient_id"/>
+                            <field name="patient_id" t-options="{'no_create': True, 'no_open': True, 'no_edit': True}" readonly="1"/>
                             <field name="clinic_id" readonly="not can_edit_clinic" force_save="1"/>
                         </group>
                         <group>
