@@ -264,7 +264,7 @@ class ResonnocareDiscountApprovalRequest(models.Model):
         if grid_lines:
             max_pct = max((l.discount_grid_id.slab2_max or 0.0) for l in grid_lines)
         return {
-            "no_of_ha": int(sum(l.product_uom_qty or 0.0 for l in device_lines)),
+            "no_of_ha": 0,
             "total_ha_mrp": gross,
             "max_discount_pct_allowed": max_pct,
             "max_discount_value_allowed": gross * (max_pct / 100.0) if gross else 0.0,
