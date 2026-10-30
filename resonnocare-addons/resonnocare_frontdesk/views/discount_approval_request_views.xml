@@ -57,8 +57,8 @@
 
                     <group string="Discount and Advance">
                         <group>
-                            <field name="max_discount_pct_allowed" readonly="1"/>
-                            <field name="max_discount_value_allowed" readonly="1"/>
+                            <field name="max_discount_pct_allowed" readonly="1" invisible="1"/>
+                            <field name="max_discount_value_allowed" readonly="1" invisible="1"/>
                             <field name="discount_value_requested" readonly="1"/>
                             <field name="ha_discount_pct" readonly="state != 'draft'"/>
                             <field name="required_approval_level" readonly="1"/>

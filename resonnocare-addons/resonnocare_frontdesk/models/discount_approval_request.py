@@ -76,8 +76,9 @@ class ResonnocareDiscountApprovalRequest(models.Model):
         store=True,
         readonly=True,
     )
-    referral_source = fields.Selection(
-        related="patient_id.referral_source",
+    referral_source = fields.Many2one(
+        "custom.source",
+        related="patient_id.ref_source",
         string="Referral Source",
         store=True,
         readonly=True,
@@ -468,7 +469,17 @@ class ResonnocareDiscountApprovalRequest(models.Model):
                     "HA Discount % is mandatory when hearing aids are present in the sale order. "
                     "Please enter the HA Discount % before submitting."
                 )
-            rec.state = "submitted"
+            if rec.required_approval_level == "none":
+                rec.write(
+                    {
+                        "state": "approved",
+                        "approved_by_id": self.env.user.id,
+                        "approved_on": fields.Datetime.now(),
+                        "rejection_reason": False,
+                    }
+                )
+            else:
+                rec.state = "submitted"
 
     def action_approve(self):
         for rec in self:
