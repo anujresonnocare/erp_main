@@ -1,6 +1,10 @@
 from odoo import api, fields, models
 from odoo.exceptions import UserError, ValidationError
 
+import logging
+
+_logger = logging.getLogger(__name__)
+
 
 class ResonnocareDiscountApprovalRequest(models.Model):
 
@@ -311,7 +315,7 @@ class ResonnocareDiscountApprovalRequest(models.Model):
         for line in lines:
             qty = line.product_uom_qty or 0.0
             unit_price = line.product_id.list_price or 0.0
-            base_mrp = getattr(line, "discount_fixed", 0.0) or 0.0
+            base_mrp = getattr(line, "discount_reference_mrp", 0.0) or 0.0
 
             line_base_mrp = base_mrp if base_mrp > 0.0 else unit_price
             gross += line_base_mrp
@@ -323,6 +327,9 @@ class ResonnocareDiscountApprovalRequest(models.Model):
 
             line_discount_value = max(line_base_mrp - line_subtotal, 0.0)
             discount_value += line_discount_value
+            _logger.info("Line 1111111111111111ID %s: base_mrp=%s, subtotal=%s, discount_value=%s", line.id, line_base_mrp, line_subtotal, line_discount_value)
+
+
 
             # HA-only aggregation
             if getattr(line.product_id.product_tmpl_id, "item_type", "") == "ha":
@@ -335,11 +342,13 @@ class ResonnocareDiscountApprovalRequest(models.Model):
         if grid_lines:
             max_pct = max((l.discount_grid_id.slab2_max or 0.0) for l in grid_lines)
 
+        _logger.info("Computed metrics for Sale Order 2222222222222222222ID %s: gross=%s, discount_value=%s, ha_gross=%s, ha_discount_value=%s, max_pct=%s", sale.id, gross, discount_value, ha_gross, ha_discount_value, max_pct)
         # no_of_ha -> sum qty of HA lines only
         no_of_ha = int(sum(l.product_uom_qty or 0.0 for l in ha_lines))
-
+        _logger.info("Number of HA units in Sale Order3333333333333333 ID %s: %s", sale.id, no_of_ha)
         # HA discount %
         ha_discount_pct = (ha_discount_value / ha_gross * 100.0) if ha_gross else 0.0
+        _logger.info("HA Discount % for Sale Order44444444444444444444 ID %s: %s", sale.id, ha_discount_pct)
 
         return {
             "no_of_ha": no_of_ha,
