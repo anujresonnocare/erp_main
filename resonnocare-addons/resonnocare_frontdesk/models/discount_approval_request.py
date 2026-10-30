@@ -348,7 +348,7 @@ class ResonnocareDiscountApprovalRequest(models.Model):
         _logger.info("Number of HA units in Sale Order3333333333333333 ID %s: %s", sale.id, no_of_ha)
         # HA discount %
         ha_discount_pct = (ha_discount_value / ha_gross * 100.0) if ha_gross else 0.0
-        _logger.info("HA Discount %s for Sale Order44444444444444444444 ID %s: %s", sale.id, ha_discount_pct)
+        # _logger.info("HA Discount for Sale Order44444444444444444444 ID %s: %s", sale.id, ha_discount_pct)
 
         return {
             "no_of_ha": no_of_ha,
