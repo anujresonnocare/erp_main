@@ -117,10 +117,19 @@ class ResonnocareDiscountApprovalRequest(models.Model):
         tracking=True,
     )
 
+    # ha_discount_pct = fields.Float(
+    #     string="HA Discount %",
+    #     tracking=True,
+    #     help="Enter the discount percentage applicable to hearing aids."
+    # )
+
     ha_discount_pct = fields.Float(
         string="HA Discount %",
+        compute="_compute_discount_metrics",
+        store=True,
+        readonly=True,
         tracking=True,
-        help="Enter the discount percentage applicable to hearing aids."
+        help="Auto-computed from HA lines: (HA discount value / HA gross MRP) x 100.",
     )
 
     ha_discount_value = fields.Monetary(
@@ -400,11 +409,15 @@ class ResonnocareDiscountApprovalRequest(models.Model):
     def _compute_discount_metrics(self):
         for rec in self:
             metrics = rec._get_discount_metrics_from_sale_order(rec.sale_order_id)
-            rec.no_of_ha = metrics["no_of_ha"]
+            rec.no_of_ha =  metrics["no_of_ha"]
             rec.total_ha_mrp = metrics["total_ha_mrp"]
             rec.max_discount_pct_allowed = metrics["max_discount_pct_allowed"]
             rec.max_discount_value_allowed = metrics["max_discount_value_allowed"]
+            rec.discount_value_requested = metrics["discount_value_requested"]
+            rec.discount_pct_requested = metrics["discount_pct_requested"]
             rec.min_advance_required = metrics["min_advance_required"]
+            rec.ha_discount_pct = metrics["ha_discount_pct"]
+            rec.ha_discount_value = metrics["ha_discount_value"]
 
     @api.depends(
         "sale_order_id.order_line.discount",
