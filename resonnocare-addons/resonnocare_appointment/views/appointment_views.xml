@@ -251,7 +251,7 @@
                                         ('product_tmpl_id.item_type','=',item_type),
                                     ]"
                                     context="{
-                                        'tree_view_ref': 'resonnocare_appointment.view_product_product_frontdesk_tree',
+                                        'list_view_ref': 'resonnocare_appointment.view_product_product_frontdesk_list',
                                         'search_view_ref': 'resonnocare_appointment.view_product_product_frontdesk_search',
                                     }"
                                     options="{'no_create': True, 'no_open': True, 'no_quick_create': True, 'no_create_edit': True, 'no_edit': True}"
@@ -369,7 +369,7 @@
 
                 <group string="Payment Modes">
                     <field name="payment_line_ids" nolabel="1" colspan="2">
-                        <tree editable="bottom">
+                        <list editable="bottom">
                             <field name="mode_id" options="{'no_create': True}"/>
                             <field name="submode_id"
                                    options="{'no_create': True}"
@@ -397,7 +397,7 @@
                                    options="{'no_create': True}"/>
                             <field name="emi_scheme_name"
                                    column_invisible="not submode_id or not submode_id.needs_emi_details"/>
-                        </tree>
+                        </list>
                     </field>
                     <div class="text-danger" invisible="split_valid">
                         Allocated total (<field name="total_allocated" readonly="1"/>)
@@ -443,11 +443,11 @@
                         <field name="denomination_total"/>
                     </group>
                     <field name="denomination_ids">
-                        <tree editable="bottom">
+                        <list editable="bottom">
                             <field name="denomination"/>
                             <field name="count"/>
                             <field name="subtotal" sum="Total"/>
-                        </tree>
+                        </list>
                     </field>
                 </sheet>
                 <footer>
@@ -459,15 +459,15 @@
 
 
     <!-- Product Type -->
-    <record id="view_resonnocare_product_type_tree" model="ir.ui.view">
-        <field name="name">resonnocare.product.type.tree</field>
+    <record id="view_resonnocare_product_type_list" model="ir.ui.view">
+        <field name="name">resonnocare.product.type.list</field>
         <field name="model">resonnocare.product.type</field>
         <field name="arch" type="xml">
-            <tree editable="bottom">
+            <list editable="bottom">
                 <field name="sequence" widget="handle"/>
                 <field name="name"/>
                 <field name="code"/>
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -490,19 +490,19 @@
     <record id="action_resonnocare_product_type" model="ir.actions.act_window">
         <field name="name">Product Types</field>
         <field name="res_model">resonnocare.product.type</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
     </record>
 
     <!-- Payment Type -->
-    <record id="view_resonnocare_payment_type_tree" model="ir.ui.view">
-        <field name="name">resonnocare.payment.type.tree</field>
+    <record id="view_resonnocare_payment_type_list" model="ir.ui.view">
+        <field name="name">resonnocare.payment.type.list</field>
         <field name="model">resonnocare.payment.type</field>
         <field name="arch" type="xml">
-            <tree editable="bottom">
+            <list editable="bottom">
                 <field name="sequence" widget="handle"/>
                 <field name="name"/>
                 <field name="code"/>
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -525,34 +525,34 @@
     <record id="action_resonnocare_payment_type" model="ir.actions.act_window">
         <field name="name">Payment Types</field>
         <field name="res_model">resonnocare.payment.type</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
     </record>
 
     <!-- EMI Partner -->
-    <record id="view_resonnocare_emi_partner_tree" model="ir.ui.view">
-        <field name="name">resonnocare.emi.partner.tree</field>
+    <record id="view_resonnocare_emi_partner_list" model="ir.ui.view">
+        <field name="name">resonnocare.emi.partner.list</field>
         <field name="model">resonnocare.emi.partner</field>
         <field name="arch" type="xml">
-            <tree editable="bottom">
+            <list editable="bottom">
                 <field name="sequence" widget="handle"/>
                 <field name="name"/>
                 <field name="active"/>
-            </tree>
+            </list>
         </field>
     </record>
 
     <record id="action_resonnocare_emi_partner" model="ir.actions.act_window">
         <field name="name">EMI Partners</field>
         <field name="res_model">resonnocare.emi.partner</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
     </record>
 
     <!-- Payment Submode -->
-    <record id="view_resonnocare_payment_submode_tree" model="ir.ui.view">
-        <field name="name">resonnocare.payment.submode.tree</field>
+    <record id="view_resonnocare_payment_submode_list" model="ir.ui.view">
+        <field name="name">resonnocare.payment.submode.list</field>
         <field name="model">resonnocare.payment.submode</field>
         <field name="arch" type="xml">
-            <tree editable="bottom">
+            <list editable="bottom">
                 <field name="sequence" widget="handle"/>
                 <field name="name"/>
                 <field name="code"/>
@@ -563,23 +563,23 @@
                 <field name="needs_cheque"/>
                 <field name="needs_emi_details"/>
                 <field name="active"/>
-            </tree>
+            </list>
         </field>
     </record>
 
     <!-- Payment Mode -->
-    <record id="view_resonnocare_payment_mode_tree" model="ir.ui.view">
-        <field name="name">resonnocare.payment.mode.tree</field>
+    <record id="view_resonnocare_payment_mode_list" model="ir.ui.view">
+        <field name="name">resonnocare.payment.mode.list</field>
         <field name="model">resonnocare.payment.mode</field>
         <field name="arch" type="xml">
-            <tree>
+            <list>
                 <field name="sequence" widget="handle"/>
                 <field name="name"/>
                 <field name="code"/>
                 <field name="finance_approval_required"/>
                 <field name="default_journal_id"/>
                 <field name="active"/>
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -616,7 +616,7 @@
                         </page>
                         <page string="Sub Modes">
                             <field name="submode_ids">
-                                <tree editable="bottom">
+                                <list editable="bottom">
                                     <field name="sequence" widget="handle"/>
                                     <field name="name"/>
                                     <field name="code"/>
@@ -627,7 +627,7 @@
                                     <field name="needs_cheque"/>
                                     <field name="needs_emi_details"/>
                                     <field name="active"/>
-                                </tree>
+                                </list>
                             </field>
                         </page>
                     </notebook>
@@ -639,7 +639,7 @@
     <record id="action_resonnocare_payment_mode" model="ir.actions.act_window">
         <field name="name">Payment Modes</field>
         <field name="res_model">resonnocare.payment.mode</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
     </record>
 
     <!-- Menu -->
@@ -735,7 +735,7 @@
 
                 <group string="Payment Modes">
                     <field name="payment_line_ids" nolabel="1" colspan="2">
-                        <tree editable="bottom">
+                        <list editable="bottom">
                             <field name="mode_id" options="{'no_create': True}"/>
                             <field name="submode_id"
                                    options="{'no_create': True}"
@@ -763,7 +763,7 @@
                                    options="{'no_create': True}"/>
                             <field name="emi_scheme_name"
                                    column_invisible="not submode_id or not submode_id.needs_emi_details"/>
-                        </tree>
+                        </list>
                     </field>
                     <div class="text-danger" invisible="split_valid">
                         Allocated total (<field name="total_allocated" readonly="1"/>)
@@ -809,11 +809,11 @@
                         <field name="denomination_total"/>
                     </group>
                     <field name="denomination_ids">
-                        <tree editable="bottom">
+                        <list editable="bottom">
                             <field name="denomination"/>
                             <field name="count"/>
                             <field name="subtotal" sum="Total"/>
-                        </tree>
+                        </list>
                     </field>
                 </sheet>
                 <footer>
