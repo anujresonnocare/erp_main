@@ -75,8 +75,8 @@
         <field name="code">cash</field>
         <field name="sequence">10</field>
         <field name="finance_approval_required" eval="False"/>
-        <field name="applicable_product_type" eval="[(6, 0, [ref('ptype_diagnostic'), ref('ptype_device'), ref('ptype_accessory'), ref('ptype_repair')])]"/>
-        <field name="applicable_payment_type" eval="[(6, 0, [ref('paytype_regular'), ref('paytype_down'), ref('paytype_balance')])]"/>
+        <field name="applicable_product_types" eval="[(6, 0, [ref('ptype_diagnostic'), ref('ptype_device'), ref('ptype_accessory'), ref('ptype_repair')])]"/>
+        <field name="applicable_payment_types" eval="[(6, 0, [ref('paytype_regular'), ref('paytype_down'), ref('paytype_balance')])]"/>
     </record>
     
     <record id="submode_cash_denom" model="resonnocare.payment.submode">
@@ -92,8 +92,8 @@
         <field name="code">pos</field>
         <field name="sequence">20</field>
         <field name="finance_approval_required" eval="False"/>
-        <field name="applicable_product_type" eval="[(6, 0, [ref('ptype_diagnostic'), ref('ptype_device'), ref('ptype_accessory'), ref('ptype_repair')])]"/>
-        <field name="applicable_payment_type" eval="[(6, 0, [ref('paytype_regular'), ref('paytype_down'), ref('paytype_balance')])]"/>
+        <field name="applicable_product_types" eval="[(6, 0, [ref('ptype_diagnostic'), ref('ptype_device'), ref('ptype_accessory'), ref('ptype_repair')])]"/>
+        <field name="applicable_payment_types" eval="[(6, 0, [ref('paytype_regular'), ref('paytype_down'), ref('paytype_balance')])]"/>
     </record>
 
     <!-- POS > UPI -->
@@ -144,8 +144,8 @@
         <field name="code">online</field>
         <field name="sequence">30</field>
         <field name="finance_approval_required" eval="True"/>
-        <field name="applicable_product_type" eval="[(6, 0, [ref('ptype_diagnostic'), ref('ptype_device'), ref('ptype_accessory'), ref('ptype_repair')])]"/>
-        <field name="applicable_payment_type" eval="[(6, 0, [ref('paytype_regular'), ref('paytype_down'), ref('paytype_balance')])]"/>
+        <field name="applicable_product_types" eval="[(6, 0, [ref('ptype_diagnostic'), ref('ptype_device'), ref('ptype_accessory'), ref('ptype_repair')])]"/>
+        <field name="applicable_payment_types" eval="[(6, 0, [ref('paytype_regular'), ref('paytype_down'), ref('paytype_balance')])]"/>
     </record>
     <record id="submode_online_neft" model="resonnocare.payment.submode">
         <field name="mode_id" ref="mode_online"/>
@@ -182,8 +182,8 @@
         <field name="sequence">40</field>
         <field name="finance_approval_required" eval="True"/>
         <!-- Cheque NOT applicable for diagnostics per spec -->
-        <field name="applicable_product_type" eval="[(6, 0, [ref('ptype_device'), ref('ptype_accessory'), ref('ptype_repair')])]"/>
-        <field name="applicable_payment_type" eval="[(6, 0, [ref('paytype_regular'), ref('paytype_down'), ref('paytype_balance')])]"/>
+        <field name="applicable_product_types" eval="[(6, 0, [ref('ptype_device'), ref('ptype_accessory'), ref('ptype_repair')])]"/>
+        <field name="applicable_payment_types" eval="[(6, 0, [ref('paytype_regular'), ref('paytype_down'), ref('paytype_balance')])]"/>
     </record>
     <record id="submode_cheque_bank" model="resonnocare.payment.submode">
         <field name="mode_id" ref="mode_cheque"/>
@@ -200,8 +200,8 @@
         <field name="sequence">50</field>
         <field name="finance_approval_required" eval="True"/>
         <!-- EMI only for Device (and Device with accessories) -->
-        <field name="applicable_product_type" eval="[(6, 0, [ref('ptype_device'), ref('ptype_accessory')])]"/>
-        <field name="applicable_payment_type" eval="[(6, 0, [ref('paytype_regular'), ref('paytype_down'), ref('paytype_balance')])]"/>
+        <field name="applicable_product_types" eval="[(6, 0, [ref('ptype_device'), ref('ptype_accessory')])]"/>
+        <field name="applicable_payment_types" eval="[(6, 0, [ref('paytype_regular'), ref('paytype_down'), ref('paytype_balance')])]"/>
     </record>
     <record id="submode_emi_no_cost" model="resonnocare.payment.submode">
         <field name="mode_id" ref="mode_emi"/>
