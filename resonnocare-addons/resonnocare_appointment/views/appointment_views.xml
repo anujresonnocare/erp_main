@@ -359,7 +359,7 @@
             </xpath>
 
             <!-- Split-lines block -->
-            <xpath expr="//sheet" position="inside">
+            <xpath expr="//form" position="inside">
                 <field name="split_valid" invisible="1"/>
                 <field name="finance_approval_required" invisible="1"/>
                 <field name="can_create_payment" invisible="1"/>
