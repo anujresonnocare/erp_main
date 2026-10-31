@@ -344,7 +344,8 @@
             </xpath>
 
             <!-- Finance approval banner + approve button -->
-            <xpath expr="//form" position="before">
+            <!-- <xpath expr="//form" position="before"> -->
+            <xpath expr="//form/div[1]" position="before">
                 <div class="alert alert-warning text-center"
                      role="alert"
                      invisible="not finance_approval_required">
