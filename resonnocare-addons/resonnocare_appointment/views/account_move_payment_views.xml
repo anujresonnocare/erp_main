@@ -21,7 +21,7 @@
                 <field name="payment_mode"/>
                 <field name="sub_mode"
                        invisible="not payment_mode"
-                       domain="[( 'id', '!=', 0)]"/>
+                       />
                 <field name="pay_type"
                        invisible="payment_mode != 'pos' or sub_mode not in ['upi', 'credit_card', 'debit_card', 'pay_by_link']"/>
                 <field name="reference_no"
