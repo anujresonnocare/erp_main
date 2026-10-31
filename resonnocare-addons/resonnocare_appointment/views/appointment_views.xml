@@ -331,6 +331,523 @@
         </field>
     </record>
 
+
+    <record id="view_account_payment_register_resonnocare" model="ir.ui.view">
+        <field name="name">account.payment.register.resonnocare</field>
+        <field name="model">account.payment.register</field>
+        <field name="inherit_id" ref="account.view_account_payment_register_form"/>
+        <field name="arch" type="xml">
+
+            <!-- Lock the amount (comes from invoice) -->
+            <xpath expr="//field[@name='amount']" position="attributes">
+                <attribute name="readonly">1</attribute>
+            </xpath>
+
+            <!-- Finance approval banner + approve button -->
+            <xpath expr="//sheet" position="before">
+                <div class="alert alert-warning text-center"
+                     role="alert"
+                     invisible="not finance_approval_required">
+                    ⚠️ Finance approval is required for one or more of the selected payment modes.
+                </div>
+                <div class="alert alert-success text-center"
+                     role="alert"
+                     invisible="not finance_approved_by">
+                    ✅ Finance approved by <field name="finance_approved_by" readonly="1"/>
+                    on <field name="finance_approved_on" readonly="1"/>.
+                </div>
+            </xpath>
+
+            <!-- Split-lines block -->
+            <xpath expr="//sheet" position="inside">
+                <field name="split_valid" invisible="1"/>
+                <field name="finance_approval_required" invisible="1"/>
+                <field name="can_create_payment" invisible="1"/>
+                <field name="show_finance_approval_button" invisible="1"/>
+                <field name="total_allocated" invisible="1"/>
+
+                <group string="Payment Modes">
+                    <field name="payment_line_ids" nolabel="1" colspan="2">
+                        <tree editable="bottom">
+                            <field name="mode_id" options="{'no_create': True}"/>
+                            <field name="submode_id"
+                                   options="{'no_create': True}"
+                                   domain="[('mode_id', '=', mode_id)]"/>
+                            <field name="amount" sum="Total Allocated"/>
+                            <field name="is_cash_mode" column_invisible="1"/>
+
+                            <!-- UPI / card / bank-transfer details -->
+                            <field name="reference_no"
+                                   column_invisible="not submode_id or not submode_id.needs_reference_no"/>
+                            <field name="reference_date"
+                                   column_invisible="not submode_id or not submode_id.needs_reference_date"/>
+                            <field name="bank_name"
+                                   column_invisible="not submode_id or not submode_id.needs_bank_name"/>
+
+                            <!-- Cheque details -->
+                            <field name="cheque_number"
+                                   column_invisible="not submode_id or not submode_id.needs_cheque"/>
+                            <field name="cheque_date"
+                                   column_invisible="not submode_id or not submode_id.needs_cheque"/>
+
+                            <!-- EMI details -->
+                            <field name="emi_partner_id"
+                                   column_invisible="not submode_id or not submode_id.needs_emi_details"
+                                   options="{'no_create': True}"/>
+                            <field name="emi_scheme_name"
+                                   column_invisible="not submode_id or not submode_id.needs_emi_details"/>
+                        </tree>
+                    </field>
+                    <div class="text-danger" invisible="split_valid">
+                        Allocated total (<field name="total_allocated" readonly="1"/>)
+                        must equal the payment amount.
+                    </div>
+                </group>
+
+                <group string="Cash Denomination"
+                       invisible="not payment_line_ids.filtered(lambda l: l.is_cash_mode)">
+                    <field name="payment_line_ids" invisible="1"/>
+                    <field name="currency_id" invisible="1"/>
+                </group>
+            </xpath>
+
+            <!-- Denomination editor (per cash line) — use a dedicated wizard popup
+                 when needed, but for inline convenience show one editable grid -->
+            <xpath expr="//footer" position="before">
+                <button name="action_finance_approve"
+                        type="object"
+                        string="Finance Approve"
+                        class="btn-primary"
+                        invisible="not show_finance_approval_button"
+                        confirm="Approve this payment for finance?"/>
+            </xpath>
+
+            <!-- Disable the core create button until split is valid -->
+            <xpath expr="//footer/button[@name='action_create_payments']" position="attributes">
+                <attribute name="invisible">not can_create_payment</attribute>
+            </xpath>
+
+        </field>
+    </record>
+
+    <!-- Optional: dedicated denomination popup for a cash line -->
+    <record id="view_resonnocare_payment_line_denomination_form" model="ir.ui.view">
+        <field name="name">resonnocare.payment.line.denomination.form</field>
+        <field name="model">resonnocare.payment.line</field>
+        <field name="arch" type="xml">
+            <form string="Cash Denomination">
+                <sheet>
+                    <group>
+                        <field name="amount" readonly="1"/>
+                        <field name="denomination_total"/>
+                    </group>
+                    <field name="denomination_ids">
+                        <tree editable="bottom">
+                            <field name="denomination"/>
+                            <field name="count"/>
+                            <field name="subtotal" sum="Total"/>
+                        </tree>
+                    </field>
+                </sheet>
+                <footer>
+                    <button special="cancel" string="Close" class="btn-secondary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+
+    <!-- Product Type -->
+    <record id="view_resonnocare_product_type_tree" model="ir.ui.view">
+        <field name="name">resonnocare.product.type.tree</field>
+        <field name="model">resonnocare.product.type</field>
+        <field name="arch" type="xml">
+            <tree editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="code"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_resonnocare_product_type_form" model="ir.ui.view">
+        <field name="name">resonnocare.product.type.form</field>
+        <field name="model">resonnocare.product.type</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="code"/>
+                        <field name="sequence"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_resonnocare_product_type" model="ir.actions.act_window">
+        <field name="name">Product Types</field>
+        <field name="res_model">resonnocare.product.type</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- Payment Type -->
+    <record id="view_resonnocare_payment_type_tree" model="ir.ui.view">
+        <field name="name">resonnocare.payment.type.tree</field>
+        <field name="model">resonnocare.payment.type</field>
+        <field name="arch" type="xml">
+            <tree editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="code"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_resonnocare_payment_type_form" model="ir.ui.view">
+        <field name="name">resonnocare.payment.type.form</field>
+        <field name="model">resonnocare.payment.type</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="code"/>
+                        <field name="sequence"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_resonnocare_payment_type" model="ir.actions.act_window">
+        <field name="name">Payment Types</field>
+        <field name="res_model">resonnocare.payment.type</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- EMI Partner -->
+    <record id="view_resonnocare_emi_partner_tree" model="ir.ui.view">
+        <field name="name">resonnocare.emi.partner.tree</field>
+        <field name="model">resonnocare.emi.partner</field>
+        <field name="arch" type="xml">
+            <tree editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="active"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_resonnocare_emi_partner" model="ir.actions.act_window">
+        <field name="name">EMI Partners</field>
+        <field name="res_model">resonnocare.emi.partner</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- Payment Submode -->
+    <record id="view_resonnocare_payment_submode_tree" model="ir.ui.view">
+        <field name="name">resonnocare.payment.submode.tree</field>
+        <field name="model">resonnocare.payment.submode</field>
+        <field name="arch" type="xml">
+            <tree editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="submode_group"/>
+                <field name="needs_reference_no"/>
+                <field name="needs_reference_date"/>
+                <field name="needs_bank_name"/>
+                <field name="needs_cheque"/>
+                <field name="needs_emi_details"/>
+                <field name="active"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Payment Mode -->
+    <record id="view_resonnocare_payment_mode_tree" model="ir.ui.view">
+        <field name="name">resonnocare.payment.mode.tree</field>
+        <field name="model">resonnocare.payment.mode</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="finance_approval_required"/>
+                <field name="default_journal_id"/>
+                <field name="active"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_resonnocare_payment_mode_form" model="ir.ui.view">
+        <field name="name">resonnocare.payment.mode.form</field>
+        <field name="model">resonnocare.payment.mode</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="Payment Mode"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="code"/>
+                            <field name="sequence"/>
+                            <field name="active"/>
+                        </group>
+                        <group>
+                            <field name="finance_approval_required"/>
+                            <field name="default_journal_id"/>
+                            <field name="default_payment_method_line_id"
+                                   options="{'no_create': True}"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Applicability">
+                            <group>
+                                <field name="applicable_product_type_ids"
+                                       widget="many2many_tags"/>
+                                <field name="applicable_payment_type_ids"
+                                       widget="many2many_tags"/>
+                            </group>
+                        </page>
+                        <page string="Sub Modes">
+                            <field name="submode_ids">
+                                <tree editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="name"/>
+                                    <field name="code"/>
+                                    <field name="submode_group"/>
+                                    <field name="needs_reference_no"/>
+                                    <field name="needs_reference_date"/>
+                                    <field name="needs_bank_name"/>
+                                    <field name="needs_cheque"/>
+                                    <field name="needs_emi_details"/>
+                                    <field name="active"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_resonnocare_payment_mode" model="ir.actions.act_window">
+        <field name="name">Payment Modes</field>
+        <field name="res_model">resonnocare.payment.mode</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- Menu -->
+    <menuitem id="menu_resonnocare_payment_config"
+              name="Payment Configuration"
+              parent="account.menu_finance_configuration"
+              sequence="100"/>
+
+    <menuitem id="menu_resonnocare_payment_mode"
+              name="Payment Modes"
+              parent="menu_resonnocare_payment_config"
+              action="action_resonnocare_payment_mode"
+              sequence="10"/>
+
+    <menuitem id="menu_resonnocare_product_type"
+              name="Product Types"
+              parent="menu_resonnocare_payment_config"
+              action="action_resonnocare_product_type"
+              sequence="20"/>
+
+    <menuitem id="menu_resonnocare_payment_type"
+              name="Payment Types"
+              parent="menu_resonnocare_payment_config"
+              action="action_resonnocare_payment_type"
+              sequence="30"/>
+
+    <menuitem id="menu_resonnocare_emi_partner"
+              name="EMI Partners"
+              parent="menu_resonnocare_payment_config"
+              action="action_resonnocare_emi_partner"
+              sequence="40"/>
+
+<odoo>
+
+    <record id="view_account_payment_resonnocare" model="ir.ui.view">
+        <field name="name">account.payment.resonnocare</field>
+        <field name="model">account.payment</field>
+        <field name="inherit_id" ref="account.view_account_payment_form"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//form/header" position="inside">
+                <button name="action_print_resonnocare_receipt"
+                        type="object"
+                        string="Print Receipt"
+                        class="btn-secondary"
+                        invisible="state not in ('in_process', 'paid', 'posted')"/>
+            </xpath>
+
+            <xpath expr="//group" position="inside">
+                <field name="resonnocare_payment_mode_id" readonly="1"/>
+                <field name="resonnocare_payment_submode_id" readonly="1"/>
+            </xpath>
+
+        </field>
+    </record>
+
+</odoo>
+
+
+    <record id="view_account_payment_register_resonnocare" model="ir.ui.view">
+        <field name="name">account.payment.register.resonnocare</field>
+        <field name="model">account.payment.register</field>
+        <field name="inherit_id" ref="account.view_account_payment_register_form"/>
+        <field name="arch" type="xml">
+
+            <!-- Lock the amount (comes from invoice) -->
+            <xpath expr="//field[@name='amount']" position="attributes">
+                <attribute name="readonly">1</attribute>
+            </xpath>
+
+            <!-- Finance approval banner + approve button -->
+            <xpath expr="//sheet" position="before">
+                <div class="alert alert-warning text-center"
+                     role="alert"
+                     invisible="not finance_approval_required">
+                    ⚠️ Finance approval is required for one or more of the selected payment modes.
+                </div>
+                <div class="alert alert-success text-center"
+                     role="alert"
+                     invisible="not finance_approved_by">
+                    ✅ Finance approved by <field name="finance_approved_by" readonly="1"/>
+                    on <field name="finance_approved_on" readonly="1"/>.
+                </div>
+            </xpath>
+
+            <!-- Split-lines block -->
+            <xpath expr="//sheet" position="inside">
+                <field name="split_valid" invisible="1"/>
+                <field name="finance_approval_required" invisible="1"/>
+                <field name="can_create_payment" invisible="1"/>
+                <field name="show_finance_approval_button" invisible="1"/>
+                <field name="total_allocated" invisible="1"/>
+
+                <group string="Payment Modes">
+                    <field name="payment_line_ids" nolabel="1" colspan="2">
+                        <tree editable="bottom">
+                            <field name="mode_id" options="{'no_create': True}"/>
+                            <field name="submode_id"
+                                   options="{'no_create': True}"
+                                   domain="[('mode_id', '=', mode_id)]"/>
+                            <field name="amount" sum="Total Allocated"/>
+                            <field name="is_cash_mode" column_invisible="1"/>
+
+                            <!-- UPI / card / bank-transfer details -->
+                            <field name="reference_no"
+                                   column_invisible="not submode_id or not submode_id.needs_reference_no"/>
+                            <field name="reference_date"
+                                   column_invisible="not submode_id or not submode_id.needs_reference_date"/>
+                            <field name="bank_name"
+                                   column_invisible="not submode_id or not submode_id.needs_bank_name"/>
+
+                            <!-- Cheque details -->
+                            <field name="cheque_number"
+                                   column_invisible="not submode_id or not submode_id.needs_cheque"/>
+                            <field name="cheque_date"
+                                   column_invisible="not submode_id or not submode_id.needs_cheque"/>
+
+                            <!-- EMI details -->
+                            <field name="emi_partner_id"
+                                   column_invisible="not submode_id or not submode_id.needs_emi_details"
+                                   options="{'no_create': True}"/>
+                            <field name="emi_scheme_name"
+                                   column_invisible="not submode_id or not submode_id.needs_emi_details"/>
+                        </tree>
+                    </field>
+                    <div class="text-danger" invisible="split_valid">
+                        Allocated total (<field name="total_allocated" readonly="1"/>)
+                        must equal the payment amount.
+                    </div>
+                </group>
+
+                <group string="Cash Denomination"
+                       invisible="not payment_line_ids.filtered(lambda l: l.is_cash_mode)">
+                    <field name="payment_line_ids" invisible="1"/>
+                    <field name="currency_id" invisible="1"/>
+                </group>
+            </xpath>
+
+            <!-- Denomination editor (per cash line) — use a dedicated wizard popup
+                 when needed, but for inline convenience show one editable grid -->
+            <xpath expr="//footer" position="before">
+                <button name="action_finance_approve"
+                        type="object"
+                        string="Finance Approve"
+                        class="btn-primary"
+                        invisible="not show_finance_approval_button"
+                        confirm="Approve this payment for finance?"/>
+            </xpath>
+
+            <!-- Disable the core create button until split is valid -->
+            <xpath expr="//footer/button[@name='action_create_payments']" position="attributes">
+                <attribute name="invisible">not can_create_payment</attribute>
+            </xpath>
+
+        </field>
+    </record>
+
+    <!-- Optional: dedicated denomination popup for a cash line -->
+    <record id="view_resonnocare_payment_line_denomination_form" model="ir.ui.view">
+        <field name="name">resonnocare.payment.line.denomination.form</field>
+        <field name="model">resonnocare.payment.line</field>
+        <field name="arch" type="xml">
+            <form string="Cash Denomination">
+                <sheet>
+                    <group>
+                        <field name="amount" readonly="1"/>
+                        <field name="denomination_total"/>
+                    </group>
+                    <field name="denomination_ids">
+                        <tree editable="bottom">
+                            <field name="denomination"/>
+                            <field name="count"/>
+                            <field name="subtotal" sum="Total"/>
+                        </tree>
+                    </field>
+                </sheet>
+                <footer>
+                    <button special="cancel" string="Close" class="btn-secondary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+
+
+    <record id="view_account_payment_resonnocare" model="ir.ui.view">
+        <field name="name">account.payment.resonnocare</field>
+        <field name="model">account.payment</field>
+        <field name="inherit_id" ref="account.view_account_payment_form"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//form/header" position="inside">
+                <button name="action_print_resonnocare_receipt"
+                        type="object"
+                        string="Print Receipt"
+                        class="btn-secondary"
+                        invisible="state not in ('in_process', 'paid', 'posted')"/>
+            </xpath>
+
+            <xpath expr="//group" position="inside">
+                <field name="resonnocare_payment_mode_id" readonly="1"/>
+                <field name="resonnocare_payment_submode_id" readonly="1"/>
+            </xpath>
+
+        </field>
+    </record>
+
+
+
     <!-- =========================================================
          APPOINTMENT ACTION
          ========================================================= -->
