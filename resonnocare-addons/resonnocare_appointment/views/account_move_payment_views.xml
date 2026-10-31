@@ -41,47 +41,7 @@
                 <field name="scheme_name" invisible="payment_mode != 'emi'"/>
             </xpath>
 
-            <xpath expr="//group" position="inside">
-                <!-- <field name="confirm_subsequent_payment" invisible="not payment_already_exists"/> -->
-
-                <!-- UPI -->
-                <label for="upi_transaction_id"
-                       invisible="not is_upi_journal"/>
-
-                <field name="upi_transaction_id"
-                       placeholder="Enter UPI Transaction ID"
-                       invisible="not is_upi_journal"/>
-
-                <!-- Paytm -->
-                <label for="paytm_txn_id"
-                       invisible="not is_paytm_journal"/>
-
-                <field name="paytm_txn_id"
-                       placeholder="Enter Paytm Transaction ID"
-                       invisible="not is_paytm_journal"/>
-
-                <!-- Cheque -->
-                <label for="cheque_number"
-                       invisible="not is_cheque_journal"/>
-
-                <field name="cheque_number"
-                       placeholder="Cheque Number"
-                       invisible="not is_cheque_journal"/>
-
-                <label for="cheque_date"
-                       invisible="not is_cheque_journal"/>
-
-                <field name="cheque_date"
-                       invisible="not is_cheque_journal"/>
-
-                <label for="cheque_bank_name"
-                       invisible="not is_cheque_journal"/>
-
-                <field name="cheque_bank_name"
-                       placeholder="Bank Name"
-                       invisible="not is_cheque_journal"/>
-
-            </xpath>
+            
 
         </field>
     </record>
