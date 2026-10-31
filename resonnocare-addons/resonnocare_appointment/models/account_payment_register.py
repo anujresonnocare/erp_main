@@ -95,48 +95,97 @@ BANK_SELECTION = [
 ]
 
 
+from odoo import api, fields, models
+from odoo.exceptions import UserError, ValidationError
+
 
 class AccountPaymentRegister(models.TransientModel):
     _inherit = "account.payment.register"
 
-    # ---- Split payment lines ----
+    # ---------- Split lines ----------
     payment_line_ids = fields.One2many(
-        "resonnocare.payment.line",
-        "register_id",
-        string="Payment Modes",
+        "resonnocare.payment.line", "register_id", string="Payment Modes",
     )
     total_allocated = fields.Monetary(
-        compute="_compute_total_allocated",
-        store=True,
+        compute="_compute_total_allocated", store=True,
         currency_field="currency_id",
     )
     split_valid = fields.Boolean(compute="_compute_total_allocated", store=True)
 
-    # ---- Finance approval ----
+    # ---------- Finance approval ----------
     finance_approval_required = fields.Boolean(
-        compute="_compute_finance_approval", store=True
+        compute="_compute_finance_approval", store=True,
     )
     finance_approved_by = fields.Many2one("res.users", readonly=True)
     finance_approved_on = fields.Datetime(readonly=True)
     show_finance_approval_button = fields.Boolean(
-        compute="_compute_show_finance_approval_button"
+        compute="_compute_show_finance_approval_button",
     )
-    can_create_payment = fields.Boolean(
-        compute="_compute_can_create_payment"
+    can_create_payment = fields.Boolean(compute="_compute_can_create_payment")
+
+    # ---------- Legacy fields (kept for old view + receipt) ----------
+    upi_transaction_id = fields.Char(string="UPI Transaction ID")
+    cheque_number = fields.Char(string="Cheque Number")
+    cheque_date = fields.Date(string="Cheque Date")
+    cheque_bank_name = fields.Char(string="Cheque Bank Name")
+    paytm_txn_id = fields.Char(string="Paytm Transaction ID")
+
+    is_upi_journal = fields.Boolean(compute="_compute_journal_flags", store=False)
+    is_cheque_journal = fields.Boolean(compute="_compute_journal_flags", store=False)
+    is_paytm_journal = fields.Boolean(compute="_compute_journal_flags", store=False)
+
+    payment_already_exists = fields.Boolean(
+        string="Payment Already Exists",
+        compute="_compute_payment_already_exists",
+        store=False,
     )
+    confirm_subsequent_payment = fields.Boolean(default=False)
 
-    # ---- Legacy compatibility (kept for receipt/PDF templates) ----
-    upi_transaction_id = fields.Char()
-    paytm_txn_id = fields.Char()
-    cheque_number = fields.Char()
-    cheque_date = fields.Date()
-    cheque_bank_name = fields.Selection(
-        selection=lambda self: self.env["resonnocare.payment.line"]._fields["bank_name"].selection,
-        string="Cheque Bank Name",
-    )
+    # ---------- Computes (legacy) ----------
+    @api.depends("journal_id")
+    def _compute_journal_flags(self):
+        for rec in self:
+            rec.is_upi_journal = False
+            rec.is_cheque_journal = False
+            rec.is_paytm_journal = False
+            if not rec.journal_id:
+                continue
+            name = (rec.journal_id.name or "").lower()
+            if "upi" in name or "qr" in name:
+                rec.is_upi_journal = True
+            if "cheque" in name or "check" in name:
+                rec.is_cheque_journal = True
+            if "paytm" in name:
+                rec.is_paytm_journal = True
 
-    # ---- Computes ----
+    @api.depends("line_ids")
+    def _compute_payment_already_exists(self):
+        for rec in self:
+            rec.payment_already_exists = False
+            for line in rec.line_ids:
+                invoice = line.move_id
+                if not invoice:
+                    continue
+                if invoice.payment_state in ("paid", "in_payment", "partial"):
+                    rec.payment_already_exists = True
+                    break
+                reconciled_payments = (
+                    invoice.reconciled_payment_ids | invoice.matched_payment_ids
+                )
+                if reconciled_payments:
+                    rec.payment_already_exists = True
+                    break
+                if hasattr(invoice, "_get_related_appointment"):
+                    appointment = invoice._get_related_appointment()
+                    if appointment:
+                        sale = appointment._get_effective_sale_order()
+                        if sale:
+                            total_paid = appointment._get_total_paid_for_sale(sale)
+                            if total_paid > 0.0:
+                                rec.payment_already_exists = True
+                                break
 
+    # ---------- Computes (new split) ----------
     @api.depends("payment_line_ids.amount")
     def _compute_total_allocated(self):
         for rec in self:
@@ -162,7 +211,7 @@ class AccountPaymentRegister(models.TransientModel):
             "resonnocare_payment_modes.group_finance_approver"
         )
         for rec in self:
-            rec.show_finance_approval_button = (
+            rec.show_finance_approval_button = bool(
                 rec.finance_approval_required
                 and not rec.finance_approved_by
                 and is_finance
@@ -185,48 +234,38 @@ class AccountPaymentRegister(models.TransientModel):
                 )
             )
 
-    # ---- Onchange: reset finance approval when lines change ----
-
     @api.onchange("payment_line_ids")
     def _onchange_payment_lines_reset_approval(self):
         if self.finance_approved_by:
             self.finance_approved_by = False
             self.finance_approved_on = False
 
-    # ---- Applicability validation ----
-
+    # ---------- Applicability (split) ----------
     def _invoice_product_types(self):
         self.ensure_one()
         codes = set()
-        invoices = self.line_ids.mapped("move_id")
-        for inv in invoices:
+        for inv in self.line_ids.mapped("move_id"):
             for il in inv.invoice_line_ids.filtered(
                 lambda l: l.product_id and not l.display_type
             ):
-                tmpl = il.product_id.product_tmpl_id
-                item_type = getattr(tmpl, "item_type", False)
+                item_type = getattr(il.product_id.product_tmpl_id, "item_type", False)
                 if item_type:
                     codes.add(item_type)
         return codes
 
     def _payment_intent_type(self):
-        """Return 'regular'/'down_payment'/'balance' if determinable."""
         self.ensure_one()
-        invoices = self.line_ids.mapped("move_id")
-        for inv in invoices:
-            # Prefer appointment's sale order if available
+        for inv in self.line_ids.mapped("move_id"):
             appointment = False
             if hasattr(inv, "_get_related_appointment"):
                 appointment = inv._get_related_appointment()
-            if appointment:
-                sale = False
-                if hasattr(appointment, "_get_effective_sale_order"):
-                    sale = appointment._get_effective_sale_order()
+            if appointment and hasattr(appointment, "_get_effective_sale_order"):
+                sale = appointment._get_effective_sale_order()
                 if sale and hasattr(sale, "appointment_sale_type"):
-                    sale_type = sale.appointment_sale_type or ""
-                    if "down" in sale_type:
+                    st = (sale.appointment_sale_type or "").lower()
+                    if "down" in st:
                         return "down_payment"
-                    if "balance" in sale_type:
+                    if "balance" in st:
                         return "balance"
                     return "regular"
         return "regular"
@@ -239,23 +278,17 @@ class AccountPaymentRegister(models.TransientModel):
             mode = line.mode_id
             allowed_products = set(mode.applicable_product_types.mapped("code"))
             allowed_intents = set(mode.applicable_payment_types.mapped("code"))
+            if allowed_products and product_types and not (product_types & allowed_products):
+                raise ValidationError(
+                    f"Mode '{mode.name}' is not applicable for the products in "
+                    f"this invoice ({', '.join(sorted(product_types))})."
+                )
+            if allowed_intents and intent and intent not in allowed_intents:
+                raise ValidationError(
+                    f"Mode '{mode.name}' is not applicable for payment type '{intent}'."
+                )
 
-            if allowed_products and product_types:
-                if not (product_types & allowed_products):
-                    raise ValidationError(
-                        f"Mode '{mode.name}' is not applicable for the "
-                        f"products in this invoice "
-                        f"({', '.join(sorted(product_types))})."
-                    )
-            if allowed_intents and intent:
-                if intent not in allowed_intents:
-                    raise ValidationError(
-                        f"Mode '{mode.name}' is not applicable for "
-                        f"payment type '{intent}'."
-                    )
-
-    # ---- Buttons ----
-
+    # ---------- Button ----------
     def action_finance_approve(self):
         for rec in self:
             if not rec.finance_approval_required:
@@ -270,14 +303,36 @@ class AccountPaymentRegister(models.TransientModel):
             })
         return {"type": "ir.actions.act_window_close"}
 
-    # ---- Override core create ----
+    # ---------- Legacy single-mode validation ----------
+    def _validate_legacy_single_mode(self):
+        if self.is_upi_journal and not self.upi_transaction_id:
+            raise ValidationError("Please enter UPI Transaction ID.")
+        if self.is_paytm_journal and not self.paytm_txn_id:
+            raise ValidationError("Please enter Paytm Transaction ID.")
+        if self.is_cheque_journal and (not self.cheque_number or not self.cheque_date):
+            raise ValidationError("Please enter cheque details.")
 
+    # ---------- Create payments (split-aware, with legacy fallback) ----------
     def _create_payments(self):
         self.ensure_one()
-        if not self.payment_line_ids:
-            # Legacy fallback: no split lines -> behave like base
-            return super()._create_payments()
 
+        # If no split lines were entered → legacy single-mode path
+        if not self.payment_line_ids:
+            self._validate_legacy_single_mode()
+            payments = super()._create_payments()
+            for payment in payments:
+                move = payment.move_id or payment
+                payment.write({"paytm_txn_id": self.paytm_txn_id})
+                move.write({
+                    "upi_transaction_id": self.upi_transaction_id,
+                    "cheque_number": self.cheque_number,
+                    "cheque_date": self.cheque_date,
+                    "cheque_bank_name": self.cheque_bank_name,
+                    "paytm_txn_id": self.paytm_txn_id,
+                })
+            return payments
+
+        # Split-mode path
         if not self.split_valid:
             raise ValidationError(
                 f"Allocated amount ({self.total_allocated}) must equal "
@@ -292,7 +347,6 @@ class AccountPaymentRegister(models.TransientModel):
         for line in self.payment_line_ids:
             line.validate_line()
 
-        # Create one payment per line
         payments = self.env["account.payment"]
         original_amount = self.amount
         original_journal = self.journal_id
@@ -301,16 +355,12 @@ class AccountPaymentRegister(models.TransientModel):
         try:
             for line in self.payment_line_ids:
                 journal = line.mode_id.default_journal_id or original_journal
-                pml = (
-                    line.mode_id.default_payment_method_line_id
-                    or original_pml
-                )
+                pml = line.mode_id.default_payment_method_line_id or original_pml
                 if not journal:
                     raise UserError(
                         f"No journal configured for mode '{line.mode_id.name}' "
-                        f"and no journal selected on the wizard."
+                        f"and none selected on the wizard."
                     )
-                # Mutate wizard to produce a single-line payment
                 self.write({
                     "amount": line.amount,
                     "journal_id": journal.id,
@@ -318,12 +368,9 @@ class AccountPaymentRegister(models.TransientModel):
                 })
                 payment = super(
                     AccountPaymentRegister,
-                    self.with_context(
-                        resonnocare_payment_line_id=line.id
-                    ),
+                    self.with_context(resonnocare_payment_line_id=line.id),
                 )._create_payments()
 
-                # Write payment-mode metadata on payment + move
                 payment.write({
                     "resonnocare_payment_mode_id": line.mode_id.id,
                     "resonnocare_payment_submode_id": line.submode_id.id,
@@ -335,12 +382,13 @@ class AccountPaymentRegister(models.TransientModel):
                         "resonnocare_payment_submode_id": line.submode_id.id,
                         "upi_transaction_id": (
                             line.reference_no
-                            if line.submode_id.submode_group == "upi"
+                            if line.submode_id and line.submode_id.submode_group == "upi"
                             else False
                         ),
                         "paytm_txn_id": (
                             line.reference_no
-                            if (line.submode_id.code or "").lower().startswith("paytm")
+                            if line.submode_id
+                            and "paytm" in (line.submode_id.code or "").lower()
                             else False
                         ),
                         "cheque_number": line.cheque_number or False,
@@ -349,15 +397,12 @@ class AccountPaymentRegister(models.TransientModel):
                     })
                 payments |= payment
         finally:
-            # Restore wizard state so it doesn't accidentally persist wrong values
             self.write({
                 "amount": original_amount,
                 "journal_id": original_journal.id if original_journal else False,
                 "payment_method_line_id": original_pml.id if original_pml else False,
             })
-
         return payments
-
 
 
 
