@@ -340,11 +340,11 @@
 
             <!-- Lock the amount (comes from invoice) -->
             <xpath expr="//field[@name='amount']" position="attributes">
-                <attribute name="readonly">1</attribute>
+                <attribute name="readonly">0</attribute>
             </xpath>
 
             <!-- Finance approval banner + approve button -->
-            <xpath expr="//sheet" position="before">
+            <xpath expr="//form" position="before">
                 <div class="alert alert-warning text-center"
                      role="alert"
                      invisible="not finance_approval_required">
@@ -710,7 +710,7 @@
             </xpath>
 
             <!-- Finance approval banner + approve button -->
-            <xpath expr="//sheet" position="before">
+            <xpath expr="//form" position="before">
                 <div class="alert alert-warning text-center"
                      role="alert"
                      invisible="not finance_approval_required">
@@ -725,7 +725,7 @@
             </xpath>
 
             <!-- Split-lines block -->
-            <xpath expr="//sheet" position="inside">
+            <xpath expr="//form" position="inside">
                 <field name="split_valid" invisible="1"/>
                 <field name="finance_approval_required" invisible="1"/>
                 <field name="can_create_payment" invisible="1"/>
