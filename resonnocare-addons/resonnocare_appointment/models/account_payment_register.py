@@ -1,213 +1,128 @@
-from odoo import models, fields, api
+from odoo import api, fields, models, _
 from odoo.exceptions import ValidationError
+
+
+PAYMENT_MODE_SELECTION = [
+    ("pos", "POS"),
+    ("online", "Online"),
+    ("cheque", "Cheque"),
+    ("emi", "EMI"),
+]
+
+SUB_MODE_SELECTION = [
+    ("upi", "UPI"),
+    ("credit_card", "Credit Card"),
+    ("debit_card", "Debit Card"),
+    ("pay_by_link", "Pay by Link"),
+    ("neft", "NEFT"),
+    ("imps", "IMPS"),
+    ("rtgs", "RTGS"),
+    ("cheque_bank", "Bank Name"),
+    ("no_cost_emi", "No Cost EMI"),
+    ("regular_emi", "Regular EMI"),
+]
+
+PAY_TYPE_SELECTION = [
+    ("dqr", "DQR"),
+    ("sqr", "SQR"),
+    ("mastercard", "Mastercard"),
+    ("visa", "VISA"),
+    ("rupay", "Rupay"),
+    ("maestro", "Maestro"),
+    ("diners", "Diners"),
+    ("amex", "Amex"),
+    ("card", "Card"),
+]
+
 
 class AccountPaymentRegister(models.TransientModel):
     _inherit = "account.payment.register"
 
-    upi_transaction_id = fields.Char(string="UPI Transaction ID")
-    cheque_number = fields.Char(string="Cheque Number")
+    payment_mode = fields.Selection(PAYMENT_MODE_SELECTION, string="Payment Mode")
+    sub_mode = fields.Selection(SUB_MODE_SELECTION, string="Sub Mode")
+    pay_type = fields.Selection(PAY_TYPE_SELECTION, string="Pay Type")
+    reference_no = fields.Char(string="Reference No.")
+    cheque_no = fields.Char(string="Cheque No.")
     cheque_date = fields.Date(string="Cheque Date")
-    # cheque_bank_name = fields.Char(string="Cheque Bank Name")
+    bank_id = fields.Many2one("res.bank", string="Bank Name")
+    emi_partner_name = fields.Char(string="Partner Name")
+    scheme_name = fields.Char(string="Scheme Name")
 
-    cheque_bank_name = fields.Selection([
-        ('sbi', 'State Bank of India (SBI)'),
-        ('bob', 'Bank of Baroda (BOB)'),
-        ('boi', 'Bank of India (BOI)'),
-        ('bom', 'Bank of Maharashtra (BOM)'),
-        ('canara', 'Canara Bank'),
-        ('central', 'Central Bank of India'),
-        ('indian_bank', 'Indian Bank'),
-        ('iob', 'Indian Overseas Bank (IOB)'),
-        ('pnb', 'Punjab National Bank (PNB)'),
-        ('punjab_sind', 'Punjab & Sind Bank'),
-        ('uco', 'UCO Bank'),
-        ('union', 'Union Bank of India'),
-        ('hdfc', 'HDFC Bank'),
-        ('icici', 'ICICI Bank'),
-        ('axis', 'Axis Bank'),
-        ('kotak', 'Kotak Mahindra Bank'),
-        ('indusind', 'IndusInd Bank'),
-        ('idbi', 'IDBI Bank'),
-        ('idfc_first', 'IDFC FIRST Bank'),
-        ('federal', 'Federal Bank'),
-        ('yes_bank', 'Yes Bank'),
-        ('rbl', 'RBL Bank'),
-        ('south_indian', 'South Indian Bank'),
-        ('karnataka', 'Karnataka Bank'),
-        ('karur_vysya', 'Karur Vysya Bank'),
-        ('city_union', 'City Union Bank'),
-        ('dhanlaxmi', 'Dhanlaxmi Bank'),
-        ('tamilnad_mercantile', 'Tamilnad Mercantile Bank'),
-        ('csb', 'CSB Bank'),
-        ('jk_bank', 'Jammu & Kashmir Bank'),
-        ('bandhan', 'Bandhan Bank'),
-        ('dcb', 'DCB Bank'),
-        ('nainital', 'Nainital Bank'),
-        ('au_sfb', 'AU Small Finance Bank'),
-        ('equitas_sfb', 'Equitas Small Finance Bank'),
-        ('ujjivan_sfb', 'Ujjivan Small Finance Bank'),
-        ('jana_sfb', 'Jana Small Finance Bank'),
-        ('suryoday_sfb', 'Suryoday Small Finance Bank'),
-        ('utkarsh_sfb', 'Utkarsh Small Finance Bank'),
-        ('esaf_sfb', 'ESAF Small Finance Bank'),
-        ('fincare_sfb', 'Fincare Small Finance Bank'),
-        ('shivalik_sfb', 'Shivalik Small Finance Bank'),
-        ('ne_sfb', 'North East Small Finance Bank'),
-        ('airtel_pb', 'Airtel Payments Bank'),
-        ('ippb', 'India Post Payments Bank'),
-        ('fino_pb', 'Fino Payments Bank'),
-        ('paytm_pb', 'Paytm Payments Bank'),
-        ('nsdl_pb', 'NSDL Payments Bank'),
-        ('aryavart_rgb', 'Aryavart Bank'),
-        ('baroda_rajasthan_rgb', 'Baroda Rajasthan Kshetriya Gramin Bank'),
-        ('kerala_gb', 'Kerala Gramin Bank'),
-        ('karnataka_gb', 'Karnataka Gramin Bank'),
-        ('maharashtra_gb', 'Maharashtra Gramin Bank'),
-        ('rajasthan_marudhara_gb', 'Rajasthan Marudhara Gramin Bank'),
-        ('punjab_gb', 'Punjab Gramin Bank'),
-        ('assam_gvb', 'Assam Gramin Vikash Bank'),
-        ('bihar_gb', 'Bihar Gramin Bank'),
-        ('jharkhand_rgb', 'Jharkhand Rajya Gramin Bank'),
-        ('up_gb', 'Uttar Pradesh Gramin Bank'),
-        ('ap_gvb', 'Andhra Pradesh Grameena Vikas Bank'),
-        ('telangana_gb', 'Telangana Grameena Bank'),
-        ('tamilnadu_gb', 'Tamil Nadu Grama Bank'),
-        ('odisha_gb', 'Odisha Gramya Bank'),
-        ('chhattisgarh_rgb', 'Chhattisgarh Rajya Gramin Bank'),
-        ('mp_gb', 'Madhya Pradesh Gramin Bank'),
-        ('uttarakhand_gb', 'Uttarakhand Gramin Bank'),
-        ('tripura_gb', 'Tripura Gramin Bank'),
-        ('meghalaya_rb', 'Meghalaya Rural Bank'),
-        ('hsbc', 'HSBC'),
-        ('standard_chartered', 'Standard Chartered Bank'),
-        ('citibank', 'Citibank'),
-        ('dbs', 'DBS Bank'),
-        ('deutsche', 'Deutsche Bank'),
-        ('boa', 'Bank of America'),
-        ('barclays', 'Barclays Bank'),
-        ('bnp_paribas', 'BNP Paribas'),
-        ('bank_of_china', 'Bank of China'),
-        ('jp_morgan', 'J.P. Morgan Chase Bank'),
-        ('mufg', 'MUFG Bank'),
-        ('societe_generale', 'Société Générale'),
-        ('credit_agricole', 'Crédit Agricole'),
-        ('qnb', 'Qatar National Bank'),
-        ('mizuho', 'Mizuho Bank'),
-        ('smbc', 'Sumitomo Mitsui Banking Corporation (SMBC)'),
-        ('scotiabank', 'Bank of Nova Scotia'),
-        ('anz', 'Australia and New Zealand Banking Group (ANZ)'),
-        ('saraswat_coop', 'Saraswat Cooperative Bank'),
-        ('cosmos_coop', 'Cosmos Cooperative Bank'),
-        ('abhyudaya_coop', 'Abhyudaya Cooperative Bank'),
-        ('bharat_coop', 'Bharat Cooperative Bank'),
-        ('shamrao_vithal_coop', 'Shamrao Vithal Cooperative Bank'),
-        ('tjsb_coop', 'TJSB Sahakari Bank'),
-        ('kalupur_coop', 'Kalupur Commercial Cooperative Bank'),
-        ('ahmedabad_mercantile_coop', 'Ahmedabad Mercantile Cooperative Bank'),
-        ('janata_sahakari', 'Janata Sahakari Bank'),
-        ('rajkot_nagrik_coop', 'Rajkot Nagrik Sahakari Bank'),
-    ], string='Bank Name', required=True)
-    paytm_txn_id = fields.Char(string="Paytm Transaction ID")
+    @api.onchange("payment_mode")
+    def _onchange_payment_mode(self):
+        for wizard in self:
+            wizard.sub_mode = False
+            wizard.pay_type = False
+            wizard.reference_no = False
+            wizard.cheque_no = False
+            wizard.cheque_date = False
+            wizard.bank_id = False
+            wizard.emi_partner_name = False
+            wizard.scheme_name = False
 
-    is_upi_journal = fields.Boolean(compute="_compute_journal_flags", store=False)
-    is_cheque_journal = fields.Boolean(compute="_compute_journal_flags", store=False)
-    is_paytm_journal = fields.Boolean(compute="_compute_journal_flags", store=False)
+    @api.onchange("sub_mode")
+    def _onchange_sub_mode(self):
+        for wizard in self:
+            wizard.pay_type = False
+            if wizard.sub_mode in ("neft", "imps", "rtgs", "cheque_bank",
+                                   "no_cost_emi", "regular_emi"):
+                wizard.reference_no = False
 
-    @api.depends("journal_id")
-    def _compute_journal_flags(self):
-        for rec in self:
-            rec.is_upi_journal = False
-            rec.is_cheque_journal = False
-            rec.is_paytm_journal = False
-
-            if not rec.journal_id:
+    @api.constrains(
+        "payment_mode", "sub_mode", "pay_type", "reference_no",
+        "cheque_no", "cheque_date", "bank_id", "emi_partner_name",
+    )
+    def _check_custom_payment_details(self):
+        for wizard in self:
+            if not wizard.payment_mode:
                 continue
+            if wizard.payment_mode == "pos":
+                if not wizard.sub_mode:
+                    raise ValidationError(_("Please select a Sub Mode for POS payments."))
+                if wizard.sub_mode in ("upi", "credit_card", "debit_card", "pay_by_link") and not wizard.pay_type:
+                    raise ValidationError(_("Please select a Pay Type for this POS payment."))
+            elif wizard.payment_mode == "online":
+                if wizard.sub_mode not in ("neft", "imps", "rtgs"):
+                    raise ValidationError(_("For Online payments, select NEFT, IMPS, or RTGS."))
+            elif wizard.payment_mode == "cheque":
+                if not wizard.bank_id:
+                    raise ValidationError(_("Please select the Bank Name for cheque payments."))
+                if not wizard.cheque_no:
+                    raise ValidationError(_("Please enter the Cheque No."))
+                if not wizard.cheque_date:
+                    raise ValidationError(_("Please enter the Cheque Date."))
+            elif wizard.payment_mode == "emi":
+                if wizard.sub_mode not in ("no_cost_emi", "regular_emi"):
+                    raise ValidationError(_("For EMI payments, select No Cost EMI or Regular EMI."))
+                if not wizard.emi_partner_name:
+                    raise ValidationError(_("Please enter the Partner Name for EMI payments."))
 
-            name = (rec.journal_id.name or "").lower()
 
-            if "upi" in name or "qr" in name:
-                rec.is_upi_journal = True
+    def _create_payment_vals_from_wizard(self, batch_result):
+        vals = super()._create_payment_vals_from_wizard(batch_result)
+        vals.update({
+            "payment_mode": self.payment_mode,
+            "sub_mode": self.sub_mode,
+            "pay_type": self.pay_type,
+            "reference_no": self.reference_no,
+            "cheque_no": self.cheque_no,
+            "cheque_date": self.cheque_date,
+            "bank_id": self.bank_id.id if self.bank_id else False,
+            "emi_partner_name": self.emi_partner_name,
+            "scheme_name": self.scheme_name,
+        })
+        return vals
 
-            if "cheque" in name or "check" in name:
-                rec.is_cheque_journal = True
 
-            if "paytm" in name:
-                rec.is_paytm_journal = True
+class AccountPayment(models.Model):
+    _inherit = "account.payment"
 
-    payment_already_exists = fields.Boolean(
-        string="Payment Already Exists",
-        compute="_compute_payment_already_exists",
-        store=False,
-    )
-    confirm_subsequent_payment = fields.Boolean(
-        string="Confirm Subsequent Payment",
-        default=False,
-    )
-
-    @api.depends("line_ids")
-    def _compute_payment_already_exists(self):
-        for rec in self:
-            rec.payment_already_exists = False
-            for line in rec.line_ids:
-                invoice = line.move_id
-                if not invoice:
-                    continue
-                
-                # Check if invoice itself is paid or partially paid
-                if invoice.payment_state in ('paid', 'in_payment', 'partial'):
-                    rec.payment_already_exists = True
-                    break
-                
-                # Check if invoice has reconciled/matched payments
-                reconciled_payments = invoice.reconciled_payment_ids | invoice.matched_payment_ids
-                if reconciled_payments:
-                    rec.payment_already_exists = True
-                    break
-
-                # Check related appointment payments
-                if hasattr(invoice, '_get_related_appointment'):
-                    appointment = invoice._get_related_appointment()
-                    if appointment:
-                        sale = appointment._get_effective_sale_order()
-                        if sale:
-                            total_paid = appointment._get_total_paid_for_sale(sale)
-                            if total_paid > 0.0:
-                                rec.payment_already_exists = True
-                                break
-
-    def _create_payments(self):
-        if self.is_upi_journal and not self.upi_transaction_id:
-            raise ValidationError("Please enter UPI Transaction ID.")
-
-        if self.is_paytm_journal and not self.paytm_txn_id:
-            raise ValidationError("Please enter Paytm Transaction ID.")
-
-        if self.is_cheque_journal:
-            if not self.cheque_number or not self.cheque_date:
-                raise ValidationError("Please enter cheque details.")
-
-        # if self.payment_already_exists and not self.confirm_subsequent_payment:
-        #     raise ValidationError(
-        #         "⚠️ Warning: A payment has already been processed for this appointment/invoice. "
-        #         "If you are sure you want to register another payment, please check the "
-        #         "'Confirm Subsequent Payment' box before clicking Create Payment."
-        #     )
-
-        payments = super()._create_payments()
-
-        # IMPORTANT FIX: write on account.move, not account.payment
-        for payment in payments:
-            move = payment.move_id or payment  # safety
-
-            payment.write({
-                "paytm_txn_id": self.paytm_txn_id,
-            })
-            move.write({
-                "upi_transaction_id": self.upi_transaction_id,
-                "cheque_number": self.cheque_number,
-                "cheque_date": self.cheque_date,
-                "cheque_bank_name": self.cheque_bank_name,
-                "paytm_txn_id": self.paytm_txn_id,
-            })
-
-        return payments
+    payment_mode = fields.Selection(PAYMENT_MODE_SELECTION, string="Payment Mode", copy=False)
+    sub_mode = fields.Selection(SUB_MODE_SELECTION, string="Sub Mode", copy=False)
+    pay_type = fields.Selection(PAY_TYPE_SELECTION, string="Pay Type", copy=False)
+    reference_no = fields.Char(string="Reference No.", copy=False)
+    cheque_no = fields.Char(string="Cheque No.", copy=False)
+    cheque_date = fields.Date(string="Cheque Date", copy=False)
+    bank_id = fields.Many2one("res.bank", string="Bank Name", copy=False)
+    emi_partner_name = fields.Char(string="Partner Name", copy=False)
+    scheme_name = fields.Char(string="Scheme Name", copy=False)

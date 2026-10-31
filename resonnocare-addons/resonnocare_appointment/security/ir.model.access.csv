@@ -21,3 +21,11 @@ access_resonnocare_audiometry_result_mark_system,resonnocare.audiometry.result.m
 access_resonnocare_audiometry_result_mark_internal,resonnocare.audiometry.result.mark.internal,model_resonnocare_audiometry_result_mark,base.group_user,1,0,0,0
 access_resonnocare_appointment_cbo,resonnocare.appointment.cbo,model_resonnocare_appointment,resonnocare_base.group_cbo,1,1,1,0
 access_resonnocare_appointment_device_line_cbo,resonnocare.appointment.device.line.cbo,model_resonnocare_appointment_device_line,resonnocare_base.group_cbo,1,1,1,1
+
+access_resonnocare_payment_mode_user,resonnocare.payment.mode user,model_resonnocare_payment_mode,base.group_user,1,0,0,0
+access_resonnocare_payment_mode_manager,resonnocare.payment.mode manager,model_resonnocare_payment_mode,account.group_account_manager,1,1,1,1
+access_resonnocare_payment_submode_user,resonnocare.payment.submode user,model_resonnocare_payment_submode,base.group_user,1,0,0,0
+access_resonnocare_payment_submode_manager,resonnocare.payment.submode manager,model_resonnocare_payment_submode,account.group_account_manager,1,1,1,1
+access_resonnocare_emi_partner_user,resonnocare.emi.partner user,model_resonnocare_emi_partner,base.group_user,1,0,0,0
+access_resonnocare_emi_partner_manager,resonnocare.emi.partner manager,model_resonnocare_emi_partner,account.group_account_manager,1,1,1,1
+access_resonnocare_payment_line_user,resonnocare.payment.line user,model_resonnocare_payment_line,base.group_user,1,1,1,1

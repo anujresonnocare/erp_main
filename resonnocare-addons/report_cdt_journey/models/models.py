@@ -608,7 +608,7 @@ class CdtJourneyReportWizard(models.TransientModel):
         # -----------------------------------------------------------------
         # DERIVED METRICS (ratios) — OVERALL
         # -----------------------------------------------------------------
-        m['asp']      = (m['mrp_ha'] / m['ha_units']) \
+        m['asp']      = (m['gross_rev_ha'] / m['ha_units']) \
                         if m['ha_units'] else 0.0
         m['na_pct']   = (m['ht_attended'] / m['ht_booked']) * 100 \
                         if m['ht_booked'] else 0.0
@@ -631,7 +631,11 @@ class CdtJourneyReportWizard(models.TransientModel):
             bin_   = m.get(f'bin_{key}', 0)
             mrp    = m.get(f'mrp_{key}', 0.0)
 
-            m[f'asp_{key}']      = (mrp / units) if units else 0.0
+            gross  = m.get(f'gr_{key}', 0.0)
+
+            m[f'asp_{key}']      = (gross / units) if units else 0.0
+
+            # m[f'asp_{key}']      = (mrp / units) if units else 0.0
             m[f'na_pct_{key}']   = (att / booked) * 100 if booked else 0.0
             m[f'hl_pct_{key}']   = (hl / att) * 100 if att else 0.0
             m[f'conv_pct_{key}'] = (conv / hl) * 100 if hl else 0.0
@@ -1144,7 +1148,7 @@ class CdtJourneyReportWizard(models.TransientModel):
     def _recalc_derived(self, m, all_keys=None):
         """Recompute all ratio metrics on aggregate rows — never sum them."""
         # overall ratios
-        m['asp']      = (m['mrp_ha'] / m['ha_units']) \
+        m['asp']      = (m['gross_rev_ha'] / m['ha_units']) \
                         if m.get('ha_units') else 0.0
         m['na_pct']   = (m['ht_attended'] / m['ht_booked']) * 100 \
                         if m.get('ht_booked') else 0.0
@@ -1166,7 +1170,9 @@ class CdtJourneyReportWizard(models.TransientModel):
                 bin_   = m.get(f'bin_{key}', 0)
                 mrp    = m.get(f'mrp_{key}', 0.0)
 
-                m[f'asp_{key}']      = (mrp / units) if units else 0.0
+                # m[f'asp_{key}']      = (mrp / units) if units else 0.0
+                gross  = m.get(f'gr_{key}', 0.0)
+                m[f'asp_{key}']      = (gross / units) if units else 0.0
                 m[f'na_pct_{key}']   = (att / booked) * 100 if booked else 0.0
                 m[f'hl_pct_{key}']   = (hl / att) * 100 if att else 0.0
                 m[f'conv_pct_{key}'] = (conv / hl) * 100 if hl else 0.0
