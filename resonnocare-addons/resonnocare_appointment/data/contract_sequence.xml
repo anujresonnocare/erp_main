@@ -70,7 +70,7 @@
     </record>
 
     <!-- ============ Cash ============ -->
-    <record id="mode_cash" model="resonnocare.payment.mode">
+    <!-- <record id="mode_cash" model="resonnocare.payment.mode">
         <field name="name">Cash</field>
         <field name="code">cash</field>
         <field name="sequence">10</field>
@@ -78,6 +78,7 @@
         <field name="applicable_product_type_ids" eval="[(6, 0, [ref('ptype_diagnostic'), ref('ptype_device'), ref('ptype_accessory'), ref('ptype_repair')])]"/>
         <field name="applicable_payment_type_ids" eval="[(6, 0, [ref('paytype_regular'), ref('paytype_down'), ref('paytype_balance')])]"/>
     </record>
+     -->
     <record id="submode_cash_denom" model="resonnocare.payment.submode">
         <field name="mode_id" ref="mode_cash"/>
         <field name="name">Denomination Window</field>
