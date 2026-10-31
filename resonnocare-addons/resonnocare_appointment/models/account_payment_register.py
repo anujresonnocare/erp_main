@@ -141,6 +141,65 @@ class AccountPaymentRegister(models.TransientModel):
     )
     confirm_subsequent_payment = fields.Boolean(default=False)
 
+
+    mode_id = fields.Many2one(
+        "resonnocare.payment.mode",
+        string="Mode",
+        compute="_compute_line_shortcuts",
+        readonly=False,
+    )
+
+    submode_id = fields.Many2one(
+        "resonnocare.payment.submode",
+        string="Sub Mode",
+        compute="_compute_line_shortcuts",
+        readonly=False,
+    )
+    reference_no = fields.Char(
+        compute="_compute_line_shortcuts", readonly=False, string="Reference No"
+    )
+    reference_date = fields.Date(
+        compute="_compute_line_shortcuts", readonly=False, string="Payment Date"
+    )
+    bank_name = fields.Selection(
+        selection=[
+            ("sbi", "State Bank of India (SBI)"),
+            ("bob", "Bank of Baroda (BOB)"),
+            ("boi", "Bank of India (BOI)"),
+            ("bom", "Bank of Maharashtra (BOM)"),
+            ("canara", "Canara Bank"),
+            # ... keep the same list you have in BANK_SELECTION
+        ],
+        compute="_compute_line_shortcuts",
+        readonly=False,
+        string="Bank Name",
+    )
+    emi_partner_id = fields.Many2one(
+        "resonnocare.emi.partner",
+        compute="_compute_line_shortcuts",
+        readonly=False,
+        string="EMI Partner",
+    )
+    emi_scheme_name = fields.Char(
+        compute="_compute_line_shortcuts", readonly=False, string="Scheme Name"
+    )
+    is_cash_mode = fields.Boolean(
+        compute="_compute_line_shortcuts", string="Is Cash"
+    )
+
+    @api.depends("payment_line_ids")
+    def _compute_line_shortcuts(self):
+        for rec in self:
+            line = rec.payment_line_ids[:1]
+            rec.mode_id = line.mode_id if line else False
+            rec.submode_id = line.submode_id if line else False
+            rec.reference_no = line.reference_no if line else False
+            rec.reference_date = line.reference_date if line else False
+            rec.bank_name = line.bank_name if line else False
+            rec.emi_partner_id = line.emi_partner_id if line else False
+            rec.emi_scheme_name = line.emi_scheme_name if line else False
+            rec.is_cash_mode = line.is_cash_mode if line else False
+            
     # ---------- Computes (legacy) ----------
     @api.depends("journal_id")
     def _compute_journal_flags(self):
