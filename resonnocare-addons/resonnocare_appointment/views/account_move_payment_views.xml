@@ -10,12 +10,12 @@
                 <attribute name="readonly">1</attribute>
             </xpath>
 
-            <xpath expr="//group" position="before">
+            <!-- <xpath expr="//group" position="before">
                 <field name="payment_already_exists" invisible="1"/>
                 <div class="alert alert-warning text-center" role="alert" invisible="not payment_already_exists" style="margin-bottom: 15px; font-weight: bold;">
                     ⚠️ A payment has already been processed for this appointment/invoice. Please verify before proceeding.
                 </div>
-            </xpath>
+            </xpath> -->
 
             <xpath expr="//field[@name='payment_date']" position="after">
                 <field name="payment_mode"/>
