@@ -4,6 +4,98 @@ from odoo import api, fields, models
 from odoo.exceptions import UserError, ValidationError
 
 
+PRODUCT_TYPE_SELECTION = [
+    ("diagnostic", "Diagnostics"),
+    ("device", "Device"),
+    ("accessory", "Accessories"),
+    ("repair", "Repairs"),
+]
+
+PAYMENT_TYPE_SELECTION = [
+    ("regular", "Regular Payment"),
+    ("down_payment", "Down Payment"),
+    ("balance", "Balance Payment"),
+]
+
+
+BANK_SELECTION = [
+    ("sbi", "State Bank of India (SBI)"),
+    ("bob", "Bank of Baroda (BOB)"),
+    ("boi", "Bank of India (BOI)"),
+    ("bom", "Bank of Maharashtra (BOM)"),
+    ("canara", "Canara Bank"),
+    ("central", "Central Bank of India"),
+    ("indian_bank", "Indian Bank"),
+    ("iob", "Indian Overseas Bank (IOB)"),
+    ("pnb", "Punjab National Bank (PNB)"),
+    ("punjab_sind", "Punjab & Sind Bank"),
+    ("uco", "UCO Bank"),
+    ("union", "Union Bank of India"),
+    ("hdfc", "HDFC Bank"),
+    ("icici", "ICICI Bank"),
+    ("axis", "Axis Bank"),
+    ("kotak", "Kotak Mahindra Bank"),
+    ("indusind", "IndusInd Bank"),
+    ("idbi", "IDBI Bank"),
+    ("idfc_first", "IDFC FIRST Bank"),
+    ("federal", "Federal Bank"),
+    ("yes_bank", "Yes Bank"),
+    ("rbl", "RBL Bank"),
+    ("south_indian", "South Indian Bank"),
+    ("karnataka", "Karnataka Bank"),
+    ("karur_vysya", "Karur Vysya Bank"),
+    ("city_union", "City Union Bank"),
+    ("dhanlaxmi", "Dhanlaxmi Bank"),
+    ("tamilnad_mercantile", "Tamilnad Mercantile Bank"),
+    ("csb", "CSB Bank"),
+    ("jk_bank", "Jammu & Kashmir Bank"),
+    ("bandhan", "Bandhan Bank"),
+    ("dcb", "DCB Bank"),
+    ("nainital", "Nainital Bank"),
+    ("au_sfb", "AU Small Finance Bank"),
+    ("equitas_sfb", "Equitas Small Finance Bank"),
+    ("ujjivan_sfb", "Ujjivan Small Finance Bank"),
+    ("jana_sfb", "Jana Small Finance Bank"),
+    ("suryoday_sfb", "Suryoday Small Finance Bank"),
+    ("utkarsh_sfb", "Utkarsh Small Finance Bank"),
+    ("esaf_sfb", "ESAF Small Finance Bank"),
+    ("fincare_sfb", "Fincare Small Finance Bank"),
+    ("shivalik_sfb", "Shivalik Small Finance Bank"),
+    ("ne_sfb", "North East Small Finance Bank"),
+    ("airtel_pb", "Airtel Payments Bank"),
+    ("ippb", "India Post Payments Bank"),
+    ("fino_pb", "Fino Payments Bank"),
+    ("paytm_pb", "Paytm Payments Bank"),
+    ("nsdl_pb", "NSDL Payments Bank"),
+    ("hsbc", "HSBC"),
+    ("standard_chartered", "Standard Chartered Bank"),
+    ("citibank", "Citibank"),
+    ("dbs", "DBS Bank"),
+    ("deutsche", "Deutsche Bank"),
+    ("boa", "Bank of America"),
+    ("barclays", "Barclays Bank"),
+    ("bnp_paribas", "BNP Paribas"),
+    ("jp_morgan", "J.P. Morgan Chase Bank"),
+    ("mufg", "MUFG Bank"),
+    ("societe_generale", "Société Générale"),
+    ("credit_agricole", "Crédit Agricole"),
+    ("qnb", "Qatar National Bank"),
+    ("mizuho", "Mizuho Bank"),
+    ("smbc", "Sumitomo Mitsui Banking Corporation (SMBC)"),
+    ("scotiabank", "Bank of Nova Scotia"),
+    ("anz", "Australia and New Zealand Banking Group (ANZ)"),
+    ("saraswat_coop", "Saraswat Cooperative Bank"),
+    ("cosmos_coop", "Cosmos Cooperative Bank"),
+    ("abhyudaya_coop", "Abhyudaya Cooperative Bank"),
+    ("bharat_coop", "Bharat Cooperative Bank"),
+    ("shamrao_vithal_coop", "Shamrao Vithal Cooperative Bank"),
+    ("tjsb_coop", "TJSB Sahakari Bank"),
+    ("kalupur_coop", "Kalupur Commercial Cooperative Bank"),
+    ("janata_sahakari", "Janata Sahakari Bank"),
+]
+
+
+
 class AccountPaymentRegister(models.TransientModel):
     _inherit = "account.payment.register"
 
@@ -267,7 +359,6 @@ class AccountPaymentRegister(models.TransientModel):
         return payments
 
 
-from odoo import fields, models
 
 
 class ResonnocareEmiPartner(models.Model):
@@ -280,21 +371,8 @@ class ResonnocareEmiPartner(models.Model):
     active = fields.Boolean(default=True)
 
 
-from odoo import api, fields, models
 
 
-PRODUCT_TYPE_SELECTION = [
-    ("diagnostic", "Diagnostics"),
-    ("device", "Device"),
-    ("accessory", "Accessories"),
-    ("repair", "Repairs"),
-]
-
-PAYMENT_TYPE_SELECTION = [
-    ("regular", "Regular Payment"),
-    ("down_payment", "Down Payment"),
-    ("balance", "Balance Payment"),
-]
 
 
 class ResonnocarePaymentMode(models.Model):
@@ -369,8 +447,6 @@ class ResonnocarePaymentType(models.Model):
     ]
 
 
-from odoo import fields, models
-
 
 class ResonnocarePaymentSubmode(models.Model):
     _name = "resonnocare.payment.submode"
@@ -412,8 +488,6 @@ class ResonnocarePaymentSubmode(models.Model):
         ),
     ]
 
-from odoo import api, fields, models
-
 
 class ResonnocarePaymentDenomination(models.TransientModel):
     _name = "resonnocare.payment.denomination"
@@ -436,85 +510,6 @@ class ResonnocarePaymentDenomination(models.TransientModel):
             rec.subtotal = (rec.denomination or 0) * (rec.count or 0)
 
 
-from odoo import api, fields, models
-from odoo.exceptions import ValidationError
-
-
-BANK_SELECTION = [
-    ("sbi", "State Bank of India (SBI)"),
-    ("bob", "Bank of Baroda (BOB)"),
-    ("boi", "Bank of India (BOI)"),
-    ("bom", "Bank of Maharashtra (BOM)"),
-    ("canara", "Canara Bank"),
-    ("central", "Central Bank of India"),
-    ("indian_bank", "Indian Bank"),
-    ("iob", "Indian Overseas Bank (IOB)"),
-    ("pnb", "Punjab National Bank (PNB)"),
-    ("punjab_sind", "Punjab & Sind Bank"),
-    ("uco", "UCO Bank"),
-    ("union", "Union Bank of India"),
-    ("hdfc", "HDFC Bank"),
-    ("icici", "ICICI Bank"),
-    ("axis", "Axis Bank"),
-    ("kotak", "Kotak Mahindra Bank"),
-    ("indusind", "IndusInd Bank"),
-    ("idbi", "IDBI Bank"),
-    ("idfc_first", "IDFC FIRST Bank"),
-    ("federal", "Federal Bank"),
-    ("yes_bank", "Yes Bank"),
-    ("rbl", "RBL Bank"),
-    ("south_indian", "South Indian Bank"),
-    ("karnataka", "Karnataka Bank"),
-    ("karur_vysya", "Karur Vysya Bank"),
-    ("city_union", "City Union Bank"),
-    ("dhanlaxmi", "Dhanlaxmi Bank"),
-    ("tamilnad_mercantile", "Tamilnad Mercantile Bank"),
-    ("csb", "CSB Bank"),
-    ("jk_bank", "Jammu & Kashmir Bank"),
-    ("bandhan", "Bandhan Bank"),
-    ("dcb", "DCB Bank"),
-    ("nainital", "Nainital Bank"),
-    ("au_sfb", "AU Small Finance Bank"),
-    ("equitas_sfb", "Equitas Small Finance Bank"),
-    ("ujjivan_sfb", "Ujjivan Small Finance Bank"),
-    ("jana_sfb", "Jana Small Finance Bank"),
-    ("suryoday_sfb", "Suryoday Small Finance Bank"),
-    ("utkarsh_sfb", "Utkarsh Small Finance Bank"),
-    ("esaf_sfb", "ESAF Small Finance Bank"),
-    ("fincare_sfb", "Fincare Small Finance Bank"),
-    ("shivalik_sfb", "Shivalik Small Finance Bank"),
-    ("ne_sfb", "North East Small Finance Bank"),
-    ("airtel_pb", "Airtel Payments Bank"),
-    ("ippb", "India Post Payments Bank"),
-    ("fino_pb", "Fino Payments Bank"),
-    ("paytm_pb", "Paytm Payments Bank"),
-    ("nsdl_pb", "NSDL Payments Bank"),
-    ("hsbc", "HSBC"),
-    ("standard_chartered", "Standard Chartered Bank"),
-    ("citibank", "Citibank"),
-    ("dbs", "DBS Bank"),
-    ("deutsche", "Deutsche Bank"),
-    ("boa", "Bank of America"),
-    ("barclays", "Barclays Bank"),
-    ("bnp_paribas", "BNP Paribas"),
-    ("jp_morgan", "J.P. Morgan Chase Bank"),
-    ("mufg", "MUFG Bank"),
-    ("societe_generale", "Société Générale"),
-    ("credit_agricole", "Crédit Agricole"),
-    ("qnb", "Qatar National Bank"),
-    ("mizuho", "Mizuho Bank"),
-    ("smbc", "Sumitomo Mitsui Banking Corporation (SMBC)"),
-    ("scotiabank", "Bank of Nova Scotia"),
-    ("anz", "Australia and New Zealand Banking Group (ANZ)"),
-    ("saraswat_coop", "Saraswat Cooperative Bank"),
-    ("cosmos_coop", "Cosmos Cooperative Bank"),
-    ("abhyudaya_coop", "Abhyudaya Cooperative Bank"),
-    ("bharat_coop", "Bharat Cooperative Bank"),
-    ("shamrao_vithal_coop", "Shamrao Vithal Cooperative Bank"),
-    ("tjsb_coop", "TJSB Sahakari Bank"),
-    ("kalupur_coop", "Kalupur Commercial Cooperative Bank"),
-    ("janata_sahakari", "Janata Sahakari Bank"),
-]
 
 
 class ResonnocarePaymentLine(models.TransientModel):
@@ -609,7 +604,6 @@ class ResonnocarePaymentLine(models.TransientModel):
                     f"cash amount ({self.amount})."
                 )
 
-from odoo import fields, models
 
 
 class AccountPayment(models.Model):
@@ -628,7 +622,6 @@ class AccountPayment(models.Model):
             "resonnocare_payment_modes.action_report_payment_receipt"
         ).report_action(self)
 
-from odoo import fields, models
 
 
 class AccountMove(models.Model):
