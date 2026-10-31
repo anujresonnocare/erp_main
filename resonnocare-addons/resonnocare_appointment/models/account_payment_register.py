@@ -199,7 +199,7 @@ class AccountPaymentRegister(models.TransientModel):
             rec.emi_partner_id = line.emi_partner_id if line else False
             rec.emi_scheme_name = line.emi_scheme_name if line else False
             rec.is_cash_mode = line.is_cash_mode if line else False
-            
+
     # ---------- Computes (legacy) ----------
     @api.depends("journal_id")
     def _compute_journal_flags(self):
@@ -293,11 +293,11 @@ class AccountPaymentRegister(models.TransientModel):
                 )
             )
 
-    @api.onchange("payment_line_ids")
-    def _onchange_payment_lines_reset_approval(self):
-        if self.finance_approved_by:
-            self.finance_approved_by = False
-            self.finance_approved_on = False
+    # @api.onchange("payment_line_ids")
+    # def _onchange_payment_lines_reset_approval(self):
+    #     if self.finance_approved_by:
+    #         self.finance_approved_by = False
+    #         self.finance_approved_on = False
 
     # ---------- Applicability (split) ----------
     def _invoice_product_types(self):
