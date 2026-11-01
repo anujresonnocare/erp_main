@@ -51,7 +51,7 @@ class ResonnocareClinicSharingRule(models.Model):
     source_category = fields.Selection(
         [
             ("crm", "CRM"),
-            ("walkin", "Walk-in"),
+            ("walkin2", "Walk-in"),
             ("doctor", "Doctor"),
             ("marketing", "Marketing"),
             ("outreach", "Outreach"),

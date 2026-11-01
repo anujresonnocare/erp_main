@@ -393,8 +393,7 @@ class ResonnocarePatientRegistrationWizard(models.TransientModel):
             "default_otp_code": self.otp_code or False,
             "default_otp_required": self.otp_required,
             "default_crm_lead_id": self.crm_lead_id.id or False,
-            "default_matched_expected_walkin_id": self.matched_expected_walkin_id.id
-            or False,
+            "default_matched_expected_walkin_id": self.matched_expected_walkin_id.id or False,
             "default_name": self.name or False,
             "default_visit_reason": self.visit_reason or False,
             "default_visit_type": self.visit_type or False,
