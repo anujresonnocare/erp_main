@@ -309,7 +309,7 @@ class ResonnocarePatientRegistrationWizard(models.TransientModel):
     # Visit Context
     visit_reason = fields.Text(string="Reason for Visit")
     visit_type = fields.Selection(
-        [("new", "New")], string="Visit Type", default="new"
+        [("new", "New"), ("followup", "Follow-up")], string="Visit Type", default="new"
     )
 
     show_doctor_field = fields.Boolean(compute='_compute_show_doctor_field', store=False)
@@ -339,6 +339,18 @@ class ResonnocarePatientRegistrationWizard(models.TransientModel):
                 }
             }
         
+    referral_source = fields.Selection(
+        [
+            ("crm", "CRM"),
+            ("walkin", "Walk-in"),
+            ("doctor", "Doctor"),
+            ("marketing", "Marketing"),
+            ("website", "Website"),
+            ("hear_com", "hear.com"),
+        ],
+        string="Referral Source",
+        default="walkin",
+    )
 
     def _get_current_user_clinic(self):
         user = self.env.user.sudo()
@@ -393,10 +405,12 @@ class ResonnocarePatientRegistrationWizard(models.TransientModel):
             "default_otp_code": self.otp_code or False,
             "default_otp_required": self.otp_required,
             "default_crm_lead_id": self.crm_lead_id.id or False,
-            "default_matched_expected_walkin_id": self.matched_expected_walkin_id.id or False,
+            "default_matched_expected_walkin_id": self.matched_expected_walkin_id.id
+            or False,
             "default_name": self.name or False,
             "default_visit_reason": self.visit_reason or False,
             "default_visit_type": self.visit_type or False,
+            "default_referral_source": self.referral_source or False,
         }
         context_defaults.update(extra_defaults)
         return {
@@ -470,6 +484,7 @@ class ResonnocarePatientRegistrationWizard(models.TransientModel):
                 {
                     "default_crm_lead_id": expected_walkin.id,
                     "default_matched_expected_walkin_id": expected_walkin.id,
+                    "default_referral_source": "crm",
                     "default_visit_type": "new",
                 }
             )
@@ -602,6 +617,7 @@ class ResonnocarePatientRegistrationWizard(models.TransientModel):
             "birthdate_date": self.dob,
             "visit_reason": self.visit_reason,
             "visit_type": self.visit_type,
+            "referral_source": self.referral_source,
             "ref_source": self.ref_source.id if self.ref_source else False,
             "type_of_service": self.type_of_service,
             "mode_of_service": self.mode_of_service,
