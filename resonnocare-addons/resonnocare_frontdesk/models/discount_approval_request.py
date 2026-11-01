@@ -76,7 +76,7 @@ class ResonnocareDiscountApprovalRequest(models.Model):
         store=True,
         readonly=True,
     )
-    referral_source = fields.Many2one(
+    ref_source = fields.Many2one(
         "custom.source",
         related="patient_id.ref_source",
         string="Referral Source",
