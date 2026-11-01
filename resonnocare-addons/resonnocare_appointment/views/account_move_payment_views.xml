@@ -7,41 +7,57 @@
         <field name="arch" type="xml">
 
             <xpath expr="//field[@name='amount']" position="attributes">
-                <attribute name="readonly">1</attribute>
+                <attribute name="readonly">0</attribute>
             </xpath>
 
-            <!-- <xpath expr="//group" position="before">
+            <xpath expr="//group" position="before">
                 <field name="payment_already_exists" invisible="1"/>
                 <div class="alert alert-warning text-center" role="alert" invisible="not payment_already_exists" style="margin-bottom: 15px; font-weight: bold;">
                     ⚠️ A payment has already been processed for this appointment/invoice. Please verify before proceeding.
                 </div>
-            </xpath> -->
-
-            <xpath expr="//field[@name='payment_date']" position="after">
-                <field name="payment_mode"/>
-                <field name="sub_mode"
-                       invisible="not payment_mode"
-                       />
-                <field name="pay_type"
-                       invisible="payment_mode != 'pos' or sub_mode not in ['upi', 'credit_card', 'debit_card', 'pay_by_link']"/>
-                <field name="reference_no"
-                       invisible="payment_mode not in ['pos', 'online']"/>
-                <field name="bank_id"
-                       invisible="payment_mode != 'cheque'"
-                       required="payment_mode == 'cheque'"/>
-                <field name="cheque_no"
-                       invisible="payment_mode not in ['cheque', 'emi']"
-                       required="payment_mode == 'cheque'"/>
-                <field name="cheque_date"
-                       invisible="payment_mode not in ['cheque', 'emi']"
-                       required="payment_mode == 'cheque'"/>
-                <field name="emi_partner_name"
-                       invisible="payment_mode != 'emi'"
-                       required="payment_mode == 'emi'"/>
-                <field name="scheme_name" invisible="payment_mode != 'emi'"/>
             </xpath>
 
-            
+            <xpath expr="//group" position="inside">
+                <!-- <field name="confirm_subsequent_payment" invisible="not payment_already_exists"/> -->
+
+                <!-- UPI -->
+                <label for="upi_transaction_id"
+                       invisible="not is_upi_journal"/>
+
+                <field name="upi_transaction_id"
+                       placeholder="Enter UPI Transaction ID"
+                       invisible="not is_upi_journal"/>
+
+                <!-- Paytm -->
+                <label for="paytm_txn_id"
+                       invisible="not is_paytm_journal"/>
+
+                <field name="paytm_txn_id"
+                       placeholder="Enter Paytm Transaction ID"
+                       invisible="not is_paytm_journal"/>
+
+                <!-- Cheque -->
+                <label for="cheque_number"
+                       invisible="not is_cheque_journal"/>
+
+                <field name="cheque_number"
+                       placeholder="Cheque Number"
+                       invisible="not is_cheque_journal"/>
+
+                <label for="cheque_date"
+                       invisible="not is_cheque_journal"/>
+
+                <field name="cheque_date"
+                       invisible="not is_cheque_journal"/>
+
+                <label for="cheque_bank_name"
+                       invisible="not is_cheque_journal"/>
+
+                <field name="cheque_bank_name"
+                       placeholder="Bank Name"
+                       invisible="not is_cheque_journal"/>
+
+            </xpath>
 
         </field>
     </record>

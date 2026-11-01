@@ -13,6 +13,8 @@ class AccountPayment(models.Model):
     cheque_bank_name = fields.Char("Cheque Bank")
     paytm_txn_id = fields.Char("Paytm Transaction ID")
 
+    sub_mode = fields.Many2one("sub.mode")
+
     is_upi_journal = fields.Boolean(compute="_compute_journal_flags", store=False)
     is_cheque_journal = fields.Boolean(compute="_compute_journal_flags", store=False)
     is_paytm_journal = fields.Boolean(compute="_compute_journal_flags", store=False)
