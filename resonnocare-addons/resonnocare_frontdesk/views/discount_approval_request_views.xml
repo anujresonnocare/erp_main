@@ -43,8 +43,8 @@
                             <field name="clinic_id" readonly="1"/>
                             <field name="patient_id" readonly="1"/>
                             <field name="patient_code" readonly="1"/>
-                            <field name="referral_source" readonly="1"/>
-                            <field name="referral_doctor_name" readonly="1" invisible="referral_source != 'doctor'"/>
+                            <field name="ref_source" readonly="1"/>
+                            <field name="referral_doctor_name" readonly="1"/>
                         </group>
                         <group>
                             <field name="hearing_aid_left" readonly="state != 'draft'"/>
