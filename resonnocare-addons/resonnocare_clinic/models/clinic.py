@@ -607,15 +607,15 @@ class ResonnocareClinic(models.Model):
                 ("status", "not in", ("cancelled", "no_show")),
             ]
             clinic.appointments_today = Appointment.search_count(base_domain)
-            # clinic.walkins_today = Appointment.search_count(
-            #     base_domain + [("source", "=", "walkin")]
-            # )
-            # clinic.patients_waiting = Appointment.search_count(
-            #     base_domain + [("status", "=", "checked_in")]
-            # )
-            # clinic.pending_consultations = Appointment.search_count(
-            #     base_domain + [("status", "in", ("scheduled", "checked_in"))]
-            # )
+            clinic.walkins_today = Appointment.search_count(
+                base_domain + [("source", "=", "walkin")]
+            )
+            clinic.patients_waiting = Appointment.search_count(
+                base_domain + [("status", "=", "checked_in")]
+            )
+            clinic.pending_consultations = Appointment.search_count(
+                base_domain + [("status", "in", ("scheduled", "checked_in"))]
+            )
 
             # CRM follow-up count (today) scoped to this clinic using available clinic linkage fields.
             followup_domain = [("type", "=", "lead")]
