@@ -314,7 +314,7 @@ class ResPartner(models.Model):
     referral_source = fields.Selection(
         [
             ("crm", "CRM"),
-            ("walkin", "Walk-in"),
+            ("walkin1", "Walk-in"),
             ("doctor", "Doctor"),
             ("marketing", "Marketing"),
             ("website", "Website"),
