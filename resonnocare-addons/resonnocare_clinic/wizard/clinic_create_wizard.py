@@ -204,7 +204,7 @@ class ResonnocareClinicCreateWizard(models.TransientModel):
                 if not wizard.partner_name:
                     name = False
                 else:
-                    name = f"{base} {wizard.partner_name} - {wizard.location} - {wizard.city}"
+                    name = f"{base} {wizard.partner_name}"
             else:
                 name = False
 
