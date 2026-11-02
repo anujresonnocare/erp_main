@@ -199,7 +199,7 @@ class ResonnocareClinicCreateWizard(models.TransientModel):
 
             if wizard.clinic_type == "coco":
                 # COCO: EAR360 Location - City
-                name = f"{base} {wizard.location} - {wizard.city}"
+                name = f"{base}"
             elif wizard.clinic_type in ("h", "sis"):
                 if not wizard.partner_name:
                     name = False
