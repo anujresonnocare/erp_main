@@ -20,7 +20,7 @@
             <field name="groups" eval="[(4, ref('resonnocare_base.group_cbo'))]"/>
             <field name="domain_force">[
                 '|',
-                ('clinic_id', 'in', user.cbo_clinic_ids.ids),
+                ('clinic_id.id', 'in', user.cbo_clinic_ids.ids),
                 ('id', '=', user.partner_id.id)
             ]</field>
         </record>
@@ -39,7 +39,7 @@
             <field name="model_id" search="[('model', '=', 'resonnocare.discount.approval.request')]"/>
             <field name="groups" eval="[(4, ref('resonnocare_base.group_cbo'))]"/>
             <field name="domain_force">[
-                ('clinic_id', 'in', user.cbo_clinic_ids.ids)
+                ('clinic_id.id', 'in', user.cbo_clinic_ids.ids)
             ]</field>
         </record>
 
@@ -48,7 +48,7 @@
             <field name="model_id" search="[('model', '=', 'resonnocare.discount.approval.request')]"/>
             <field name="groups" eval="[(4, ref('resonnocare_base.group_clinic_admin'))]"/>
             <field name="domain_force">[
-                ('clinic_id', '=', user.employee_id.clinic_id.id)
+                ('clinic_id.id', '=', user.employee_id.clinic_id.id)
             ]</field>
         </record> -->
 
@@ -66,7 +66,7 @@
             <field name="model_id" search="[('model', '=', 'resonnocare.advance.approval.request')]"/>
             <field name="groups" eval="[(4, ref('resonnocare_base.group_cbo'))]"/>
             <field name="domain_force">[
-                ('clinic_id', 'in', user.cbo_clinic_ids.ids)
+                ('clinic_id.id', 'in', user.cbo_clinic_ids.ids)
             ]</field>
         </record>
 
@@ -75,7 +75,7 @@
             <field name="model_id" search="[('model', '=', 'resonnocare.advance.approval.request')]"/>
             <field name="groups" eval="[(4, ref('resonnocare_base.group_clinic_admin'))]"/>
             <field name="domain_force">[
-                ('clinic_id', '=', user.employee_id.clinic_id.id)
+                ('clinic_id.id', '=', user.employee_id.clinic_id.id)
             ]</field>
         </record> -->
 
@@ -93,7 +93,7 @@
             <field name="model_id" search="[('model', '=', 'resonnocare.final.invoice')]"/>
             <field name="groups" eval="[(4, ref('resonnocare_base.group_cbo'))]"/>
             <field name="domain_force">[
-                ('sale_order_id.clinic_id', 'in', user.cbo_clinic_ids.ids)
+                ('sale_order_id.clinic_id.id', 'in', user.cbo_clinic_ids.ids)
             ]</field>
         </record>
 
@@ -111,7 +111,7 @@
             <field name="model_id" search="[('model', '=', 'resonnocare.final.invoice.line')]"/>
             <field name="groups" eval="[(4, ref('resonnocare_base.group_cbo'))]"/>
             <field name="domain_force">[
-                ('final_invoice_id.sale_order_id.clinic_id', 'in', user.cbo_clinic_ids.ids)
+                ('final_invoice_id.sale_order_id.clinic_id.id', 'in', user.cbo_clinic_ids.ids)
             ]</field>
         </record>
 
