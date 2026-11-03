@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="approval_result_template" name="Discount Approval Result">
+        <t t-call="web.layout">
+            <t t-set="head">
+                <meta charset="utf-8"/>
+                <title>Discount Approval Result</title>
+            </t>
+            <div class="container" style="max-width:600px;margin-top:60px;text-align:center;font-family:Arial,sans-serif;">
+                <h2 t-if="success" style="color:#28a745;">&#10004; Success</h2>
+                <h2 t-if="not success" style="color:#dc3545;">&#10006; Action Not Performed</h2>
+                <p t-out="message" style="font-size:16px;margin-top:16px;"/>
+            </div>
+        </t>
+    </template>
+</odoo>

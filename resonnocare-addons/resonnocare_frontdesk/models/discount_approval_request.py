@@ -1,7 +1,10 @@
 from odoo import api, fields, models
 from odoo.exceptions import UserError, ValidationError
 
+import uuid
+
 import logging
+
 
 _logger = logging.getLogger(__name__)
 
@@ -14,6 +17,9 @@ class ResonnocareDiscountApprovalRequest(models.Model):
     _inherit = ["mail.thread", "mail.activity.mixin"]
     _order = "id desc"
 
+    access_token = fields.Char(
+        string="Access Token", copy=False, index=True, readonly=True
+    ) 
     name = fields.Char(
         string="Request ID",
         required=True,
@@ -480,6 +486,97 @@ class ResonnocareDiscountApprovalRequest(models.Model):
                 )
             else:
                 rec.state = "submitted"
+                rec._send_cbo_approval_email()
+
+    def _send_cbo_approval_email(self):
+        """Send approval request email to all CBOs of the clinic."""
+        self.ensure_one()
+
+        cbo_users = self.clinic_id.cbo_ids if self.clinic_id else self.env["res.users"]
+        if not cbo_users:
+            _logger.warning(
+                "No CBO configured for clinic %s on approval request %s. Email not sent.",
+                self.clinic_id.display_name if self.clinic_id else "N/A",
+                self.name,
+            )
+            return
+
+        partner_ids = cbo_users.mapped("partner_id").filtered(lambda p: p.email)
+        if not partner_ids:
+            _logger.warning(
+                "No CBO with a valid email for clinic %s. Email not sent.",
+                self.clinic_id.display_name if self.clinic_id else "N/A",
+            )
+            return
+
+        base_url = (
+            self.env["ir.config_parameter"].sudo().get_param("web.base.url") or ""
+        ).rstrip("/")
+
+        approve_url = f"{base_url}/discount/approve/{self.id}?token={self.access_token}"
+        reject_url = f"{base_url}/discount/reject/{self.id}?token={self.access_token}"
+
+        level_label = dict(self._fields["required_approval_level"].selection).get(
+            self.required_approval_level, ""
+        )
+
+        body_html = f"""
+            <p>Dear CBO,</p>
+            <p>A discount approval request has been submitted for your review.</p>
+            <table style="border-collapse:collapse;margin:12px 0;">
+                <tr><td style="padding:4px 8px;"><b>Request ID</b></td><td style="padding:4px 8px;">{self.name}</td></tr>
+                <tr><td style="padding:4px 8px;"><b>Clinic</b></td><td style="padding:4px 8px;">{self.clinic_id.display_name or ''}</td></tr>
+                <tr><td style="padding:4px 8px;"><b>Patient</b></td><td style="padding:4px 8px;">{self.patient_id.display_name or ''}</td></tr>
+                <tr><td style="padding:4px 8px;"><b>Sale Order</b></td><td style="padding:4px 8px;">{self.sale_order_id.name or ''}</td></tr>
+                <tr><td style="padding:4px 8px;"><b>HA Discount %</b></td><td style="padding:4px 8px;">{self.ha_discount_pct:.2f}%</td></tr>
+                <tr><td style="padding:4px 8px;"><b>HA Discount Value</b></td><td style="padding:4px 8px;">{self.ha_discount_value:.2f}</td></tr>
+                <tr><td style="padding:4px 8px;"><b>Max Allowed %</b></td><td style="padding:4px 8px;">{self.max_discount_pct_allowed:.2f}%</td></tr>
+                <tr><td style="padding:4px 8px;"><b>Lower Advance Requested</b></td><td style="padding:4px 8px;">{self.lower_advance_requested:.2f}</td></tr>
+                <tr><td style="padding:4px 8px;"><b>Required Approval Level</b></td><td style="padding:4px 8px;">{level_label}</td></tr>
+            </table>
+            <p>
+                <a href="{approve_url}"
+                style="background:#28a745;color:#fff;padding:10px 22px;
+                        text-decoration:none;border-radius:6px;font-weight:bold;">
+                    &#10004; Approve
+                </a>
+                &nbsp;&nbsp;
+                <a href="{reject_url}"
+                style="background:#dc3545;color:#fff;padding:10px 22px;
+                        text-decoration:none;border-radius:6px;font-weight:bold;">
+                    &#10006; Reject
+                </a>
+            </p>
+            <p style="color:#888;font-size:12px;">
+                These links are secure and unique to this request. Do not forward this email.
+            </p>
+        """
+
+        self.message_post(
+            body=body_html,
+            partner_ids=partner_ids.ids,
+            subtype_xmlid="mail.mt_comment",
+            subject=f"Discount Approval Required \u2013 {self.name}",
+        )
+
+        mail_values = {
+            "subject": f"Discount Approval Required \u2013 {self.name}",
+            "body_html": body_html,
+            "email_to": ",".join(partner_ids.mapped("email")),
+            "email_from": self.env.company.email or self.env.user.email or "",
+            "model": self._name,
+            "res_id": self.id,
+        }
+        try:
+            self.env["mail.mail"].sudo().create(mail_values).send()
+        except Exception as e:  # noqa: BLE001
+            _logger.exception("Failed to send CBO approval email: %s", e)
+
+        _logger.info(
+            "Approval email sent for request %s to %s",
+            self.name,
+            ", ".join(partner_ids.mapped("email")),
+        )
 
     def action_approve(self):
         for rec in self:

@@ -26,6 +26,7 @@
         "data/sale_return_request_sequence.xml",
         "security/security.xml",
         "security/ir.model.access.csv",
+        "views/approval_result_template.xml",
         "views/res_partner_patient_form.xml",
         "views/patient_search_view.xml",
         "views/patient_registration_wizard.xml",
