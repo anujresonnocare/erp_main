@@ -520,20 +520,149 @@ class ResonnocareDiscountApprovalRequest(models.Model):
             self.required_approval_level, ""
         )
 
+        # -------- Formatting helpers --------
+        currency = self.currency_id or self.sale_order_id.currency_id
+        currency_symbol = currency.symbol or ""
+
+        def fmt(amount):
+            return f"{currency_symbol} {amount or 0.0:,.2f}"
+
+        # -------- Discount details --------
+        total_ha_mrp = self.total_ha_mrp or 0.0
+        max_discount_pct = self.max_discount_pct_allowed or 0.0
+        max_discount_value = self.max_discount_value_allowed or 0.0
+        requested_discount_value = self.discount_value_requested or 0.0
+        requested_discount_pct = self.discount_pct_requested or 0.0
+        ha_discount_pct = self.ha_discount_pct or 0.0
+        ha_discount_value = self.ha_discount_value or 0.0
+        sale_total = self.sale_order_id.amount_total or 0.0
+        min_advance = self.min_advance_required or 0.0
+        lower_advance = self.lower_advance_requested or 0.0
+        doctor_absorbed = self.discount_absorbed_by_doctor or 0.0
+
+        # Colour code: over max allowed -> red, else green
+        exceeds_max = requested_discount_pct > max_discount_pct
+        requested_pct_color = "#dc3545" if exceeds_max else "#28a745"
+        exceeds_max_label = (
+            '<span style="color:#dc3545;font-weight:bold;">&nbsp;(exceeds allowed max)</span>'
+            if exceeds_max
+            else '<span style="color:#28a745;font-weight:bold;">&nbsp;(within allowed max)</span>'
+        )
+
         body_html = f"""
             <p>Dear CBO,</p>
             <p>A discount approval request has been submitted for your review.</p>
-            <table style="border-collapse:collapse;margin:12px 0;">
-                <tr><td style="padding:4px 8px;"><b>Request ID</b></td><td style="padding:4px 8px;">{self.name}</td></tr>
-                <tr><td style="padding:4px 8px;"><b>Clinic</b></td><td style="padding:4px 8px;">{self.clinic_id.display_name or ''}</td></tr>
-                <tr><td style="padding:4px 8px;"><b>Patient</b></td><td style="padding:4px 8px;">{self.patient_id.display_name or ''}</td></tr>
-                <tr><td style="padding:4px 8px;"><b>Sale Order</b></td><td style="padding:4px 8px;">{self.sale_order_id.name or ''}</td></tr>
-                <tr><td style="padding:4px 8px;"><b>HA Discount %</b></td><td style="padding:4px 8px;">{self.ha_discount_pct:.2f}%</td></tr>
-                <tr><td style="padding:4px 8px;"><b>HA Discount Value</b></td><td style="padding:4px 8px;">{self.ha_discount_value:.2f}</td></tr>
-                <tr><td style="padding:4px 8px;"><b>Max Allowed %</b></td><td style="padding:4px 8px;">{self.max_discount_pct_allowed:.2f}%</td></tr>
-                <tr><td style="padding:4px 8px;"><b>Lower Advance Requested</b></td><td style="padding:4px 8px;">{self.lower_advance_requested:.2f}</td></tr>
-                <tr><td style="padding:4px 8px;"><b>Required Approval Level</b></td><td style="padding:4px 8px;">{level_label}</td></tr>
+
+            <!-- ================= REQUEST SUMMARY ================= -->
+            <h3 style="margin-top:20px;">Request Summary</h3>
+            <table style="border-collapse:collapse;margin:12px 0;width:100%;">
+                <tr><td style="padding:4px 8px;border-bottom:1px solid #eee;"><b>Request ID</b></td>
+                    <td style="padding:4px 8px;border-bottom:1px solid #eee;">{self.name}</td></tr>
+                <tr><td style="padding:4px 8px;border-bottom:1px solid #eee;"><b>Clinic</b></td>
+                    <td style="padding:4px 8px;border-bottom:1px solid #eee;">{self.clinic_id.display_name or ''}</td></tr>
+                <tr><td style="padding:4px 8px;border-bottom:1px solid #eee;"><b>Patient</b></td>
+                    <td style="padding:4px 8px;border-bottom:1px solid #eee;">{self.patient_id.display_name or ''} ({self.patient_code or ''})</td></tr>
+                <tr><td style="padding:4px 8px;border-bottom:1px solid #eee;"><b>Sale Order</b></td>
+                    <td style="padding:4px 8px;border-bottom:1px solid #eee;">{self.sale_order_id.name or ''}</td></tr>
+                <tr><td style="padding:4px 8px;border-bottom:1px solid #eee;"><b>Requested By</b></td>
+                    <td style="padding:4px 8px;border-bottom:1px solid #eee;">{self.requested_by_id.name or ''}</td></tr>
+                <tr><td style="padding:4px 8px;border-bottom:1px solid #eee;"><b>Required Approval Level</b></td>
+                    <td style="padding:4px 8px;border-bottom:1px solid #eee;">{level_label}</td></tr>
             </table>
+
+            <!-- ================= HEARING AIDS ================= -->
+            <h3 style="margin-top:20px;">Hearing Aid Details</h3>
+            <table style="border-collapse:collapse;margin:12px 0;width:100%;">
+                <tr><td style="padding:4px 8px;border-bottom:1px solid #eee;"><b>HA Brand</b></td>
+                    <td style="padding:4px 8px;border-bottom:1px solid #eee;">{self.ha_brand or '-'}</td></tr>
+                <tr><td style="padding:4px 8px;border-bottom:1px solid #eee;"><b>Hearing Aid (Left)</b></td>
+                    <td style="padding:4px 8px;border-bottom:1px solid #eee;">{self.hearing_aid_left or '-'}</td></tr>
+                <tr><td style="padding:4px 8px;border-bottom:1px solid #eee;"><b>Hearing Aid (Right)</b></td>
+                    <td style="padding:4px 8px;border-bottom:1px solid #eee;">{self.hearing_aid_right or '-'}</td></tr>
+                <tr><td style="padding:4px 8px;border-bottom:1px solid #eee;"><b>No. of Hearing Aids</b></td>
+                    <td style="padding:4px 8px;border-bottom:1px solid #eee;">{self.no_of_ha or 0}</td></tr>
+                <tr><td style="padding:4px 8px;border-bottom:1px solid #eee;"><b>Total HA MRP</b></td>
+                    <td style="padding:4px 8px;border-bottom:1px solid #eee;">{fmt(total_ha_mrp)}</td></tr>
+            </table>
+
+            <!-- ================= DISCOUNT DETAILS ================= -->
+            <h3 style="margin-top:20px;">Discount Details</h3>
+            <table style="border-collapse:collapse;margin:12px 0;width:100%;
+                        border:1px solid #ddd;background:#fafafa;">
+                <thead>
+                    <tr style="background:#f0f0f0;">
+                        <th style="padding:8px;text-align:left;border-bottom:2px solid #ddd;">Parameter</th>
+                        <th style="padding:8px;text-align:right;border-bottom:2px solid #ddd;">Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="padding:6px 8px;border-bottom:1px solid #eee;">Total HA MRP</td>
+                        <td style="padding:6px 8px;text-align:right;border-bottom:1px solid #eee;">{fmt(total_ha_mrp)}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding:6px 8px;border-bottom:1px solid #eee;">Max Discount % Allowed (Clinic Grid)</td>
+                        <td style="padding:6px 8px;text-align:right;border-bottom:1px solid #eee;">{max_discount_pct:.2f}%</td>
+                    </tr>
+                    <tr>
+                        <td style="padding:6px 8px;border-bottom:1px solid #eee;">Max Discount Value Allowed</td>
+                        <td style="padding:6px 8px;text-align:right;border-bottom:1px solid #eee;">{fmt(max_discount_value)}</td>
+                    </tr>
+                    <tr style="background:#fff8e1;">
+                        <td style="padding:6px 8px;border-bottom:1px solid #eee;"><b>Discount Requested (%)</b></td>
+                        <td style="padding:6px 8px;text-align:right;border-bottom:1px solid #eee;color:{requested_pct_color};">
+                            <b>{requested_discount_pct:.2f}%</b>{exceeds_max_label}
+                        </td>
+                    </tr>
+                    <tr style="background:#fff8e1;">
+                        <td style="padding:6px 8px;border-bottom:1px solid #eee;"><b>Discount Requested (Value)</b></td>
+                        <td style="padding:6px 8px;text-align:right;border-bottom:1px solid #eee;color:{requested_pct_color};">
+                            <b>{fmt(requested_discount_value)}</b>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding:6px 8px;border-bottom:1px solid #eee;">HA Discount % (Computed)</td>
+                        <td style="padding:6px 8px;text-align:right;border-bottom:1px solid #eee;">{ha_discount_pct:.2f}%</td>
+                    </tr>
+                    <tr>
+                        <td style="padding:6px 8px;border-bottom:1px solid #eee;">HA Discount Value (Computed)</td>
+                        <td style="padding:6px 8px;text-align:right;border-bottom:1px solid #eee;">{fmt(ha_discount_value)}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding:6px 8px;border-bottom:1px solid #eee;">Discount Absorbed by Doctor</td>
+                        <td style="padding:6px 8px;text-align:right;border-bottom:1px solid #eee;">{fmt(doctor_absorbed)}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- ================= PAYMENT / ADVANCE ================= -->
+            <h3 style="margin-top:20px;">Payment &amp; Advance Details</h3>
+            <table style="border-collapse:collapse;margin:12px 0;width:100%;
+                        border:1px solid #ddd;background:#fafafa;">
+                <thead>
+                    <tr style="background:#f0f0f0;">
+                        <th style="padding:8px;text-align:left;border-bottom:2px solid #ddd;">Parameter</th>
+                        <th style="padding:8px;text-align:right;border-bottom:2px solid #ddd;">Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="padding:6px 8px;border-bottom:1px solid #eee;">Sale Order Total</td>
+                        <td style="padding:6px 8px;text-align:right;border-bottom:1px solid #eee;">{fmt(sale_total)}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding:6px 8px;border-bottom:1px solid #eee;">Minimum Advance Required (30%)</td>
+                        <td style="padding:6px 8px;text-align:right;border-bottom:1px solid #eee;">{fmt(min_advance)}</td>
+                    </tr>
+                    <tr style="background:#fff8e1;">
+                        <td style="padding:6px 8px;border-bottom:1px solid #eee;"><b>Lower Advance Requested</b></td>
+                        <td style="padding:6px 8px;text-align:right;border-bottom:1px solid #eee;">
+                            <b>{fmt(lower_advance)}</b>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
             <p>
                 <a href="{approve_url}"
                 style="background:#28a745;color:#fff;padding:10px 22px;
@@ -578,6 +707,7 @@ class ResonnocareDiscountApprovalRequest(models.Model):
             ", ".join(partner_ids.mapped("email")),
         )
 
+        
     def action_approve(self):
         for rec in self:
             if rec.state != "submitted":
