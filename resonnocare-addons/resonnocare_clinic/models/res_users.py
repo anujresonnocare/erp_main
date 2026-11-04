@@ -73,16 +73,16 @@ class ResUsers(models.Model):
             #         )
             #     )
 
-            if clinic.clinic_status != "active":
-                status_label = dict(clinic._fields["clinic_status"].selection).get(
-                    clinic.clinic_status, clinic.clinic_status
-                )
-                raise AccessDenied(
-                    _(
-                        "Your clinic (%(clinic)s) is not active yet. Current status: %(status)s. "
-                        "Please contact Resonnocare HQ."
-                    )
-                    % {"clinic": clinic.name, "status": status_label}
-                )
+            # if clinic.clinic_status != "active":
+            #     status_label = dict(clinic._fields["clinic_status"].selection).get(
+            #         clinic.clinic_status, clinic.clinic_status
+            #     )
+            # raise AccessDenied(
+            #     _(
+            #         "Your clinic (%(clinic)s) is not active yet. Current status: %(status)s. "
+            #         "Please contact Resonnocare HQ."
+            #     )
+            #     % {"clinic": clinic.name, "status": status_label}
+            # )
 
         return result
