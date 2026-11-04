@@ -1073,6 +1073,7 @@ class ResonnocareAppointment(models.Model):
             {
                 "picking_type_id": picking_type.id,
                 "location_id": source_location.id,
+                "partner_id": self.patient_id.id,
                 "location_dest_id": destination_location.id,
                 "origin": f"{self.appointment_id or self.display_name}",
                 "company_id": company.id,

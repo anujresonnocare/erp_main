@@ -66,12 +66,12 @@ class ResUsers(models.Model):
                 continue
 
             clinic = user._get_effective_clinic()
-            if not clinic:
-                raise AccessDenied(
-                    _(
-                        "Your account is not assigned to any clinic yet. Please contact HR/Admin."
-                    )
-                )
+            # if not clinic:
+            #     raise AccessDenied(
+            #         _(
+            #             "Your account is not assigned to any clinic yet. Please contact HR/Admin."
+            #         )
+            #     )
 
             if clinic.clinic_status != "active":
                 status_label = dict(clinic._fields["clinic_status"].selection).get(
