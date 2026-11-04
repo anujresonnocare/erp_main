@@ -129,7 +129,7 @@ class ResonnocareAppointmentDeviceLine(models.Model):
                 line.is_right_ear = True    
                 line.product_uom_qty = 2.0
             else:
-                line.is_left_ear = True
+                line.is_left_ear = False
                 line.is_right_ear = False
                 line.product_uom_qty = 1.0    
 
