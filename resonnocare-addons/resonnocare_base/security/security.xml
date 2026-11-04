@@ -36,6 +36,8 @@
             <field name="name">CBO</field>
             <field name="category_id" ref="module_category_resonnocare"/>
             <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+
+
         </record>
 
 
@@ -63,10 +65,10 @@
         <record id="group_doctor" model="res.groups">
             <field name="name">Doctor / Audiologist</field>
             <field name="category_id" ref="module_category_resonnocare"/>
-            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user')),(4, ref('resonnocare_base.group_sale_salesman_all_leads'))]"/>
         </record>
 
-        <!-- ========================= -->
+        <!-- ========================= -->CBO
         <!-- EXTERNAL DOCTOR -->
         <!-- ========================= -->
         <record id="group_external_doctor" model="res.groups">
