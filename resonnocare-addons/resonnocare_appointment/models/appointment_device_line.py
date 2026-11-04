@@ -128,6 +128,10 @@ class ResonnocareAppointmentDeviceLine(models.Model):
                 line.is_left_ear = True
                 line.is_right_ear = True    
                 line.product_uom_qty = 2.0
+            else:
+                line.is_left_ear = True
+                line.is_right_ear = False
+                line.product_uom_qty = 1.0    
 
 
 
@@ -138,7 +142,7 @@ class ResonnocareAppointmentDeviceLine(models.Model):
                 line.product_uom_qty = 2.0
             elif line.is_left_ear or line.is_right_ear:
                 line.product_uom_qty = 1.0
-            if line.product_id and line.product_id.product_tmpl_id.item_style_id.name == "Battery" or line.product_id.product_tmpl_id.item_style_id.name == "Charger":
+            elif line.product_id and line.product_id.product_tmpl_id.item_style_id.name == "Battery" or line.product_id.product_tmpl_id.item_style_id.name == "Charger":
                 line.product_uom_qty = 1.0
             else:
                 line.product_uom_qty = 0.0    
