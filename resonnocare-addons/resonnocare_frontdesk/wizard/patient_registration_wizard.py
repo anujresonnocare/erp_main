@@ -617,7 +617,7 @@ class ResonnocarePatientRegistrationWizard(models.TransientModel):
             "birthdate_date": self.dob,
             "visit_reason": self.visit_reason,
             "visit_type": self.visit_type,
-            "referral_source": self.referral_source,
+            # "referral_source": self.referral_source,
             "ref_source": self.ref_source.id if self.ref_source else False,
             "type_of_service": self.type_of_service,
             "mode_of_service": self.mode_of_service,
