@@ -76,7 +76,10 @@ class DailyPrescriptionReportWizard(models.TransientModel):
         ])
 
         if not device_appointment_types:
-            raise ValidationError(_('No device appointment types found. Please configure appointment types with sale_type = Device.'))
+            raise ValidationError(_(
+                'No device appointment types found. '
+                'Please configure appointment types with sale_type = Device.'
+            ))
 
         domain = [
             ('appointment_date', '>=', self.date_from),
@@ -93,7 +96,10 @@ class DailyPrescriptionReportWizard(models.TransientModel):
             domain.append(('clinic_id', 'in', self.clinic_ids.ids))
 
         appointments = self.env['resonnocare.appointment'].search(domain)
-        _logger.info("Found %s device appointments (excluding cancelled and no-show)", len(appointments))
+        _logger.info(
+            "Found %s device appointments (excluding cancelled and no-show)",
+            len(appointments)
+        )
         return appointments
 
     def _calculate_discount(self, line):
@@ -166,15 +172,12 @@ class DailyPrescriptionReportWizard(models.TransientModel):
                                                            otherwise 'Checked In'
         - other                                         -> normal mapped label
         """
-        # Rule 1: Draft
         if appointment.status == 'draft':
             return 'Draft'
 
-        # Rule 2: Forced labels
         if appointment.status in ('scheduled', 'in_consultation', 'completed'):
             return 'Order Process to SCM'
 
-        # Rule 3: Checked-in -> check for SCM picking
         if appointment.status == 'checked_in':
             origin_candidates = []
             if hasattr(appointment, 'appointment_id') and appointment.appointment_id:
@@ -192,7 +195,6 @@ class DailyPrescriptionReportWizard(models.TransientModel):
                     return 'Order Process to SCM'
             return 'Checked In'
 
-        # Fallback: normal status label
         status_map = {
             'draft': 'Draft',
             'scheduled': 'Scheduled',
@@ -201,6 +203,86 @@ class DailyPrescriptionReportWizard(models.TransientModel):
             'completed': 'Completed',
         }
         return status_map.get(appointment.status, appointment.status)
+
+    def _collect_ha_lines(self, sale_order):
+        """
+        Return the de-duplicated list of HA order lines on a sale order.
+        De-duplication guards against accidental duplicate lines
+        (same product, price, qty) that would otherwise inflate counts.
+        """
+        ha_lines = []
+        seen_keys = set()
+        for line in sale_order.order_line:
+            if not line.product_id:
+                continue
+
+            product_item_type = False
+            if hasattr(line.product_id, 'item_type'):
+                product_item_type = line.product_id.item_type
+            elif hasattr(line.product_id.product_tmpl_id, 'item_type'):
+                product_item_type = line.product_id.product_tmpl_id.item_type
+
+            if product_item_type != 'ha':
+                continue
+
+            # Dedupe key: product + price + qty (avoids phantom duplicates)
+            key = (
+                line.product_id.id,
+                round(line.price_unit or 0.0, 2),
+                round(line.product_uom_qty or 0.0, 2),
+            )
+            if key in seen_keys:
+                _logger.warning(
+                    "Skipping duplicate HA line id=%s on SO %s (product=%s)",
+                    line.id, sale_order.name, line.product_id.display_name
+                )
+                continue
+            seen_keys.add(key)
+            ha_lines.append(line)
+
+        return ha_lines
+
+    def _build_paired_rows(self, ha_lines):
+        """
+        Group HA lines by product name.
+        - Same name -> pair one Left + one Right, quantity = 2
+        - Single leftover -> Left only, quantity = 1
+        """
+        product_groups = OrderedDict()
+        for line in ha_lines:
+            pname = line.product_id.name
+            product_groups.setdefault(pname, []).append(line)
+
+        paired_rows = []
+        for _pname, lines in product_groups.items():
+            lines = sorted(lines, key=lambda l: l.id)
+            idx = 0
+            while idx < len(lines):
+                if idx + 1 < len(lines):
+                    left_line = lines[idx]
+                    right_line = lines[idx + 1]
+                    paired_rows.append({
+                        'left_line': left_line,
+                        'right_line': right_line,
+                        'left_name': left_line.product_id.name,
+                        'right_name': right_line.product_id.name,
+                        'quantity': 2,
+                        'lines': [left_line, right_line],
+                    })
+                    idx += 2
+                else:
+                    single_line = lines[idx]
+                    paired_rows.append({
+                        'left_line': single_line,
+                        'right_line': None,
+                        'left_name': single_line.product_id.name,
+                        'right_name': '',
+                        'quantity': 1,
+                        'lines': [single_line],
+                    })
+                    idx += 1
+
+        return paired_rows
 
     def _generate_excel_report(self):
         """Generate Excel report with prescription data"""
@@ -282,6 +364,11 @@ class DailyPrescriptionReportWizard(models.TransientModel):
             'border': 1,
             'font_size': 11
         })
+        scm_status_format = workbook.add_format({
+            'border': 1,
+            'font_size': 10,
+            'fg_color': '#B0E0E6'
+        })
 
         status_colors = {
             'draft': '#FFE4E1',
@@ -289,13 +376,6 @@ class DailyPrescriptionReportWizard(models.TransientModel):
             'checked_in': '#FFFACD',
             'in_consultation': '#FFDAB9',
             'completed': '#98FB98',
-        }
-        status_map = {
-            'draft': 'Draft',
-            'scheduled': 'Scheduled',
-            'checked_in': 'Checked In',
-            'in_consultation': 'In Consultation',
-            'completed': 'Completed',
         }
 
         clinic_type_map = {
@@ -306,6 +386,16 @@ class DailyPrescriptionReportWizard(models.TransientModel):
         clinic_subtype_map = {
             'b2b': 'B2B',
             'b2c': 'B2C'
+        }
+
+        # Pre-create status formats to avoid recreating per cell
+        status_formats = {
+            key: workbook.add_format({
+                'border': 1,
+                'font_size': 10,
+                'fg_color': color,
+            })
+            for key, color in status_colors.items()
         }
 
         # ========================================
@@ -322,7 +412,11 @@ class DailyPrescriptionReportWizard(models.TransientModel):
             'custom': 'Custom Range'
         }.get(self.report_type, 'Custom Range')
 
-        title_text = f'Daily Prescription Report - {report_label}: {self.date_from.strftime("%d %b %Y")} To {self.date_to.strftime("%d %b %Y")}'
+        title_text = (
+            f'Daily Prescription Report - {report_label}: '
+            f'{self.date_from.strftime("%d %b %Y")} To '
+            f'{self.date_to.strftime("%d %b %Y")}'
+        )
         if self.area_manager_id:
             title_text += f' - AM: {self.area_manager_id.name}'
         if self.region:
@@ -365,90 +459,47 @@ class DailyPrescriptionReportWizard(models.TransientModel):
         all_report_data = []
 
         # ========================================
-        # PROCESS APPOINTMENTS
+        # PROCESS APPOINTMENTS (DEDUPED BY SALE ORDER)
         # ========================================
+        seen_sale_orders = set()
+        skipped_duplicate_so = 0
+
         for appointment in appointments:
-            sale_order = appointment.sale_order_id or appointment.parent_appointment_id.sale_order_id
+            sale_order = (
+                appointment.sale_order_id
+                or appointment.parent_appointment_id.sale_order_id
+            )
             if not sale_order:
                 continue
 
+            # ---- FIX: skip sale orders already processed ----
+            if sale_order.id in seen_sale_orders:
+                skipped_duplicate_so += 1
+                _logger.info(
+                    "Skipping duplicate sale order %s (already processed via another appointment)",
+                    sale_order.name
+                )
+                continue
+            seen_sale_orders.add(sale_order.id)
+
             # ------------------------------------------------
-            # Collect HA lines from sale order
+            # Collect HA lines (de-duplicated)
             # ------------------------------------------------
-            ha_lines = []
-            for line in sale_order.order_line:
-                if not line.product_id:
-                    continue
-
-                product_item_type = False
-                if hasattr(line.product_id, 'item_type'):
-                    product_item_type = line.product_id.item_type
-                elif hasattr(line.product_id.product_tmpl_id, 'item_type'):
-                    product_item_type = line.product_id.product_tmpl_id.item_type
-
-                if product_item_type != 'ha':
-                    continue
-
-                ha_lines.append(line)
-
+            ha_lines = self._collect_ha_lines(sale_order)
             if not ha_lines:
                 continue
 
             # ------------------------------------------------
-            # GROUP LINES BY PRODUCT NAME
-            # Same name -> pair one Left + one Right, quantity = 2
-            # Single leftover -> Left only, quantity = 1
+            # Build paired rows (Left/Right)
             # ------------------------------------------------
-            product_groups = OrderedDict()
-            for line in ha_lines:
-                pname = line.product_id.name
-                product_groups.setdefault(pname, []).append(line)
+            paired_rows = self._build_paired_rows(ha_lines)
+            if not paired_rows:
+                continue
 
-            paired_rows = []
-            for pname, lines in product_groups.items():
-                lines = sorted(lines, key=lambda l: l.id)
-                idx = 0
-                while idx < len(lines):
-                    if idx + 1 < len(lines):
-                        left_line = lines[idx]
-                        right_line = lines[idx + 1]
-                        paired_rows.append({
-                            'left_line': left_line,
-                            'right_line': right_line,
-                            'left_name': left_line.product_id.name,
-                            'right_name': right_line.product_id.name,
-                            'quantity': 2,
-                            'lines': [left_line, right_line],
-                        })
-                        idx += 2
-                    else:
-                        single_line = lines[idx]
-                        paired_rows.append({
-                            'left_line': single_line,
-                            'right_line': None,
-                            'left_name': single_line.product_id.name,
-                            'right_name': '',
-                            'quantity': 1,
-                            'lines': [single_line],
-                        })
-                        idx += 1
-
-            # ------------------------------------------------
-            # Advance Received = Sale Order Total - Balance Due
-            # ------------------------------------------------
             advance_received = self._get_advance_received(sale_order, appointment)
-
-            # ------------------------------------------------
-            # Patient Source from ref_source (Many2one)
-            # ------------------------------------------------
             patient_source = self._get_patient_source(appointment.patient_id)
-
-            # ------------------------------------------------
-            # Status label (Draft / Order Process to SCM / normal)
-            # ------------------------------------------------
             status_label = self._get_appointment_status_label(appointment)
 
-            # Clinic info
             clinic = appointment.clinic_id
             clinic_type_display = clinic_type_map.get(clinic.clinic_type, '') if clinic else ''
             clinic_subtype_display = clinic_subtype_map.get(clinic.clinic_subtype, '') if clinic else ''
@@ -456,9 +507,6 @@ class DailyPrescriptionReportWizard(models.TransientModel):
             region = clinic.region if clinic else ''
             area_manager = clinic.area_manager_id.name if clinic and clinic.area_manager_id else ''
 
-            # ------------------------------------------------
-            # WRITE ONE ROW PER PAIRED GROUP
-            # ------------------------------------------------
             for pair in paired_rows:
                 left_line = pair['left_line']
                 right_line = pair['right_line']
@@ -467,7 +515,10 @@ class DailyPrescriptionReportWizard(models.TransientModel):
                 ref_line = left_line or right_line
                 item_style = self._get_item_style(ref_line.product_id) if ref_line else ''
 
-                unit_price = left_line.price_unit if left_line else (right_line.price_unit if right_line else 0.0)
+                unit_price = (
+                    left_line.price_unit if left_line
+                    else (right_line.price_unit if right_line else 0.0)
+                )
 
                 total_discount_amount = 0.0
                 total_discount_percent = 0.0
@@ -476,7 +527,10 @@ class DailyPrescriptionReportWizard(models.TransientModel):
                 for l in pair['lines']:
                     dp, da = self._calculate_discount(l)
                     total_discount_amount += da
-                    total_net_sale += (l.price_subtotal if hasattr(l, 'price_subtotal') else l.product_uom_qty * l.price_unit)
+                    total_net_sale += (
+                        l.price_subtotal if hasattr(l, 'price_subtotal')
+                        else l.product_uom_qty * l.price_unit
+                    )
 
                 gross_for_pct = sum(
                     (l.product_uom_qty * (l.product_id.lst_price or l.price_unit))
@@ -511,12 +565,12 @@ class DailyPrescriptionReportWizard(models.TransientModel):
                     'discount_amount': total_discount_amount,
                     'advance_received': advance_received,
                     'total_sale': total_net_sale,
-                    'status': status_label
+                    'status': status_label,
+                    'appointment_status': appointment.status,
                 }
                 all_report_data.append(row_data)
 
-                col = 0
-                for idx, value in enumerate([
+                values = [
                     row_data['date'],
                     row_data['clinic_name'],
                     row_data['region'],
@@ -536,40 +590,37 @@ class DailyPrescriptionReportWizard(models.TransientModel):
                     row_data['discount_amount'],
                     row_data['advance_received'],
                     row_data['total_sale'],
-                    row_data['status']
-                ]):
-                    if idx == 0:
-                        worksheet.write(row, col, value, date_format)
-                    elif idx == 13:
-                        worksheet.write(row, col, value or 0, number_format)
-                    elif idx in [14, 16, 17, 18]:
-                        worksheet.write(row, col, value or 0, currency_format)
-                    elif idx == 15:
-                        worksheet.write(row, col, (value / 100) if value else 0, percent_format)
-                    elif idx == 19:
-                        # Status coloring
+                    row_data['status'],
+                ]
+
+                for col_idx, value in enumerate(values):
+                    if col_idx == 0:
+                        worksheet.write(row, col_idx, value, date_format)
+                    elif col_idx == 13:
+                        worksheet.write(row, col_idx, value or 0, number_format)
+                    elif col_idx in (14, 16, 17, 18):
+                        worksheet.write(row, col_idx, value or 0, currency_format)
+                    elif col_idx == 15:
+                        worksheet.write(row, col_idx, (value / 100) if value else 0, percent_format)
+                    elif col_idx == 19:
                         if status_label == 'Order Process to SCM':
-                            status_format = workbook.add_format({
-                                'border': 1,
-                                'font_size': 10,
-                                'fg_color': '#B0E0E6'
-                            })
-                            worksheet.write(row, col, value, status_format)
+                            worksheet.write(row, col_idx, value, scm_status_format)
                         else:
-                            status_color = status_colors.get(appointment.status, '')
-                            if status_color:
-                                status_format = workbook.add_format({
-                                    'border': 1,
-                                    'font_size': 10,
-                                    'fg_color': status_color
-                                })
-                                worksheet.write(row, col, value, status_format)
+                            st_format = status_formats.get(appointment.status)
+                            if st_format:
+                                worksheet.write(row, col_idx, value, st_format)
                             else:
-                                worksheet.write(row, col, value, text_format)
+                                worksheet.write(row, col_idx, value, text_format)
                     else:
-                        worksheet.write(row, col, value or '', text_format)
-                    col += 1
+                        worksheet.write(row, col_idx, value or '', text_format)
                 row += 1
+
+        _logger.info(
+            "Report built: appointments=%s, unique_sale_orders=%s, "
+            "skipped_duplicate_sale_orders=%s, rows_written=%s",
+            len(appointments), len(seen_sale_orders),
+            skipped_duplicate_so, len(all_report_data)
+        )
 
         # ========================================
         # CALCULATE AND ADD TOTALS
@@ -580,7 +631,10 @@ class DailyPrescriptionReportWizard(models.TransientModel):
                 am = data.get('area_manager', '')
                 if am:
                     if am not in am_totals:
-                        am_totals[am] = {'quantity': 0, 'discount_amount': 0, 'advance_received': 0, 'total_sale': 0}
+                        am_totals[am] = {
+                            'quantity': 0, 'discount_amount': 0,
+                            'advance_received': 0, 'total_sale': 0
+                        }
                     am_totals[am]['quantity'] += data.get('quantity', 0)
                     am_totals[am]['discount_amount'] += data.get('discount_amount', 0)
                     am_totals[am]['advance_received'] += data.get('advance_received', 0)
@@ -591,7 +645,10 @@ class DailyPrescriptionReportWizard(models.TransientModel):
                 region = data.get('region', '')
                 if region:
                     if region not in region_totals:
-                        region_totals[region] = {'quantity': 0, 'discount_amount': 0, 'advance_received': 0, 'total_sale': 0}
+                        region_totals[region] = {
+                            'quantity': 0, 'discount_amount': 0,
+                            'advance_received': 0, 'total_sale': 0
+                        }
                     region_totals[region]['quantity'] += data.get('quantity', 0)
                     region_totals[region]['discount_amount'] += data.get('discount_amount', 0)
                     region_totals[region]['advance_received'] += data.get('advance_received', 0)
@@ -604,7 +661,6 @@ class DailyPrescriptionReportWizard(models.TransientModel):
                 'total_sale': sum(d.get('total_sale', 0) for d in all_report_data)
             }
 
-            # Region Totals
             if region_totals:
                 row += 1
                 worksheet.merge_range(row, 0, row, 19, 'REGION TOTALS', total_format)
@@ -617,7 +673,6 @@ class DailyPrescriptionReportWizard(models.TransientModel):
                     worksheet.write(row, 18, totals.get('total_sale', 0), currency_format)
                     row += 1
 
-            # Area Manager Totals
             if am_totals:
                 row += 1
                 worksheet.merge_range(row, 0, row, 19, 'AREA MANAGER TOTALS', total_format)
@@ -630,7 +685,6 @@ class DailyPrescriptionReportWizard(models.TransientModel):
                     worksheet.write(row, 18, totals.get('total_sale', 0), currency_format)
                     row += 1
 
-            # Grand Total
             row += 1
             worksheet.merge_range(row, 0, row, 19, 'GRAND TOTAL', total_format)
             row += 1
