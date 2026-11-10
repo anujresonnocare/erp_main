@@ -336,7 +336,7 @@ class ResonnocareDiscountApprovalRequest(models.Model):
                     1.0 - (line.discount or 0.0) / 100.0
                 )
 
-            line_discount_value = getattr(line, "discount_reference_mrp", 0.0) or 0.0
+            line_discount_value = getattr(line, "discount_fixed", 0.0) or 0.0
             ha_discount_value += line_discount_value
 
             _logger.info(
