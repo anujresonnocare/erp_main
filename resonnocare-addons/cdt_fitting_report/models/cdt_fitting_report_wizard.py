@@ -117,7 +117,7 @@ class CdtFittingReportWizard(models.TransientModel):
             elif line.discount_type == 'fixed':
                 # Fixed amount discount per unit
                 discount_fixed = line.discount_fixed or 0.0
-                discount_amount = discount_fixed * quantity
+                discount_amount = discount_fixed
                 discount_percent = (discount_amount / gross_mrp * 100) if gross_mrp > 0 else 0.0
         else:
             # Fallback: calculate from price difference
