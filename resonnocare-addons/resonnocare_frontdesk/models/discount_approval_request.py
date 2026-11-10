@@ -324,7 +324,7 @@ class ResonnocareDiscountApprovalRequest(models.Model):
         for line in ha_lines:
             qty = line.product_uom_qty or 0.0
             unit_price = line.product_id.list_price or 0.0
-            base_mrp = getattr(line, "discount_fixed", 0.0) or 0.0
+            base_mrp = getattr(line, "discount_reference_mrp", 0.0) or 0.0
 
             line_base_mrp = base_mrp if base_mrp > 0.0 else unit_price
             ha_gross += line_base_mrp
@@ -336,7 +336,7 @@ class ResonnocareDiscountApprovalRequest(models.Model):
                     1.0 - (line.discount or 0.0) / 100.0
                 )
 
-            line_discount_value = max(line_base_mrp - line_subtotal, 0.0)
+            line_discount_value = getattr(line, "discount_reference_mrp", 0.0) or 0.0
             ha_discount_value += line_discount_value
 
             _logger.info(
