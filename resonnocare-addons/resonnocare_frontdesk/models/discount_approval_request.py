@@ -327,7 +327,7 @@ class ResonnocareDiscountApprovalRequest(models.Model):
             base_mrp = getattr(line, "discount_reference_mrp", 0.0) or 0.0
 
             line_base_mrp = base_mrp if base_mrp > 0.0 else unit_price
-            ha_gross += line_base_mrp
+            ha_gross += line_base_mrp * qty
 
             if line.price_subtotal:
                 line_subtotal = line.price_subtotal
