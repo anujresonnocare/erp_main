@@ -1227,6 +1227,10 @@ class SaleOrderLine(models.Model):
     def _prepare_invoice_line(self, **optional_values):
         res = super()._prepare_invoice_line(**optional_values)
         if self.discount_type == "fixed" and self.discount_fixed:
-            res["price_unit"] = self.price_unit - self.discount_fixed
+            if self.product_uom_qty > 1:
+                res["price_unit"] = self.price_unit - (self.discount_fixed / 2)
+            else:
+                res["price_unit"] = self.price_unit - self.discount_fixed   
+            # res["price_unit"] = self.price_unit - self.discount_fixed
             res["discount"] = 0.0
         return res
