@@ -818,10 +818,10 @@ class SaleOrderLine(models.Model):
                 _logger.info("Converting fixed discount to percentage for line ID 11111111111111%s: price_unit=%s, discount_fixed=%s", line.id, price, line.discount_fixed)
                 if line.product_uom_qty > 1:
                     line.discount = ((line.discount_fixed / 2) / price) * 100.0
-                    line.price_subtotal = (line.price_unit * line.product_uom_qty) - (line.discount_fixed)
+                    # line.price_subtotal = (line.price_unit * line.product_uom_qty) - (line.discount_fixed)
                 else:
                     line.discount = (line.discount_fixed / price) * 100.0
-                    line.price_subtotal = (line.price_unit * line.product_uom_qty) - (line.discount_fixed)
+                    # line.price_subtotal = (line.price_unit * line.product_uom_qty) - (line.discount_fixed)
             else:
                 line.discount = 0.0
 
