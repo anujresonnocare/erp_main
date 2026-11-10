@@ -6,6 +6,10 @@ from datetime import date
 from dateutil.relativedelta import relativedelta
 import io, base64, xlsxwriter
 
+import logging
+
+_logger = logging.getLogger(__name__)
+
 class CdtFittingReportWizard(models.TransientModel):
     _name = 'cdt.fitting.report.wizard'
     _description = 'CDT Fitting Report Wizard'
@@ -190,6 +194,8 @@ class CdtFittingReportWizard(models.TransientModel):
         pickings = sale_order.picking_ids.filtered(
             lambda p: p.state == 'done' and p.picking_type_code == 'outgoing'
         )
+        _logger.info("Found %s completed pickings for Sale Order %s", len(pickings), sale_order.name)
+        _logger.info("Pickings IDs: %s", pickings.ids)
         
         for picking in pickings:
             for move_line in picking.move_line_ids:
