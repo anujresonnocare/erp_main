@@ -374,6 +374,7 @@ class CdtFittingReportWizard(models.TransientModel):
 
             # Get all serial numbers grouped by product
             serials_by_product = self._get_serial_numbers_for_sale_order(sale_order)
+            _logger.info("Serial numbers by product for Sale Order %s: %s", sale_order.name, serials_by_product)
             
             # Track used serials per product to distribute correctly
             used_serials_by_product = {}
