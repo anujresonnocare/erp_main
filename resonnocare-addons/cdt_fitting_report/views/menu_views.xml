@@ -2,7 +2,7 @@
 <odoo>
     <!-- Main Menu -->
     <menuitem id="menu_cdt_fitting_report_root" 
-              name="CDT Reports" 
+              name="Fitting Report" 
               sequence="10"
               web_icon="cdt_fitting_report,static/description/icon.png"/>
 

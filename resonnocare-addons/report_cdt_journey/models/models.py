@@ -33,6 +33,7 @@ class CdtJourneyReportWizard(models.TransientModel):
     # CONSTANTS
     # =====================================================================
     APPT_TYPE_DIAGNOSTIC   = 'Diagnostics'
+    APPT_TYPE_TINNITUS   = 'Tinnitus'
     APPT_TYPE_HEARING_TEST = 'Hearing Test & Trial'
     APPT_TYPE_SPEECH       = 'Speech'
     APPT_TYPE_VOICE        = 'Voice'
@@ -258,7 +259,11 @@ class CdtJourneyReportWizard(models.TransientModel):
         return codes
 
     def _is_diagnostic_type(self, appointment):
-        return self._appt_type_name(appointment) == self.APPT_TYPE_DIAGNOSTIC
+        return self._appt_type_name(appointment) in (
+            self.APPT_TYPE_DIAGNOSTIC,
+            self.APPT_TYPE_TINNITUS,
+        )
+        # return self._appt_type_name(appointment) == self.APPT_TYPE_DIAGNOSTIC
 
     def _is_hearing_test_type(self, appointment):
         return self._appt_type_name(appointment) == self.APPT_TYPE_HEARING_TEST
