@@ -412,7 +412,7 @@ class CdtFittingReportWizard(models.TransientModel):
                         if serial not in used_serials:
                             serial_numbers_str = serial
                             used_serials.append(serial)
-                            break
+                            # break
 
                 # Calculate values
                 list_price = line.product_id.lst_price or line.price_unit
