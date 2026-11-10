@@ -373,9 +373,48 @@ class CdtFittingReportWizard(models.TransientModel):
             final_invoice = self._get_final_invoice(sale_order)
 
             # Get all serial numbers grouped by product
+            # serials_by_product = self._get_serial_numbers_for_sale_order(sale_order)
+            # _logger.info("Serial numbers by product for Sale Order %s: %s", sale_order.name, serials_by_product)
+            
+            # # Track used serials per product to distribute correctly
+            # used_serials_by_product = {}
+
+            # # Process each sale order line - ONLY HA products
+            # for line in sale_order.order_line:
+            #     if not line.product_id:
+            #         continue
+                
+            #     # Check if product has item_type field and it's 'ha'
+            #     product_item_type = False
+            #     if hasattr(line.product_id, 'item_type'):
+            #         product_item_type = line.product_id.item_type
+            #     elif hasattr(line.product_id.product_tmpl_id, 'item_type'):
+            #         product_item_type = line.product_id.product_tmpl_id.item_type
+                
+            #     # Skip if item_type is not 'ha'
+            #     if product_item_type != 'ha':
+            #         continue
+
+            #     product_id = line.product_id.id
+                
+            #     # Initialize used serials for this product if not exists
+            #     if product_id not in used_serials_by_product:
+            #         used_serials_by_product[product_id] = []
+                
+            #     # Get serial numbers for this specific line
+            #     serial_numbers_str = ''
+            #     if product_id in serials_by_product:
+            #         for serial in serials_by_product[product_id]:
+            #             if serial not in used_serials_by_product[product_id]:
+            #                 used_serials_by_product[product_id].append(serial)
+            #                 serial_numbers_str = serial
+            #                 break
+            #         # serial_numbers_str = product_id
+            #         # break
+
             serials_by_product = self._get_serial_numbers_for_sale_order(sale_order)
             _logger.info("Serial numbers by product for Sale Order %s: %s", sale_order.name, serials_by_product)
-            
+
             # Track used serials per product to distribute correctly
             used_serials_by_product = {}
 
@@ -383,37 +422,49 @@ class CdtFittingReportWizard(models.TransientModel):
             for line in sale_order.order_line:
                 if not line.product_id:
                     continue
-                
+
                 # Check if product has item_type field and it's 'ha'
                 product_item_type = False
                 if hasattr(line.product_id, 'item_type'):
                     product_item_type = line.product_id.item_type
                 elif hasattr(line.product_id.product_tmpl_id, 'item_type'):
                     product_item_type = line.product_id.product_tmpl_id.item_type
-                
+
                 # Skip if item_type is not 'ha'
                 if product_item_type != 'ha':
                     continue
 
                 product_id = line.product_id.id
-                
+
                 # Initialize used serials for this product if not exists
                 if product_id not in used_serials_by_product:
                     used_serials_by_product[product_id] = []
-                
-                # Get serial numbers for this specific line
-                serial_numbers_str = ''
-                if product_id in serials_by_product:
-                    available_serials = serials_by_product[product_id]
-                    used_serials = used_serials_by_product[product_id]
-                    
-                    # Find next unused serial
-                    for serial in available_serials:
-                        if serial not in used_serials:
-                            serial_numbers_str = serial
-                            used_serials.append(serial)
-                            # break
 
+                # Get serial numbers for this line (one per unit of product_qty)
+                serial_numbers_for_line = []
+                if product_id in serials_by_product:
+                    available_serials = [
+                        s for s in serials_by_product[product_id]
+                        if s not in used_serials_by_product[product_id]
+                    ]
+
+                    # Take as many serials as the line quantity requires
+                    qty_needed = int(line.product_uom_qty)
+                    serials_to_assign = available_serials[:qty_needed]
+
+                    for serial in serials_to_assign:
+                        used_serials_by_product[product_id].append(serial)
+                        serial_numbers_for_line.append(serial)
+
+                # Build the serial string for this line (comma separated if multiple qty)
+                serial_numbers_str = ', '.join(serial_numbers_for_line)
+
+                _logger.info(
+                    "Line %s (product %s): assigned serials %s",
+                    line.id, line.product_id.display_name, serial_numbers_str
+                )
+
+                # ... rest of your logic using serial_numbers_str for this line
                 # Calculate values
                 list_price = line.product_id.lst_price or line.price_unit
                 unit_price = line.price_unit
