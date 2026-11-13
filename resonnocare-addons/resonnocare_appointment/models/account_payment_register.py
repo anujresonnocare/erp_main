@@ -8,12 +8,12 @@ class AccountPaymentRegister(models.TransientModel):
     # ------------------------------------------------------------------
     # MASTER FIELD
     # ------------------------------------------------------------------
-    payment_mode = fields.Selection([
-        ("POS", "POS"),
-        ("Online", "Online"),
-        ("Cheque", "Cheque"),
-        ("EMI", "EMI"),
-    ], string="Payment Mode")
+    # payment_mode = fields.Selection([
+    #     ("POS", "POS"),
+    #     ("Online", "Online"),
+    #     ("Cheque", "Cheque"),
+    #     ("EMI", "EMI"),
+    # ], string="Payment Mode")
 
     # ------------------------------------------------------------------
     # SUB MODES
@@ -172,6 +172,33 @@ class AccountPaymentRegister(models.TransientModel):
         ("FIBER", "FIBER"),
     ], string="Partner Name")
     scheme_name = fields.Char("Scheme Name")
+
+    payment_mode = fields.Selection([
+        ("POS", "POS"),
+        ("Online", "Online"),
+        ("Cheque", "Cheque"),
+        ("EMI", "EMI"),
+    ], string="Payment Mode", compute="_compute_payment_mode", store=True, readonly=False)
+
+    @api.depends("journal_id")
+    def _compute_payment_mode(self):
+        for rec in self:
+            if not rec.journal_id:
+                rec.payment_mode = False
+                continue
+
+            name = (rec.journal_id.name or "").strip().lower()
+
+            if name == "pos":
+                rec.payment_mode = "POS"
+            elif name == "online":
+                rec.payment_mode = "Online"
+            elif name in ("cheque", "check"):
+                rec.payment_mode = "Cheque"
+            elif name == "emi":
+                rec.payment_mode = "EMI"
+            else:
+                rec.payment_mode = False
 
     # ------------------------------------------------------------------
     # FLAGS (derived from payment_mode / sub_mode_pos — no journal name lookup)
