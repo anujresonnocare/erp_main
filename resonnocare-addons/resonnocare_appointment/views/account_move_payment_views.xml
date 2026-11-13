@@ -1,134 +1,104 @@
 <odoo>
-    <record id="view_account_payment_register_resonnocare" model="ir.ui.view">
-        <field name="name">account.payment.register.resonnocare</field>
-        <field name="model">account.payment.register</field>
-        <field name="inherit_id" ref="account.view_account_payment_register_form"/>
-        <field name="groups_id" eval="[(5, 0, 0)]"/>
-        <field name="arch" type="xml">
+    <record id="view_account_payment_register_form_inherit_mode" model="ir.ui.view">
+    <field name="name">account.payment.register.form.inherit.mode</field>
+    <field name="model">account.payment.register</field>
+    <field name="inherit_id" ref="account.view_account_payment_register_form"/>
+    <field name="arch" type="xml">
 
-            <xpath expr="//field[@name='amount']" position="attributes">
-                <attribute name="readonly">0</attribute>
-            </xpath>
+        <xpath expr="//group[@name='group1']" position="after">
+            <group string="Payment Details" col="4">
 
-            <xpath expr="//group" position="before">
-                <field name="payment_already_exists" invisible="1"/>
-                <div class="alert alert-warning text-center" role="alert" invisible="not payment_already_exists" style="margin-bottom: 15px; font-weight: bold;">
-                    ⚠️ A payment has already been processed for this appointment/invoice. Please verify before proceeding.
-                </div>
-            </xpath>
+                <!-- ============ MASTER ============ -->
+                <field name="payment_mode" required="1"/>
 
-            <xpath expr="//group" position="inside">
-                <!-- <field name="confirm_subsequent_payment" invisible="not payment_already_exists"/> -->
+                <!-- ============ POS ============ -->
+                <field name="sub_mode_pos"
+                       invisible="payment_mode != 'POS'"
+                       required="payment_mode == 'POS'"/>
 
-                <!-- UPI -->
-                <label for="upi_transaction_id"
-                       invisible="not is_upi_journal"/>
+                <field name="pay_type_upi"
+                       invisible="not is_pos_upi"
+                       required="is_pos_upi"/>
 
-                <field name="upi_transaction_id"
-                       placeholder="Enter UPI Transaction ID"
-                       invisible="not is_upi_journal"/>
+                <field name="pay_type_card"
+                       invisible="not is_pos_card"
+                       required="is_pos_card"/>
 
-                <!-- Paytm -->
-                <label for="paytm_txn_id"
-                       invisible="not is_paytm_journal"/>
+                <field name="pay_type_link"
+                       invisible="not is_pos_link"
+                       required="is_pos_link"/>
 
-                <field name="paytm_txn_id"
-                       placeholder="Enter Paytm Transaction ID"
-                       invisible="not is_paytm_journal"/>
+                <!-- ============ ONLINE ============ -->
+                <field name="sub_mode_online"
+                       invisible="payment_mode != 'Online'"
+                       required="payment_mode == 'Online'"/>
 
-                <!-- Cheque -->
-                <label for="cheque_number"
-                       invisible="not is_cheque_journal"/>
+                <field name="reference_no"
+                       invisible="payment_mode not in ('Online',)"
+                       required="payment_mode == 'Online'"/>
 
-                <field name="cheque_number"
-                       placeholder="Cheque Number"
-                       invisible="not is_cheque_journal"/>
+                <field name="payment_date"
+                       invisible="payment_mode not in ('Online',)"
+                       required="payment_mode == 'Online'"/>
 
-                <label for="cheque_date"
-                       invisible="not is_cheque_journal"/>
+                <!-- ============ CHEQUE ============ -->
+                <field name="cheque_bank_name"
+                       invisible="payment_mode != 'Cheque'"
+                       required="payment_mode == 'Cheque'"/>
+
+                <field name="cheque_no"
+                       invisible="payment_mode not in ('Cheque','EMI')"
+                       required="payment_mode in ('Cheque','EMI')"/>
 
                 <field name="cheque_date"
-                       invisible="not is_cheque_journal"/>
+                       invisible="payment_mode not in ('Cheque','EMI')"
+                       required="payment_mode in ('Cheque','EMI')"/>
 
-                <label for="cheque_bank_name"
-                       invisible="not is_cheque_journal"/>
+                <!-- ============ EMI ============ -->
+                <field name="sub_mode_emi"
+                       invisible="payment_mode != 'EMI'"
+                       required="payment_mode == 'EMI'"/>
 
-                <field name="cheque_bank_name"
-                       placeholder="Bank Name"
-                       invisible="not is_cheque_journal"/>
+                <field name="partner_name"
+                       invisible="payment_mode != 'EMI'"
+                       required="payment_mode == 'EMI'"/>
 
-            </xpath>
+                <field name="scheme_name"
+                       invisible="payment_mode != 'EMI'"/>
 
-        </field>
-    </record>
+            </group>
+        </xpath>
+    </field>
+</record>
 
     <!-- Payment Form View -->
-    <record id="view_account_payment_resonnocare" model="ir.ui.view">
-        <field name="name">account.payment.resonnocare</field>
-        <field name="model">account.payment</field>
-        <field name="inherit_id" ref="account.view_account_payment_form"/>
-        <field name="groups_id" eval="[(5, 0, 0)]"/>
-        <field name="arch" type="xml">
-            <xpath expr="//form/header" position="inside">
-                <button
-                    name="action_print_resonnocare_receipt"
-                    type="object"
-                    string="Print Receipt"
-                    class="btn-secondary"
-                    invisible="state not in ('in_process', 'paid', 'posted')"
-                />
-            </xpath>
+    <record id="view_account_payment_form_inherit_mode" model="ir.ui.view">
+    <field name="name">account.payment.form.inherit.mode</field>
+    <field name="model">account.payment</field>
+    <field name="inherit_id" ref="account.view_account_payment_form"/>
+    <field name="arch" type="xml">
 
-            <xpath expr="//field[@name='amount']" position="attributes">
-                <attribute name="readonly">1</attribute>
-            </xpath>
+        <xpath expr="//group" position="after">
+            <group string="Extended Payment Info" col="4">
+                <field name="payment_mode"/>
+                <field name="sub_mode_pos"      invisible="payment_mode != 'POS'"/>
+                <field name="pay_type_upi"      invisible="not (payment_mode == 'POS' and sub_mode_pos == 'UPI')"/>
+                <field name="pay_type_card"     invisible="not (payment_mode == 'POS' and sub_mode_pos in ('Credit_Card','Debit_Card'))"/>
+                <field name="pay_type_link"     invisible="not (payment_mode == 'POS' and sub_mode_pos == 'Pay_by_Link')"/>
 
-            <xpath expr="//group" position="inside">
+                <field name="sub_mode_online"   invisible="payment_mode != 'Online'"/>
+                <field name="reference_no"      invisible="payment_mode != 'Online'"/>
+                <field name="payment_date"      invisible="payment_mode != 'Online'"/>
 
-                <!-- UPI -->
-                <label for="upi_transaction_id"
-                       invisible="not is_upi_journal"/>
+                <field name="cheque_bank_name"  invisible="payment_mode != 'Cheque'"/>
+                <field name="cheque_no"         invisible="payment_mode not in ('Cheque','EMI')"/>
+                <field name="cheque_date"       invisible="payment_mode not in ('Cheque','EMI')"/>
 
-                <field name="upi_transaction_id"
-                       placeholder="Enter UPI Transaction ID"
-                       invisible="not is_upi_journal"
-                       readonly="1"/>
-
-                <!-- Paytm -->
-                <label for="paytm_txn_id"
-                       invisible="not is_paytm_journal"/>
-
-                <field name="paytm_txn_id"
-                       placeholder="Enter Paytm Transaction ID"
-                       invisible="not is_paytm_journal"
-                       readonly="1"/>
-
-                <!-- Cheque -->
-                <label for="cheque_number"
-                       invisible="not is_cheque_journal"/>
-
-                <field name="cheque_number"
-                       placeholder="Cheque Number"
-                       invisible="not is_cheque_journal"
-                       readonly="1"/>
-
-                <label for="cheque_date"
-                       invisible="not is_cheque_journal"/>
-
-                <field name="cheque_date"
-                       invisible="not is_cheque_journal"
-                       readonly="1"/>
-
-                <label for="cheque_bank_name"
-                       invisible="not is_cheque_journal"/>
-
-                <field name="cheque_bank_name"
-                       placeholder="Bank Name"
-                       invisible="not is_cheque_journal"
-                       readonly="1"/>
-
-            </xpath>
-
-        </field>
-    </record>
+                <field name="sub_mode_emi"      invisible="payment_mode != 'EMI'"/>
+                <field name="partner_name"      invisible="payment_mode != 'EMI'"/>
+                <field name="scheme_name"       invisible="payment_mode != 'EMI'"/>
+            </group>
+        </xpath>
+    </field>
+</record>
 </odoo>

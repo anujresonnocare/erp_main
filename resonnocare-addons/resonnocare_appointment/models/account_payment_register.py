@@ -1,14 +1,70 @@
 from odoo import models, fields, api
 from odoo.exceptions import ValidationError
 
+
 class AccountPaymentRegister(models.TransientModel):
     _inherit = "account.payment.register"
 
-    upi_transaction_id = fields.Char(string="UPI Transaction ID")
-    cheque_number = fields.Char(string="Cheque Number")
-    cheque_date = fields.Date(string="Cheque Date")
-    # cheque_bank_name = fields.Char(string="Cheque Bank Name")
+    # ------------------------------------------------------------------
+    # MASTER FIELD
+    # ------------------------------------------------------------------
+    payment_mode = fields.Selection([
+        ("POS", "POS"),
+        ("Online", "Online"),
+        ("Cheque", "Cheque"),
+        ("EMI", "EMI"),
+    ], string="Payment Mode")
 
+    # ------------------------------------------------------------------
+    # SUB MODES
+    # ------------------------------------------------------------------
+    sub_mode_pos = fields.Selection([
+        ("UPI", "UPI"),
+        ("Credit_Card", "Credit Card"),
+        ("Debit_Card", "Debit Card"),
+        ("Pay_by_Link", "Pay by Link"),
+    ], string="Sub Mode (POS)")
+
+    sub_mode_online = fields.Selection([
+        ("NEFT", "NEFT"),
+        ("IMPS", "IMPS"),
+        ("RTGS", "RTGS"),
+    ], string="Sub Mode (Online)")
+
+    sub_mode_emi = fields.Selection([
+        ("No_Cost_EMI", "No Cost EMI"),
+        ("Regular_EMI", "Regular EMI"),
+    ], string="Sub Mode (EMI)")
+
+    # ------------------------------------------------------------------
+    # PAY TYPES
+    # ------------------------------------------------------------------
+    pay_type_upi = fields.Selection([
+        ("DQR", "DQR"),
+        ("SQR", "SQR"),
+    ], string="UPI Type")
+
+    pay_type_card = fields.Selection([
+        ("Mastercard", "Mastercard"),
+        ("VISA", "VISA"),
+        ("Rupay", "Rupay"),
+        ("Maestro", "Maestro"),
+        ("Diners", "Diners"),
+        ("Amex", "Amex"),
+    ], string="Card Type")
+
+    pay_type_link = fields.Selection([
+        ("Card", "Card"),
+    ], string="Pay by Link Type")
+
+    # ------------------------------------------------------------------
+    # SHARED DETAILS
+    # ------------------------------------------------------------------
+    reference_no = fields.Char("Reference No")
+    payment_date = fields.Date("Payment Date", default=fields.Date.context_today)
+
+    cheque_no = fields.Char("Cheque No")
+    cheque_date = fields.Date("Cheque Date")
     cheque_bank_name = fields.Selection([
         ('sbi', 'State Bank of India (SBI)'),
         ('bob', 'Bank of Baroda (BOB)'),
@@ -106,108 +162,101 @@ class AccountPaymentRegister(models.TransientModel):
         ('ahmedabad_mercantile_coop', 'Ahmedabad Mercantile Cooperative Bank'),
         ('janata_sahakari', 'Janata Sahakari Bank'),
         ('rajkot_nagrik_coop', 'Rajkot Nagrik Sahakari Bank'),
-    ], string='Bank Name', required=True)
-    paytm_txn_id = fields.Char(string="Paytm Transaction ID")
+    ], string='Bank Name')
 
-    is_upi_journal = fields.Boolean(compute="_compute_journal_flags", store=False)
-    is_cheque_journal = fields.Boolean(compute="_compute_journal_flags", store=False)
-    is_paytm_journal = fields.Boolean(compute="_compute_journal_flags", store=False)
+    # EMI only
+    partner_name = fields.Selection([
+        ("Paytm", "Paytm"),
+        ("HDFC", "HDFC"),
+        ("Shopse", "Shopse"),
+        ("FIBER", "FIBER"),
+    ], string="Partner Name")
+    scheme_name = fields.Char("Scheme Name")
 
-    @api.depends("journal_id")
-    def _compute_journal_flags(self):
+    # ------------------------------------------------------------------
+    # FLAGS (derived from payment_mode / sub_mode_pos — no journal name lookup)
+    # ------------------------------------------------------------------
+    is_pos_upi = fields.Boolean(compute="_compute_flags", store=False)
+    is_pos_card = fields.Boolean(compute="_compute_flags", store=False)
+    is_pos_link = fields.Boolean(compute="_compute_flags", store=False)
+    is_online = fields.Boolean(compute="_compute_flags", store=False)
+    is_cheque = fields.Boolean(compute="_compute_flags", store=False)
+    is_emi = fields.Boolean(compute="_compute_flags", store=False)
+
+    @api.depends("payment_mode", "sub_mode_pos")
+    def _compute_flags(self):
         for rec in self:
-            rec.is_upi_journal = False
-            rec.is_cheque_journal = False
-            rec.is_paytm_journal = False
+            rec.is_pos_upi = rec.payment_mode == "POS" and rec.sub_mode_pos == "UPI"
+            rec.is_pos_card = rec.payment_mode == "POS" and rec.sub_mode_pos in ("Credit_Card", "Debit_Card")
+            rec.is_pos_link = rec.payment_mode == "POS" and rec.sub_mode_pos == "Pay_by_Link"
+            rec.is_online = rec.payment_mode == "Online"
+            rec.is_cheque = rec.payment_mode == "Cheque"
+            rec.is_emi = rec.payment_mode == "EMI"
 
-            if not rec.journal_id:
-                continue
-
-            name = (rec.journal_id.name or "").lower()
-
-            if "upi" in name or "qr" in name:
-                rec.is_upi_journal = True
-
-            if "cheque" in name or "check" in name:
-                rec.is_cheque_journal = True
-
-            if "paytm" in name:
-                rec.is_paytm_journal = True
-
-    payment_already_exists = fields.Boolean(
-        string="Payment Already Exists",
-        compute="_compute_payment_already_exists",
-        store=False,
-    )
-    confirm_subsequent_payment = fields.Boolean(
-        string="Confirm Subsequent Payment",
-        default=False,
-    )
-
-    @api.depends("line_ids")
-    def _compute_payment_already_exists(self):
+    # ------------------------------------------------------------------
+    # VALIDATION
+    # ------------------------------------------------------------------
+    def _validate_payment_mode_fields(self):
         for rec in self:
-            rec.payment_already_exists = False
-            for line in rec.line_ids:
-                invoice = line.move_id
-                if not invoice:
-                    continue
-                
-                # Check if invoice itself is paid or partially paid
-                if invoice.payment_state in ('paid', 'in_payment', 'partial'):
-                    rec.payment_already_exists = True
-                    break
-                
-                # Check if invoice has reconciled/matched payments
-                reconciled_payments = invoice.reconciled_payment_ids | invoice.matched_payment_ids
-                if reconciled_payments:
-                    rec.payment_already_exists = True
-                    break
+            if not rec.payment_mode:
+                raise ValidationError("Please select a Payment Mode.")
 
-                # Check related appointment payments
-                if hasattr(invoice, '_get_related_appointment'):
-                    appointment = invoice._get_related_appointment()
-                    if appointment:
-                        sale = appointment._get_effective_sale_order()
-                        if sale:
-                            total_paid = appointment._get_total_paid_for_sale(sale)
-                            if total_paid > 0.0:
-                                rec.payment_already_exists = True
-                                break
+            if rec.payment_mode == "POS":
+                if not rec.sub_mode_pos:
+                    raise ValidationError("Please select a POS Sub Mode.")
+                if rec.sub_mode_pos == "UPI" and not rec.pay_type_upi:
+                    raise ValidationError("Please select a UPI Type (DQR / SQR).")
+                if rec.sub_mode_pos in ("Credit_Card", "Debit_Card") and not rec.pay_type_card:
+                    raise ValidationError("Please select a Card Type.")
+                if rec.sub_mode_pos == "Pay_by_Link" and not rec.pay_type_link:
+                    raise ValidationError("Please select a Pay by Link Type.")
+
+            if rec.payment_mode == "Online":
+                if not rec.sub_mode_online:
+                    raise ValidationError("Please select an Online Sub Mode (NEFT / IMPS / RTGS).")
+                if not rec.reference_no:
+                    raise ValidationError("Please enter the Reference No.")
+                if not rec.payment_date:
+                    raise ValidationError("Please enter the Payment Date.")
+
+            if rec.payment_mode == "Cheque":
+                if not rec.cheque_bank_name:
+                    raise ValidationError("Please select the Bank Name.")
+                if not rec.cheque_no:
+                    raise ValidationError("Please enter the Cheque No.")
+                if not rec.cheque_date:
+                    raise ValidationError("Please enter the Cheque Date.")
+
+            if rec.payment_mode == "EMI":
+                if not rec.sub_mode_emi:
+                    raise ValidationError("Please select an EMI Sub Mode.")
+                if not rec.partner_name:
+                    raise ValidationError("Please select the Partner Name.")
+                if not rec.cheque_no:
+                    raise ValidationError("Please enter the Cheque No.")
+                if not rec.cheque_date:
+                    raise ValidationError("Please enter the Cheque Date.")
 
     def _create_payments(self):
-        if self.is_upi_journal and not self.upi_transaction_id:
-            raise ValidationError("Please enter UPI Transaction ID.")
-
-        if self.is_paytm_journal and not self.paytm_txn_id:
-            raise ValidationError("Please enter Paytm Transaction ID.")
-
-        if self.is_cheque_journal:
-            if not self.cheque_number or not self.cheque_date:
-                raise ValidationError("Please enter cheque details.")
-
-        # if self.payment_already_exists and not self.confirm_subsequent_payment:
-        #     raise ValidationError(
-        #         "⚠️ Warning: A payment has already been processed for this appointment/invoice. "
-        #         "If you are sure you want to register another payment, please check the "
-        #         "'Confirm Subsequent Payment' box before clicking Create Payment."
-        #     )
-
+        self._validate_payment_mode_fields()
         payments = super()._create_payments()
 
-        # IMPORTANT FIX: write on account.move, not account.payment
         for payment in payments:
-            move = payment.move_id or payment  # safety
-
             payment.write({
-                "paytm_txn_id": self.paytm_txn_id,
-            })
-            move.write({
-                "upi_transaction_id": self.upi_transaction_id,
-                "cheque_number": self.cheque_number,
-                "cheque_date": self.cheque_date,
-                "cheque_bank_name": self.cheque_bank_name,
-                "paytm_txn_id": self.paytm_txn_id,
+                "payment_mode":      self.payment_mode,
+                "sub_mode_pos":      self.sub_mode_pos,
+                "sub_mode_online":   self.sub_mode_online,
+                "sub_mode_emi":      self.sub_mode_emi,
+                "pay_type_upi":      self.pay_type_upi,
+                "pay_type_card":     self.pay_type_card,
+                "pay_type_link":     self.pay_type_link,
+                "reference_no":      self.reference_no,
+                "payment_date":      self.payment_date,
+                "cheque_no":         self.cheque_no,
+                "cheque_date":       self.cheque_date,
+                "cheque_bank_name":  self.cheque_bank_name,
+                "partner_name":      self.partner_name,
+                "scheme_name":       self.scheme_name,
             })
 
         return payments

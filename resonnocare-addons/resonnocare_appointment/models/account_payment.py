@@ -15,9 +15,41 @@ class AccountPayment(models.Model):
 
     sub_mode = fields.Many2one("sub.mode")
 
-    is_upi_journal = fields.Boolean(compute="_compute_journal_flags", store=False)
-    is_cheque_journal = fields.Boolean(compute="_compute_journal_flags", store=False)
-    is_paytm_journal = fields.Boolean(compute="_compute_journal_flags", store=False)
+    is_upi_journal = fields.Boolean()
+    is_cheque_journal = fields.Boolean()
+    is_paytm_journal = fields.Boolean()
+
+
+
+    payment_mode      = fields.Selection([
+        ("POS", "POS"), ("Online", "Online"), ("Cheque", "Cheque"), ("EMI", "EMI"),
+    ], string="Payment Mode")
+    sub_mode_pos      = fields.Selection([
+        ("UPI", "UPI"), ("Credit_Card", "Credit Card"),
+        ("Debit_Card", "Debit Card"), ("Pay_by_Link", "Pay by Link"),
+    ], string="Sub Mode (POS)")
+    sub_mode_online   = fields.Selection([
+        ("NEFT", "NEFT"), ("IMPS", "IMPS"), ("RTGS", "RTGS"),
+    ], string="Sub Mode (Online)")
+    sub_mode_emi      = fields.Selection([
+        ("No_Cost_EMI", "No Cost EMI"), ("Regular_EMI", "Regular EMI"),
+    ], string="Sub Mode (EMI)")
+    pay_type_upi      = fields.Selection([("DQR", "DQR"), ("SQR", "SQR")], string="UPI Type")
+    pay_type_card     = fields.Selection([
+        ("Mastercard", "Mastercard"), ("VISA", "VISA"), ("Rupay", "Rupay"),
+        ("Maestro", "Maestro"), ("Diners", "Diners"), ("Amex", "Amex"),
+    ], string="Card Type")
+    pay_type_link     = fields.Selection([("Card", "Card")], string="Pay by Link Type")
+    reference_no      = fields.Char("Reference No")
+    payment_date      = fields.Date("Payment Date")
+    cheque_no         = fields.Char("Cheque No")
+    cheque_date       = fields.Date("Cheque Date")
+    cheque_bank_name  = fields.Selection(selection=[], string='Bank Name')  # reuse same list
+    partner_name      = fields.Selection([
+        ("Paytm", "Paytm"), ("HDFC", "HDFC"), ("Shopse", "Shopse"), ("FIBER", "FIBER"),
+    ], string="Partner Name")
+    scheme_name       = fields.Char("Scheme Name")
+
 
     def _is_resonnocare_customer_receipt(self):
         self.ensure_one()
@@ -141,26 +173,26 @@ class AccountPayment(models.Model):
         report = self.env.ref("account.action_report_payment_receipt")
         return report.report_action(self)
 
-    @api.depends("journal_id")
-    def _compute_journal_flags(self):
-        for rec in self:
-            rec.is_upi_journal = False
-            rec.is_cheque_journal = False
-            rec.is_paytm_journal = False
+    # @api.depends("journal_id")
+    # def _compute_journal_flags(self):
+    #     for rec in self:
+    #         rec.is_upi_journal = False
+    #         rec.is_cheque_journal = False
+    #         rec.is_paytm_journal = False
 
-            if not rec.journal_id:
-                continue
+    #         if not rec.journal_id:
+    #             continue
 
-            name = (rec.journal_id.name or "").lower()
+    #         name = (rec.journal_id.name or "").lower()
 
-            if "upi" in name or "qr" in name:
-                rec.is_upi_journal = True
+    #         if "upi" in name or "qr" in name:
+    #             rec.is_upi_journal = True
 
-            if "cheque" in name or "check" in name:
-                rec.is_cheque_journal = True
+    #         if "cheque" in name or "check" in name:
+    #             rec.is_cheque_journal = True
 
-            if "paytm" in name:
-                rec.is_paytm_journal = True
+    #         if "paytm" in name:
+    #             rec.is_paytm_journal = True
 
     def _check_excess_payment_diagnostic_contract(self):
         """
