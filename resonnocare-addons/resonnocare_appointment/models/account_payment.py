@@ -22,6 +22,7 @@ class AccountPayment(models.Model):
 
 
     payment_mode      = fields.Selection([
+        ("cash", "Cash"),
         ("POS", "POS"), ("Online", "Online"), ("Cheque", "Cheque"), ("EMI", "EMI"),
     ], string="Payment Mode")
     sub_mode_pos      = fields.Selection([

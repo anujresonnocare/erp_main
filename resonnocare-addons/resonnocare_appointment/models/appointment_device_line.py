@@ -134,7 +134,6 @@ class ResonnocareAppointmentDeviceLine(models.Model):
                 line.product_uom_qty = 1.0    
 
 
-
     @api.onchange("is_left_ear", "is_right_ear")
     def _onchange_ear_selection(self):
         for line in self:
