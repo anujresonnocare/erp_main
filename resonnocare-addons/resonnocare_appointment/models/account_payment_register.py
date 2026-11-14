@@ -174,11 +174,12 @@ class AccountPaymentRegister(models.TransientModel):
     scheme_name = fields.Char("Scheme Name")
 
     payment_mode = fields.Selection([
+        ("cash", "Cash"),
         ("POS", "POS"),
         ("Online", "Online"),
         ("Cheque", "Cheque"),
         ("EMI", "EMI"),
-    ], string="Payment Mode", compute="_compute_payment_mode", store=True, readonly=False)
+    ], string="Payment Mode", compute="_compute_payment_mode", default="cash", store=True, readonly=False)
 
     @api.depends("journal_id")
     def _compute_payment_mode(self):
