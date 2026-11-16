@@ -324,7 +324,11 @@ class ResonnocareDiscountApprovalRequest(models.Model):
         for line in ha_lines:
             qty = line.product_uom_qty or 0.0
             unit_price = line.product_id.list_price or 0.0
-            base_mrp = getattr(line, "discount_reference_mrp", 0.0) or 0.0
+            if line.product_id and line.product_id.product_tmpl_id.is_binaural:
+                base_ddt = getattr(line, "discount_reference_mrp", 0.0) or 0.0 
+                base_mrp = base_ddt / 2
+            else:    
+                base_mrp = getattr(line, "discount_reference_mrp", 0.0) or 0.0
 
             line_base_mrp = base_mrp if base_mrp > 0.0 else unit_price
             ha_gross += line_base_mrp * qty
