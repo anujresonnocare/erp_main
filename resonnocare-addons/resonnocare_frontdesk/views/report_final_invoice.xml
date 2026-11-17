@@ -58,12 +58,16 @@
                                     <td style="width:25%;vertical-align:top;border:1px solid #2a2a2a;padding:6px 8px;">
                                         <div><strong>Place Of Supply</strong>: <br/>
                                         State :- <span t-out="clinic.state_hq_name or ''"/><br/>
-                                        State Code:- <span t-out="clinic.state_id.code or ''"/><br/></div>
+                                        State Code:- <span t-out="clinic.state_id.l10n_in_tin or ''"/><br/></div>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td style="border:1px solid #2a2a2a;padding:6px 8px;line-height:1.2;">
                                         <div><strong>Customer ID</strong>: <span t-out="o.partner_id.patient_id or ''"/></div>
+                                        <div>
+                                            <strong>Patient</strong>: <span t-out="o.partner_id.name or ''"/>
+                                            <span t-if="o.partner_id.patient_id">(<span t-out="o.partner_id.patient_id"/>)</span>
+                                        </div>
                                         <div><strong>Address</strong>: <span t-out="o.partner_id.contact_address or ''"/></div>
                                         <div><strong>Phone</strong>: <span t-out="o.partner_id.mobile or o.partner_id.phone or ''"/></div>
                                         <div t-if="o.partner_id.email">Email: <span t-out="o.partner_id.email"/></div>
@@ -71,10 +75,7 @@
                                     </td>
                                     <td colspan="2" style="border:1px solid #2a2a2a;padding:6px 8px;line-height:1.2;">
                                         <div><strong>Other Reference(s)</strong>: <span t-out="o.invoice_origin or ''"/></div>
-                                        <div>
-                                            <strong>Patient</strong>: <span t-out="o.partner_id.name or ''"/>
-                                            <span t-if="o.partner_id.patient_id">(<span t-out="o.partner_id.patient_id"/>)</span>
-                                        </div>
+                                        
                                         <div><strong>Clinic Name</strong>: <span t-out="clinic.name or ''"/></div>
                                         <div>
                                             <span t-out="clinic.street or ''"/>
@@ -297,12 +298,16 @@
                                     <td style="width:25%;vertical-align:top;border:1px solid #2a2a2a;padding:6px 8px;">
                                         <div><strong>Place Of Supply</strong>: <br/>
                                         State :- <span t-out="clinic.state_hq_name or ''"/><br/>
-                                        State Code:- <span t-out="clinic.state_id.code or ''"/><br/></div>
+                                        State Code:- <span t-out="clinic.state_id.l10n_in_tin or ''"/><br/></div>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td style="border:1px solid #2a2a2a;padding:6px 8px;line-height:1.2;">
                                         <div><strong>Customer ID</strong>: <span t-out="o.partner_id.patient_id or ''"/></div>
+                                        <div>
+                                            <strong>Patient Name and Patient ID</strong>: <span t-out="o.partner_id.name or ''"/>
+                                            <span t-if="o.partner_id.patient_id">(<span t-out="o.partner_id.patient_id"/>)</span>
+                                        </div>
                                         <div><strong>Address</strong>: <span t-out="o.partner_id.contact_address or ''"/></div>
                                         <div><strong>Mobile</strong>: <span t-out="o.partner_id.mobile or o.partner_id.phone or ''"/></div>
                                         <div><strong>Email</strong>: <span t-out="o.partner_id.email or ''"/></div>
@@ -310,10 +315,7 @@
                                     </td>
                                     <td colspan="2" style="border:1px solid #2a2a2a;padding:6px 8px;line-height:1.2;">
                                         <div><strong>Other Reference(s)</strong>: <span t-out="o.invoice_origin or ''"/></div>
-                                        <div>
-                                            <strong>Patient Name and Patient ID</strong>: <span t-out="o.partner_id.name or ''"/>
-                                            <span t-if="o.partner_id.patient_id">(<span t-out="o.partner_id.patient_id"/>)</span>
-                                        </div>
+                                        
                                         <div><strong>Clinic Name</strong>: <span t-out="clinic.name or ''"/></div>
                                         <div>
                                             <strong>Address</strong>:

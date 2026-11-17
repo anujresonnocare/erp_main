@@ -36,6 +36,14 @@
             <field name="domain_force">[('clinic_id','=',user.employee_id.clinic_id.id)]</field>
         </record>
 
+
+        <record id="resonnocare_audiometry_result_rule_front_desk" model="ir.rule">
+            <field name="name">Audiometry Results: Front Desk - Own Clinic</field>
+            <field name="model_id" ref="model_resonnocare_audiometry_result"/>
+            <field name="groups" eval="[(4, ref('resonnocare_base.group_front_desk'))]"/>
+            <field name="domain_force">[('clinic_id','=',user.employee_id.clinic_id.id)]</field>
+        </record>
+
         <record id="resonnocare_ear_mould_form_rule_super_admin" model="ir.rule">
             <field name="name">Ear Mould Form: Super Admin - All</field>
             <field name="model_id" ref="model_resonnocare_ear_mould_form"/>

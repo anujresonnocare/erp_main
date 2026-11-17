@@ -98,10 +98,9 @@
                                 </div>
                             </td>
                             <td style="width:20%;vertical-align:top;border:1px solid #2a2a2a;padding:6px 8px;">
-                                <div>
-                                    <strong>GST Treatment</strong>:
-                                    <span t-out="(o.partner_id._fields.get('l10n_in_gst_treatment') and o.partner_id.l10n_in_gst_treatment) or ''"/>
-                                </div>
+                                        <div><strong>Place Of Supply</strong>: <br/>
+                                        State :- <span t-out="clinic.state_hq_name or ''"/><br/>
+                                        State Code:- <span t-out="clinic.state_id.l10n_in_tin or ''"/><br/></div>
                             </td>
                         </tr>
                         <tr>
