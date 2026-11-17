@@ -892,6 +892,7 @@ class AccountMove(models.Model):
             rows.append(
                 {
                     "sl_no": idx,
+                    "is_binaural": product.product_tmpl_id.is_binaural if product else False,
                     "description": line.name
                     or (product.display_name if product else ""),
                     "hsn": self._get_product_hsn_code(product),
