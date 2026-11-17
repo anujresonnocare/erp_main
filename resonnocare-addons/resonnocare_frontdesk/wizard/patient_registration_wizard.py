@@ -309,7 +309,7 @@ class ResonnocarePatientRegistrationWizard(models.TransientModel):
     # Visit Context
     visit_reason = fields.Text(string="Reason for Visit")
     visit_type = fields.Selection(
-        [("new", "New"), ("followup", "Follow-up")], string="Visit Type", default="new"
+        [("new", "New")], string="Visit Type", default="new"
     )
 
     show_doctor_field = fields.Boolean(compute='_compute_show_doctor_field', store=False)

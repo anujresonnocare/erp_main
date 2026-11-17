@@ -897,7 +897,7 @@ class AccountMove(models.Model):
                     or (product.display_name if product else ""),
                     "hsn": self._get_product_hsn_code(product),
                     "item_code": product.default_code if product else "",
-                    "brand": brand,
+                    "brand": line.product_id.product_tmpl_id.brand or "",
                     "qty": line.quantity or 0.0,
                     "patient_selling_price": line.price_unit or 0.0,
                     "hospital_sharing_pct": hospital_sharing_pct,
