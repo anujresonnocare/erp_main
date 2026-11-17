@@ -122,7 +122,7 @@
                                         <td class="text-center" style="border:1px solid #9cc3dd;padding:6px 4px;"><span t-out="r.get('item_code', '')" /></td>
                                         <td style="border:1px solid #9cc3dd;padding:6px 4px;"><span t-out="r.get('brand', '') or r.get('manufacturer', '')"/></td>
                                         <td class="text-end" style="border:1px solid #9cc3dd;padding:6px 4px;"><span t-out="r['qty']"/></td>
-                                        <td class="text-end" style="border:1px solid #9cc3dd;padding:6px 4px;"><span t-out="o._format_amount_compact(r['is_binaural'])"/></td>
+                                        <td class="text-end" style="border:1px solid #9cc3dd;padding:6px 4px;"><span t-out="o._format_amount_compact(r['mrp'])"/></td>
                                         <td class="text-end" style="border:1px solid #9cc3dd;padding:6px 4px;"><span t-out="o._format_amount_compact(r['total'])"/></td>
                                         <td class="text-end" style="border:1px solid #9cc3dd;padding:6px 4px;"><span t-out="o._format_amount_compact(r['discount'])"/></td>
                                         <td class="text-end" style="border:1px solid #9cc3dd;padding:6px 4px;"><span t-out="o._format_amount_compact(r['taxable_value'])"/></td>

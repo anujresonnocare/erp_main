@@ -115,6 +115,7 @@ class ResonnocareFinalInvoice(models.Model):
             rows.append(
                 {
                     "sl_no": idx,
+                    "is_binaural": line.product_id.product_tmpl_id.is_binaural if line.product_id else False,
                     "description": line.description or "",
                     "serial_numbers": line.serial_numbers or "",
                     "hsn": line.hsn_code or "",
