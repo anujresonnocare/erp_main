@@ -56,6 +56,8 @@
 
     <menuitem id="menu_resonnocare_discount_requests" name="Discount Requests" parent="menu_resonnocare_billing" sequence="3" action="action_discount_approval_requests" groups="resonnocare_base.group_front_desk,resonnocare_base.group_cbo,resonnocare_base.group_clinic_admin,resonnocare_base.group_resonnocare_super_admin,resonnocare_base.group_resonnocare_hr,hr_holidays.group_hr_holidays_user,hr_holidays.group_hr_holidays_manager"/>
 
+     <menuitem id="menu_resonnocare_discount_requests_submitted" name="Submitted Discount Requests" parent="menu_resonnocare_billing" sequence="3" action="action_discount_approval_request_submitted" groups="resonnocare_base.group_cbo"/>
+
     <menuitem id="menu_resonnocare_min_advance_requests" name="Min Advance Requests" parent="menu_resonnocare_billing" sequence="4" action="action_advance_approval_requests" groups="resonnocare_base.group_front_desk,resonnocare_base.group_clinic_admin,resonnocare_base.group_resonnocare_super_admin,resonnocare_base.group_resonnocare_hr,hr_holidays.group_hr_holidays_user,hr_holidays.group_hr_holidays_manager"/>
 
     <!-- HR/Manager access inside Employees app -->
@@ -71,7 +73,8 @@
           name="Submitted Discount Requests"
           parent="resonnocare_hr.menu_resonnocare_hr_controls_native"
           action="action_discount_approval_request_submitted"
-          sequence="86"/>
+          sequence="86"
+          groups="resonnocare_base.group_resonnocare_hr,resonnocare_base.group_resonnocare_super_admin,hr_holidays.group_hr_holidays_user,hr_holidays.group_hr_holidays_manager"/>
 
 
     <menuitem id="menu_resonnocare_min_advance_requests_hr_native"
