@@ -1250,6 +1250,13 @@ class ResonnocareAppointment(models.Model):
             if not lines:
                 continue
 
+            for line in lines:
+                product_id = line.product_id
+                if product_id and product_id.product_tmpl_id.is_kit_product and not line.charger:
+                    raise ValidationError(_(
+                        "Charger is required for kit product '%s'. Please select a charger for this line."
+                    ) % product_id.display_name)
+            
             # Collect style names present on the lines
             styles = set()
             for line in lines:
@@ -1257,6 +1264,7 @@ class ResonnocareAppointment(models.Model):
                 if product and product.product_tmpl_id.item_style_id:
                     styles.add(product.product_tmpl_id.item_style_id.name)
 
+            
             # Rule 1: Charger required for these styles
             charger_required_styles = {'BTECH', 'BTECHS', 'ITECH', 'RITECH', 'RITECHS'}
             if styles & charger_required_styles:
