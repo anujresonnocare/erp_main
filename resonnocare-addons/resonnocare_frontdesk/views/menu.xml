@@ -66,6 +66,14 @@
               sequence="85"
               groups="resonnocare_base.group_resonnocare_hr,resonnocare_base.group_resonnocare_super_admin,hr_holidays.group_hr_holidays_user,hr_holidays.group_hr_holidays_manager"/>
 
+
+    <menuitem id="menu_discount_approval_submitted"
+          name="Submitted Discount Requests"
+          parent="resonnocare_hr.menu_resonnocare_hr_controls_native"
+          action="action_discount_approval_request_submitted"
+          sequence="86"/>
+
+
     <menuitem id="menu_resonnocare_min_advance_requests_hr_native"
               name="Min Advance Requests"
               parent="resonnocare_hr.menu_resonnocare_hr_controls_native"
