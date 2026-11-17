@@ -66,7 +66,7 @@
                                         <div><strong>Customer ID</strong>: <span t-out="o.partner_id.patient_id or ''"/></div>
                                         <div>
                                             <strong>Patient</strong>: <span t-out="o.partner_id.name or ''"/>
-                                            <span t-if="o.partner_id.patient_id">(<span t-out="o.partner_id.patient_id"/>)</span>
+                                            <span t-if="o.partner_id.patient_id"></span>
                                         </div>
                                         <div><strong>Address</strong>: <span t-out="o.partner_id.contact_address or ''"/></div>
                                         <div><strong>Phone</strong>: <span t-out="o.partner_id.mobile or o.partner_id.phone or ''"/></div>
@@ -74,13 +74,15 @@
                                         <div t-if="o.partner_id.vat">GSTN: <span t-out="o.partner_id.vat"/></div>
                                     </td>
                                     <td colspan="2" style="border:1px solid #2a2a2a;padding:6px 8px;line-height:1.2;">
-                                        <div><strong>Other Reference(s)</strong>: <span t-out="o.invoice_origin or ''"/></div>
+                                        <!-- <div><strong>Other Reference(s)</strong>: <span t-out="o.invoice_origin or ''"/></div> -->
                                         
                                         <div><strong>Clinic Name</strong>: <span t-out="clinic.name or ''"/></div>
                                         <div>
                                             <span t-out="clinic.street or ''"/>
                                             <span t-if="clinic.street2">, <span t-out="clinic.street2"/></span>
                                             <span t-if="clinic.city">, <span t-out="clinic.city"/></span>
+                                            <span t-if="clinic and clinic.state_id">, <span t-out="clinic.state_id.name"/></span>
+                                            <span t-if="clinic and clinic.zip"> - <span t-out="clinic.zip"/></span>
                                         </div>
                                     </td>
                                 </tr>
@@ -306,7 +308,7 @@
                                         <div><strong>Customer ID</strong>: <span t-out="o.partner_id.patient_id or ''"/></div>
                                         <div>
                                             <strong>Patient Name and Patient ID</strong>: <span t-out="o.partner_id.name or ''"/>
-                                            <span t-if="o.partner_id.patient_id">(<span t-out="o.partner_id.patient_id"/>)</span>
+                                            <span t-if="o.partner_id.patient_id"></span>
                                         </div>
                                         <div><strong>Address</strong>: <span t-out="o.partner_id.contact_address or ''"/></div>
                                         <div><strong>Mobile</strong>: <span t-out="o.partner_id.mobile or o.partner_id.phone or ''"/></div>
