@@ -78,10 +78,8 @@ class ResonnocareAppointmentDeviceLine(models.Model):
     charger =fields.Many2one(
         "product.product",
         string="Charger",
-        
+        domain="[('product_id.product_tmpl_id.is_charger_style', '=', True)]",
     )
-
-    # domain="[('product_tmpl_id.is_charger_style', '=', True)]",
 
     # @api.model
     # def _get_product_domain(self, item_type, vendor_partner_id):
