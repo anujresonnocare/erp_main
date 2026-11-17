@@ -15,13 +15,15 @@ class ProductTemplate(models.Model):
     # Helper field to check if item_style_id is "Charger"
     is_charger_style = fields.Boolean(
         string="Is Charger Style", 
-        compute="_compute_is_charger_style"
+        compute="_compute_is_charger_style",
+        store=True, 
     )
     
     # Helper field to check if product is a Kit
     is_kit_product = fields.Boolean(
         string="Is Kit", 
-        compute="_compute_is_kit_product"
+        compute="_compute_is_kit_product",
+        store=True, 
     )
 
     @api.depends('item_style_id', 'item_style_id.name')
