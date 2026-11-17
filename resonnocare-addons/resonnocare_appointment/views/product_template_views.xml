@@ -48,6 +48,8 @@
         <field name="arch" type="xml">
             <xpath expr="//field[@name='type']" position="after">
                 <field name="is_ear_mould"/>
+                <field name="is_charger_style"/>
+                <field name="is_kit_product"/>
             </xpath>
         </field>
     </record>
