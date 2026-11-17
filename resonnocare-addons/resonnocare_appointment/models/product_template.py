@@ -39,3 +39,5 @@ class ProductTemplate(models.Model):
         for record in self:
             if "2+1" in record.display_name or "1+1" in record.display_name:
                 record.is_kit_product = True
+            else:
+                record.is_kit_product = False
