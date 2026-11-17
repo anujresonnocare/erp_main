@@ -37,5 +37,5 @@ class ProductTemplate(models.Model):
     @api.depends('display_name')
     def _compute_is_kit_product(self):
         for record in self:
-            if ["2+1","1+1"] in self.display_name:
+            if "2+1" in self.display_name or "1+1" in self.display_name:
                 record.is_kit_product = True
