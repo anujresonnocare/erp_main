@@ -1167,19 +1167,42 @@ class SaleOrderLine(models.Model):
             else:
                 mrp = line.product_id.lst_price or 0.0
 
-            grid = Grid.search(
-                [
-                    ("active", "=", True),
-                    ("channel", "=", channel),
-                    ("mrp_from", "<=", mrp),
-                    "|",
-                    ("mrp_to", "=", 0),
-                    ("mrp_to", ">=", mrp),
-                ],
-                order="mrp_from desc, id desc",
-                limit=1,
-            )
-            line.discount_channel = channel
+
+            # self.env["resonnocare.discount.grid"].flush_model(["active", "channel", "mrp_from", "mrp_to"])
+            if line.order_id.clinic_id.clinic_type == "sis" or line.order_id.clinic_id.clinic_subtype == "h":
+                line.order_id.clinic_id.flush_model(["clinic_type", "clinic_subtype"])
+
+                grid = Grid.search(
+                    [
+                        ("active", "=", True),
+                        ("channel", "=", "hsis"),
+                        ("mrp_from", "<=", mrp),
+                        "|",
+                        ("mrp_to", "=", 0),
+                        ("mrp_to", ">=", mrp),
+                    ],
+                    order="mrp_from desc, id desc",
+                    limit=1,
+                )
+                line.discount_channel = "hsis"
+
+            if line.order_id.clinic_id.clinic_type == "coco":
+                line.order_id.clinic_id.flush_model(["clinic_type", "clinic_subtype"])
+
+                grid = Grid.search(
+                    [
+                        ("active", "=", True),
+                        ("channel", "=", "corporate"),
+                        ("mrp_from", "<=", mrp),
+                        "|",
+                        ("mrp_to", "=", 0),
+                        ("mrp_to", ">=", mrp),
+                    ],
+                    order="mrp_from desc, id desc",
+                    limit=1,
+                )    
+
+                line.discount_channel = "corporate"
             line.discount_grid_id = grid.id if grid else False
             # Keep reference MRP for internal metrics/approval logic.
             line.discount_reference_mrp = mrp
