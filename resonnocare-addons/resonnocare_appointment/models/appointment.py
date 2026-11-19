@@ -816,14 +816,14 @@ class ResonnocareAppointment(models.Model):
 
     def _create_ho_supply_request_for_device_booking(self):
         self.ensure_one()
-        
+
         # CHECK 1: Device lines exist
         if not self.device_sale_line_ids:
             raise UserError(
                 "❌ SCM Order cannot be created: No device sale lines found.\n"
                 "Please add at least one device to the appointment before generating SCM Order."
             )
-        
+
         # CHECK 2: Sale order exists
         sale = self._get_effective_sale_order()
         if not sale:
@@ -831,37 +831,26 @@ class ResonnocareAppointment(models.Model):
                 "❌ SCM Order cannot be created: No sale order linked to this appointment.\n"
                 "Please generate device sale first by clicking 'Create SCM Order' button."
             )
-        
+
         # CHECK 3: Payment/Advance requirement
         total_order = sale.amount_total or 0.0
-        
         total_paid = self._get_total_paid_for_sale(sale)
         minimum_required = total_order * 0.30
 
         logger.info(
-            "Checking payment for sale888888888888888888888 %s: Total Order = %f, Total Paid = %f, Minimum Required = %f",
-            sale.name,
-            total_order,
-            total_paid,
-            minimum_required
+            "Checking payment for sale %s: Total Order = %f, Total Paid = %f, Minimum Required = %f",
+            sale.name, total_order, total_paid, minimum_required,
         )
-        
+
         is_full_paid = total_paid >= total_order
-        logger.info(
-            "Is full paid for sale999999999999999999999 %s: %s",
-            sale.name,
-            is_full_paid
-        )
+        logger.info("Is full paid for sale %s: %s", sale.name, is_full_paid)
 
         if not is_full_paid:
             logger.info(
-                "Payment not full for sale000000000000000000000 %s: Total Paid = %f, Minimum Required = %f",
-                sale.name,
-                total_paid,
-                minimum_required
+                "Payment not full for sale %s: Total Paid = %f, Minimum Required = %f",
+                sale.name, total_paid, minimum_required,
             )
             if total_paid < minimum_required:
-            # Check for approved minimum advance request
                 approved_request = self.env["resonnocare.advance.approval.request"].search(
                     [
                         ("sale_order_id", "=", sale.id),
@@ -871,9 +860,8 @@ class ResonnocareAppointment(models.Model):
                     limit=1,
                 )
                 logger.info(
-                    "Found approved advance request for sale111111111111111111111 %s: %s",
-                    sale.name,
-                    bool(approved_request)
+                    "Found approved advance request for sale %s: %s",
+                    sale.name, bool(approved_request),
                 )
 
                 if not approved_request:
@@ -897,8 +885,7 @@ class ResonnocareAppointment(models.Model):
                         "After completing either option, try creating SCM Order again."
                     ).format(minimum_required)
                     raise UserError(error_msg)
-                
-                # Check if paid amount meets the approved minimum
+
                 if total_paid < approved_request.requested_min_advance:
                     error_msg = (
                         "❌ SCM Order cannot be created: Paid amount below approved minimum.\n\n"
@@ -912,7 +899,7 @@ class ResonnocareAppointment(models.Model):
                         f"Click 'Collect Balance' button to create invoice and register payment."
                     )
                     raise UserError(error_msg)
-            
+
         # CHECK 4: Configuration
         clinic = self.clinic_id
         if not clinic:
@@ -920,17 +907,17 @@ class ResonnocareAppointment(models.Model):
                 "❌ SCM Order cannot be created: Clinic not configured.\n"
                 "Please select a clinic for this appointment."
             )
-        
+
         company = clinic.company_id or self.env.company
         if not company:
             raise UserError(
                 "❌ SCM Order cannot be created: Company not configured.\n"
                 "Please ensure the clinic has a company associated."
             )
-        
+
         ho_warehouse = company.ho_warehouse_id
         if not ho_warehouse:
-            error_msg = (
+            raise UserError(
                 "❌ SCM Order cannot be created: HO Warehouse not configured.\n\n"
                 f"🏢 Company: {company.name}\n"
                 f"📦 HO Warehouse: Not Set\n\n"
@@ -941,11 +928,10 @@ class ResonnocareAppointment(models.Model):
                 "2. Set 'HO Warehouse' field\n"
                 "3. Save and try again"
             )
-            raise UserError(error_msg)
-        
+
         source_location = ho_warehouse.lot_stock_id
         if not source_location:
-            error_msg = (
+            raise UserError(
                 "❌ SCM Order cannot be created: Source location not configured.\n\n"
                 f"🏢 Company: {company.name}\n"
                 f"📦 HO Warehouse: {ho_warehouse.name}\n"
@@ -958,11 +944,10 @@ class ResonnocareAppointment(models.Model):
                 "   (Or ensure HO Warehouse has a default stock location)\n"
                 "3. Save and try again"
             )
-            raise UserError(error_msg)
-        
+
         destination_location = clinic.stock_location_id
         if not destination_location:
-            error_msg = (
+            raise UserError(
                 "❌ SCM Order cannot be created: Destination location not configured.\n\n"
                 f"🏥 Clinic: {clinic.name}\n"
                 f"📍 Destination Location: Not Set\n\n"
@@ -974,11 +959,10 @@ class ResonnocareAppointment(models.Model):
                 "   (Or ensure Clinic has a default stock location)\n"
                 "3. Save and try again"
             )
-            raise UserError(error_msg)
-        
+
         picking_type = ho_warehouse.int_type_id if ho_warehouse else False
         if not picking_type:
-            error_msg = (
+            raise UserError(
                 "❌ SCM Order cannot be created: Internal picking type not configured.\n\n"
                 f"🏢 Company: {company.name}\n"
                 f"📦 HO Warehouse: {ho_warehouse.name}\n"
@@ -990,40 +974,42 @@ class ResonnocareAppointment(models.Model):
                 "2. Set 'Internal Transfers' picking type\n"
                 "3. Save and try again"
             )
-            raise UserError(error_msg)
-        
+
         # CHECK 5: Products have stock data
         for line in self.device_sale_line_ids:
             product = line.product_id
             if not product:
-                error_msg = (
+                raise UserError(
                     "❌ SCM Order cannot be created: Device line missing product.\n\n"
                     f"Line: {line.id}\n"
                     "Please ensure all device lines have a product selected."
                 )
-                raise UserError(error_msg)
-            
-            if product.type not in ['product', 'consu']:
-                error_msg = (
+
+            if product.type not in ["product", "consu"]:
+                raise UserError(
                     f"❌ SCM Order cannot be created: Product '{product.display_name}' is not storable.\n\n"
                     f"Product Type: {product.type}\n"
                     "Only storable products (Stockable or Consumable) can be used in SCM orders.\n\n"
                     "Please use a different product or change the product type in product settings."
                 )
-                raise UserError(error_msg)
-        
-        # All checks passed - create supply request
-        # Requested qty calculation
-        request_qty_by_product = defaultdict(float)
+
+        # ------------------------------------------------------------------
+        # All checks passed — build the request.
+        # Group per device line so that ear/charger/serial stay linked to the
+        # exact device row they came from (no blind aggregation by product).
+        # ------------------------------------------------------------------
         available_cache = {}
         consumed_qty = defaultdict(float)
-        
+
+        # Each entry: {product, qty, left, right, charger, serials}
+        request_rows = []
+
         for line in self.device_sale_line_ids:
             product = line.product_id
             ordered_qty = line.product_uom_qty or 0.0
             if ordered_qty <= 0:
                 continue
-            
+
             if self.pre_booking:
                 req_qty = ordered_qty
             else:
@@ -1034,59 +1020,108 @@ class ResonnocareAppointment(models.Model):
                 remaining = max(available_cache[product.id] - consumed_qty[product.id], 0.0)
                 req_qty = max(ordered_qty - remaining, 0.0)
                 consumed_qty[product.id] += ordered_qty
-            
-            if req_qty > 0:
-                request_qty_by_product[product.id] += req_qty
+
+            if req_qty <= 0:
+                continue
+
+            request_rows.append({
+                "product": product,
+                "qty": req_qty,
+                "is_left_ear": bool(line.is_left_ear),
+                "is_right_ear": bool(line.is_right_ear),
+                "charger": line.charger or False,
+                "serial_lot_ids": [line.serial_lot_id.id] if line.serial_lot_id else [],
+            })
+
+            # Charger travels with the device row — same quantity
+            if line.charger:
+                request_rows.append({
+                    "product": line.charger,
+                    "qty": req_qty,
+                    "is_left_ear": False,
+                    "is_right_ear": False,
+                    "charger": False,
+                    "serial_lot_ids": [],
+                    "is_charger_row": True,
+                })
 
         logger.info(
-            "SCM Order calculation for appointment %s: Requested quantities by product: %s",
+            "SCM Order calculation for appointment %s: %d device rows, %d total rows",
             self.appointment_id or self.display_name,
-            dict(request_qty_by_product)
+            len(self.device_sale_line_ids),
+            len(request_rows),
         )
-        if not request_qty_by_product:
+
+        if not request_rows:
             raise UserError(
                 "❌ SCM Order cannot be created: No products require supply.\n\n"
                 "All requested products are already available in stock.\n"
                 "No supply order needed for this appointment."
             )
-        
-        # Create the supply picking
+
+        # ------------------------------------------------------------------
+        # Build move lines — carry ear/charger/serials as real fields
+        # ------------------------------------------------------------------
         move_vals = []
-        for product_id, qty in request_qty_by_product.items():
-            product = self.env["product.product"].browse(product_id)
-            move_vals.append(
-                (
-                    0,
-                    0,
-                    {
-                        "name": product.display_name,
-                        "product_id": product.id,
-                        "product_uom_qty": qty,
-                        "product_uom": product.uom_id.id,
-                        "location_id": source_location.id,
-                        "location_dest_id": destination_location.id,
-                        "company_id": company.id,
-                    },
-                )
-            )
-            logger.info(
-                "Calculating total paid for sale 191919191919191919191919191%s: Found %d related posted invoices.",
-                move_vals , qty
-            )
-        
-        supply_picking = self.env["stock.picking"].create(
-            {
-                "picking_type_id": picking_type.id,
+        # Remember serials per move index for post-confirm application
+        serials_by_move_index = {}
+
+        for idx, row in enumerate(request_rows):
+            product = row["product"]
+
+            description = product.display_name
+            if row["is_left_ear"] and row["is_right_ear"]:
+                description += " [Both Ears]"
+            elif row["is_left_ear"]:
+                description += " [Left Ear]"
+            elif row["is_right_ear"]:
+                description += " [Right Ear]"
+            if row.get("is_charger_row"):
+                description += " [Charger]"
+
+            move_val = {
+                "name": description,
+                "product_id": product.id,
+                "product_uom_qty": row["qty"],
+                "product_uom": product.uom_id.id,
                 "location_id": source_location.id,
-                "partner_id": self.patient_id.id,
                 "location_dest_id": destination_location.id,
-                "origin": f"{self.appointment_id or self.display_name}",
                 "company_id": company.id,
-                "move_ids_without_package": move_vals,
+                # Custom fields on stock.move
+                "is_left_ear": row["is_left_ear"],
+                "is_right_ear": row["is_right_ear"],
+                "charger_id": row["charger"].id if row["charger"] else False,
             }
-        )
-        
+
+            # Serial only on the device row (not the charger row)
+            if row["serial_lot_ids"] and product.tracking == "serial":
+                serials_by_move_index[idx] = row["serial_lot_ids"]
+
+            move_vals.append((0, 0, move_val))
+
+        supply_picking = self.env["stock.picking"].create({
+            "picking_type_id": picking_type.id,
+            "location_id": source_location.id,
+            "partner_id": self.patient_id.id,
+            "location_dest_id": destination_location.id,
+            "origin": f"{self.appointment_id or self.display_name}",
+            "company_id": company.id,
+            "move_ids_without_package": move_vals,
+        })
+
         supply_picking.action_confirm()
+
+        # lot_ids is inverse-only — apply serials after confirm, then reserve
+        if serials_by_move_index:
+            moves = supply_picking.move_ids_without_package
+            for idx, serial_ids in serials_by_move_index.items():
+                if idx >= len(moves):
+                    continue
+                moves[idx].lot_ids = [(6, 0, list(dict.fromkeys(serial_ids)))]
+
+        if supply_picking.state == "confirmed":
+            supply_picking.action_assign()
+
         return supply_picking
 
     def action_generate_device_sale(self):
@@ -2472,3 +2507,18 @@ class SaleOrderLine(models.Model):
         if 'product_id' in vals or self.filtered(lambda l: l.product_id.is_binaural):
             vals = self._apply_binaural_rule(vals)
         return super().write(vals)
+
+
+from odoo import models, fields
+
+
+class StockMove(models.Model):
+    _inherit = "stock.move"
+
+    is_left_ear = fields.Boolean(string="Left Ear")
+    is_right_ear = fields.Boolean(string="Right Ear")
+    charger_id = fields.Many2one(
+        "product.product",
+        string="Charger",
+        domain="[('product_tmpl_id.is_charger_style', '=', True)]",
+    )    
