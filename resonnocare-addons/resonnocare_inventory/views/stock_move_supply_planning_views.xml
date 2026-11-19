@@ -9,6 +9,9 @@
                 <field name="state" string="Status"/>
                 <field name="product_id" string="Product"/>
                 <field name="product_uom_qty" string="Required Qty"/>
+                <field name="is_left_ear" string="Left Ear" optional="hide"/>
+                <field name="is_right_ear" string="Right Ear" optional="hide"/>
+                <field name="charger_id" string="Charger" optional="hide"/>
                 <field name="quantity" string="Done Qty" optional="hide"/>
                 <field name="product_uom" string="UoM" optional="hide"/>
                 <field name="supply_clinic_id" string="Clinic"/>

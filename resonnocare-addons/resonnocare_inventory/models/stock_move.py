@@ -41,6 +41,14 @@ class StockMove(models.Model):
         store=False,
     )
 
+    is_left_ear = fields.Boolean(string="Left Ear")
+    is_right_ear = fields.Boolean(string="Right Ear")
+    charger_id = fields.Many2one(
+        "product.product",
+        string="Charger",
+        domain="[('product_tmpl_id.is_charger_style', '=', True)]",
+    )    
+
     @api.depends("product_id", "product_uom_qty", "location_id", "state")
     def _compute_supply_planning_metrics(self):
         quant_model = self.env["stock.quant"].sudo()
