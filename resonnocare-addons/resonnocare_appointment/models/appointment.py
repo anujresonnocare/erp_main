@@ -1037,7 +1037,12 @@ class ResonnocareAppointment(models.Model):
             
             if req_qty > 0:
                 request_qty_by_product[product.id] += req_qty
-        
+
+        logger.info(
+            "SCM Order calculation for appointment %s: Requested quantities by product: %s",
+            self.appointment_id or self.display_name,
+            dict(request_qty_by_product)
+        )
         if not request_qty_by_product:
             raise UserError(
                 "❌ SCM Order cannot be created: No products require supply.\n\n"

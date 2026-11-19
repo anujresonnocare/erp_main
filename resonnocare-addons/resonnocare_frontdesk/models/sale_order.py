@@ -1170,7 +1170,7 @@ class SaleOrderLine(models.Model):
 
             # self.env["resonnocare.discount.grid"].flush_model(["active", "channel", "mrp_from", "mrp_to"])
             if line.order_id.clinic_id.clinic_type == "sis" or line.order_id.clinic_id.clinic_subtype == "h":
-                line.order_id.clinic_id.flush_model(["clinic_type", "clinic_subtype"])
+                # line.order_id.clinic_id.flush_model(["clinic_type", "clinic_subtype"])
 
                 grid = Grid.search(
                     [
@@ -1187,7 +1187,7 @@ class SaleOrderLine(models.Model):
                 line.discount_channel = "hsis"
 
             if line.order_id.clinic_id.clinic_type == "coco":
-                line.order_id.clinic_id.flush_model(["clinic_type", "clinic_subtype"])
+                # line.order_id.clinic_id.flush_model(["clinic_type", "clinic_subtype"])
 
                 grid = Grid.search(
                     [

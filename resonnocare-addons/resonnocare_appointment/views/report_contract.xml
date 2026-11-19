@@ -213,25 +213,63 @@
 
                         <div class="mt-2">
                             <div style="font-size:22px;font-weight:700;">Terms &amp; Conditions</div>
-                            <p style="font-size:13px;margin-bottom:4px;line-height:1.4;">
-                                I, &lt;Name&gt; hereby agree to purchase the above mentioned Hearing Instrument(s) &amp; fitment and agree to pay the above written purchase price and honor the following terms &amp; conditions:
+
+
+                            <p style="font-size:16px;margin-bottom:4px;line-height:1.4;">Hearing Instrument Purchase Agreement</p>
+                            <p style="font-size:14px;margin-bottom:4px;line-height:1.4;">I, <span t-out="o.partner_id.name or ''"/>, agree to buy the Hearing Instrument(s) listed above at the specified price and accept these terms:</p> 
+
+
+                            <p style="font-size:14px;margin-bottom:4px;line-height:1.4;">Booking and Payment</p>
+
+                            <p style="font-size:12px;margin-bottom:4px;line-height:1.4;">
+                            Booking confirms only after we receive your advance via cash or credit card. For cheque / NEFT, it confirms once funds clear in our account.
+                            <br/>
+                            We will fit and deliver within 10 days of booking, once full payment arrives. Cheque/NEFT delays will extend the timeline.
+                            <br/>
+                            Full payment is due within 10 days. If not, we may cancel without refund.
                             </p>
-                            <ol style="font-size:12px;line-height:1.4;padding-left:16px;">
-                                <li>The Hearing Instrument(s) will be booked only on receipt of advance through cash or credit card. In case the booking is done through cheque/NEFT, booking will get confirmed only after the realisation of cheque or transfer of money into the Company account.</li>
-                                <li>The first fitting of booked Hearing-Instrument(s) and delivery will be within 10 days from the date of booking subject to full payment by the Client. In case payment is made through Cheque/NEFT, fitting/delivery of instrument(s) will be done only after the cheque/NEFT has been encashed/realised.</li>
-                                <li>If Client fails to make full payment within 10 days from the date of booking, Company reserves the right to cancel the booking without any refund.</li>
-                                <li>Once purchase order is booked, there will be no cancellation of the same. If client requests for cancellation, no refund of booking amount will be paid by the Company to the Client.</li>
-                                <li>After booking of Hearing-Instrument(s) but before the first fitting/delivery, the Client can request for modification of the order with higher version of Hearing-Instrument(s) subject to payment of difference in purchase price.</li>
-                                <li>Client can request for exchange of newly purchased Hearing-Instrument(s) with higher version Hearing-Instrument(s) only, subject to payment of difference in purchase price.</li>
-                                <li>No request for exchange of Hearing-Instrument(s) will be entertained after expiry of seven days from the date of first fitting.</li>
-                                <li>Any decision regarding cancellation, modification of order or exchange of Hearing-Instrument(s) &amp; Fitment will be at sole discretion of the Company only.</li>
-                                <li>The Company has explained to the Client about usage, functions, care, maintenance etc. of Hearing-Instrument(s).</li>
-                                <li>The Client has understood that Hearing-Instrument(s) are meant to compensate hearing loss but not restore completely normal hearing.</li>
-                                <li>Warranty of Hearing-Instrument(s) is as per manufacturer terms; it will be void in case of non-payment or balance payment due.</li>
-                                <li>Jurisdiction territory is courts of the registered office only.</li>
-                                <li>In case the fitting/delivery date falls on holiday, next working day will be treated as the day for fitting/delivery.</li>
-                                <li>Not with standing NDNC registration, you agree to receive sales/service calls from company/group/associates based on provided information.</li>
-                            </ol>
+
+                            <p style="font-size:14px;margin-bottom:4px;line-height:1.4;">
+                            Cancellations and Changes
+                            </p>
+                            <p style="font-size:12px;margin-bottom:4px;line-height:1.4;">
+                            No cancellations after booking, no refunds.
+                            <br/>
+                            Upgrade to a higher model before fitting can be done at differential price payment.
+                            <br/>
+                            Exchange for a higher model after purchase is possible only on paying the difference, return damaged instrument and packaging. No exchanges if damaged.
+                            <br/>
+                            Refunds are made in Indian Currency only.
+                            <br/>
+                            We decide on all cancellations, upgrades, exchanges, or fix fees.
+
+                            </p>
+
+                            <p style="font-size:14px;margin-bottom:4px;line-height:1.4;">
+                            Product and Warranty Info
+                            </p>
+
+                            <p style="font-size:12px;margin-bottom:4px;line-height:1.4;">
+                            We've explained basic, features, care, and maintenance.
+                            <br/>
+                            We've explained that hearing aids help with hearing loss but won't restore normal hearing fully.
+                            <br/>
+                            Warranty matches the manufacturer's terms—void if payment isn't complete.
+                            </p>
+
+                            <p style="font-size:14px;margin-bottom:4px;line-height:1.4;">
+                            Other Details
+                            </p>
+                            <p style="font-size:12px;margin-bottom:4px;line-height:1.4;">
+                            In case the timeline is falling on a holiday, next working day counts for fitting/delivery.
+                            <br/>
+                            Refund via Cheque/NEFT within 7 days from the Refund filing date.
+                            <br/>
+                            Calls: You agree to sales/service calls from Resonnocare, affiliates, or associates, even if registered on DNDC or blocked.
+
+                            </p>
+
+
                         </div>
 
                         <div class="mt-2">
