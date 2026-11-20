@@ -591,8 +591,8 @@ class AccountMove(models.Model):
                         else ""
                     ),
                     "hsn_code": self._get_product_hsn_code(product),
-                    "item_code": line.product_id.product_tmpl_id.item_type if product else "",
-                    "brand": line.product_id.product_tmpl_id.brand or "",
+                    "item_code": sol.product_id.product_tmpl_id.item_type if product else "",
+                    "brand": sol.product_id.product_tmpl_id.brand or "",
                     "qty": qty,
                     "rate": unit_price,
                     "amount": taxable_value,
