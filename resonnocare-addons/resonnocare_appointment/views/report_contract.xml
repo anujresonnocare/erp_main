@@ -31,9 +31,9 @@
                             </tr>
                             <tr>
                                 <td style="border-top:1px solid #000;border-right:1px solid #000;padding:8px 10px;line-height:1.35;">
-                                    <div t-if="clinic and clinic.state_hq_name">
+                                    <!-- <div t-if="clinic and clinic.state_hq_name">
                                             <span t-out="clinic.state_hq_name or 'N/A'"/>
-                                    </div>
+                                    </div> -->
                                     <div t-if="clinic and clinic.state_hq_address">
                                         <span t-out="clinic.state_hq_address or 'N/A'"/>
                                     </div>
@@ -48,6 +48,7 @@
                                     <div>
                                         <span t-out="clinic.city or ''"/>
                                         <span t-if="clinic.state_id">, <span t-out="clinic.state_id.name"/></span>
+                                        <span t-if="clinic.zip"> - <span t-out="clinic.zip"/></span>
                                     </div>
                                     <div>Phone: <span t-out="(clinic.company_id.phone if clinic and clinic.company_id else '') or ''"/></div>
                                 </td>
@@ -216,10 +217,10 @@
 
 
                             <p style="font-size:16px;margin-bottom:4px;line-height:1.4;">Hearing Instrument Purchase Agreement</p>
-                            <p style="font-size:14px;margin-bottom:4px;line-height:1.4;">I, <span t-out="o.partner_id.name or ''"/>, agree to buy the Hearing Instrument(s) listed above at the specified price and accept these terms:</p> 
+                            <p style="font-size:14px;margin-bottom:4px;line-height:1.4;"><strong>I, <span t-out="o.partner_id.name or ''"/>, agree to buy the Hearing Instrument(s) listed above at the specified price and accept these terms:</strong></p> 
 
 
-                            <p style="font-size:14px;margin-bottom:4px;line-height:1.4;">Booking and Payment</p>
+                            <p style="font-size:14px;margin-bottom:4px;line-height:1.4;"><strong>Booking and Payment</strong></p>
 
                             <p style="font-size:12px;margin-bottom:4px;line-height:1.4;">
                             Booking confirms only after we receive your advance via cash or credit card. For cheque / NEFT, it confirms once funds clear in our account.
@@ -230,7 +231,7 @@
                             </p>
 
                             <p style="font-size:14px;margin-bottom:4px;line-height:1.4;">
-                            Cancellations and Changes
+                            <strong>Cancellations and Changes</strong>
                             </p>
                             <p style="font-size:12px;margin-bottom:4px;line-height:1.4;">
                             No cancellations after booking, no refunds.
@@ -246,7 +247,7 @@
                             </p>
 
                             <p style="font-size:14px;margin-bottom:4px;line-height:1.4;">
-                            Product and Warranty Info
+                            <strong>Product and Warranty Info</strong>
                             </p>
 
                             <p style="font-size:12px;margin-bottom:4px;line-height:1.4;">
@@ -258,7 +259,7 @@
                             </p>
 
                             <p style="font-size:14px;margin-bottom:4px;line-height:1.4;">
-                            Other Details
+                            <strong>Other Details</strong>
                             </p>
                             <p style="font-size:12px;margin-bottom:4px;line-height:1.4;">
                             In case the timeline is falling on a holiday, next working day counts for fitting/delivery.
