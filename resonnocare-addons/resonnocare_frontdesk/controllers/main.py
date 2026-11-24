@@ -33,12 +33,12 @@ class DiscountApprovalController(http.Controller):
             return request.redirect(f'/resonnocare/action-928/{record.id}')
                 
         except AccessError as e:
-            return request.render('your_module_name.error_403_template', {'message': str(e)})
+            return request.render('resonnocare_frontdesk.error_403_template', {'message': str(e)})
         except MissingError as e:
-            return request.render('your_module_name.error_404_template', {'message': str(e)})
+            return request.render('resonnocare_frontdesk.error_404_template', {'message': str(e)})
         except Exception as e:
             _logger.error("Approval Error: %s", str(e))
-            return request.render('your_module_name.error_500_template', {'message': "An unexpected error occurred."})
+            return request.render('resonnocare_frontdesk.error_500_template', {'message': "An unexpected error occurred."})
 
     @http.route('/discount/reject/<int:record_id>', type='http', auth='user', website=True, csrf=False)
     def reject_discount(self, record_id, token=None, **kw):
@@ -52,9 +52,9 @@ class DiscountApprovalController(http.Controller):
             return request.redirect(f'/resonnocare/action-928/{record.id}')
                 
         except AccessError as e:
-            return request.render('your_module_name.error_403_template', {'message': str(e)})
+            return request.render('resonnocare_frontdesk.error_403_template', {'message': str(e)})
         except MissingError as e:
-            return request.render('your_module_name.error_404_template', {'message': str(e)})
+            return request.render('resonnocare_frontdesk.error_404_template', {'message': str(e)})
         except Exception as e:
             _logger.error("Rejection Error: %s", str(e))
-            return request.render('your_module_name.error_500_template', {'message': "An unexpected error occurred."})
+            return request.render('resonnocare_frontdesk.error_500_template', {'message': "An unexpected error occurred."})

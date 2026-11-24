@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="error_403_template" name="Access Denied">
+            <t t-call="website.layout">
+                <div class="container mt-5 mb-5 text-center">
+                    <h1 class="display-4 text-danger">403</h1>
+                    <h3 class="mb-3">Access Denied</h3>
+                    <p class="lead"><t t-esc="message or 'You do not have permission to perform this action.'"/></p>
+                </div>
+            </t>
+        </template>
+
+        <template id="error_404_template" name="Not Found">
+            <t t-call="website.layout">
+                <div class="container mt-5 mb-5 text-center">
+                    <h1 class="display-4 text-warning">404</h1>
+                    <p class="lead"><t t-esc="message or 'Record not found.'"/></p>
+                </div>
+            </t>
+        </template>
+
+        <template id="error_500_template" name="Server Error">
+            <t t-call="website.layout">
+                <div class="container mt-5 mb-5 text-center">
+                    <h1 class="display-4 text-danger">500</h1>
+                    <p class="lead"><t t-esc="message or 'An unexpected error occurred.'"/></p>
+                </div>
+            </t>
+        </template>
+    </data>
+</odoo>

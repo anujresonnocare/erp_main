@@ -43,6 +43,7 @@
         "views/sale_order_return_views.xml",
         "wizard/sale_return_wizard.xml",
         "views/menu.xml",
+        "views/template.xml",
     ],
     "installable": True,
     "application": True,
