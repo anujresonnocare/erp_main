@@ -579,10 +579,9 @@ class ResonnocareDiscountApprovalRequest(models.Model):
             <table style="border-collapse:collapse;margin:12px 0;width:100%;">
                 <tr><td style="padding:4px 8px;border-bottom:1px solid #eee;"><b>HA Brand</b></td>
                     <td style="padding:4px 8px;border-bottom:1px solid #eee;">{self.ha_brand or '-'}</td></tr>
-                <tr><td style="padding:4px 8px;border-bottom:1px solid #eee;"><b>Hearing Aid (Left)</b></td>
+                <tr><td style="padding:4px 8px;border-bottom:1px solid #eee;"><b>Hearing Aid</b></td>
                     <td style="padding:4px 8px;border-bottom:1px solid #eee;">{self.hearing_aid_left or '-'}</td></tr>
-                <tr><td style="padding:4px 8px;border-bottom:1px solid #eee;"><b>Hearing Aid (Right)</b></td>
-                    <td style="padding:4px 8px;border-bottom:1px solid #eee;">{self.hearing_aid_right or '-'}</td></tr>
+
                 <tr><td style="padding:4px 8px;border-bottom:1px solid #eee;"><b>No. of Hearing Aids</b></td>
                     <td style="padding:4px 8px;border-bottom:1px solid #eee;">{self.no_of_ha or 0}</td></tr>
                 <tr><td style="padding:4px 8px;border-bottom:1px solid #eee;"><b>Total HA MRP</b></td>
