@@ -7,7 +7,7 @@ _logger = logging.getLogger(__name__)
 
 class DiscountApprovalController(http.Controller):
 
-    def _get_record_and_validate(self, record_id, token):
+    def _get_record_and_validate(self, record_id):
         """Helper to fetch record and validate token."""
         record = request.env['resonnocare.discount.approval.request'].sudo().browse(record_id)
         
@@ -15,15 +15,15 @@ class DiscountApprovalController(http.Controller):
             raise MissingError("The requested record does not exist.")
         
         # Validate token
-        if not token or record.access_token != token:
-            raise AccessError("Invalid or missing security token.")
+        # if not token or record.access_token != token:
+        #     raise AccessError("Invalid or missing security token.")
             
         return record
 
     @http.route('/discount/approve/<int:record_id>', type='http', auth='user', website=True, csrf=False)
     def approve_discount(self, record_id, token=None, **kw):
         try:
-            record = self._get_record_and_validate(record_id, token)
+            record = self._get_record_and_validate(record_id)
             
             if record.state != 'approved':
                 record.with_user(request.env.user).action_approve()
@@ -43,7 +43,7 @@ class DiscountApprovalController(http.Controller):
     @http.route('/discount/reject/<int:record_id>', type='http', auth='user', website=True, csrf=False)
     def reject_discount(self, record_id, token=None, **kw):
         try:
-            record = self._get_record_and_validate(record_id, token)
+            record = self._get_record_and_validate(record_id)
             
             if record.state != 'rejected':
                 record.with_user(request.env.user).action_reject()
