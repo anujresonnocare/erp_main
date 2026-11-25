@@ -452,8 +452,6 @@ class StockPicking(models.Model):
 
     def action_acknowledge_stn(self):
         for picking in self:
-            if not picking.stn_can_acknowledge:
-                raise UserError(_("You can only acknowledge done GRNs for your clinic."))
             picking.sudo().write(
                 {
                     "stn_acknowledged_by_id": self.env.user.id,
