@@ -35,10 +35,9 @@ class StockPicking(models.Model):
                     elif picking.state == 'confirmed':
                         status = 'processed'
                     elif picking.state == 'assigned':
-                        if picking.stn_acknowledged_by_id:
-                            status = 'from_ho' # Acknowledged by clinic
-                        else:
-                            status = 'from_clinic' # Done by HO, waiting for clinic GRN ack
+                        status = 'from_ho' # Acknowledged by clinic
+                    elif picking.state == 'done':
+                        status = 'from_clinic' # Done by HO, waiting for clinic GRN ack
                             
                 else:
                     # Internal transfer from HO to HO (e.g., Return Warehouse)
@@ -114,6 +113,7 @@ class StockPicking(models.Model):
     dispatch_remarks = fields.Text(string="Dispatch Remarks", copy=False)
     docket_file = fields.Binary(string="Docket File", attachment=True, copy=False)
     docket_file_name = fields.Char(string="Docket Filename", copy=False)
+    dispatch_done = fields.Boolean("Dispatched Done")
 
 
     auto_po_ids = fields.One2many(
@@ -470,6 +470,7 @@ class StockPicking(models.Model):
                 raise UserError(_("Only open transfers can be marked as dispatched."))
             if not picking.courier_name or not picking.docket_number:
                 raise UserError(_("Please provide Courier Name and Docket Number before dispatch."))
+            self.dispatch_done = True
         return self.action_assign()
 
     def action_goods_returned_to_ho(self):
@@ -483,12 +484,12 @@ class StockPicking(models.Model):
                 pass
         return self.button_validate()
 
-    def action_grn_receive_at_ho(self):
-        """ Validate receipt picking from GIT to Return Warehouse """
-        for picking in self:
-            if picking.state in ("done", "cancel"):
-                raise UserError(_("Only open transfers can be received."))
-        return True
+    # def action_grn_receive_at_ho(self):
+    #     """ Validate receipt picking from GIT to Return Warehouse """
+    #     for picking in self:
+    #         if picking.state in ("done", "cancel"):
+    #             raise UserError(_("Only open transfers can be received."))
+    #     return True
 
     def action_open_clinic_incoming_receipts(self):
         user = self.env.user.sudo()

@@ -48,31 +48,31 @@
                     type="object"
                     string="Mark Dispatched"
                     class="btn-primary"
-                    invisible="picking_type_code != 'internal' or not is_clinic_supply or state in ('done','cancel')"
+                    invisible="picking_type_code != 'internal' or not is_clinic_supply or dispatch_done or state in ('done','cancel')"
                 />
                 <button
                     name="action_acknowledge_stn"
                     type="object"
                     string="Acknowledge GRN"
                     class="btn-primary"
-                    invisible="not stn_can_acknowledge"
+                    invisible="state != 'assigned'"
                 />
-                <button
+                <!-- <button
                     name="action_goods_returned_to_ho"
                     type="object"
                     string="Goods Returned to HO"
                     class="btn-warning"
                     invisible="state != 'assigned' or picking_type_code != 'incoming'"
                     groups="resonnocare_admin.group_resonnocare_clinic_manager,resonnocare_admin.group_resonnocare_clinic_user"
-                />
-                <button
+                /> -->
+                <!-- <button
                     name="action_grn_receive_at_ho"
                     type="object"
                     string="GRN (Receive at HO)"
                     class="btn-success"
                     invisible="state != 'assigned' or picking_type_code != 'internal'"
                     groups="stock.group_stock_user"
-                />
+                /> -->
             </xpath>
 
             <xpath expr="//div[@name='button_box']" position="inside">
