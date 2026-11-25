@@ -30,9 +30,9 @@ class StockPicking(models.Model):
             
             if picking.picking_type_code == 'internal':
                 if picking.is_clinic_supply:
-                    if picking.state in ('draft', 'confirmed'):
+                    if picking.state  == 'draft':
                         status = 'pending'
-                    elif picking.state == 'waiting':
+                    elif picking.state == 'confirmed':
                         status = 'processed'
                     elif picking.state == 'assigned':
                         if picking.stn_acknowledged_by_id:
