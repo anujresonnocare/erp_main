@@ -470,7 +470,7 @@ class StockPicking(models.Model):
                 raise UserError(_("Only open transfers can be marked as dispatched."))
             if not picking.courier_name or not picking.docket_number:
                 raise UserError(_("Please provide Courier Name and Docket Number before dispatch."))
-        return True
+        return self.action_assign()
 
     def action_goods_returned_to_ho(self):
         """ Validate return picking from Clinic to GIT """
