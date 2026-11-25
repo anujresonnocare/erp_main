@@ -27,6 +27,41 @@
         <field name="inherit_id" ref="stock.view_picking_form"/>
         <field name="groups_id" eval="[(5, 0, 0)]"/>
         <field name="arch" type="xml">
+
+        <xpath expr="//div[hasclass('oe_title')]" position="inside">
+            <div>
+                <field name="custom_process_status" widget="badge" 
+                       decoration-info="custom_process_status == 'pending'"
+                       decoration-warning="custom_process_status in ('processed','to_vendor')"
+                       decoration-primary="custom_process_status in ('from_ho','from_clinic')"
+                       decoration-success="custom_process_status == 'delivered'"
+                       class="ms-2"/>
+            </div>
+        </xpath>
+
+        <!-- Override the statusbar labels for Clinic Supply -->
+        <xpath expr="//header/field[@name='state']" position="attributes">
+            <attribute name="invisible">picking_type_code != 'internal' or not is_clinic_supply</attribute>
+        </xpath>
+        
+        <xpath expr="//header/field[@name='state']" position="after">
+            <!-- Custom Statusbar for Clinic Supply -->
+            <field name="state" widget="statusbar" invisible="picking_type_code != 'internal' or not is_clinic_supply"
+                   statusbar_visible="draft,assigned,done"
+                   selection="[('draft', 'Order Process Pending'), 
+                               ('assigned', 'Order Processed'), 
+                               ('done', 'Process from Clinic Stock'), 
+                               ('cancel', 'Cancelled')]"/>
+            
+            <!-- Custom Statusbar for Incoming (Vendor) -->
+            <field name="state" widget="statusbar" invisible="picking_type_code != 'incoming'"
+                   statusbar_visible="draft,assigned,done"
+                   selection="[('draft', 'Order Process Pending'), 
+                               ('assigned', 'Sub-Process to Vendor'), 
+                               ('done', 'Process from Head Office'), 
+                               ('cancel', 'Cancelled')]"/>
+        </xpath>
+        
             <xpath expr="//header" position="inside">
                 <button
                     name="action_mark_dispatched"
@@ -93,6 +128,8 @@
             </xpath>
         </field>
     </record>
+
+    
 
     <record id="action_resonnocare_incoming_receipts" model="ir.actions.act_window">
         <field name="name">GRN Acknowledgement</field>

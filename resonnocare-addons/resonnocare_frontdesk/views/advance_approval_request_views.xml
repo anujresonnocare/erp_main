@@ -21,6 +21,39 @@
         </field>
     </record>
 
+
+        <record id="view_advance_approval_request_list_submitted" model="ir.ui.view">
+        <field name="name">resonnocare.advance.approval.request.submitted</field>
+        <field name="model">resonnocare.advance.approval.request</field>
+        <field name="arch" type="xml">
+            <list create="1" edit="1" delete="0">
+                <field name="name"/>
+                <field name="state"/>
+                <field name="clinic_id"/>
+                <field name="patient_id"/>
+                <field name="sale_order_id"/>
+                <field name="sale_order_total"/>
+                <field name="min_advance_required"/>
+                <field name="amount_paid"/>
+                <field name="requested_min_advance"/>
+                <field name="requested_by_id"/>
+                <field name="approved_by_id"/>
+                <field name="approved_on"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_advance_approval__submittted_request_list_submitted" model="ir.actions.act_window">
+    <field name="name">Submitted Min Advance Requests</field>
+    <field name="res_model">resonnocare.advance.approval.request</field>
+    <field name="view_mode">list,form</field>
+    <!-- THIS IS THE MAGIC LINE -->
+    <field name="domain">[('state', '=', 'submitted')]</field>
+    
+    <!-- Tell it to use your new list view -->
+    <field name="view_id" ref="view_advance_approval_request_list_submitted"/>
+</record>
+
     <record id="view_advance_approval_request_form" model="ir.ui.view">
         <field name="name">resonnocare.advance.approval.request.form</field>
         <field name="model">resonnocare.advance.approval.request</field>

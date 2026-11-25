@@ -12,6 +12,57 @@ from odoo.exceptions import UserError
 class StockPicking(models.Model):
     _inherit = "stock.picking"
 
+
+    custom_process_status = fields.Selection([
+        ('pending', 'Order Process Pending'),
+        ('processed', 'Order Processed'),
+        ('to_vendor', 'Sub-Process to Vendor'),
+        ('from_ho', 'Process from Head Office'),
+        ('from_clinic', 'Process from Clinic Stock'),
+        ('delivered', 'Delivery to Customer'),
+    ], string='Process Status', compute='_compute_custom_process_status', store=True, tracking=True)
+
+
+    @api.depends('state', 'picking_type_code', 'is_clinic_supply', 'stn_acknowledged_by_id', 'location_dest_id')
+    def _compute_custom_process_status(self):
+        for picking in self:
+            status = 'pending'
+            
+            if picking.picking_type_code == 'internal':
+                if picking.is_clinic_supply:
+                    if picking.state in ('draft', 'confirmed', 'waiting'):
+                        status = 'pending'
+                    elif picking.state == 'assigned':
+                        status = 'processed'
+                    elif picking.state == 'done':
+                        if picking.stn_acknowledged_by_id:
+                            status = 'from_ho' # Acknowledged by clinic
+                        else:
+                            status = 'from_clinic' # Done by HO, waiting for clinic GRN ack
+                            
+                else:
+                    # Internal transfer from HO to HO (e.g., Return Warehouse)
+                    if picking.state == 'done':
+                        status = 'from_ho'
+                    else:
+                        status = 'pending'
+
+            elif picking.picking_type_code == 'incoming':
+                if picking.state == 'assigned':
+                    status = 'to_vendor'
+                elif picking.state == 'done':
+                    status = 'from_ho'
+                else:
+                    status = 'pending'
+
+            elif picking.picking_type_code == 'outgoing':
+                if picking.state == 'done':
+                    status = 'delivered'
+                else:
+                    status = 'from_clinic' # Being processed from clinic stock
+            
+            picking.custom_process_status = status
+
     stn_number = fields.Char(
         string="GRN Number",
         copy=False,
