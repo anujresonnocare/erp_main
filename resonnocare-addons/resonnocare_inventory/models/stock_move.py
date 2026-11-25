@@ -46,7 +46,6 @@ class StockMove(models.Model):
     charger_id = fields.Many2one(
         "product.product",
         string="Charger",
-        domain="[('product_tmpl_id.is_charger_style', '=', True)]",
     )    
 
     @api.depends("product_id", "product_uom_qty", "location_id", "state")
