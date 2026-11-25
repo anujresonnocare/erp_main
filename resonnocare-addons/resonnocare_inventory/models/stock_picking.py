@@ -30,11 +30,11 @@ class StockPicking(models.Model):
             
             if picking.picking_type_code == 'internal':
                 if picking.is_clinic_supply:
-                    if picking.state in ('draft', 'confirmed', 'waiting'):
+                    if picking.state in ('draft', 'confirmed'):
                         status = 'pending'
-                    elif picking.state == 'assigned':
+                    elif picking.state == 'waiting':
                         status = 'processed'
-                    elif picking.state == 'done':
+                    elif picking.state == 'assigned':
                         if picking.stn_acknowledged_by_id:
                             status = 'from_ho' # Acknowledged by clinic
                         else:
@@ -460,7 +460,7 @@ class StockPicking(models.Model):
                     "stn_acknowledged_on": fields.Datetime.now(),
                 }
             )
-        return True
+        return self.button_validate()
 
     def action_mark_dispatched(self):
         for picking in self:
@@ -470,7 +470,7 @@ class StockPicking(models.Model):
                 raise UserError(_("Only open transfers can be marked as dispatched."))
             if not picking.courier_name or not picking.docket_number:
                 raise UserError(_("Please provide Courier Name and Docket Number before dispatch."))
-        return self.button_validate()
+        return True
 
     def action_goods_returned_to_ho(self):
         """ Validate return picking from Clinic to GIT """
@@ -488,7 +488,7 @@ class StockPicking(models.Model):
         for picking in self:
             if picking.state in ("done", "cancel"):
                 raise UserError(_("Only open transfers can be received."))
-        return self.button_validate()
+        return True
 
     def action_open_clinic_incoming_receipts(self):
         user = self.env.user.sudo()
@@ -545,7 +545,7 @@ class StockPicking(models.Model):
             )
 
         domain = [
-            ("state", "=", "done"),
+            ("state", "=", "assigned"),
             ("picking_type_code", "=", "internal"),
             ("location_dest_id", "child_of", clinic.stock_location_id.id),
             ("stn_acknowledged_by_id", "=", False),

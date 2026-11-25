@@ -40,28 +40,8 @@
         </xpath>
 
         <!-- Override the statusbar labels for Clinic Supply -->
-        <xpath expr="//header/field[@name='state']" position="attributes">
-            <attribute name="invisible">picking_type_code != 'internal' or not is_clinic_supply</attribute>
-        </xpath>
-        
-        <xpath expr="//header/field[@name='state']" position="after">
-            <!-- Custom Statusbar for Clinic Supply -->
-            <field name="state" widget="statusbar" invisible="picking_type_code != 'internal' or not is_clinic_supply"
-                   statusbar_visible="draft,assigned,done"
-                   selection="[('draft', 'Order Process Pending'), 
-                               ('assigned', 'Order Processed'), 
-                               ('done', 'Process from Clinic Stock'), 
-                               ('cancel', 'Cancelled')]"/>
-            
-            <!-- Custom Statusbar for Incoming (Vendor) -->
-            <field name="state" widget="statusbar" invisible="picking_type_code != 'incoming'"
-                   statusbar_visible="draft,assigned,done"
-                   selection="[('draft', 'Order Process Pending'), 
-                               ('assigned', 'Sub-Process to Vendor'), 
-                               ('done', 'Process from Head Office'), 
-                               ('cancel', 'Cancelled')]"/>
-        </xpath>
-        
+
+
             <xpath expr="//header" position="inside">
                 <button
                     name="action_mark_dispatched"
