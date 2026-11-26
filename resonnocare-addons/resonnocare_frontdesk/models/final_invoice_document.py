@@ -529,12 +529,12 @@ class ResonnocareFinalInvoice(models.Model):
                 # serial_numbers = ", ".join(
                 #     dict.fromkeys([s for s in serial_names if s])
                 # )
-                if not serial_numbers:
-                    raise ValidationError(
-                        "Serial Number is mandatory for Final Invoice. "
-                        "Please complete delivery with serial for product '%s'."
-                        % (line.product_id.display_name,)
-                    )
+                # if not serial_names:
+                #     raise ValidationError(
+                #         "Serial Number is mandatory for Final Invoice. "
+                #         "Please complete delivery with serial for product '%s'."
+                #         % (line.product_id.display_name,)
+                #     )
 
             vals["line_ids"].append(
                 Command.create(
