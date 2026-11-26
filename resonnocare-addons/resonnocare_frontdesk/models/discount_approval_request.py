@@ -639,32 +639,7 @@ class ResonnocareDiscountApprovalRequest(models.Model):
             </table>
 
             <!-- ================= PAYMENT / ADVANCE ================= -->
-            <h3 style="margin-top:20px;">Payment &amp; Advance Details</h3>
-            <table style="border-collapse:collapse;margin:12px 0;width:100%;
-                        border:1px solid #ddd;background:#fafafa;">
-                <thead>
-                    <tr style="background:#f0f0f0;">
-                        <th style="padding:8px;text-align:left;border-bottom:2px solid #ddd;">Parameter</th>
-                        <th style="padding:8px;text-align:right;border-bottom:2px solid #ddd;">Value</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td style="padding:6px 8px;border-bottom:1px solid #eee;">Sale Order Total</td>
-                        <td style="padding:6px 8px;text-align:right;border-bottom:1px solid #eee;">{fmt(sale_total)}</td>
-                    </tr>
-                    <tr>
-                        <td style="padding:6px 8px;border-bottom:1px solid #eee;">Minimum Advance Required (30%)</td>
-                        <td style="padding:6px 8px;text-align:right;border-bottom:1px solid #eee;">{fmt(min_advance)}</td>
-                    </tr>
-                    <tr style="background:#fff8e1;">
-                        <td style="padding:6px 8px;border-bottom:1px solid #eee;"><b>Lower Advance Requested</b></td>
-                        <td style="padding:6px 8px;text-align:right;border-bottom:1px solid #eee;">
-                            <b>{fmt(lower_advance)}</b>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+            
 
             <p>
                 <a href="{approve_url}"

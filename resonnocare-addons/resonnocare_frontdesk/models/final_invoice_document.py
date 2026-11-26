@@ -17,9 +17,9 @@ class ResonnocareFinalInvoice(models.Model):
         default="/",
     )
     sale_order_id = fields.Many2one("sale.order", string="Sale Order", required=True, ondelete="cascade")
-    partner_id = fields.Many2one(related="sale_order_id.partner_id", store=True, readonly=True)
-    company_id = fields.Many2one(related="sale_order_id.company_id", store=True, readonly=True)
-    clinic_id = fields.Many2one(related="sale_order_id.clinic_id", store=True, readonly=True)
+    partner_id = fields.Many2one("res.partner", store=True, readonly=True)
+    company_id = fields.Many2one("res.company", store=True, readonly=True)
+    clinic_id = fields.Many2one("resonnocare.clinic")
     invoice_origin = fields.Char(related="sale_order_id.name", store=True, readonly=True)
     invoice_date = fields.Date(string="Invoice Date", required=True, default=fields.Date.today)
     customer_name = fields.Char(string="Customer", readonly=True)
@@ -285,6 +285,9 @@ class ResonnocareFinalInvoice(models.Model):
 
         vals = {
             "sale_order_id": sale.id,
+            "partner_id" : sale.partner_id.id,
+            "company_id" :sale.company_id.id,
+            "clinic_id" :sale.supply_clinic_id.id,
             "name": final_doc_name or "/",
             "invoice_date": fields.Date.today(),
             "customer_name": sale.partner_id.display_name or "",
@@ -391,6 +394,202 @@ class ResonnocareFinalInvoice(models.Model):
             doc = existing_doc
         else:
             doc = FinalInvoice.create(vals)
+        return self.browse(doc.id)
+
+
+    @api.model
+    def create_or_refresh_from_internal_transfer(self, transfer):
+        transfer = transfer.sudo()
+        FinalInvoice = self.sudo()
+
+        currency = transfer.company_id.currency_id
+
+        # ------------------------------------------------------------------
+        # Product lines from internal transfer
+        # ------------------------------------------------------------------
+        product_lines = transfer.move_ids_without_package.filtered(
+            lambda l: l.product_id
+            and (getattr(l.product_id, "type", "") in ("product", "consu"))
+            and not getattr(l, "is_downpayment", False)
+        )
+        if not product_lines:
+            raise ValidationError(
+                "No goods/device lines found to generate final invoice. "
+                "Final invoice is only for device/goods sale (not service/contract lines)."
+            )
+
+        # ------------------------------------------------------------------
+        # Header totals (from product list_price / 2)
+        # ------------------------------------------------------------------
+        total_payable = 0.0
+        untaxed_total = 0.0
+        for line in product_lines:
+            qty = line.quantity or 0.0
+            unit = (line.product_id.list_price or 0.0) / 2.0
+            subtotal = qty * unit
+            total_payable += subtotal
+            untaxed_total += subtotal
+
+        balance_due = total_payable  # no invoice/payment logic
+        total_paid = 0.0
+
+        # is_taxable = bool(
+        #     any(
+        #         (line.tax_id.filtered(lambda t: (t.amount or 0.0) > 0))
+        #         for line in product_lines
+        #     )
+        # )
+
+        is_taxable = False
+
+        # ------------------------------------------------------------------
+        # Document name (custom TI/BS style)
+        # ------------------------------------------------------------------
+        # existing_doc = FinalInvoice.search(
+        #     [("internal_transfer_id", "=", transfer.id)], order="id desc", limit=1
+        # )
+        # if existing_doc and existing_doc.name and existing_doc.name != "/":
+        #     final_doc_name = existing_doc.name
+        # else:
+        final_doc_name = FinalInvoice._next_custom_final_invoice_name(
+            False, is_taxable=is_taxable
+        )
+
+        partner = transfer.partner_id if "partner_id" in transfer._fields else False
+        vals = {
+            "partner_id" : transfer.partner_id.id,
+            "company_id" :transfer.company_id.id,
+            "clinic_id" :transfer.supply_clinic_id.id,
+            "name": final_doc_name or "/",
+            "invoice_date": fields.Date.today(),
+            "customer_name": (partner.display_name if partner else "") or "",
+            "customer_phone": (
+                (partner.mobile or partner.phone) if partner else ""
+            )
+            or "",
+            "customer_address": (partner.contact_address if partner else "") or "",
+            "patient_name": (
+                transfer.patient_id.display_name
+                if "patient_id" in transfer._fields and transfer.patient_id
+                else ""
+            ),
+            "clinic_name": (
+                transfer.supply_clinic_id.display_name
+                if "clinic_id" in transfer._fields and transfer.supply_clinic_id
+                else ""
+            ),
+            "gst_treatment": (
+                partner
+                and partner._fields.get("l10n_in_gst_treatment")
+                and dict(
+                    partner._fields["l10n_in_gst_treatment"].selection
+                ).get(partner.l10n_in_gst_treatment)
+            )
+            or "Consumer",
+            "currency_id": currency.id,
+            "total_payable": total_payable,
+            "amount_untaxed": untaxed_total,
+            "amount_total": total_payable,
+            "total_paid": total_paid,
+            "balance_due": balance_due,
+            "generated_by_id": self.env.user.id,
+            "line_ids": [Command.clear()],
+        }
+
+        # ------------------------------------------------------------------
+        # Line values (from product list_price / 2, no discount)
+        # ------------------------------------------------------------------
+        for line in product_lines:
+            qty = line.quantity or 0.0
+            unit_price = (line.product_id.list_price or 0.0) / 2.0
+            line_total = qty * unit_price
+
+            tax_rate = 0.0
+            taxable_value = line_total
+            tax_amount = taxable_value * (tax_rate / 100.0)
+
+            same_state = (
+                transfer.company_id.state_id
+                and partner
+                and partner.state_id
+                and transfer.company_id.state_id.id == partner.state_id.id
+            )
+            cgst_rate = (tax_rate / 2.0) if same_state else 0.0
+            sgst_rate = (tax_rate / 2.0) if same_state else 0.0
+            igst_rate = tax_rate if not same_state else 0.0
+            cgst_amount = (tax_amount / 2.0) if same_state else 0.0
+            sgst_amount = (tax_amount / 2.0) if same_state else 0.0
+            igst_amount = tax_amount if not same_state else 0.0
+
+            # Only extract serial numbers for HA (Hearing Aid) and Charger (Equipment)
+            serial_numbers = ""
+            if line.product_id.item_type in ("ha", "equipment"):
+                serial_names = []
+                for move in line.filtered(lambda m: m.state == "done"):
+                    # You must access lot_id through move_line_ids, not the move itself
+                    if move.lot_ids:
+                        serial_names.append(move.lot_ids.mapped('name'))
+                
+                # serial_numbers = ", ".join(
+                #     dict.fromkeys([s for s in serial_names if s])
+                # )
+                # if not serial_names:
+                #     raise ValidationError(
+                #         "Serial Number is mandatory for Final Invoice. "
+                #         "Please complete delivery with serial for product '%s'."
+                #         % (line.product_id.display_name,)
+                #     )
+
+            vals["line_ids"].append(
+                Command.create(
+                    {
+                        "product_id": line.product_id.id,
+                        "description": line.name or line.product_id.display_name,
+                        "serial_numbers": serial_numbers,
+                        "hsn_code": (line.product_id.l10n_in_hsn_code or ""),
+                        "item_code": (line.product_id.default_code or ""),
+                        "brand_name": (
+                            line.product_id.product_brand_id.name
+                            if "product_brand_id" in line.product_id._fields
+                            and line.product_id.product_brand_id
+                            else ""
+                        ),
+                        "quantity": qty,
+                        "mrp": unit_price,
+                        "line_total": line_total,
+                        "unit_price": unit_price,
+                        "taxable_value": taxable_value,
+                        "cgst_rate": cgst_rate,
+                        "cgst_amount": cgst_amount,
+                        "sgst_rate": sgst_rate,
+                        "sgst_amount": sgst_amount,
+                        "igst_rate": igst_rate,
+                        "igst_amount": igst_amount,
+                        "subtotal": line_total + tax_amount,
+                        "hospital_sharing_pct": (
+                            line.clinic_sharing_pct
+                            if "clinic_sharing_pct" in line._fields
+                            else 0.0
+                        )
+                        or 0.0,
+                        "hospital_sharing_amount": (
+                            line.clinic_sharing_amount
+                            if "clinic_sharing_amount" in line._fields
+                            else 0.0
+                        )
+                        or 0.0,
+                    }
+                )
+            )
+
+        # ------------------------------------------------------------------
+        # Create / update
+        # ------------------------------------------------------------------
+        # if existing_doc:
+        #     existing_doc.sudo().write(vals)
+        #     doc = existing_doc
+        # else:
+        doc = FinalInvoice.create(vals)
         return self.browse(doc.id)
 
 

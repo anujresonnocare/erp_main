@@ -1035,17 +1035,17 @@ class ResonnocareAppointment(models.Model):
             })
 
             # Charger travels with the device row — same quantity
-            if line.charger:
-                request_rows.append({
-                    "product": line.charger,
-                    "qty": req_qty,
-                    "is_left_ear": False,
-                    "is_right_ear": False,
-                    "charger": False,
-                    "cros" : False,
-                    "serial_lot_ids": [],
-                    "is_charger_row": True,
-                })
+            # if line.charger:
+            #     request_rows.append({
+            #         "product": line.charger,
+            #         "qty": req_qty,
+            #         "is_left_ear": False,
+            #         "is_right_ear": False,
+            #         "charger": False,
+            #         "cros" : False,
+            #         "serial_lot_ids": [],
+            #         "is_charger_row": True,
+            #     })
 
         logger.info(
             "SCM Order calculation for appointment %s: %d device rows, %d total rows",
