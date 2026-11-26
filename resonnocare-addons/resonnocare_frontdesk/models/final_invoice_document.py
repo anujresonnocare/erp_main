@@ -17,9 +17,9 @@ class ResonnocareFinalInvoice(models.Model):
         default="/",
     )
     sale_order_id = fields.Many2one("sale.order", string="Sale Order", ondelete="cascade")
-    partner_id = fields.Many2one(related="sale_order_id.partner_id", store=True, readonly=True)
-    company_id = fields.Many2one(related="sale_order_id.company_id", store=True, readonly=True)
-    clinic_id = fields.Many2one(related="sale_order_id.clinic_id", store=True, readonly=True)
+    partner_id = fields.Many2one("res.partner", store=True, readonly=True)
+    company_id = fields.Many2one("res.company", store=True, readonly=True)
+    clinic_id = fields.Many2one("resonnocare.clinic", store=True, readonly=True)
     invoice_origin = fields.Char(related="sale_order_id.name", store=True, readonly=True)
     invoice_date = fields.Date(string="Invoice Date", required=True, default=fields.Date.today)
     customer_name = fields.Char(string="Customer", readonly=True)
@@ -224,178 +224,177 @@ class ResonnocareFinalInvoice(models.Model):
 
     
 
-    @api.model
-    def create_or_refresh_from_internal_transfer(self, sale):
-        sale = sale.sudo()
-        FinalInvoice = self.sudo()
-        if sale.state not in ("sale", "done"):
-            raise ValidationError("Final invoice is allowed only for confirmed sales.")
+    # @api.model
+    # def create_or_refresh_from_internal_transfer(self, sale):
+    #     sale = sale.sudo()
+    #     FinalInvoice = self.sudo()
+    #     if sale.state not in ("sale", "done"):
+    #         raise ValidationError("Final invoice is allowed only for confirmed sales.")
 
-        invoices = sale.invoice_ids.filtered(
-            lambda inv: inv.move_type == "out_invoice" and inv.state == "posted"
-        )
-        total_paid = 0.0
-        for inv in invoices:
-            if hasattr(inv, "_get_contract_advance_paid"):
-                total_paid += inv._get_contract_advance_paid()
-            else:
-                total_paid += (inv.amount_total or 0.0) - (inv.amount_residual or 0.0)
+    #     invoices = sale.invoice_ids.filtered(
+    #         lambda inv: inv.move_type == "out_invoice" and inv.state == "posted"
+    #     )
+    #     total_paid = 0.0
+    #     for inv in invoices:
+    #         if hasattr(inv, "_get_contract_advance_paid"):
+    #             total_paid += inv._get_contract_advance_paid()
+    #         else:
+    #             total_paid += (inv.amount_total or 0.0) - (inv.amount_residual or 0.0)
 
-        # For final invoice, always generate the custom TI/BS style number.
-        # Device normal invoices may use Odoo default numbering; final document carries custom number.
-        reference_invoice = False
-        non_downpayment_invoices = invoices.filtered(
-            lambda inv: bool(
-                inv.invoice_line_ids.filtered(
-                    lambda l: not l.display_type and not getattr(l, "is_downpayment", False)
-                )
-            )
-        )
-        if non_downpayment_invoices:
-            reference_invoice = non_downpayment_invoices.sorted(
-                lambda inv: (inv.invoice_date or fields.Date.today(), inv.id)
-            )[-1]
-        elif invoices:
-            reference_invoice = invoices.sorted(lambda inv: (inv.invoice_date or fields.Date.today(), inv.id))[-1]
+    #     # For final invoice, always generate the custom TI/BS style number.
+    #     # Device normal invoices may use Odoo default numbering; final document carries custom number.
+    #     reference_invoice = False
+    #     non_downpayment_invoices = invoices.filtered(
+    #         lambda inv: bool(
+    #             inv.invoice_line_ids.filtered(
+    #                 lambda l: not l.display_type and not getattr(l, "is_downpayment", False)
+    #             )
+    #         )
+    #     )
+    #     if non_downpayment_invoices:
+    #         reference_invoice = non_downpayment_invoices.sorted(
+    #             lambda inv: (inv.invoice_date or fields.Date.today(), inv.id)
+    #         )[-1]
+    #     elif invoices:
+    #         reference_invoice = invoices.sorted(lambda inv: (inv.invoice_date or fields.Date.today(), inv.id))[-1]
 
-        currency = sale.currency_id or sale.company_id.currency_id
-        total_payable = sale.amount_total or 0.0
-        balance_due = total_payable - total_paid
-        if balance_due < 0:
-            balance_due = 0.0
-        if not float_is_zero(balance_due, precision_rounding=(currency.rounding or 0.01)):
-            raise ValidationError("Final invoice can be printed only after full payment is completed.")
+    #     currency = sale.currency_id or sale.company_id.currency_id
+    #     total_payable = sale.amount_total or 0.0
+    #     balance_due = total_payable - total_paid
+    #     if balance_due < 0:
+    #         balance_due = 0.0
+    #     if not float_is_zero(balance_due, precision_rounding=(currency.rounding or 0.01)):
+    #         raise ValidationError("Final invoice can be printed only after full payment is completed.")
 
-        product_lines = sale.order_line.filtered(
-            lambda l: not l.display_type
-            and l.product_id
-            and (getattr(l.product_id, "type", "") in ("product", "consu"))
-        )
-        product_lines = product_lines.filtered(lambda l: not getattr(l, "is_downpayment", False))
-        if not product_lines:
-            raise ValidationError(
-                "No goods/device lines found to generate final invoice. "
-                "Final invoice is only for device/goods sale (not service/contract lines)."
-            )
+    #     product_lines = sale.order_line.filtered(
+    #         lambda l: not l.display_type
+    #         and l.product_id
+    #         and (getattr(l.product_id, "type", "") in ("product", "consu"))
+    #     )
+    #     product_lines = product_lines.filtered(lambda l: not getattr(l, "is_downpayment", False))
+    #     if not product_lines:
+    #         raise ValidationError(
+    #             "No goods/device lines found to generate final invoice. "
+    #             "Final invoice is only for device/goods sale (not service/contract lines)."
+    #         )
 
-        is_taxable = bool(any((line.tax_id.filtered(lambda t: (t.amount or 0.0) > 0)) for line in product_lines))
+    #     is_taxable = bool(any((line.tax_id.filtered(lambda t: (t.amount or 0.0) > 0)) for line in product_lines))
 
-        existing_doc = FinalInvoice.search([("sale_order_id", "=", sale.id)], order="id desc", limit=1)
-        if existing_doc and existing_doc.name and existing_doc.name != "/":
-            final_doc_name = existing_doc.name
-        else:
-            final_doc_name = FinalInvoice._next_custom_final_invoice_name(reference_invoice, is_taxable=is_taxable)
+    #     existing_doc = FinalInvoice.search([("sale_order_id", "=", sale.id)], order="id desc", limit=1)
+    #     if existing_doc and existing_doc.name and existing_doc.name != "/":
+    #         final_doc_name = existing_doc.name
+    #     else:
+    #         final_doc_name = FinalInvoice._next_custom_final_invoice_name(reference_invoice, is_taxable=is_taxable)
 
-        vals = {
-            "sale_order_id": sale.id,
-            "name": final_doc_name or "/",
-            "clinic_id" : sale.supply_clinic_id,
-            "invoice_date": fields.Date.today(),
-            "customer_name": sale.partner_id.display_name or "",
-            "customer_phone": sale.partner_id.mobile or sale.partner_id.phone or "",
-            "customer_address": sale.partner_id.contact_address or "",
-            "patient_name": sale.patient_id.display_name or "",
-            "clinic_name": (sale.clinic_id.display_name if sale.clinic_id else ""),
-            "gst_treatment": (
-                sale.partner_id._fields.get("l10n_in_gst_treatment")
-                and dict(sale.partner_id._fields["l10n_in_gst_treatment"].selection).get(
-                    sale.partner_id.l10n_in_gst_treatment
-                )
-            )
-            or "Consumer",
-            "currency_id": currency.id,
-            "total_payable": total_payable,
-            "amount_untaxed": sum(product_lines.mapped("price_subtotal")),
-            "amount_total": total_payable,
-            "total_paid": total_paid,
-            "balance_due": balance_due,
-            "generated_by_id": self.env.user.id,
-            "line_ids": [Command.clear()],
-        }
-        for line in product_lines:
-            tax_rate = sum(line.tax_id.mapped("amount")) if line.tax_id else 0.0
-            taxable_value = line.price_subtotal or 0.0
-            tax_amount = (line.price_total or 0.0) - taxable_value
-            same_state = (
-                sale.company_id.state_id
-                and sale.partner_id.state_id
-                and sale.company_id.state_id.id == sale.partner_id.state_id.id
-            )
-            cgst_rate = (tax_rate / 2.0) if same_state else 0.0
-            sgst_rate = (tax_rate / 2.0) if same_state else 0.0
-            igst_rate = tax_rate if not same_state else 0.0
-            cgst_amount = (tax_amount / 2.0) if same_state else 0.0
-            sgst_amount = (tax_amount / 2.0) if same_state else 0.0
-            igst_amount = tax_amount if not same_state else 0.0
+    #     vals = {
+    #         "sale_order_id": sale.id,
+    #         "name": final_doc_name or "/",
+    #         "invoice_date": fields.Date.today(),
+    #         "customer_name": sale.partner_id.display_name or "",
+    #         "customer_phone": sale.partner_id.mobile or sale.partner_id.phone or "",
+    #         "customer_address": sale.partner_id.contact_address or "",
+    #         "patient_name": sale.patient_id.display_name or "",
+    #         "clinic_name": (sale.clinic_id.display_name if sale.clinic_id else ""),
+    #         "gst_treatment": (
+    #             sale.partner_id._fields.get("l10n_in_gst_treatment")
+    #             and dict(sale.partner_id._fields["l10n_in_gst_treatment"].selection).get(
+    #                 sale.partner_id.l10n_in_gst_treatment
+    #             )
+    #         )
+    #         or "Consumer",
+    #         "currency_id": currency.id,
+    #         "total_payable": total_payable,
+    #         "amount_untaxed": sum(product_lines.mapped("price_subtotal")),
+    #         "amount_total": total_payable,
+    #         "total_paid": total_paid,
+    #         "balance_due": balance_due,
+    #         "generated_by_id": self.env.user.id,
+    #         "line_ids": [Command.clear()],
+    #     }
+    #     for line in product_lines:
+    #         tax_rate = sum(line.tax_id.mapped("amount")) if line.tax_id else 0.0
+    #         taxable_value = line.price_subtotal or 0.0
+    #         tax_amount = (line.price_total or 0.0) - taxable_value
+    #         same_state = (
+    #             sale.company_id.state_id
+    #             and sale.partner_id.state_id
+    #             and sale.company_id.state_id.id == sale.partner_id.state_id.id
+    #         )
+    #         cgst_rate = (tax_rate / 2.0) if same_state else 0.0
+    #         sgst_rate = (tax_rate / 2.0) if same_state else 0.0
+    #         igst_rate = tax_rate if not same_state else 0.0
+    #         cgst_amount = (tax_amount / 2.0) if same_state else 0.0
+    #         sgst_amount = (tax_amount / 2.0) if same_state else 0.0
+    #         igst_amount = tax_amount if not same_state else 0.0
             
-            # Only extract serial numbers for HA (Hearing Aid) and Charger (Equipment) products
-            serial_numbers = ""
-            if line.product_id.item_type in ('ha', 'equipment'):
-                serial_names = []
-                for move in line.move_ids.filtered(lambda m: m.state == "done"):
-                    serial_names.extend(move.move_line_ids.mapped("lot_id.name"))
-                serial_numbers = ", ".join(dict.fromkeys([s for s in serial_names if s]))
-                if not serial_numbers:
-                    raise ValidationError(
-                        "Serial Number is mandatory for Final Invoice. "
-                        "Please complete delivery with serial for product '%s'." % (line.product_id.display_name,)
-                    )
+    #         # Only extract serial numbers for HA (Hearing Aid) and Charger (Equipment) products
+    #         serial_numbers = ""
+    #         if line.product_id.item_type in ('ha', 'equipment'):
+    #             serial_names = []
+    #             for move in line.move_ids.filtered(lambda m: m.state == "done"):
+    #                 serial_names.extend(move.move_line_ids.mapped("lot_id.name"))
+    #             serial_numbers = ", ".join(dict.fromkeys([s for s in serial_names if s]))
+    #             if not serial_numbers:
+    #                 raise ValidationError(
+    #                     "Serial Number is mandatory for Final Invoice. "
+    #                     "Please complete delivery with serial for product '%s'." % (line.product_id.display_name,)
+    #                 )
 
-            # serial_names = []
-            # for move in line.move_ids.filtered(lambda m: m.state == "done"):
-            #     serial_names.extend(move.move_line_ids.mapped("lot_id.name"))
-            # serial_numbers = ", ".join(dict.fromkeys([s for s in serial_names if s]))
-            # if not serial_numbers:
-                # raise ValidationError(
-                #     "Serial Number is mandatory for Final Invoice. "
-                #     "Please complete delivery with serial for product '%s'." % (line.product_id.display_name,)
-                # )
+    #         # serial_names = []
+    #         # for move in line.move_ids.filtered(lambda m: m.state == "done"):
+    #         #     serial_names.extend(move.move_line_ids.mapped("lot_id.name"))
+    #         # serial_numbers = ", ".join(dict.fromkeys([s for s in serial_names if s]))
+    #         # if not serial_numbers:
+    #             # raise ValidationError(
+    #             #     "Serial Number is mandatory for Final Invoice. "
+    #             #     "Please complete delivery with serial for product '%s'." % (line.product_id.display_name,)
+    #             # )
             
-            vals["line_ids"].append(
-                Command.create(
-                    {
-                        "product_id": line.product_id.id,
-                        "description": line.name or line.product_id.display_name,
-                        "serial_numbers": serial_numbers,
-                        "hsn_code": (line.product_id.l10n_in_hsn_code or ""),
-                        "item_code": (line.product_id.default_code or ""),
-                        "brand_name": (line.product_id.product_brand_id.name if "product_brand_id" in line.product_id._fields and line.product_id.product_brand_id else ""),
-                        "quantity": line.product_uom_qty or 0.0,
-                        "mrp": line.price_unit or 0.0,
-                        "line_total": (line.product_uom_qty or 0.0) * (line.price_unit or 0.0),
-                        "unit_price": line.price_unit or 0.0,
-                        "discount_pct": line.discount or 0.0,
-                        "discount_amount": ((line.product_uom_qty or 0.0) * (line.price_unit or 0.0)) - taxable_value,
-                        "taxable_value": taxable_value,
-                        "cgst_rate": cgst_rate,
-                        "cgst_amount": cgst_amount,
-                        "sgst_rate": sgst_rate,
-                        "sgst_amount": sgst_amount,
-                        "igst_rate": igst_rate,
-                        "igst_amount": igst_amount,
-                        "subtotal": line.price_total or 0.0,
-                        "hospital_sharing_pct": (
-                            line.clinic_sharing_pct
-                            if "clinic_sharing_pct" in line._fields
-                            else 0.0
-                        )
-                        or 0.0,
-                        "hospital_sharing_amount": (
-                            line.clinic_sharing_amount
-                            if "clinic_sharing_amount" in line._fields
-                            else 0.0
-                        )
-                        or 0.0,
-                    }
-                )
-            )
+    #         vals["line_ids"].append(
+    #             Command.create(
+    #                 {
+    #                     "product_id": line.product_id.id,
+    #                     "description": line.name or line.product_id.display_name,
+    #                     "serial_numbers": serial_numbers,
+    #                     "hsn_code": (line.product_id.l10n_in_hsn_code or ""),
+    #                     "item_code": (line.product_id.default_code or ""),
+    #                     "brand_name": (line.product_id.product_brand_id.name if "product_brand_id" in line.product_id._fields and line.product_id.product_brand_id else ""),
+    #                     "quantity": line.product_uom_qty or 0.0,
+    #                     "mrp": line.price_unit or 0.0,
+    #                     "line_total": (line.product_uom_qty or 0.0) * (line.price_unit or 0.0),
+    #                     "unit_price": line.price_unit or 0.0,
+    #                     "discount_pct": line.discount or 0.0,
+    #                     "discount_amount": ((line.product_uom_qty or 0.0) * (line.price_unit or 0.0)) - taxable_value,
+    #                     "taxable_value": taxable_value,
+    #                     "cgst_rate": cgst_rate,
+    #                     "cgst_amount": cgst_amount,
+    #                     "sgst_rate": sgst_rate,
+    #                     "sgst_amount": sgst_amount,
+    #                     "igst_rate": igst_rate,
+    #                     "igst_amount": igst_amount,
+    #                     "subtotal": line.price_total or 0.0,
+    #                     "hospital_sharing_pct": (
+    #                         line.clinic_sharing_pct
+    #                         if "clinic_sharing_pct" in line._fields
+    #                         else 0.0
+    #                     )
+    #                     or 0.0,
+    #                     "hospital_sharing_amount": (
+    #                         line.clinic_sharing_amount
+    #                         if "clinic_sharing_amount" in line._fields
+    #                         else 0.0
+    #                     )
+    #                     or 0.0,
+    #                 }
+    #             )
+    #         )
 
-        if existing_doc:
-            existing_doc.sudo().write(vals)
-            doc = existing_doc
-        else:
-            doc = FinalInvoice.create(vals)
-        return self.browse(doc.id)
+    #     if existing_doc:
+    #         existing_doc.sudo().write(vals)
+    #         doc = existing_doc
+    #     else:
+    #         doc = FinalInvoice.create(vals)
+    #     return self.browse(doc.id)
 
     @api.model
     def create_or_refresh_from_internal_transfer(self, transfer):
@@ -457,6 +456,9 @@ class ResonnocareFinalInvoice(models.Model):
 
         partner = transfer.partner_id if "partner_id" in transfer._fields else False
         vals = {
+            "partner_id" : transfer.partner_id,
+            "company_id" :transfer.company_id,
+            "clinic_id" :transfer.supply_clinic_id,
             "name": final_doc_name or "/",
             "invoice_date": fields.Date.today(),
             "customer_name": (partner.display_name if partner else "") or "",
