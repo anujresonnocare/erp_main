@@ -16,7 +16,7 @@ class ResonnocareFinalInvoice(models.Model):
         readonly=True,
         default="/",
     )
-    sale_order_id = fields.Many2one("sale.order", string="Sale Order", required=True, ondelete="cascade")
+    sale_order_id = fields.Many2one("sale.order", string="Sale Order", ondelete="cascade")
     partner_id = fields.Many2one(related="sale_order_id.partner_id", store=True, readonly=True)
     company_id = fields.Many2one(related="sale_order_id.company_id", store=True, readonly=True)
     clinic_id = fields.Many2one(related="sale_order_id.clinic_id", store=True, readonly=True)
