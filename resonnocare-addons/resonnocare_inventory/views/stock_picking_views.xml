@@ -57,6 +57,15 @@
                     class="btn-primary"
                     invisible="state != 'assigned'"
                 />
+
+                <button
+                    name="action_print_final_invoice"
+                    type="object"
+                    string="Print BOS / TI"
+                    class="btn-primary"
+                />
+
+                
                 <!-- <button
                     name="action_goods_returned_to_ho"
                     type="object"

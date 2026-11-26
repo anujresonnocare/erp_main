@@ -120,6 +120,12 @@ class StockPicking(models.Model):
         'purchase.order', 'origin_picking_id', string="Auto-Created POs"
     )
 
+
+    def action_print_final_invoice(self):
+        self.ensure_one()
+        doc = self.env["resonnocare.final.invoice"].create_or_refresh_from_internal_transfer(self)
+        return doc.action_print_document()
+
     def purchase_order_view_action(self):
         self.ensure_one()
         action = self.env.ref('purchase.purchase_form_action').read()[0]
