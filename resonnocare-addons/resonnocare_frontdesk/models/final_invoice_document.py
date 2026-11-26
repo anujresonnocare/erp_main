@@ -406,7 +406,7 @@ class ResonnocareFinalInvoice(models.Model):
         # ------------------------------------------------------------------
         # Product lines from internal transfer
         # ------------------------------------------------------------------
-        product_lines = transfer.move_line_ids.filtered(
+        product_lines = transfer.move_ids_without_package.filtered(
             lambda l: l.product_id
             and (getattr(l.product_id, "type", "") in ("product", "consu"))
             and not getattr(l, "is_downpayment", False)
