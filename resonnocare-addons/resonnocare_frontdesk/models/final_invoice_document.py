@@ -521,8 +521,8 @@ class ResonnocareFinalInvoice(models.Model):
             serial_numbers = ""
             if line.product_id.item_type in ("ha", "equipment"):
                 serial_names = []
-                for move in line.move_id.filtered(lambda m: m.state == "done"):
-                    serial_names.extend(move.move_line_ids.mapped("lot_id.name"))
+                for move in line.filtered(lambda m: m.state == "done"):
+                    serial_names.extend(move.move_ids_without_package.mapped("lot_id.name"))
                 serial_numbers = ", ".join(
                     dict.fromkeys([s for s in serial_names if s])
                 )
