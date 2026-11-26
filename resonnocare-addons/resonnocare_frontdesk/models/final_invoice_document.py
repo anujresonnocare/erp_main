@@ -500,7 +500,7 @@ class ResonnocareFinalInvoice(models.Model):
             unit_price = (line.product_id.list_price or 0.0) / 2.0
             line_total = qty * unit_price
 
-            tax_rate = sum(line.tax_id.mapped("amount")) if line.tax_id else 0.0
+            tax_rate = 0.0
             taxable_value = line_total
             tax_amount = taxable_value * (tax_rate / 100.0)
 
@@ -578,11 +578,11 @@ class ResonnocareFinalInvoice(models.Model):
         # ------------------------------------------------------------------
         # Create / update
         # ------------------------------------------------------------------
-        if existing_doc:
-            existing_doc.sudo().write(vals)
-            doc = existing_doc
-        else:
-            doc = FinalInvoice.create(vals)
+        # if existing_doc:
+        #     existing_doc.sudo().write(vals)
+        #     doc = existing_doc
+        # else:
+        doc = FinalInvoice.create(vals)
         return self.browse(doc.id)
 
 
