@@ -526,9 +526,9 @@ class ResonnocareFinalInvoice(models.Model):
                     if move.lot_ids:
                         serial_names.append(move.lot_ids.mapped('name'))
                 
-                serial_numbers = ", ".join(
-                    dict.fromkeys([s for s in serial_names if s])
-                )
+                # serial_numbers = ", ".join(
+                #     dict.fromkeys([s for s in serial_names if s])
+                # )
                 if not serial_numbers:
                     raise ValidationError(
                         "Serial Number is mandatory for Final Invoice. "
