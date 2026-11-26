@@ -522,7 +522,10 @@ class ResonnocareFinalInvoice(models.Model):
             if line.product_id.item_type in ("ha", "equipment"):
                 serial_names = []
                 for move in line.filtered(lambda m: m.state == "done"):
-                    serial_names.extend(move.mapped("lot_id.name"))
+                    # You must access lot_id through move_line_ids, not the move itself
+                    if move.lot_id:
+                        serial_names.append(move.lot_id.name)
+                
                 serial_numbers = ", ".join(
                     dict.fromkeys([s for s in serial_names if s])
                 )
