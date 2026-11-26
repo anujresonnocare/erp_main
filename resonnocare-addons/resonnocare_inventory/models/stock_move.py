@@ -48,6 +48,12 @@ class StockMove(models.Model):
         string="Charger",
     )    
 
+    cros = fields.Many2one(
+        "product.product",
+        string="CROS",
+    )    
+
+
     @api.depends("product_id", "product_uom_qty", "location_id", "state")
     def _compute_supply_planning_metrics(self):
         quant_model = self.env["stock.quant"].sudo()

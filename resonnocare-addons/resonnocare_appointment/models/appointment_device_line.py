@@ -81,6 +81,12 @@ class ResonnocareAppointmentDeviceLine(models.Model):
         domain="[('product_tmpl_id.is_charger_style', '=', True)]",
     )
 
+    cros =fields.Many2one(
+        "product.product",
+        string="Charger",
+        domain="[('product_tmpl_id.is_cros', '=', True)]",
+    )
+
     # @api.model
     # def _get_product_domain(self, item_type, vendor_partner_id):
     #     """Build the domain for the product_id field dynamically."""

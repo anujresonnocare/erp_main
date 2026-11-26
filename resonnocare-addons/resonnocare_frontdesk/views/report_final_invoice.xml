@@ -170,6 +170,7 @@
                                 </tr>
                             </table>
 
+                            <t t-if="o.sale_order_id">
                             <h5 class="mt-1 mb-1">Payment Details:-</h5>
                             <table class="table table-sm mb-2" style="border-collapse:collapse;table-layout:fixed;border:1px solid #2a2a2a;">
                                 <thead>
@@ -195,6 +196,7 @@
                                     </tr>
                                 </tbody>
                             </table>
+                            </t>
 
                             <h5 class="mt-2 mb-1" style="font-size:20px;">HSN Summary</h5>
                             <table class="table table-sm mb-2" style="border-collapse:collapse;border:1px solid #2a2a2a;">

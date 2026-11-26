@@ -1030,6 +1030,7 @@ class ResonnocareAppointment(models.Model):
                 "is_left_ear": bool(line.is_left_ear),
                 "is_right_ear": bool(line.is_right_ear),
                 "charger": line.charger or False,
+                "cros" : line.cros or False,
                 "serial_lot_ids": [line.serial_lot_id.id] if line.serial_lot_id else [],
             })
 
@@ -1091,6 +1092,7 @@ class ResonnocareAppointment(models.Model):
                 "is_left_ear": row["is_left_ear"],
                 "is_right_ear": row["is_right_ear"],
                 "charger_id": row["charger"].id if row["charger"] else False,
+                "cros" : row["cros"].id if row["cros"] else False 
             }
 
             # Serial only on the device row (not the charger row)
@@ -1322,6 +1324,12 @@ class ResonnocareAppointment(models.Model):
                         "A Battery product is required when the appointment contains "
                         "products with styles: %s. Please add a line with a Battery product."
                     ) % ', '.join(battery_required_styles & styles))
+            if "CROS" in self.display_name:
+                if product_id and product_id.product_tmpl_id.is_kit_product and not line.cros:
+                    raise ValidationError(_(
+                        "A CROS product is required when the appointment contains "
+                        "products with styles: CROS. Please add a line with a CROS product."
+                    ))
                 
     @api.model_create_multi
     def create(self, vals_list):
@@ -2521,4 +2529,13 @@ class StockMove(models.Model):
         "product.product",
         string="Charger",
         domain="[('product_tmpl_id.is_charger_style', '=', True)]",
-    )    
+    )   
+
+
+    cros = fields.Many2one(
+        "product.product",
+        string="CROS",
+        domain="[('product_tmpl_id.is_cros', '=', True)]",
+    )   
+
+     

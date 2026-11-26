@@ -7,6 +7,7 @@
         <field name="groups_id" eval="[(5, 0, 0)]"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='barcode']" position="after">
+                <field name="is_cros"/>
                 <field name="brand"/>
                 <field name="rechargeable"/>
                 <field name="item_type"/>

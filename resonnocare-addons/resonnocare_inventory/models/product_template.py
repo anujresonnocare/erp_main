@@ -104,6 +104,9 @@ class ProductTemplate(models.Model):
         help="Style / variant of the device",
     )
 
+
+    is_cros = fields.Boolean("Is Cross")
+
     @api.depends("price_history_ids")
     def _compute_price_history_count(self):
         counts = (
