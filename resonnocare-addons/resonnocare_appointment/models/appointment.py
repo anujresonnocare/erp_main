@@ -1324,7 +1324,7 @@ class ResonnocareAppointment(models.Model):
                         "A Battery product is required when the appointment contains "
                         "products with styles: %s. Please add a line with a Battery product."
                     ) % ', '.join(battery_required_styles & styles))
-            if "CROS" in self.display_name:
+            if "CROS" in lines.product_id.display_name and lines.product_id.item_type == "ha":
                 if product_id and product_id.product_tmpl_id.is_kit_product and not line.cros:
                     raise ValidationError(_(
                         "A CROS product is required when the appointment contains "
