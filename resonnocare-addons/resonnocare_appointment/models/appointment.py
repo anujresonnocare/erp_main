@@ -1042,6 +1042,7 @@ class ResonnocareAppointment(models.Model):
                     "is_left_ear": False,
                     "is_right_ear": False,
                     "charger": False,
+                    "cros" : False,
                     "serial_lot_ids": [],
                     "is_charger_row": True,
                 })

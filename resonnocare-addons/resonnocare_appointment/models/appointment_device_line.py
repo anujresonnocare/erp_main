@@ -83,7 +83,7 @@ class ResonnocareAppointmentDeviceLine(models.Model):
 
     cros =fields.Many2one(
         "product.product",
-        string="Charger",
+        string="CROS",
         domain="[('product_tmpl_id.is_cros', '=', True)]",
     )
 
