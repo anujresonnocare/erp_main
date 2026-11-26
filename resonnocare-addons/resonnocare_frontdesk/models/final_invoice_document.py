@@ -19,7 +19,7 @@ class ResonnocareFinalInvoice(models.Model):
     sale_order_id = fields.Many2one("sale.order", string="Sale Order", ondelete="cascade")
     partner_id = fields.Many2one("res.partner", store=True, readonly=True)
     company_id = fields.Many2one("res.company", store=True, readonly=True)
-    clinic_id = fields.Many2one("resonnocare.clinic", store=True, readonly=True)
+    clinic_id = fields.Many2one("resonnocare.clinic")
     invoice_origin = fields.Char(related="sale_order_id.name", store=True, readonly=True)
     invoice_date = fields.Date(string="Invoice Date", required=True, default=fields.Date.today)
     customer_name = fields.Char(string="Customer", readonly=True)
@@ -456,9 +456,9 @@ class ResonnocareFinalInvoice(models.Model):
 
         partner = transfer.partner_id if "partner_id" in transfer._fields else False
         vals = {
-            "partner_id" : transfer.partner_id,
-            "company_id" :transfer.company_id,
-            "clinic_id" :transfer.supply_clinic_id,
+            "partner_id" : transfer.partner_id.id,
+            "company_id" :transfer.company_id.id,
+            "clinic_id" :transfer.supply_clinic_id.id,
             "name": final_doc_name or "/",
             "invoice_date": fields.Date.today(),
             "customer_name": (partner.display_name if partner else "") or "",
@@ -474,7 +474,7 @@ class ResonnocareFinalInvoice(models.Model):
             ),
             "clinic_name": (
                 transfer.supply_clinic_id.display_name
-                if "clinic_id" in transfer._fields and transfer.clinic_id
+                if "clinic_id" in transfer._fields and transfer.supply_clinic_id
                 else ""
             ),
             "gst_treatment": (
