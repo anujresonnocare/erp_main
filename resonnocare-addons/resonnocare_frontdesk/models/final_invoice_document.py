@@ -523,8 +523,8 @@ class ResonnocareFinalInvoice(models.Model):
                 serial_names = []
                 for move in line.filtered(lambda m: m.state == "done"):
                     # You must access lot_id through move_line_ids, not the move itself
-                    if move.lot_id:
-                        serial_names.append(move.lot_id.name)
+                    if move.lot_ids:
+                        serial_names.append(move.lot_ids.mapped('name'))
                 
                 serial_numbers = ", ".join(
                     dict.fromkeys([s for s in serial_names if s])
