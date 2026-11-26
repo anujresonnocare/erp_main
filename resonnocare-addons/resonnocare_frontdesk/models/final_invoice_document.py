@@ -289,6 +289,7 @@ class ResonnocareFinalInvoice(models.Model):
         vals = {
             "sale_order_id": sale.id,
             "name": final_doc_name or "/",
+            "clinic_id" : sale.supply_clinic_id,
             "invoice_date": fields.Date.today(),
             "customer_name": sale.partner_id.display_name or "",
             "customer_phone": sale.partner_id.mobile or sale.partner_id.phone or "",
