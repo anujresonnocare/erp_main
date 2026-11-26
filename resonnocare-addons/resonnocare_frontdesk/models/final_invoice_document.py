@@ -432,12 +432,14 @@ class ResonnocareFinalInvoice(models.Model):
         balance_due = total_payable  # no invoice/payment logic
         total_paid = 0.0
 
-        is_taxable = bool(
-            any(
-                (line.tax_id.filtered(lambda t: (t.amount or 0.0) > 0))
-                for line in product_lines
-            )
-        )
+        # is_taxable = bool(
+        #     any(
+        #         (line.tax_id.filtered(lambda t: (t.amount or 0.0) > 0))
+        #         for line in product_lines
+        #     )
+        # )
+
+        is_taxable = False
 
         # ------------------------------------------------------------------
         # Document name (custom TI/BS style)
