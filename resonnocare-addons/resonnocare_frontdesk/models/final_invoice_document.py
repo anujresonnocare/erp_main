@@ -473,7 +473,7 @@ class ResonnocareFinalInvoice(models.Model):
                 else ""
             ),
             "clinic_name": (
-                transfer.clinic_id.display_name
+                transfer.supply_clinic_id.display_name
                 if "clinic_id" in transfer._fields and transfer.clinic_id
                 else ""
             ),
