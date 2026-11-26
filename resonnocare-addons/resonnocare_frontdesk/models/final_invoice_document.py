@@ -444,19 +444,18 @@ class ResonnocareFinalInvoice(models.Model):
         # ------------------------------------------------------------------
         # Document name (custom TI/BS style)
         # ------------------------------------------------------------------
-        existing_doc = FinalInvoice.search(
-            [("internal_transfer_id", "=", transfer.id)], order="id desc", limit=1
+        # existing_doc = FinalInvoice.search(
+        #     [("internal_transfer_id", "=", transfer.id)], order="id desc", limit=1
+        # )
+        # if existing_doc and existing_doc.name and existing_doc.name != "/":
+        #     final_doc_name = existing_doc.name
+        # else:
+        final_doc_name = FinalInvoice._next_custom_final_invoice_name(
+            False, is_taxable=is_taxable
         )
-        if existing_doc and existing_doc.name and existing_doc.name != "/":
-            final_doc_name = existing_doc.name
-        else:
-            final_doc_name = FinalInvoice._next_custom_final_invoice_name(
-                False, is_taxable=is_taxable
-            )
 
         partner = transfer.partner_id if "partner_id" in transfer._fields else False
         vals = {
-            "internal_transfer_id": transfer.id,
             "name": final_doc_name or "/",
             "invoice_date": fields.Date.today(),
             "customer_name": (partner.display_name if partner else "") or "",
