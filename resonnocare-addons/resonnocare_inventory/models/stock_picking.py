@@ -19,7 +19,7 @@ class StockPicking(models.Model):
         ('to_vendor', 'Sub-Process to Vendor'),
         ('from_ho', 'Process from Head Office'),
         ('from_clinic', 'Process from Clinic Stock'),
-        ('delivered', 'Delivery to Customer'),
+        ('delivered', 'Delivered to Customer'),
     ], string='Process Status', compute='_compute_custom_process_status', store=True, tracking=True)
 
 
