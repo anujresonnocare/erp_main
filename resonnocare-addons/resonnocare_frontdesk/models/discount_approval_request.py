@@ -353,7 +353,7 @@ class ResonnocareDiscountApprovalRequest(models.Model):
         grid_ha_lines = ha_lines.filtered(lambda l: l.discount_grid_id)
         if grid_ha_lines:
             max_pct = max(
-                (l.discount_grid_id.slab2_max or 0.0) for l in grid_ha_lines
+                (l.discount_grid_id.slab1_max or 0.0) for l in grid_ha_lines
             )
 
         no_of_ha = int(sum(l.product_uom_qty or 0.0 for l in ha_lines))
